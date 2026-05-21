@@ -6,7 +6,7 @@ workers_dev = true
 [vars]
 APP_NAME = "HeelsUp"
 CORS_ORIGIN = "*"
-API_BASE_URL = "https://heelsup-api.heelsup.workers.dev"
+API_BASE_URL = "https://heelsupnew.heelsup.workers.dev/"
 GOOGLE_APPSCRIPT_ENDPOINT = ""
 GOOGLE_APPSCRIPT_TOKEN = ""
 JWT_EXPIRES_DAYS = "30"
