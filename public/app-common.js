@@ -5,7 +5,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = (window.HEELSUP_CONFIG && window.HEELSUP_CONFIG.API_BASE) || 'https://heelsup-api.heelsup.workers.dev';
+  const API_BASE = (window.HEELSUP_CONFIG && window.HEELSUP_CONFIG.API_BASE) || 'https://heelsupnew.heelsup.workers.dev';
 
   // ── Logo SVG (inline, no external dependency) ──────────────────
   const LOGO_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 44" fill="none">
