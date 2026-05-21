@@ -1,5 +1,5 @@
 name = "heelsupnew"
-main = "src/index.js"
+main = "beckend/index.js"
 compatibility_date = "2026-05-08"
 workers_dev = true
 
