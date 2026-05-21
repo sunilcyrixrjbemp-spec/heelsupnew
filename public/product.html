@@ -1,0 +1,1622 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Product – HeelsUp</title>
+  <meta name="description" content="Shop premium ladies footwear & bags at HeelsUp. Free shipping above ₹499." />
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ===== PAGE-SPECIFIC STYLES ===== */
+
+    /* Breadcrumb */
+    .breadcrumb-wrap {
+      background: var(--color-light, #f5f3ef);
+      padding: 14px 0;
+      border-bottom: 1px solid var(--border-color, #e8e2d9);
+    }
+    .breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--text-muted, #888);
+    }
+    .breadcrumb a {
+      color: var(--text-muted, #888);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .breadcrumb a:hover { color: var(--color-primary, #C9A96E); }
+    .breadcrumb-sep { opacity: 0.4; font-size: 10px; }
+    .breadcrumb-current { color: var(--text-primary, #0d0d0d); font-weight: 500; }
+
+    /* Product Section */
+    .product-section {
+      padding: 48px 0 72px;
+      background: var(--bg-page, #FAF8F5);
+    }
+    .product-layout {
+      display: grid;
+      grid-template-columns: 1.1fr 1fr;
+      gap: 56px;
+      align-items: start;
+    }
+
+    /* === IMAGE GALLERY === */
+    .product-gallery { position: relative; }
+    .gallery-main {
+      position: relative;
+      aspect-ratio: 4/5;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f0ede8;
+      cursor: zoom-in;
+      margin-bottom: 16px;
+    }
+    .gallery-main img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-main:hover img { transform: scale(1.06); }
+    .gallery-main .oos-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(13,13,13,0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      z-index: 3;
+    }
+    .gallery-thumbs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
+    .gallery-thumb {
+      aspect-ratio: 1;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .gallery-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-thumb:hover { transform: translateY(-2px); }
+    .gallery-thumb.active { border-color: var(--color-primary, #C9A96E); }
+    .gallery-badges {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      z-index: 2;
+    }
+    .badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px; }
+    .badge-new { background: var(--color-dark, #0D0D0D); color: #fff; }
+    .badge-sale { background: var(--color-accent, #D4456B); color: #fff; }
+
+    /* === PRODUCT INFO === */
+    .product-info { position: sticky; top: 88px; }
+    .product-cat-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-primary, #C9A96E);
+      font-variant: small-caps;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .product-title {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: clamp(1.7rem, 3vw, 2.4rem);
+      font-weight: 600;
+      color: var(--color-dark, #0D0D0D);
+      line-height: 1.2;
+      margin-bottom: 14px;
+    }
+    .product-rating-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .stars { display: flex; gap: 2px; }
+    .star { font-size: 15px; }
+    .star.filled { color: #f5a623; }
+    .star.half { color: #f5a623; }
+    .star.empty { color: #ddd; }
+    .rating-val { font-weight: 700; color: var(--text-primary, #0d0d0d); font-size: 14px; }
+    .rating-count { font-size: 13px; color: var(--text-muted, #888); }
+    .rating-sep { color: var(--border-color, #e0d9ce); }
+
+    /* Price */
+    .product-price-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+    .price-big {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-dark, #0D0D0D);
+    }
+    .price-orig {
+      font-size: 1.15rem;
+      color: var(--text-muted, #888);
+      text-decoration: line-through;
+    }
+    .price-off-badge {
+      background: var(--color-accent, #D4456B);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 100px;
+      letter-spacing: 0.06em;
+    }
+    .product-desc {
+      font-size: 14.5px;
+      color: var(--text-secondary, #555);
+      line-height: 1.75;
+      margin-bottom: 22px;
+    }
+    .product-divider { border: none; border-top: 1px solid var(--border-color, #e8e2d9); margin: 22px 0; }
+
+    /* Size Selector */
+    .size-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .size-label { font-size: 13px; font-weight: 700; color: var(--text-primary, #0d0d0d); letter-spacing: 0.04em; text-transform: uppercase; }
+    .size-guide-link { font-size: 12px; color: var(--color-primary, #C9A96E); text-decoration: underline; cursor: pointer; }
+    .size-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      margin-bottom: 22px;
+    }
+    .size-btn {
+      padding: 9px 4px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      border: 1.5px solid var(--border-color, #e0d9ce);
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fff;
+      color: var(--text-primary, #0d0d0d);
+      transition: all 0.2s;
+      letter-spacing: 0.02em;
+    }
+    .size-btn:hover { border-color: var(--color-primary, #C9A96E); color: var(--color-primary, #C9A96E); }
+    .size-btn.selected { background: var(--color-dark, #0D0D0D); color: #fff; border-color: var(--color-dark, #0D0D0D); }
+    .size-btn.oos { opacity: 0.35; cursor: not-allowed; text-decoration: line-through; }
+
+    /* Quantity */
+    .qty-row { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+    .qty-label { font-size: 13px; font-weight: 700; color: var(--text-primary, #0d0d0d); letter-spacing: 0.04em; text-transform: uppercase; }
+    .qty-control {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border-color, #e0d9ce);
+      border-radius: 10px;
+      overflow: hidden;
+      background: #fff;
+    }
+    .qty-btn {
+      width: 40px;
+      height: 42px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-primary, #0d0d0d);
+      transition: background 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .qty-btn:hover { background: var(--color-primary-glow, rgba(201,169,110,0.12)); }
+    .qty-num {
+      width: 48px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 600;
+      border-left: 1px solid var(--border-color, #e0d9ce);
+      border-right: 1px solid var(--border-color, #e0d9ce);
+      height: 42px;
+      line-height: 42px;
+      color: var(--text-primary, #0d0d0d);
+      user-select: none;
+    }
+
+    /* CTA Buttons */
+    .product-cta { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .btn-add-cart {
+      width: 100%;
+      padding: 16px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--color-dark, #0D0D0D);
+      color: #fff;
+      border: 2px solid var(--color-dark, #0D0D0D);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+    .btn-add-cart:hover { background: var(--color-primary, #C9A96E); border-color: var(--color-primary, #C9A96E); color: var(--color-dark, #0D0D0D); }
+    .btn-buy-now {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: transparent;
+      color: var(--color-dark, #0D0D0D);
+      border: 2px solid var(--color-dark, #0D0D0D);
+      border-radius: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      transition: all 0.25s ease;
+    }
+    .btn-buy-now:hover { background: var(--color-dark, #0D0D0D); color: #fff; }
+
+    /* Trust Row */
+    .trust-row {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      padding: 16px;
+      background: var(--color-light, #f5f3ef);
+      border-radius: 12px;
+      margin-bottom: 20px;
+    }
+    .trust-row-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-secondary, #555);
+      font-weight: 500;
+    }
+    .trust-row-item i { color: var(--color-primary, #C9A96E); font-size: 13px; }
+
+    /* Share Row */
+    .share-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .share-label { font-size: 12px; font-weight: 600; color: var(--text-muted, #888); letter-spacing: 0.08em; text-transform: uppercase; }
+    .share-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-color, #e0d9ce);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: var(--text-muted, #888);
+      text-decoration: none;
+      cursor: pointer;
+      background: #fff;
+      transition: all 0.2s;
+    }
+    .share-btn:hover { border-color: var(--color-primary, #C9A96E); color: var(--color-primary, #C9A96E); }
+    .share-btn.wa:hover { border-color: #25D366; color: #25D366; }
+
+    /* Accordion */
+    .accordion { border-top: 1px solid var(--border-color, #e8e2d9); }
+    .accordion-item { border-bottom: 1px solid var(--border-color, #e8e2d9); }
+    .accordion-header {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 16px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-primary, #0d0d0d);
+      letter-spacing: 0.04em;
+      text-align: left;
+      transition: color 0.2s;
+    }
+    .accordion-header:hover { color: var(--color-primary, #C9A96E); }
+    .accordion-icon { font-size: 11px; transition: transform 0.3s; flex-shrink: 0; }
+    .accordion-item.open .accordion-icon { transform: rotate(180deg); }
+    .accordion-body {
+      display: none;
+      font-size: 13.5px;
+      color: var(--text-secondary, #555);
+      line-height: 1.75;
+      padding-bottom: 16px;
+    }
+    .accordion-item.open .accordion-body { display: block; }
+    .accordion-body ul { padding-left: 18px; margin: 0; }
+    .accordion-body ul li { margin-bottom: 4px; }
+
+    /* === REVIEWS SECTION === */
+    .reviews-section {
+      padding: 72px 0;
+      background: var(--color-light, #f5f3ef);
+    }
+    .reviews-layout {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+    .rating-summary { text-align: center; }
+    .rating-big {
+      font-family: var(--font-heading, 'Playfair Display', serif);
+      font-size: 4.5rem;
+      font-weight: 700;
+      color: var(--color-dark, #0D0D0D);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .rating-big-stars { display: flex; gap: 4px; justify-content: center; margin-bottom: 6px; }
+    .rating-big-stars .star { font-size: 18px; }
+    .rating-count-text { font-size: 13px; color: var(--text-muted, #888); margin-bottom: 24px; }
+    .rating-bars { text-align: left; }
+    .rating-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: var(--text-secondary, #555);
+    }
+    .rating-bar-label { width: 36px; text-align: right; flex-shrink: 0; }
+    .rating-bar-track {
+      flex: 1;
+      height: 6px;
+      background: #e0d9ce;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .rating-bar-fill { height: 100%; background: #f5a623; border-radius: 10px; }
+    .rating-bar-num { width: 28px; flex-shrink: 0; font-weight: 600; }
+
+    .review-cards { display: flex; flex-direction: column; gap: 20px; }
+    .review-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 22px 24px;
+      border: 1px solid var(--border-color, #e8e2d9);
+    }
+    .review-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; gap: 12px; }
+    .reviewer-info { display: flex; align-items: center; gap: 12px; }
+    .reviewer-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: var(--color-primary-glow, rgba(201,169,110,0.15));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-heading, serif);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--color-primary, #C9A96E);
+      flex-shrink: 0;
+    }
+    .reviewer-name { font-weight: 700; font-size: 14px; color: var(--text-primary, #0d0d0d); margin-bottom: 2px; }
+    .reviewer-date { font-size: 12px; color: var(--text-muted, #888); }
+    .review-stars { display: flex; gap: 2px; }
+    .review-stars .star { font-size: 12px; }
+    .review-verified { font-size: 11px; color: #22a06b; font-weight: 600; display: flex; align-items: center; gap: 4px; margin-top: 4px; }
+    .review-text { font-size: 14px; color: var(--text-secondary, #555); line-height: 1.7; margin-bottom: 10px; }
+    .review-tag { display: inline-block; background: var(--color-primary-glow, rgba(201,169,110,0.12)); color: var(--color-primary, #C9A96E); font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 100px; margin-right: 6px; }
+
+    .write-review-wrap { margin-top: 28px; text-align: center; }
+    .btn-review { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border: 2px solid var(--color-primary, #C9A96E); color: var(--color-primary, #C9A96E); border-radius: 10px; font-size: 13px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; background: transparent; transition: all 0.2s; }
+    .btn-review:hover { background: var(--color-primary, #C9A96E); color: #fff; }
+
+    /* === RELATED PRODUCTS === */
+    .related-section { padding: 72px 0; background: var(--bg-page, #FAF8F5); }
+    .related-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+
+    /* Toast */
+    .page-toast {
+      position: fixed;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--color-dark, #0D0D0D);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 600;
+      z-index: 9999;
+      opacity: 0;
+      transition: all 0.35s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      white-space: nowrap;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    }
+    .page-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .page-toast.success i { color: #4ade80; }
+    .page-toast.error i { color: var(--color-accent, #D4456B); }
+
+    /* Loading Skeleton */
+    .skeleton-wrap { padding: 48px 0; }
+    .skeleton-layout { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; }
+    .skeleton {
+      background: linear-gradient(90deg, #f0ede8 25%, #e8e3db 50%, #f0ede8 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    /* Review Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(13,13,13,0.7);
+      z-index: 9000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal-box {
+      background: #fff;
+      border-radius: 20px;
+      width: 100%;
+      max-width: 520px;
+      padding: 36px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-muted, #888);
+    }
+    .modal-title {
+      font-family: var(--font-heading, serif);
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: var(--color-dark, #0D0D0D);
+    }
+    .modal-stars-pick { display: flex; gap: 8px; font-size: 1.8rem; margin-bottom: 16px; cursor: pointer; }
+    .modal-stars-pick .star { color: #ddd; transition: color 0.15s; }
+    .modal-stars-pick .star.sel { color: #f5a623; }
+    .modal-form-group { margin-bottom: 14px; }
+    .modal-form-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted, #888); }
+    .modal-form-group input,
+    .modal-form-group textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border-color, #e0d9ce);
+      border-radius: 10px;
+      font-family: var(--font-body, 'DM Sans', sans-serif);
+      font-size: 14px;
+      background: var(--bg-page, #FAF8F5);
+      color: var(--text-primary, #0d0d0d);
+      transition: border-color 0.2s;
+      box-sizing: border-box;
+    }
+    .modal-form-group input:focus,
+    .modal-form-group textarea:focus { outline: none; border-color: var(--color-primary, #C9A96E); }
+    .modal-form-group textarea { min-height: 100px; resize: vertical; }
+    .btn-submit-review {
+      width: 100%;
+      padding: 14px;
+      background: var(--color-dark, #0D0D0D);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-submit-review:hover { background: var(--color-primary, #C9A96E); color: var(--color-dark, #0D0D0D); }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .product-layout { grid-template-columns: 1fr 1fr; gap: 36px; }
+      .reviews-layout { grid-template-columns: 1fr; }
+      .rating-summary { text-align: left; }
+      .rating-big-stars { justify-content: flex-start; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .product-layout { grid-template-columns: 1fr; gap: 28px; }
+      .product-info { position: static; }
+      .size-grid { grid-template-columns: repeat(4, 1fr); }
+      .skeleton-layout { grid-template-columns: 1fr; }
+      .related-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+      .reviews-section .section-header { margin-bottom: 28px; }
+      .trust-row { gap: 10px; }
+    }
+    @media (max-width: 480px) {
+      .related-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .gallery-thumbs { grid-template-columns: repeat(4, 1fr); }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================
+   TOPBAR ANNOUNCEMENT
+   ============================ -->
+  <div class="topbar" id="topbar">
+    <div class="topbar-marquee" id="topbar-marquee">
+      <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">🚚 FREE Shipping on orders above <strong>₹499</strong></span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">🏷️ Use code <strong>HEELS10</strong> for 10% off on first order</span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">💳 EMI available on orders above <strong>₹1999</strong></span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">🚚 FREE Shipping on orders above <strong>₹499</strong></span>
+      <span class="topbar-dot"></span>
+      <span class="topbar-text">🏷️ Use code <strong>HEELS10</strong> for 10% off</span>
+      <span class="topbar-dot"></span>
+    </div>
+    <button class="topbar-close" id="topbar-close" aria-label="Close announcement">✕</button>
+  </div>
+
+  <!-- ============================
+   NAVBAR
+   ============================ -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="navbar-inner">
+        <a href="index.html" class="navbar-logo">
+          <img src="logo.png" alt="HeelsUp Logo" onerror="this.style.display='none'" />
+        </a>
+        <ul class="navbar-menu" id="nav-menu">
+          <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+          <li class="nav-item">
+            <a href="shop.html" class="nav-link active">Shop <i class="fa-solid fa-chevron-down" style="font-size:9px;opacity:0.6"></i></a>
+            <div class="nav-dropdown">
+              <a href="category.html?cat=heels"><span class="nav-dropdown-icon">👠</span> Heels</a>
+              <a href="category.html?cat=flats"><span class="nav-dropdown-icon">🥿</span> Flats</a>
+              <a href="category.html?cat=sandals"><span class="nav-dropdown-icon">👡</span> Sandals</a>
+              <a href="category.html?cat=wedges"><span class="nav-dropdown-icon">👢</span> Wedges</a>
+              <a href="category.html?cat=bags"><span class="nav-dropdown-icon">👜</span> Bags</a>
+              <a href="category.html?cat=clutches"><span class="nav-dropdown-icon">👝</span> Clutches</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="category.html?cat=heels" class="nav-link">Heels</a></li>
+          <li class="nav-item"><a href="category.html?cat=sandals" class="nav-link">Sandals</a></li>
+          <li class="nav-item"><a href="category.html?cat=bags" class="nav-link">Bags</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+        <div class="navbar-actions">
+          <button class="nav-icon-btn" id="search-toggle-btn" aria-label="Search">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+          <a href="wishlist.html" class="nav-icon-btn" aria-label="Wishlist">
+            <i class="fa-regular fa-heart"></i>
+          </a>
+          <a href="profile.html" class="nav-icon-btn" aria-label="Account" id="nav-account-btn" title="My Account">
+            <i class="fa-regular fa-user"></i>
+          </a>
+          <a href="cart.html" class="nav-icon-btn" aria-label="Cart" style="position:relative">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="nav-badge cart-badge" style="display:none">0</span>
+          </a>
+          <button class="navbar-hamburger" id="hamburger-btn" aria-label="Menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-header">
+        <span class="navbar-logo-text">Heels<span style="color:var(--color-primary)">Up</span></span>
+        <button id="mobile-menu-close" style="font-size:1.3rem;color:var(--text-muted);cursor:pointer;background:none;border:none">✕</button>
+      </div>
+      <div class="mobile-menu-body">
+        <a href="index.html">🏠 Home</a>
+        <a href="shop.html">🛍️ Shop All</a>
+        <a href="category.html?cat=heels">👠 Heels</a>
+        <a href="category.html?cat=sandals">👡 Sandals</a>
+        <a href="category.html?cat=bags">👜 Bags</a>
+        <a href="category.html?cat=new">✨ New Arrivals</a>
+        <a href="category.html?cat=sale" style="color:var(--color-accent)">🔥 Sale</a>
+        <a href="about.html">📄 About Us</a>
+        <a href="contact.html">📞 Contact</a>
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:12px 0" />
+        <a href="login.html" id="mobile-login-link">👤 Login</a>
+        <a href="cart.html">🛒 My Cart</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search Overlay -->
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" class="search-input" id="search-input" placeholder="Search for heels, bags, sandals…" autocomplete="off" />
+      <button class="search-close" id="search-close-btn" aria-label="Close search">✕</button>
+    </div>
+  </div>
+
+  <!-- ============================
+   BREADCRUMB
+   ============================ -->
+  <div class="breadcrumb-wrap">
+    <div class="container">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <a href="shop.html">Shop</a>
+        <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span id="breadcrumb-cat"><a href="shop.html" id="breadcrumb-cat-link">Category</a></span>
+        <span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right"></i></span>
+        <span class="breadcrumb-current" id="breadcrumb-name">Loading…</span>
+      </nav>
+    </div>
+  </div>
+
+  <!-- ============================
+   PRODUCT DETAIL
+   ============================ -->
+  <section class="product-section">
+    <div class="container">
+
+      <!-- Loading State -->
+      <div id="product-loading" class="skeleton-wrap">
+        <div class="skeleton-layout">
+          <div>
+            <div class="skeleton" style="aspect-ratio:4/5;border-radius:16px;margin-bottom:16px"></div>
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px">
+              <div class="skeleton" style="aspect-ratio:1;border-radius:10px"></div>
+              <div class="skeleton" style="aspect-ratio:1;border-radius:10px"></div>
+              <div class="skeleton" style="aspect-ratio:1;border-radius:10px"></div>
+              <div class="skeleton" style="aspect-ratio:1;border-radius:10px"></div>
+            </div>
+          </div>
+          <div>
+            <div class="skeleton" style="height:14px;width:80px;margin-bottom:14px"></div>
+            <div class="skeleton" style="height:36px;margin-bottom:10px"></div>
+            <div class="skeleton" style="height:36px;width:60%;margin-bottom:18px"></div>
+            <div class="skeleton" style="height:20px;width:160px;margin-bottom:18px"></div>
+            <div class="skeleton" style="height:50px;margin-bottom:14px"></div>
+            <div class="skeleton" style="height:20px;margin-bottom:8px"></div>
+            <div class="skeleton" style="height:20px;margin-bottom:8px"></div>
+            <div class="skeleton" style="height:20px;width:70%;margin-bottom:24px"></div>
+            <div class="skeleton" style="height:54px;border-radius:12px;margin-bottom:12px"></div>
+            <div class="skeleton" style="height:50px;border-radius:12px"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Product Content -->
+      <div id="product-content" class="product-layout" style="display:none">
+
+        <!-- LEFT: Image Gallery -->
+        <div class="product-gallery">
+          <div class="gallery-main" id="gallery-main">
+            <img id="gallery-main-img" src="" alt="Product" loading="eager" />
+            <div class="gallery-badges" id="gallery-badges"></div>
+            <div class="oos-overlay" id="oos-overlay" style="display:none">Out of Stock</div>
+          </div>
+          <div class="gallery-thumbs" id="gallery-thumbs"></div>
+        </div>
+
+        <!-- RIGHT: Product Info -->
+        <div class="product-info">
+          <span class="product-cat-label" id="info-cat">Category</span>
+          <h1 class="product-title" id="info-name">Product Name</h1>
+
+          <div class="product-rating-row">
+            <div class="stars" id="info-stars"></div>
+            <span class="rating-val" id="info-rating-val">4.8</span>
+            <span class="rating-sep">·</span>
+            <span class="rating-count" id="info-rating-count">0 Reviews</span>
+          </div>
+
+          <div class="product-price-row">
+            <span class="price-big" id="info-price">₹0</span>
+            <span class="price-orig" id="info-orig-price" style="display:none">₹0</span>
+            <span class="price-off-badge" id="info-discount-badge" style="display:none">0% OFF</span>
+          </div>
+
+          <p class="product-desc" id="info-desc">Loading product description…</p>
+
+          <hr class="product-divider" />
+
+          <!-- Size Selector -->
+          <div class="size-header">
+            <span class="size-label">Select Size</span>
+            <a href="size-guide.html" class="size-guide-link" target="_blank">
+              <i class="fa-solid fa-ruler"></i> Size Guide
+            </a>
+          </div>
+          <div class="size-grid" id="size-grid">
+            <button class="size-btn" data-size="36">36</button>
+            <button class="size-btn" data-size="37">37</button>
+            <button class="size-btn" data-size="38">38</button>
+            <button class="size-btn" data-size="39">39</button>
+            <button class="size-btn" data-size="40">40</button>
+            <button class="size-btn" data-size="41">41</button>
+          </div>
+
+          <!-- Quantity -->
+          <div class="qty-row">
+            <span class="qty-label">Quantity</span>
+            <div class="qty-control">
+              <button class="qty-btn" id="qty-minus" aria-label="Decrease quantity">−</button>
+              <span class="qty-num" id="qty-num">1</span>
+              <button class="qty-btn" id="qty-plus" aria-label="Increase quantity">+</button>
+            </div>
+          </div>
+
+          <!-- CTA Buttons -->
+          <div class="product-cta">
+            <button class="btn-add-cart" id="btn-add-cart">
+              <i class="fa-solid fa-bag-shopping"></i> Add to Bag
+            </button>
+            <button class="btn-buy-now" id="btn-buy-now">
+              <i class="fa-solid fa-bolt"></i> Buy Now
+            </button>
+          </div>
+
+          <!-- Trust Row -->
+          <div class="trust-row">
+            <div class="trust-row-item"><i class="fa-solid fa-truck-fast"></i> Free Ship ₹499+</div>
+            <div class="trust-row-item"><i class="fa-solid fa-rotate-left"></i> 7-day Return</div>
+            <div class="trust-row-item"><i class="fa-solid fa-shield-halved"></i> 100% Authentic</div>
+          </div>
+
+          <!-- Share Row -->
+          <div class="share-row">
+            <span class="share-label">Share:</span>
+            <a class="share-btn wa" id="share-wa" href="#" target="_blank" rel="noopener" aria-label="Share on WhatsApp">
+              <i class="fa-brands fa-whatsapp"></i>
+            </a>
+            <a class="share-btn" href="https://instagram.com/heelsup.in" target="_blank" rel="noopener" aria-label="Instagram">
+              <i class="fa-brands fa-instagram"></i>
+            </a>
+            <button class="share-btn" id="copy-link-btn" aria-label="Copy link" title="Copy product link">
+              <i class="fa-solid fa-link"></i>
+            </button>
+          </div>
+
+          <!-- Accordion -->
+          <div class="accordion">
+            <div class="accordion-item open">
+              <button class="accordion-header" type="button">
+                Product Details <i class="fa-solid fa-chevron-down accordion-icon"></i>
+              </button>
+              <div class="accordion-body" id="acc-details">
+                <ul>
+                  <li>Upper Material: Premium Synthetic Leather</li>
+                  <li>Sole: Non-slip TPR</li>
+                  <li>Heel Height: 3.5 inches</li>
+                  <li>Closure: Buckle strap</li>
+                  <li>Care: Wipe with dry cloth</li>
+                  <li>Country of Origin: India</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header" type="button">
+                Shipping & Delivery <i class="fa-solid fa-chevron-down accordion-icon"></i>
+              </button>
+              <div class="accordion-body">
+                <ul>
+                  <li>Free shipping on orders above ₹499</li>
+                  <li>Standard delivery: 3–5 business days</li>
+                  <li>Express delivery: 1–2 business days (₹99 extra)</li>
+                  <li>Cash on Delivery available across India</li>
+                  <li>Order tracking via SMS and email</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header" type="button">
+                Returns & Exchanges <i class="fa-solid fa-chevron-down accordion-icon"></i>
+              </button>
+              <div class="accordion-body">
+                <ul>
+                  <li>7-day easy return policy</li>
+                  <li>Item must be unused and in original packaging</li>
+                  <li>Exchanges available for size issues</li>
+                  <li>Initiate return via WhatsApp or email</li>
+                  <li>Refund processed in 5–7 business days</li>
+                </ul>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header" type="button">
+                Size Guide <i class="fa-solid fa-chevron-down accordion-icon"></i>
+              </button>
+              <div class="accordion-body">
+                <p style="margin-bottom:8px">Our shoes are true to size. For the best fit:</p>
+                <ul>
+                  <li>Size 36 → UK 3 → US 6 → Foot length: 23 cm</li>
+                  <li>Size 37 → UK 4 → US 7 → Foot length: 23.7 cm</li>
+                  <li>Size 38 → UK 5 → US 8 → Foot length: 24.4 cm</li>
+                  <li>Size 39 → UK 6 → US 9 → Foot length: 25.1 cm</li>
+                  <li>Size 40 → UK 7 → US 10 → Foot length: 25.8 cm</li>
+                  <li>Size 41 → UK 8 → US 11 → Foot length: 26.5 cm</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error State -->
+      <div id="product-error" style="display:none; text-align:center; padding:80px 0">
+        <div style="font-size:3rem;margin-bottom:16px">😞</div>
+        <h2 style="font-family:var(--font-heading,serif);margin-bottom:12px">Product Not Found</h2>
+        <p style="color:var(--text-muted,#888);margin-bottom:24px">The product you're looking for doesn't exist or may have been removed.</p>
+        <a href="shop.html" class="btn btn-primary">Browse All Products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+   REVIEWS SECTION
+   ============================ -->
+  <section class="reviews-section" id="reviews-section" style="display:none">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:44px">
+        <span class="section-label">What Customers Say</span>
+        <h2>Customer <em style="font-family:var(--font-display);font-style:italic;font-weight:400">Reviews</em></h2>
+      </div>
+      <div class="reviews-layout">
+        <!-- Rating Summary -->
+        <div class="rating-summary">
+          <div class="rating-big" id="rev-rating-big">4.8</div>
+          <div class="rating-big-stars" id="rev-stars-big"></div>
+          <div class="rating-count-text" id="rev-count-text">Based on 0 reviews</div>
+          <div class="rating-bars" id="rev-bars"></div>
+        </div>
+        <!-- Review Cards -->
+        <div>
+          <div class="review-cards" id="review-cards"></div>
+          <div class="write-review-wrap">
+            <button class="btn-review" id="write-review-btn">
+              <i class="fa-solid fa-pen"></i> Write a Review
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================
+   RELATED PRODUCTS
+   ============================ -->
+  <section class="related-section" id="related-section" style="display:none">
+    <div class="container">
+      <div class="section-header" style="margin-bottom:40px">
+        <span class="section-label">More to Love</span>
+        <h2>You May Also <em style="font-family:var(--font-display);font-style:italic;font-weight:400">Like</em></h2>
+      </div>
+      <div class="related-grid" id="related-grid"></div>
+    </div>
+  </section>
+
+  <!-- ============================
+   FOOTER
+   ============================ -->
+  <footer class="footer" aria-label="Site footer">
+    <div class="container">
+      <div class="footer-top grid grid-4">
+        <div>
+          <div class="footer-logo">
+            <img src="logo.png" alt="HeelsUp" onerror="this.style.display='none'" />
+          </div>
+          <div style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:12px">
+            Heels<span style="color:var(--color-primary)">Up</span>
+          </div>
+          <p class="footer-tagline">Jodhpur se India tak — stylish ladies footwear & bags ka sabse trusted naam.</p>
+          <div class="footer-social">
+            <a href="https://instagram.com/heelsup.in" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+            <a href="https://facebook.com/heelsup.in" class="footer-social-link" aria-label="Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="https://wa.me/919xxxxxxxxx" class="footer-social-link" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="https://pinterest.com/heelsup" class="footer-social-link" aria-label="Pinterest" target="_blank" rel="noopener"><i class="fa-brands fa-pinterest-p"></i></a>
+          </div>
+        </div>
+        <div>
+          <div class="footer-col-title">Quick Links</div>
+          <ul class="footer-links">
+            <li><a href="shop.html" class="footer-link"><i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i> Shop All</a></li>
+            <li><a href="category.html?cat=new" class="footer-link"><i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i> New Arrivals</a></li>
+            <li><a href="category.html?cat=sale" class="footer-link"><i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i> Sale</a></li>
+            <li><a href="about.html" class="footer-link"><i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i> About Us</a></li>
+            <li><a href="contact.html" class="footer-link"><i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i> Contact Us</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Categories</div>
+          <ul class="footer-links">
+            <li><a href="category.html?cat=heels" class="footer-link">👠 Heels</a></li>
+            <li><a href="category.html?cat=flats" class="footer-link">🥿 Flats</a></li>
+            <li><a href="category.html?cat=sandals" class="footer-link">👡 Sandals</a></li>
+            <li><a href="category.html?cat=wedges" class="footer-link">👢 Wedges</a></li>
+            <li><a href="category.html?cat=bags" class="footer-link">👜 Bags</a></li>
+            <li><a href="category.html?cat=clutches" class="footer-link">👝 Clutches</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Help & Support</div>
+          <ul class="footer-links">
+            <li><a href="orders.html" class="footer-link"><i class="fa-solid fa-box" style="font-size:10px;opacity:0.5"></i> Track Order</a></li>
+            <li><a href="returns.html" class="footer-link"><i class="fa-solid fa-rotate-left" style="font-size:10px;opacity:0.5"></i> Return Policy</a></li>
+            <li><a href="policy/privacy.html" class="footer-link"><i class="fa-solid fa-shield" style="font-size:10px;opacity:0.5"></i> Privacy Policy</a></li>
+            <li><a href="faq.html" class="footer-link"><i class="fa-solid fa-circle-question" style="font-size:10px;opacity:0.5"></i> FAQs</a></li>
+          </ul>
+          <div style="margin-top:20px">
+            <div class="footer-col-title" style="margin-bottom:10px">Contact Us</div>
+            <a href="https://wa.me/919xxxxxxxxx" class="footer-link" target="_blank" rel="noopener">
+              <i class="fa-brands fa-whatsapp" style="color:var(--color-primary)"></i> +91 9XXXXXXXXX
+            </a>
+            <a href="mailto:hello@heelsup.in" class="footer-link" style="margin-top:8px">
+              <i class="fa-solid fa-envelope" style="color:var(--color-primary)"></i> hello@heelsup.in
+            </a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copyright">© 2025 HeelsUp. All rights reserved. Made with ❤️ in Jodhpur, Rajasthan.</p>
+        <div class="footer-bottom-links">
+          <a href="policy/privacy.html">Privacy</a>
+          <a href="policy/terms.html">Terms</a>
+          <a href="returns.html">Returns</a>
+        </div>
+        <div class="footer-payments" style="display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,0.3)">
+          <span>We Accept:</span>
+          <span style="color:var(--color-primary-light);font-weight:600;font-size:12px">UPI · Cards · COD · EMI</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating WhatsApp -->
+  <a href="https://wa.me/919xxxxxxxxx?text=Hello HeelsUp! I want to enquire about a product." class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+  <!-- Scroll to Top -->
+  <button class="scroll-top-btn" id="scroll-top" aria-label="Scroll to top">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <!-- Toast -->
+  <div class="page-toast" id="page-toast"></div>
+
+  <!-- ============================
+   REVIEW MODAL
+   ============================ -->
+  <div class="modal-backdrop" id="review-modal">
+    <div class="modal-box">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">✕</button>
+      <h3 class="modal-title">Write a Review</h3>
+      <div class="modal-form-group">
+        <label>Your Rating</label>
+        <div class="modal-stars-pick" id="modal-stars">
+          <span class="star" data-val="1">★</span>
+          <span class="star" data-val="2">★</span>
+          <span class="star" data-val="3">★</span>
+          <span class="star" data-val="4">★</span>
+          <span class="star" data-val="5">★</span>
+        </div>
+      </div>
+      <div class="modal-form-group">
+        <label>Review Title</label>
+        <input type="text" id="review-title" placeholder="e.g. Amazing quality!" maxlength="80" />
+      </div>
+      <div class="modal-form-group">
+        <label>Your Review</label>
+        <textarea id="review-body" placeholder="Share your experience with this product…" maxlength="500"></textarea>
+      </div>
+      <button class="btn-submit-review" id="submit-review-btn">Submit Review</button>
+    </div>
+  </div>
+
+  <!-- ============================
+   SCRIPTS
+   ============================ -->
+  <script src="app-config.js"></script>
+  <script src="app-auth.js"></script>
+  <script src="js/cart.js"></script>
+  <script>
+    // ======================================================
+    // STATE
+    // ======================================================
+    let currentProduct = null;
+    let selectedSize = '';
+    let quantity = 1;
+    let reviewRating = 0;
+
+    const FALLBACK_IMAGES = [
+      'https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=800&q=80&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=800&q=80&auto=format&fit=crop',
+      'https://images.unsplash.com/photo-1522163182402-834f871fd851?w=800&q=80&auto=format&fit=crop'
+    ];
+
+    // ======================================================
+    // INIT
+    // ======================================================
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavbar();
+      initTopbar();
+      initSearch();
+      initScrollTop();
+      loadProduct();
+      initAccordions();
+      initModal();
+      updateNavUser();
+    });
+
+    // ======================================================
+    // LOAD PRODUCT
+    // ======================================================
+    async function loadProduct() {
+      const params = new URLSearchParams(location.search);
+      const id = params.get('id') || '1';
+
+      try {
+        let product;
+        try {
+          product = await HeelsUpAuth.api(`/api/products/${id}`);
+        } catch (apiErr) {
+          // Fallback demo product
+          product = getDemoProduct(id);
+        }
+
+        if (!product) throw new Error('Product not found');
+        currentProduct = product;
+        renderProduct(product);
+        loadRelated(product.category, product.id);
+      } catch (err) {
+        document.getElementById('product-loading').style.display = 'none';
+        document.getElementById('product-error').style.display = 'block';
+      }
+    }
+
+    function getDemoProduct(id) {
+      const demos = {
+        '1': { id: 1, name: 'Stiletto Block Heel Pumps', category: 'Heels', price: 899, original_price: 1499, description: 'Elevate every look with our bestselling Stiletto Block Heel Pumps. Crafted with premium faux leather upper, cushioned footbed, and a sturdy 3.5" block heel — perfect for both office and evenings. Available in classic black and nude.', images: FALLBACK_IMAGES, is_new: true, rating: 4.8, review_count: 124, stock: 15 },
+        '2': { id: 2, name: 'Rose Gold Strappy Sandals', category: 'Sandals', price: 649, original_price: 999, description: 'Turn heads at every party with our Rose Gold Strappy Sandals. Adjustable ankle strap, padded insole, and that signature rose gold metallic finish. A must-have for your summer wardrobe.', images: FALLBACK_IMAGES, rating: 4.7, review_count: 89, stock: 8 },
+        '3': { id: 3, name: 'Classic Tote Bag – Tan', category: 'Bags', price: 1299, original_price: 1999, description: 'The everyday bag that does it all. Our Classic Tote in warm tan features a structured silhouette, magnetic closure, interior zip pocket, and comfortable shoulder straps. Holds everything your day demands.', images: FALLBACK_IMAGES, is_new: true, rating: 4.9, review_count: 203, stock: 22 }
+      };
+      return demos[id] || demos['1'];
+    }
+
+    function renderProduct(p) {
+      // Update page title & meta
+      document.title = `${p.name} – HeelsUp`;
+      document.getElementById('page-title').textContent = `${p.name} – HeelsUp`;
+
+      // Breadcrumb
+      const catLink = document.getElementById('breadcrumb-cat-link');
+      catLink.textContent = p.category || 'Shop';
+      catLink.href = `category.html?cat=${(p.category || '').toLowerCase()}`;
+      document.getElementById('breadcrumb-name').textContent = p.name;
+
+      // Category label
+      document.getElementById('info-cat').textContent = p.category || '';
+
+      // Name
+      document.getElementById('info-name').textContent = p.name;
+
+      // Rating
+      const rating = parseFloat(p.rating) || 4.5;
+      const reviewCount = p.review_count || 0;
+      document.getElementById('info-rating-val').textContent = rating.toFixed(1);
+      document.getElementById('info-rating-count').textContent = `${reviewCount} Review${reviewCount !== 1 ? 's' : ''}`;
+      document.getElementById('info-stars').innerHTML = buildStarsHTML(rating, 16);
+
+      // Price
+      document.getElementById('info-price').textContent = `₹${Number(p.price).toLocaleString('en-IN')}`;
+      if (p.original_price && p.original_price > p.price) {
+        document.getElementById('info-orig-price').textContent = `₹${Number(p.original_price).toLocaleString('en-IN')}`;
+        document.getElementById('info-orig-price').style.display = '';
+        const disc = Math.round((1 - p.price / p.original_price) * 100);
+        document.getElementById('info-discount-badge').textContent = `${disc}% OFF`;
+        document.getElementById('info-discount-badge').style.display = '';
+      }
+
+      // Description
+      document.getElementById('info-desc').textContent = p.description || 'Premium quality footwear crafted with care, designed for the modern Indian woman.';
+
+      // Accordion details update
+      if (p.material || p.heel_height) {
+        const details = document.getElementById('acc-details');
+        if (details && p.material) {
+          details.querySelector('ul').insertAdjacentHTML('afterbegin', `<li>Material: ${p.material}</li>`);
+        }
+      }
+
+      // Gallery
+      const images = getImages(p);
+      renderGallery(images, p.stock === 0, p.is_new, p.original_price && p.original_price > p.price ? Math.round((1 - p.price / p.original_price) * 100) : 0);
+
+      // OOS Check
+      if (p.stock === 0) {
+        document.getElementById('btn-add-cart').disabled = true;
+        document.getElementById('btn-add-cart').textContent = 'Out of Stock';
+        document.getElementById('btn-buy-now').disabled = true;
+        document.getElementById('btn-buy-now').style.opacity = '0.4';
+      }
+
+      // Reviews section
+      renderReviews(rating, reviewCount);
+
+      // Share
+      document.getElementById('share-wa').href = `https://wa.me/?text=Check%20out%20${encodeURIComponent(p.name)}%20at%20HeelsUp!%20${encodeURIComponent(location.href)}`;
+
+      // Show content
+      document.getElementById('product-loading').style.display = 'none';
+      document.getElementById('product-content').style.display = 'grid';
+      document.getElementById('reviews-section').style.display = '';
+      document.getElementById('related-section').style.display = '';
+    }
+
+    function getImages(p) {
+      let imgs = [];
+      if (Array.isArray(p.images) && p.images.length) imgs = p.images;
+      else if (p.image_url) imgs = [p.image_url];
+      if (imgs.length === 0) imgs = [FALLBACK_IMAGES[0]];
+      // Pad to 4 with fallback images
+      while (imgs.length < 4) imgs.push(FALLBACK_IMAGES[imgs.length % FALLBACK_IMAGES.length]);
+      return imgs.slice(0, 4);
+    }
+
+    function renderGallery(images, oos, isNew, discPct) {
+      const mainImg = document.getElementById('gallery-main-img');
+      mainImg.src = images[0];
+      mainImg.alt = currentProduct?.name || 'Product';
+
+      if (oos) document.getElementById('oos-overlay').style.display = 'flex';
+
+      // Badges
+      let badgeHTML = '';
+      if (isNew) badgeHTML += `<span class="badge badge-new">New</span>`;
+      if (discPct > 0) badgeHTML += `<span class="badge badge-sale">-${discPct}%</span>`;
+      document.getElementById('gallery-badges').innerHTML = badgeHTML;
+
+      // Thumbnails
+      const thumbsWrap = document.getElementById('gallery-thumbs');
+      thumbsWrap.innerHTML = images.map((src, i) => `
+        <div class="gallery-thumb ${i === 0 ? 'active' : ''}" data-idx="${i}" onclick="switchImage(${i})">
+          <img src="${src}" alt="Product view ${i + 1}" loading="lazy" />
+        </div>
+      `).join('');
+    }
+
+    window.switchImage = function (idx) {
+      const images = getImages(currentProduct);
+      document.getElementById('gallery-main-img').src = images[idx];
+      document.querySelectorAll('.gallery-thumb').forEach((t, i) => t.classList.toggle('active', i === idx));
+    };
+
+    // ======================================================
+    // STARS
+    // ======================================================
+    function buildStarsHTML(rating, size = 14) {
+      let html = '';
+      for (let i = 1; i <= 5; i++) {
+        if (rating >= i) html += `<span class="star filled" style="font-size:${size}px">★</span>`;
+        else if (rating >= i - 0.5) html += `<span class="star half" style="font-size:${size}px">⯨</span>`;
+        else html += `<span class="star empty" style="font-size:${size}px">★</span>`;
+      }
+      return html;
+    }
+
+    // ======================================================
+    // SIZE SELECTION
+    // ======================================================
+    document.getElementById('size-grid').addEventListener('click', (e) => {
+      const btn = e.target.closest('.size-btn');
+      if (!btn || btn.classList.contains('oos')) return;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedSize = btn.dataset.size;
+    });
+
+    // ======================================================
+    // QUANTITY
+    // ======================================================
+    document.getElementById('qty-minus').addEventListener('click', () => {
+      if (quantity > 1) { quantity--; document.getElementById('qty-num').textContent = quantity; }
+    });
+    document.getElementById('qty-plus').addEventListener('click', () => {
+      if (quantity < 10) { quantity++; document.getElementById('qty-num').textContent = quantity; }
+    });
+
+    // ======================================================
+    // ADD TO CART
+    // ======================================================
+    document.getElementById('btn-add-cart').addEventListener('click', () => {
+      if (!currentProduct) return;
+      if (!selectedSize) {
+        showToast('⚠️ Please select a size first', 'error');
+        // Highlight size grid
+        document.getElementById('size-grid').style.animation = 'none';
+        document.getElementById('size-grid').offsetHeight;
+        document.getElementById('size-grid').style.boxShadow = '0 0 0 2px var(--color-accent)';
+        document.getElementById('size-grid').style.borderRadius = '10px';
+        setTimeout(() => { document.getElementById('size-grid').style.boxShadow = ''; }, 2000);
+        return;
+      }
+      HeelsUpCart.addItem(currentProduct, quantity, selectedSize);
+      showToast('✓ Added to bag!', 'success');
+    });
+
+    // ======================================================
+    // BUY NOW
+    // ======================================================
+    document.getElementById('btn-buy-now').addEventListener('click', () => {
+      if (!currentProduct) return;
+      if (!selectedSize) {
+        showToast('⚠️ Please select a size first', 'error');
+        return;
+      }
+      HeelsUpCart.addItem(currentProduct, quantity, selectedSize);
+      location.href = 'checkout.html';
+    });
+
+    // ======================================================
+    // COPY LINK
+    // ======================================================
+    document.getElementById('copy-link-btn').addEventListener('click', () => {
+      navigator.clipboard.writeText(location.href).then(() => {
+        showToast('🔗 Link copied!', 'success');
+      }).catch(() => {
+        showToast('Could not copy link', 'error');
+      });
+    });
+
+    // ======================================================
+    // RELATED PRODUCTS
+    // ======================================================
+    async function loadRelated(category, excludeId) {
+      if (!category) return;
+      const grid = document.getElementById('related-grid');
+      grid.innerHTML = `<div class="skeleton" style="aspect-ratio:3/4;border-radius:14px"></div>`.repeat(4);
+
+      try {
+        let data;
+        try {
+          data = await HeelsUpAuth.api(`/api/products?category=${encodeURIComponent(category)}&limit=8`);
+        } catch {
+          data = { products: getDemoRelated(category, excludeId) };
+        }
+
+        let products = (data.products || data || []).filter(p => p.id != excludeId).slice(0, 4);
+        if (products.length === 0) products = getDemoRelated(category, excludeId);
+
+        grid.innerHTML = products.map(p => buildProductCard(p)).join('');
+      } catch (e) {
+        grid.innerHTML = getDemoRelated(category, excludeId).map(p => buildProductCard(p)).join('');
+      }
+    }
+
+    function getDemoRelated(cat, excludeId) {
+      const all = [
+        { id: 2, name: 'Rose Gold Strappy Sandals', category: 'Sandals', price: 649, original_price: 999, images: [FALLBACK_IMAGES[3]], rating: 4.7, review_count: 89 },
+        { id: 4, name: 'Embroidered Juttis', category: 'Flats', price: 549, original_price: 849, images: [FALLBACK_IMAGES[1]], rating: 4.6, review_count: 67 },
+        { id: 5, name: 'Wedge Ankle Strap Heels', category: 'Heels', price: 799, original_price: 1299, images: [FALLBACK_IMAGES[2]], is_new: true, rating: 4.5, review_count: 56 },
+        { id: 7, name: 'Platform Mule Heels', category: 'Heels', price: 749, original_price: 1199, images: [FALLBACK_IMAGES[0]], rating: 4.7, review_count: 78 }
+      ];
+      return all.filter(p => p.id != excludeId).slice(0, 4);
+    }
+
+    function buildProductCard(p) {
+      const imgs = Array.isArray(p.images) ? p.images : [p.image_url || FALLBACK_IMAGES[0]];
+      const img = imgs[0] || FALLBACK_IMAGES[0];
+      const disc = p.original_price && p.original_price > p.price ? Math.round((1 - p.price / p.original_price) * 100) : 0;
+      return `
+        <div class="product-card" data-id="${p.id}">
+          <div class="product-card-img-wrap">
+            <a href="product.html?id=${p.id}"><img src="${img}" alt="${p.name}" loading="lazy"></a>
+            <div class="product-card-badges">
+              ${p.is_new ? '<span class="badge badge-new">New</span>' : ''}
+              ${disc > 0 ? `<span class="badge badge-sale">-${disc}%</span>` : ''}
+            </div>
+            <div class="product-card-actions">
+              <button onclick="quickAdd(${p.id})" class="btn-icon" title="Add to Cart"><i class="fa-solid fa-bag-shopping"></i></button>
+              <a href="product.html?id=${p.id}" class="btn-icon" title="View"><i class="fa-solid fa-eye"></i></a>
+            </div>
+          </div>
+          <div class="product-card-body">
+            <div class="product-card-cat">${p.category || ''}</div>
+            <h3 class="product-card-name"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+            <div class="product-card-rating">${buildStarsHTML(p.rating || 4.5, 12)} (${p.review_count || 0})</div>
+            <div class="product-card-price">
+              <span class="price-current">₹${Number(p.price).toLocaleString('en-IN')}</span>
+              ${p.original_price ? `<span class="price-original">₹${Number(p.original_price).toLocaleString('en-IN')}</span>` : ''}
+            </div>
+          </div>
+        </div>`;
+    }
+
+    window.quickAdd = function (id) {
+      showToast('👠 Open product to select size', 'success');
+      setTimeout(() => location.href = `product.html?id=${id}`, 1200);
+    };
+
+    // ======================================================
+    // REVIEWS
+    // ======================================================
+    const SAMPLE_REVIEWS = [
+      { name: 'Priya Sharma', city: 'Delhi', rating: 5, date: '12 May 2025', title: 'Absolutely love these!', body: 'Bahut hi comfortable hain aur quality bhi amazing hai. Maine size 38 liya aur perfectly fit hua. Delivery bhi 2 din mein aa gayi. Highly recommend!', tags: ['Comfortable', 'True to Size'] },
+      { name: 'Ananya Gupta', city: 'Mumbai', rating: 4, date: '3 Apr 2025', title: 'Great quality for the price', body: 'The material is premium and the heel is sturdy. Wore them to a wedding and received so many compliments. Only reason for 4 stars is they needed a bit of breaking in.', tags: ['Premium Look', 'Great Value'] },
+      { name: 'Kavitha Reddy', city: 'Hyderabad', rating: 5, date: '18 Mar 2025', title: 'My go-to heels now!', body: 'Order karte hi mujhe pata tha yeh perfect honge. Aur haan, bilkul waise hi hain jaise photos mein dikh rahe hain. Already order kar rahi hoon dobaara different color mein!', tags: ['As Described', 'Beautiful'] }
+    ];
+
+    function renderReviews(rating, count) {
+      // Big rating
+      document.getElementById('rev-rating-big').textContent = rating.toFixed(1);
+      document.getElementById('rev-stars-big').innerHTML = buildStarsHTML(rating, 20);
+      document.getElementById('rev-count-text').textContent = `Based on ${count} review${count !== 1 ? 's' : ''}`;
+
+      // Rating bars (pseudo distribution)
+      const total = Math.max(count, 1);
+      const dist = {
+        5: Math.round(total * 0.68),
+        4: Math.round(total * 0.18),
+        3: Math.round(total * 0.08),
+        2: Math.round(total * 0.04),
+        1: Math.round(total * 0.02)
+      };
+      let barsHTML = '';
+      for (let s = 5; s >= 1; s--) {
+        const pct = total > 0 ? (dist[s] / total) * 100 : 0;
+        barsHTML += `
+          <div class="rating-bar-row">
+            <span class="rating-bar-label">${s}★</span>
+            <div class="rating-bar-track"><div class="rating-bar-fill" style="width:${pct}%"></div></div>
+            <span class="rating-bar-num">${dist[s]}</span>
+          </div>`;
+      }
+      document.getElementById('rev-bars').innerHTML = barsHTML;
+
+      // Review cards
+      const cardsHTML = SAMPLE_REVIEWS.map(r => `
+        <div class="review-card">
+          <div class="review-header">
+            <div class="reviewer-info">
+              <div class="reviewer-avatar">${r.name.charAt(0)}</div>
+              <div>
+                <div class="reviewer-name">${r.name} <span style="font-size:11px;color:var(--text-muted,#888);font-weight:400">· ${r.city}</span></div>
+                <div class="reviewer-date">${r.date}</div>
+                <div class="review-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+              </div>
+            </div>
+            <div class="review-stars">${buildStarsHTML(r.rating, 13)}</div>
+          </div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:8px;color:var(--text-primary,#0d0d0d)">${r.title}</div>
+          <p class="review-text">${r.body}</p>
+          <div>${r.tags.map(t => `<span class="review-tag">${t}</span>`).join('')}</div>
+        </div>`).join('');
+      document.getElementById('review-cards').innerHTML = cardsHTML;
+    }
+
+    // ======================================================
+    // ACCORDIONS
+    // ======================================================
+    function initAccordions() {
+      document.querySelectorAll('.accordion-header').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const item = btn.closest('.accordion-item');
+          const isOpen = item.classList.contains('open');
+          document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+          if (!isOpen) item.classList.add('open');
+        });
+      });
+    }
+
+    // ======================================================
+    // REVIEW MODAL
+    // ======================================================
+    function initModal() {
+      document.getElementById('write-review-btn').addEventListener('click', () => {
+        const user = HeelsUpAuth.getUser();
+        if (!user) {
+          showToast('Please login to write a review', 'error');
+          setTimeout(() => location.href = 'login.html?redirect=' + encodeURIComponent(location.href), 1500);
+          return;
+        }
+        document.getElementById('review-modal').classList.add('open');
+        document.body.style.overflow = 'hidden';
+      });
+      document.getElementById('modal-close-btn').addEventListener('click', closeModal);
+      document.getElementById('review-modal').addEventListener('click', (e) => {
+        if (e.target === document.getElementById('review-modal')) closeModal();
+      });
+
+      // Star picking
+      const starEls = document.querySelectorAll('#modal-stars .star');
+      starEls.forEach(s => {
+        s.addEventListener('click', () => {
+          reviewRating = parseInt(s.dataset.val);
+          starEls.forEach((st, i) => st.classList.toggle('sel', i < reviewRating));
+        });
+        s.addEventListener('mouseenter', () => {
+          const v = parseInt(s.dataset.val);
+          starEls.forEach((st, i) => st.classList.toggle('sel', i < v));
+        });
+        s.addEventListener('mouseleave', () => {
+          starEls.forEach((st, i) => st.classList.toggle('sel', i < reviewRating));
+        });
+      });
+
+      document.getElementById('submit-review-btn').addEventListener('click', () => {
+        if (!reviewRating) { showToast('Please select a star rating', 'error'); return; }
+        const title = document.getElementById('review-title').value.trim();
+        const body = document.getElementById('review-body').value.trim();
+        if (!body) { showToast('Please write your review', 'error'); return; }
+        closeModal();
+        showToast('✓ Review submitted! Thank you 💛', 'success');
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('review-modal').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    // ======================================================
+    // TOAST
+    // ======================================================
+    let toastTimer;
+    function showToast(msg, type = 'success') {
+      const t = document.getElementById('page-toast');
+      const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+      t.innerHTML = `<i class="fa-solid ${icon}"></i> ${msg}`;
+      t.className = `page-toast show ${type}`;
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => t.classList.remove('show'), 3000);
+    }
+
+    // ======================================================
+    // NAV USER STATE
+    // ======================================================
+    function updateNavUser() {
+      const user = HeelsUpAuth.getUser();
+      const btn = document.getElementById('nav-account-btn');
+      if (user && btn) {
+        btn.title = `Hi, ${user.firstName || user.name || 'User'}`;
+      }
+    }
+
+    // ======================================================
+    // NAVBAR
+    // ======================================================
+    function initNavbar() {
+      const navbar = document.getElementById('navbar');
+      const hamburger = document.getElementById('hamburger-btn');
+      const mobileMenu = document.getElementById('mobile-menu');
+      const backdrop = document.getElementById('mobile-backdrop');
+      const closeBtn = document.getElementById('mobile-menu-close');
+
+      window.addEventListener('scroll', () => {
+        navbar.classList.toggle('scrolled', window.scrollY > 60);
+        document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
+      });
+
+      hamburger?.addEventListener('click', () => {
+        hamburger.classList.toggle('open');
+        mobileMenu.classList.toggle('open');
+        document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+      });
+
+      const closeMobile = () => {
+        hamburger?.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        document.body.style.overflow = '';
+      };
+      backdrop?.addEventListener('click', closeMobile);
+      closeBtn?.addEventListener('click', closeMobile);
+    }
+
+    // ======================================================
+    // TOPBAR
+    // ======================================================
+    function initTopbar() {
+      document.getElementById('topbar-close')?.addEventListener('click', () => {
+        const tb = document.getElementById('topbar');
+        tb.style.height = '0'; tb.style.overflow = 'hidden'; tb.style.padding = '0';
+        tb.style.transition = 'height 0.3s ease';
+      });
+    }
+
+    // ======================================================
+    // SEARCH
+    // ======================================================
+    function initSearch() {
+      const overlay = document.getElementById('search-overlay');
+      document.getElementById('search-toggle-btn')?.addEventListener('click', () => {
+        overlay.classList.add('active');
+        document.getElementById('search-input').focus();
+      });
+      document.getElementById('search-close-btn')?.addEventListener('click', () => overlay.classList.remove('active'));
+      document.getElementById('search-input')?.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          const q = e.target.value.trim();
+          if (q) location.href = `search.html?q=${encodeURIComponent(q)}`;
+        }
+        if (e.key === 'Escape') overlay.classList.remove('active');
+      });
+    }
+
+    // ======================================================
+    // SCROLL TOP
+    // ======================================================
+    function initScrollTop() {
+      document.getElementById('scroll-top')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS products;
+DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS sessions;
+DROP TABLE IF EXISTS otp_tokens;
+DROP TABLE IF EXISTS orders;
+DROP TABLE IF EXISTS order_items;
+DROP TABLE IF EXISTS payments;
+DROP TABLE IF EXISTS newsletter_subscribers;
+DROP TABLE IF EXISTS contact_messages;
+DROP TABLE IF EXISTS d1_migrations;

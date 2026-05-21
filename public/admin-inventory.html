@@ -1,0 +1,1750 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Inventory Management</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ============================================================
+           ADMIN INVENTORY SPECIFIC STYLES
+        ============================================================ */
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Inventory Stats Grid */
+        .inv-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        /* Tabs Navigation */
+        .inv-tabs-wrapper {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius);
+            padding: 0 var(--space-6);
+            margin-bottom: var(--space-6);
+            box-shadow: var(--shadow-xs);
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        .inv-tabs-wrapper::-webkit-scrollbar {
+            display: none;
+            /* Chrome/Safari */
+        }
+
+        .inv-tab-btn {
+            padding: var(--space-4) var(--space-5);
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .inv-tab-btn:hover {
+            color: var(--color-primary-dark);
+        }
+
+        .inv-tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .inv-tab-badge {
+            background: var(--color-light-3);
+            color: var(--text-secondary);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: var(--radius-pill);
+        }
+
+        .inv-tab-btn.active .inv-tab-badge {
+            background: var(--color-primary-glow);
+            color: var(--color-primary-dark);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Advanced Filters Bar */
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-white);
+            padding: var(--space-4) var(--space-6);
+            border: 1px solid var(--border-color);
+            border-bottom: none;
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+
+        .adv-filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+        }
+
+        /* Table Inputs */
+        .qty-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .qty-input {
+            width: 70px;
+            padding: 6px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-weight: 600;
+            background: var(--color-light);
+            transition: all 0.2s;
+        }
+
+        .qty-input:focus {
+            border-color: var(--color-primary);
+            background: var(--color-white);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+
+        .qty-save-btn {
+            background: var(--color-white);
+            color: var(--color-primary-dark);
+            border: 1px solid var(--color-primary);
+            border-radius: var(--radius-sm);
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+        }
+
+        .qty-save-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            background: var(--color-light);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Log Table Specific */
+        .log-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .log-icon.add {
+            background: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .log-icon.sub {
+            background: var(--color-error-light);
+            color: var(--color-error);
+        }
+
+        .log-icon.move {
+            background: var(--color-info-light);
+            color: var(--color-info);
+        }
+
+        .location-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--color-light-3);
+            color: var(--text-secondary);
+        }
+
+        .text-right {
+            text-align: right;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i>
+                        <span>Products</span>
+                        <span class="admin-nav-badge">350</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i>
+                        <span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                        <span>Inventory</span>
+                        <span class="admin-nav-badge" style="background:var(--color-warning)">Alerts</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i>
+                        <span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i>
+                        <span>Orders</span>
+                        <span class="admin-nav-badge">12</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i>
+                        <span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i>
+                        <span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i>
+                        <span>Reviews</span>
+                        <span class="admin-nav-badge" style="background:var(--color-success)">4</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i>
+                        <span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i>
+                        <span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i>
+                        <span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i>
+                        <span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar mobile overlay -->
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Inventory Hub</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search SKU, Product, or PO Number..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="admin-notif-btn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="admin-notif-dot"></span>
+                    </button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Inventory Management</h2>
+                        <p>Track multi-warehouse stock levels, incoming orders, and internal transfers.</p>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3); flex-wrap:wrap;">
+                        <button class="btn btn-white"
+                            onclick="document.getElementById('modal-transfer').classList.add('open')">
+                            <i class="fa-solid fa-truck-fast"></i> Transfer Stock
+                        </button>
+                        <button class="btn btn-white"
+                            onclick="document.getElementById('modal-po').classList.add('open')">
+                            <i class="fa-solid fa-file-invoice"></i> Create PO
+                        </button>
+                        <button class="btn btn-primary"
+                            onclick="document.getElementById('modal-adjust').classList.add('open')">
+                            <i class="fa-solid fa-sliders"></i> Adjust Stock
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="inv-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Units on Hand</div>
+                            <div class="stat-value">12,485</div>
+                            <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> +450 from last week</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-cubes"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Inventory Asset Value</div>
+                            <div class="stat-value">₹32.4L</div>
+                            <div class="stat-change neutral"><i class="fa-solid fa-minus"></i> Stable</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                    </div>
+                    <div class="stat-card"
+                        style="border: 1.5px solid var(--color-warning-light); background: var(--color-warning-light);">
+                        <div>
+                            <div class="stat-label" style="color: var(--color-warning);">Items to Reorder</div>
+                            <div class="stat-value" style="color: var(--color-warning);">24</div>
+                            <div class="stat-change down"><i class="fa-solid fa-arrow-down"></i> Action required</div>
+                        </div>
+                        <div class="stat-card-icon" style="background:var(--color-warning); color:#fff;"><i
+                                class="fa-solid fa-triangle-exclamation"></i></div>
+                    </div>
+                    <div class="stat-card"
+                        style="border: 1.5px solid var(--color-info-light); background: var(--color-info-light);">
+                        <div>
+                            <div class="stat-label" style="color: var(--color-info);">Incoming Stock (PO)</div>
+                            <div class="stat-value" style="color: var(--color-info);">1,250</div>
+                            <div class="stat-change up"><i class="fa-solid fa-truck"></i> Expected this week</div>
+                        </div>
+                        <div class="stat-card-icon" style="background:var(--color-info); color:#fff;"><i
+                                class="fa-solid fa-boxes-packing"></i></div>
+                    </div>
+                </div>
+
+                <!-- Tabs Navigation -->
+                <div class="inv-tabs-wrapper">
+                    <div class="inv-tab-btn active" onclick="switchTab('tab-all')">
+                        <i class="fa-solid fa-list"></i> All Inventory <span class="inv-tab-badge">3,412</span>
+                    </div>
+                    <div class="inv-tab-btn" onclick="switchTab('tab-po')">
+                        <i class="fa-solid fa-file-contract"></i> Purchase Orders <span class="inv-tab-badge">8
+                            Active</span>
+                    </div>
+                    <div class="inv-tab-btn" onclick="switchTab('tab-transfers')">
+                        <i class="fa-solid fa-arrow-right-arrow-left"></i> Stock Transfers <span
+                            class="inv-tab-badge">3</span>
+                    </div>
+                    <div class="inv-tab-btn" onclick="switchTab('tab-history')">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Activity History
+                    </div>
+                </div>
+
+                <!-- TAB 1: ALL INVENTORY -->
+                <div id="tab-all" class="tab-content active">
+                    <!-- Advanced Filters -->
+                    <div class="adv-filter-bar">
+                        <div class="adv-filter-group">
+                            <select class="form-control"
+                                style="width: 180px; padding: 8px 12px; background:var(--color-light);">
+                                <option>All Locations</option>
+                                <option>Jodhpur Warehouse (Main)</option>
+                                <option>Mumbai Fulfillment Hub</option>
+                                <option>Delhi Store Front</option>
+                            </select>
+                            <select class="form-control"
+                                style="width: 160px; padding: 8px 12px; background:var(--color-light);">
+                                <option>Stock Status</option>
+                                <option>In Stock</option>
+                                <option>Low Stock</option>
+                                <option>Out of Stock</option>
+                            </select>
+                            <select class="form-control"
+                                style="width: 160px; padding: 8px 12px; background:var(--color-light);">
+                                <option>All Vendors</option>
+                                <option>ShoeCrafters India</option>
+                                <option>LeatherWorks Ltd</option>
+                                <option>Global Heels Inc</option>
+                            </select>
+                        </div>
+                        <div class="adv-filter-group">
+                            <button class="btn btn-ghost btn-sm"><i class="fa-solid fa-filter-circle-xmark"></i>
+                                Clear</button>
+                            <button class="btn btn-white btn-sm"><i class="fa-solid fa-print"></i> Print
+                                Barcodes</button>
+                        </div>
+                    </div>
+
+                    <!-- Inventory Table -->
+                    <div class="admin-table-wrap"
+                        style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                        <div style="overflow-x:auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th><input type="checkbox" class="table-checkbox" id="selectAllInv" /></th>
+                                        <th>Product Variant</th>
+                                        <th class="sortable">SKU</th>
+                                        <th class="sortable">Location</th>
+                                        <th class="sortable">Cost / Retail</th>
+                                        <th class="text-right sortable sorted">Available <i
+                                                class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                        <th class="text-right">Committed</th>
+                                        <th class="text-right">Incoming</th>
+                                        <th>Quick Adjust</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Row 1 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Stiletto Block Heel Pumps</div>
+                                                    <div class="admin-table-sub">Size: 38 | Color: Black</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> ShoeCrafters India</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-HLS-042-38B
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹350</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹899</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-error)"></span>
+                                                <span class="stock-qty text-error" style="font-size: 16px;">3</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 10</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">1</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--color-info);">+50</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="3" min="0" />
+                                                <button class="qty-save-btn"
+                                                    onclick="alert('Stock updated!')">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 2 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Stiletto Block Heel Pumps</div>
+                                                    <div class="admin-table-sub">Size: 38 | Color: Black</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> ShoeCrafters India</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-HLS-042-38B
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i class="fa-solid fa-shop text-accent"></i>
+                                                Mumbai Hub</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹350</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹899</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">24</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 5</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">4</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="24" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 3 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Classic Tote Bag</div>
+                                                    <div class="admin-table-sub">Size: OS | Color: Tan</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> LeatherWorks Ltd</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-BAG-017-TAN
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹480</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹1,299</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-warning)"></span>
+                                                <span class="stock-qty text-warning" style="font-size: 16px;">8</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 15</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">0</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--color-info);">+100</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="8" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 4 (Out of Stock) -->
+                                    <tr style="background: var(--color-error-light); opacity: 0.85;">
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Embroidered Juttis</div>
+                                                    <div class="admin-table-sub">Size: 39 | Color: Pink</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> JuttiArtisans</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-FLT-009-39P
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹180</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹549</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-error)"></span>
+                                                <span class="stock-qty text-error" style="font-size: 16px;">0</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 20</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">3</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="0" min="0" disabled />
+                                                <button class="qty-save-btn" disabled
+                                                    style="opacity: 0.5;">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 5 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Rose Gold Sandals</div>
+                                                    <div class="admin-table-sub">Size: 37 | Color: Gold</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> Global Heels Inc</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-SND-028-37G
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i class="fa-solid fa-store text-success"></i>
+                                                Delhi Store</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹210</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹649</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">45</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 10</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">2</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="45" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 6 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1554141220-83411835a60b?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Mini Sling Crossbody Bag</div>
+                                                    <div class="admin-table-sub">Size: OS | Color: Black</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> LeatherWorks Ltd</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-BAG-031-BLK
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹300</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹899</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">18</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 5</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">1</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="18" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 7 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Pointed Toe Velvet Heels</div>
+                                                    <div class="admin-table-sub">Size: 40 | Color: Maroon</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> Global Heels Inc</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-HLS-102-40M
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹450</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹1,499</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">115</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 30</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">12</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="115" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 8 (Low Stock) -->
+                                    <tr style="background: var(--color-warning-light); opacity: 0.95;">
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Minimalist Leather Flats</div>
+                                                    <div class="admin-table-sub">Size: 36 | Color: Beige</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> LeatherWorks Ltd</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-FLT-055-36B
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i class="fa-solid fa-shop text-accent"></i>
+                                                Mumbai Hub</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹220</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹699</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-warning)"></span>
+                                                <span class="stock-qty text-warning" style="font-size: 16px;">5</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 15</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">2</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--color-info);">+20</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="5" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 9 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1562183241-b937e95585b6?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Party Wear Gladiator Sandals</div>
+                                                    <div class="admin-table-sub">Size: 39 | Color: Silver</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> Global Heels Inc</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-SND-088-39S
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i class="fa-solid fa-store text-success"></i>
+                                                Delhi Store</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹340</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹999</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">32</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 12</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">0</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="32" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                    <!-- Row 10 -->
+                                    <tr>
+                                        <td><input type="checkbox" class="table-checkbox" /></td>
+                                        <td>
+                                            <div style="display:flex;align-items:center;gap:12px">
+                                                <img src="https://images.unsplash.com/photo-1584916201218-f4242ceb4809?w=100&q=80&auto=format&fit=crop"
+                                                    class="admin-table-img" alt="" />
+                                                <div>
+                                                    <div class="admin-table-name">Bridal Embellished Clutch</div>
+                                                    <div class="admin-table-sub">Size: OS | Color: Pearl White</div>
+                                                    <div
+                                                        style="font-size:9px; color:var(--text-muted); margin-top:4px;">
+                                                        <i class="fa-solid fa-building"></i> LeatherWorks Ltd</div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="admin-table-sub" style="font-family: monospace;">HU-BAG-112-PW
+                                            </div>
+                                        </td>
+                                        <td><span class="location-badge"><i
+                                                    class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur
+                                                Main</span></td>
+                                        <td>
+                                            <div style="font-weight: 500; font-size:12px;">C: ₹600</div>
+                                            <div
+                                                style="font-weight: 500; font-size:12px; color:var(--color-primary-dark);">
+                                                R: ₹1,899</div>
+                                        </td>
+                                        <td class="text-right">
+                                            <div class="stock-indicator" style="justify-content: flex-end;">
+                                                <span class="stock-dot" style="background:var(--color-success)"></span>
+                                                <span class="stock-qty text-success" style="font-size: 16px;">15</span>
+                                            </div>
+                                            <div style="font-size:9px; color:var(--text-muted);">Reorder Pt: 5</div>
+                                        </td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-secondary);">2</span></td>
+                                        <td class="text-right"><span
+                                                style="font-weight: 600; color:var(--text-muted);">0</span></td>
+                                        <td>
+                                            <div class="qty-input-group">
+                                                <input type="number" class="qty-input" value="15" min="0" />
+                                                <button class="qty-save-btn">Save</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="admin-table-footer">
+                            <div class="table-page-info">Showing <strong>1–10</strong> of <strong>3,412</strong>
+                                variants</div>
+                            <div class="pagination" style="margin:0">
+                                <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"
+                                        style="font-size:10px"></i></button>
+                                <button class="page-btn active">1</button>
+                                <button class="page-btn">2</button>
+                                <button class="page-btn">3</button>
+                                <span class="page-ellipsis">…</span>
+                                <button class="page-btn">342</button>
+                                <button class="page-btn"><i class="fa-solid fa-chevron-right"
+                                        style="font-size:10px"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PURCHASE ORDERS -->
+                <div id="tab-po" class="tab-content">
+                    <div class="adv-filter-bar">
+                        <div class="adv-filter-group">
+                            <select class="form-control"
+                                style="width: 180px; padding: 8px 12px; background:var(--color-light);">
+                                <option>All Statuses</option>
+                                <option>Draft</option>
+                                <option>Ordered</option>
+                                <option>Partially Received</option>
+                                <option>Closed</option>
+                            </select>
+                            <input type="date" class="form-control"
+                                style="width: 160px; padding: 8px 12px; background:var(--color-light);" />
+                        </div>
+                        <div class="adv-filter-group">
+                            <button class="btn btn-primary btn-sm"
+                                onclick="document.getElementById('modal-po').classList.add('open')">
+                                <i class="fa-solid fa-plus"></i> Create New PO
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="admin-table-wrap"
+                        style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable sorted">PO Number <i
+                                            class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                    <th>Supplier</th>
+                                    <th>Destination</th>
+                                    <th>Order Date</th>
+                                    <th>Expected Date</th>
+                                    <th>Total Cost</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#PO-1082</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">ShoeCrafters India</div>
+                                        <div class="admin-table-sub">Contact: Ramesh Kumar</div>
+                                    </td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td>12 May 2026</td>
+                                    <td>20 May 2026</td>
+                                    <td><span style="font-weight:600;">₹45,200</span></td>
+                                    <td><span class="status-badge status-processing">Ordered</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Receive Stock"><i
+                                                    class="fa-solid fa-box-open"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#PO-1081</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">LeatherWorks Ltd</div>
+                                        <div class="admin-table-sub">Contact: Priya Singh</div>
+                                    </td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td>05 May 2026</td>
+                                    <td>15 May 2026</td>
+                                    <td><span style="font-weight:600;">₹1,12,000</span></td>
+                                    <td><span class="status-badge"
+                                            style="background:var(--color-info-light); color:var(--color-info)">Partially
+                                            Received (60%)</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Receive Stock"><i
+                                                    class="fa-solid fa-box-open"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#PO-1080</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Global Heels Inc</div>
+                                        <div class="admin-table-sub">Contact: John Doe</div>
+                                    </td>
+                                    <td><span class="location-badge"><i class="fa-solid fa-shop text-accent"></i> Mumbai
+                                            Hub</span></td>
+                                    <td>01 May 2026</td>
+                                    <td>10 May 2026</td>
+                                    <td><span style="font-weight:600;">₹85,500</span></td>
+                                    <td><span class="status-badge status-active">Closed</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Download Invoice"><i
+                                                    class="fa-solid fa-download"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#PO-1079</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">JuttiArtisans</div>
+                                        <div class="admin-table-sub">Contact: Abdul</div>
+                                    </td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td>28 Apr 2026</td>
+                                    <td>05 May 2026</td>
+                                    <td><span style="font-weight:600;">₹22,000</span></td>
+                                    <td><span class="status-badge status-active">Closed</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Download Invoice"><i
+                                                    class="fa-solid fa-download"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 3: STOCK TRANSFERS -->
+                <div id="tab-transfers" class="tab-content">
+                    <div class="adv-filter-bar">
+                        <div class="adv-filter-group">
+                            <select class="form-control"
+                                style="width: 180px; padding: 8px 12px; background:var(--color-light);">
+                                <option>All Statuses</option>
+                                <option>Pending</option>
+                                <option>In Transit</option>
+                                <option>Completed</option>
+                            </select>
+                        </div>
+                        <div class="adv-filter-group">
+                            <button class="btn btn-primary btn-sm"
+                                onclick="document.getElementById('modal-transfer').classList.add('open')">
+                                <i class="fa-solid fa-truck-fast"></i> New Transfer
+                            </button>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap"
+                        style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable sorted">Transfer Ref <i
+                                            class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                    <th>Origin</th>
+                                    <th><i class="fa-solid fa-arrow-right"></i></th>
+                                    <th>Destination</th>
+                                    <th>Items</th>
+                                    <th>Date Created</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#TRF-501</span>
+                                    </td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td class="text-muted"><i class="fa-solid fa-arrow-right"></i></td>
+                                    <td><span class="location-badge"><i class="fa-solid fa-store text-success"></i>
+                                            Delhi Store</span></td>
+                                    <td><span style="font-weight:600;">120 Units</span> (5 SKUs)</td>
+                                    <td>14 May 2026</td>
+                                    <td><span class="status-badge status-processing">In Transit</span></td>
+                                    <td>
+                                        <button class="btn btn-white btn-xs">Receive Items</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><span style="font-weight: 700; color: var(--color-primary);">#TRF-500</span>
+                                    </td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td class="text-muted"><i class="fa-solid fa-arrow-right"></i></td>
+                                    <td><span class="location-badge"><i class="fa-solid fa-shop text-accent"></i> Mumbai
+                                            Hub</span></td>
+                                    <td><span style="font-weight:600;">350 Units</span> (12 SKUs)</td>
+                                    <td>10 May 2026</td>
+                                    <td><span class="status-badge status-active">Completed</span></td>
+                                    <td>
+                                        <button class="btn btn-ghost btn-xs">View Details</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TAB 4: ACTIVITY HISTORY -->
+                <div id="tab-history" class="tab-content">
+                    <div class="adv-filter-bar">
+                        <div class="adv-filter-group">
+                            <input type="text" class="form-control" placeholder="Search logs..."
+                                style="width: 250px; padding: 8px 12px; background:var(--color-light);" />
+                            <select class="form-control"
+                                style="width: 160px; padding: 8px 12px; background:var(--color-light);">
+                                <option>All Actions</option>
+                                <option>Manual Adjustment</option>
+                                <option>Order Fulfillment</option>
+                                <option>PO Received</option>
+                                <option>Transfer</option>
+                            </select>
+                        </div>
+                        <div class="adv-filter-group">
+                            <button class="btn btn-white btn-sm"><i class="fa-solid fa-download"></i> Export
+                                Logs</button>
+                        </div>
+                    </div>
+                    <div class="admin-table-wrap"
+                        style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Date & Time</th>
+                                    <th>User / System</th>
+                                    <th>Action</th>
+                                    <th>Product SKU</th>
+                                    <th>Location</th>
+                                    <th class="text-right">Change</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <div class="admin-table-name">Today, 10:45 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Admin User</div>
+                                        <div class="admin-table-sub">Manual Edit</div>
+                                    </td>
+                                    <td><span class="badge"
+                                            style="background:var(--color-light-3); color:var(--text-secondary);">Manual
+                                            Adjustment</span></td>
+                                    <td><span style="font-family: monospace; font-size:12px;">HU-HLS-042-38B</span></td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <div
+                                            style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                            <span
+                                                style="color:var(--text-muted); font-size:11px; text-decoration:line-through;">3</span>
+                                            <i class="fa-solid fa-arrow-right"
+                                                style="font-size:10px; color:var(--text-muted);"></i>
+                                            <span style="font-weight:700; color:var(--color-success);">+2</span>
+                                            <div class="log-icon add"><i class="fa-solid fa-arrow-up"></i></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="admin-table-name">Today, 09:12 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">System</div>
+                                        <div class="admin-table-sub">Order #ORD-1040</div>
+                                    </td>
+                                    <td><span class="badge"
+                                            style="background:var(--color-info-light); color:var(--color-info);">Order
+                                            Fulfillment</span></td>
+                                    <td><span style="font-family: monospace; font-size:12px;">HU-BAG-017-TAN</span></td>
+                                    <td><span class="location-badge"><i
+                                                class="fa-solid fa-warehouse text-primary-c"></i> Jodhpur Main</span>
+                                    </td>
+                                    <td class="text-right">
+                                        <div
+                                            style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                            <span style="font-weight:700; color:var(--color-error);">-1</span>
+                                            <div class="log-icon sub"><i class="fa-solid fa-arrow-down"></i></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="admin-table-name">Yesterday, 04:30 PM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Priya S. (Staff)</div>
+                                        <div class="admin-table-sub">PO #PO-1080</div>
+                                    </td>
+                                    <td><span class="badge"
+                                            style="background:var(--color-success-light); color:var(--color-success);">PO
+                                            Received</span></td>
+                                    <td><span style="font-family: monospace; font-size:12px;">HU-SND-028-37G</span></td>
+                                    <td><span class="location-badge"><i class="fa-solid fa-shop text-accent"></i> Mumbai
+                                            Hub</span></td>
+                                    <td class="text-right">
+                                        <div
+                                            style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                            <span style="font-weight:700; color:var(--color-success);">+50</span>
+                                            <div class="log-icon add"><i class="fa-solid fa-arrow-up"></i></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div class="admin-table-name">10 May 2026, 11:20 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Admin User</div>
+                                        <div class="admin-table-sub">Transfer #TRF-500</div>
+                                    </td>
+                                    <td><span class="badge"
+                                            style="background:var(--color-primary-glow); color:var(--color-primary-dark);">Stock
+                                            Transfer</span></td>
+                                    <td><span style="font-family: monospace; font-size:12px;">HU-FLT-055-36B</span></td>
+                                    <td><span class="location-badge">Jodhpur <i class="fa-solid fa-arrow-right"></i>
+                                            Mumbai</span></td>
+                                    <td class="text-right">
+                                        <div
+                                            style="display:flex; align-items:center; justify-content:flex-end; gap:8px;">
+                                            <span style="font-weight:700; color:var(--color-info);">Moved 20</span>
+                                            <div class="log-icon move"><i class="fa-solid fa-truck"></i></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==============================================
+         MODALS
+    =============================================== -->
+
+    <!-- Modal: Adjust Stock -->
+    <div class="modal-overlay" id="modal-adjust">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Adjust Inventory</div>
+                <button class="modal-close" onclick="closeModal('modal-adjust')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group-full">
+                        <label class="form-label">Search Product / SKU</label>
+                        <input type="text" class="form-control" placeholder="Start typing SKU or name..."
+                            value="HU-HLS-042-38B" />
+                    </div>
+                    <div>
+                        <label class="form-label">Warehouse Location</label>
+                        <select class="form-control">
+                            <option>Jodhpur Main Warehouse</option>
+                            <option>Mumbai Fulfillment Hub</option>
+                            <option>Delhi Store Front</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Adjustment Reason</label>
+                        <select class="form-control">
+                            <option>Inventory Count / Audit</option>
+                            <option>Damaged / Defective</option>
+                            <option>Return Restock</option>
+                            <option>Theft / Loss</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Current Qty</label>
+                        <input type="text" class="form-control" value="3" disabled
+                            style="background:var(--color-light-3);" />
+                    </div>
+                    <div>
+                        <label class="form-label">New Qty</label>
+                        <input type="number" class="form-control" value="5" />
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">Notes (Optional)</label>
+                        <textarea class="form-control" placeholder="Add reason for adjustment..."></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-adjust')">Cancel</button>
+                <button class="btn btn-primary"
+                    onclick="closeModal('modal-adjust'); showToast('success', 'Stock Adjusted', 'Inventory levels updated successfully.');">Save
+                    Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create PO -->
+    <div class="modal-overlay" id="modal-po">
+        <div class="modal-box" style="max-width: 800px;">
+            <div class="modal-header">
+                <div class="modal-title">Create Purchase Order</div>
+                <button class="modal-close" onclick="closeModal('modal-po')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Supplier/Vendor</label>
+                        <select class="form-control">
+                            <option>Select Supplier...</option>
+                            <option>ShoeCrafters India</option>
+                            <option>LeatherWorks Ltd</option>
+                            <option>Global Heels Inc</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Destination Warehouse</label>
+                        <select class="form-control">
+                            <option>Jodhpur Main Warehouse</option>
+                            <option>Mumbai Fulfillment Hub</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Order Date</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                    <div>
+                        <label class="form-label">Expected Delivery Date</label>
+                        <input type="date" class="form-control" />
+                    </div>
+
+                    <div class="form-group-full" style="margin-top:var(--space-4);">
+                        <label class="form-label">Add Items to Order</label>
+                        <div
+                            style="border:1px solid var(--border-color); border-radius:var(--radius-base); padding:var(--space-4);">
+                            <div style="display:flex; gap:10px; margin-bottom:10px;">
+                                <input type="text" class="form-control" placeholder="Search SKU to add..."
+                                    style="flex:1;" />
+                                <button class="btn btn-secondary btn-sm">Add Item</button>
+                            </div>
+                            <!-- Mock List -->
+                            <div
+                                style="font-size:var(--text-sm); color:var(--text-muted); text-align:center; padding:20px 0;">
+                                No items added yet. Search and add products above.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-po')">Cancel</button>
+                <button class="btn btn-primary"
+                    onclick="closeModal('modal-po'); showToast('success', 'PO Created', 'Purchase order drafted successfully.');">Create
+                    Draft PO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Transfer Stock -->
+    <div class="modal-overlay" id="modal-transfer">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Transfer Stock</div>
+                <button class="modal-close" onclick="closeModal('modal-transfer')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Origin Warehouse (From)</label>
+                        <select class="form-control">
+                            <option>Jodhpur Main Warehouse</option>
+                            <option>Mumbai Fulfillment Hub</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Destination Warehouse (To)</label>
+                        <select class="form-control">
+                            <option>Delhi Store Front</option>
+                            <option>Mumbai Fulfillment Hub</option>
+                        </select>
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">Select Items & Quantity</label>
+                        <div
+                            style="border:1px dashed var(--border-color); border-radius:var(--radius-base); padding:var(--space-6); text-align:center; background:var(--color-light);">
+                            <i class="fa-solid fa-box-open"
+                                style="font-size:24px; color:var(--text-muted); margin-bottom:10px;"></i>
+                            <p style="font-size:var(--text-sm); color:var(--text-secondary); margin-bottom:10px;">Select
+                                products to transfer between locations.</p>
+                            <button class="btn btn-white btn-sm">Browse Products</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-transfer')">Cancel</button>
+                <button class="btn btn-primary"
+                    onclick="closeModal('modal-transfer'); showToast('info', 'Transfer Initiated', 'Stock transfer marked as pending.');">Initiate
+                    Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Scripts -->
+    <script>
+        // Sidebar functionality
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+            document.getElementById('sidebar-toggle-icon').className = sidebar.classList.contains('mini') ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+
+        // Tab Switching Logic
+        function switchTab(tabId) {
+            // Remove active classes
+            document.querySelectorAll('.inv-tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Add active class to clicked tab and target content
+            event.currentTarget.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Select All Logic
+        document.getElementById('selectAllInv')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('#tab-all tbody .table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Modal Logic
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        // Close modal on outside click
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.remove('open');
+                }
+            });
+        });
+
+        // Toast Notification Function
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+            container.insertAdjacentHTML('beforeend', `
+              <div class="toast toast-${type}" id="${id}">
+                <i class="fa-solid ${icons[type] || icons.info} toast-icon"></i>
+                <div class="toast-body">
+                  <div class="toast-title">${title}</div>
+                  <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button>
+              </div>`);
+            setTimeout(() => document.getElementById(id)?.remove(), 4000);
+        }
+    </script>
+</body>
+
+</html>

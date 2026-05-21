@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Wishlist – HeelsUp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .wishlist-page {
+            background: var(--color-light);
+            min-height: 100vh;
+            padding: 40px 0 80px;
+        }
+
+        .wishlist-header {
+            margin-bottom: 32px;
+        }
+
+        .wishlist-title {
+            font-family: var(--font-heading);
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .wishlist-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+        }
+
+        .wishlist-card {
+            background: var(--color-white);
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .wishlist-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .wishlist-card-img {
+            aspect-ratio: 4/5;
+            overflow: hidden;
+            position: relative;
+            background: var(--color-light-3);
+        }
+
+        .wishlist-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .wishlist-card:hover .wishlist-card-img img {
+            transform: scale(1.06);
+        }
+
+        .remove-wish-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 2;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-accent);
+            font-size: 1rem;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.2s;
+        }
+
+        .remove-wish-btn:hover {
+            background: var(--color-accent);
+            color: #fff;
+        }
+
+        .wishlist-card-info {
+            padding: 16px;
+        }
+
+        .wishlist-card-cat {
+            font-size: 11px;
+            color: var(--color-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .wishlist-card-name {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+            line-height: 1.3;
+        }
+
+        .wishlist-card-price {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .wishlist-add-btn {
+            width: 100%;
+            padding: 10px;
+            background: var(--color-dark);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .wishlist-add-btn:hover {
+            background: var(--color-primary);
+            color: var(--color-dark);
+        }
+
+        /* Empty state */
+        .wishlist-empty {
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .wishlist-empty-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        @media(max-width:1024px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+        }
+
+        @media(max-width:480px) {
+            .wishlist-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-marquee"><span class="topbar-text">❤️ Save your favorites in Wishlist!</span><span
+                class="topbar-dot"></span><span class="topbar-text">🚚 FREE Shipping above <strong>₹499</strong></span>
+        </div>
+    </div>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="navbar-logo"><span class="navbar-logo-text">Heels<span>Up</span></span></a>
+                <ul class="navbar-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="category.html?cat=new" class="nav-link">New Arrivals</a></li>
+                </ul>
+                <div class="navbar-actions">
+                    <a href="wishlist.html" class="nav-icon-btn" style="color:var(--color-accent)"><i
+                            class="fa-solid fa-heart"></i></a>
+                    <a href="profile.html" class="nav-icon-btn"><i class="fa-regular fa-user"></i></a>
+                    <button class="nav-icon-btn" id="cart-open-btn"><i class="fa-solid fa-bag-shopping"></i><span
+                            class="nav-badge" id="cart-count">0</span></button>
+                    <button class="navbar-hamburger" id="hamburger-btn"><span class="hamburger-line"></span><span
+                            class="hamburger-line"></span><span class="hamburger-line"></span></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wishlist-page">
+        <div class="container">
+            <nav class="breadcrumb"><span class="breadcrumb-item"><a href="index.html">Home</a></span><span
+                    class="breadcrumb-sep"><i class="fa-solid fa-chevron-right" style="font-size:8px"></i></span><span
+                    class="breadcrumb-item active">My Wishlist</span></nav>
+            <div class="wishlist-header">
+                <h1 class="wishlist-title">My Wishlist <span
+                        style="font-size:1.1rem;color:var(--color-primary);font-weight:400"
+                        id="wish-count-label"></span></h1>
+                <p class="wishlist-subtitle">Aapki saved favorite products</p>
+            </div>
+
+            <div id="wishlist-content">
+                <!-- Populated by JS -->
+            </div>
+
+            <!-- Recommended Section -->
+            <div style="margin-top:60px">
+                <h2 style="font-family:var(--font-heading);font-size:1.6rem;font-weight:600;margin-bottom:8px">You Might
+                    Also <em
+                        style="font-family:var(--font-display);font-style:italic;color:var(--color-primary)">Like</em>
+                </h2>
+                <p style="font-size:14px;color:var(--text-muted);margin-bottom:28px">Trending products aapke liye</p>
+                <div class="wishlist-grid" id="recommend-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <div style="display:flex;align-items:center;gap:12px">
+                <h3>My Cart</h3><span class="cart-count-badge" id="cart-drawer-count">0 items</span>
+            </div><button class="cart-close-btn" id="cart-close-btn">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cart-body">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛍️</div>
+                <div class="cart-empty-text">Cart is empty</div><a href="shop.html" class="btn btn-primary"
+                    style="margin-top:12px">Shop Now</a>
+            </div>
+        </div>
+        <div class="cart-drawer-footer" id="cart-footer" style="display:none">
+            <div class="cart-summary-row"><span>Total</span><span id="cart-total">₹0</span></div><a href="checkout.html"
+                class="btn btn-primary btn-full" style="margin-top:14px"><i class="fa-solid fa-lock"></i> Checkout</a>
+        </div>
+    </aside>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const DEMO = [
+            { id: 1, name: 'Stiletto Block Heel Pumps', category: 'heels', price: 899, original_price: 1499, images: ['https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.8 },
+            { id: 2, name: 'Rose Gold Strappy Sandals', category: 'sandals', price: 649, original_price: 999, images: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&auto=format&fit=crop'], rating: 4.7 },
+            { id: 3, name: 'Classic Tote Bag – Tan', category: 'bags', price: 1299, original_price: 1999, images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80&auto=format&fit=crop'], rating: 4.9 },
+            { id: 4, name: 'Embroidered Juttis', category: 'flats', price: 549, original_price: 849, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&auto=format&fit=crop'], rating: 4.6 },
+            { id: 5, name: 'Wedge Ankle Strap Heels', category: 'heels', price: 799, original_price: 1299, images: ['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80&auto=format&fit=crop'], rating: 4.5 },
+            { id: 6, name: 'Mini Sling Crossbody Bag', category: 'bags', price: 899, original_price: 1299, images: ['https://images.unsplash.com/photo-1554141220-83411835a60b?w=500&q=80&auto=format&fit=crop'], rating: 4.8 },
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
+        let wishlist = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[1,3]');
+
+        function saveCart() { localStorage.setItem('heelsup_cart', JSON.stringify(cart)); updateCartUI(); }
+        function updateCartUI() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            document.getElementById('cart-count').textContent = count;
+            document.getElementById('cart-drawer-count').textContent = count + ' item' + (count !== 1 ? 's' : '');
+            const sub = cart.reduce((s, i) => s + i.price * i.qty, 0);
+            const tot = document.getElementById('cart-total');
+            if (tot) tot.textContent = '₹' + sub.toLocaleString('en-IN');
+            const footer = document.getElementById('cart-footer');
+            const body = document.getElementById('cart-body');
+            if (!cart.length) {
+                footer.style.display = 'none';
+                body.innerHTML = '<div class="cart-empty"><div class="cart-empty-icon">🛍️</div><div class="cart-empty-text">Cart is empty</div><a href="shop.html" class="btn btn-primary" style="margin-top:12px">Shop Now</a></div>';
+            } else {
+                footer.style.display = 'block';
+                body.innerHTML = cart.map(item => `<div class="cart-item"><div class="cart-item-img"><img src="${item.img}" alt="${item.name}" /></div><div class="cart-item-body"><div class="cart-item-name">${item.name}</div><div class="cart-item-price">₹${(item.price * item.qty).toLocaleString('en-IN')}</div><div class="qty-control"><button class="qty-btn" onclick="chQty(${item.id},-1)">−</button><span class="qty-value">${item.qty}</span><button class="qty-btn" onclick="chQty(${item.id},1)">+</button></div></div></div>`).join('');
+            }
+        }
+        window.chQty = function (id, d) { const i = cart.find(x => x.id === id); if (!i) return; i.qty = Math.max(1, i.qty + d); saveCart(); };
+
+        function addToCart(p) {
+            const ex = cart.find(i => i.id === p.id);
+            if (ex) ex.qty++; else cart.push({ id: p.id, name: p.name, price: p.price, img: p.images[0], qty: 1, category: p.category });
+            saveCart(); document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open');
+            showToast('success', 'Added to Cart!', p.name + ' added.');
+        }
+
+        function removeFromWishlist(id) {
+            wishlist = wishlist.filter(i => i !== id);
+            localStorage.setItem('heelsup_wishlist', JSON.stringify(wishlist));
+            renderWishlist();
+            showToast('info', 'Removed', 'Wishlist se remove ho gaya.');
+        }
+
+        function renderWishlist() {
+            const el = document.getElementById('wishlist-content');
+            const items = DEMO.filter(p => wishlist.includes(p.id));
+            document.getElementById('wish-count-label').textContent = items.length ? `(${items.length} items)` : '';
+            if (!items.length) {
+                el.innerHTML = `<div class="wishlist-empty"><div class="wishlist-empty-icon">💔</div><h3 style="font-family:var(--font-heading);margin-bottom:10px">Wishlist Khali Hai</h3><p style="color:var(--text-muted);margin-bottom:28px">Koi product save nahi kiya abhi tak</p><a href="shop.html" class="btn btn-primary btn-lg">Shop Karo</a></div>`;
+                return;
+            }
+            el.innerHTML = `<div class="wishlist-grid">${items.map(p => {
+                const disc = Math.round((1 - p.price / p.original_price) * 100);
+                return `<div class="wishlist-card"><div class="wishlist-card-img"><img src="${p.images[0]}" alt="${p.name}" /><button class="remove-wish-btn" onclick="removeFromWishlist(${p.id})" title="Remove from wishlist"><i class="fa-solid fa-heart-crack"></i></button>${disc >= 10 ? `<div class="product-badges"><span class="badge badge-sale">-${disc}%</span></div>` : ''}</div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name">${p.name}</div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span><span class="price-original">₹${p.original_price.toLocaleString('en-IN')}</span></div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`;
+            }).join('')}</div>`;
+        }
+
+        function renderRecommend() {
+            const others = DEMO.filter(p => !wishlist.includes(p.id)).slice(0, 4);
+            document.getElementById('recommend-grid').innerHTML = others.map(p => `<div class="wishlist-card"><div class="wishlist-card-img"><img src="${p.images[0]}" alt="${p.name}" /></div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name">${p.name}</div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span></div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`).join('');
+        }
+
+        window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+        document.getElementById('cart-open-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open'); });
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+        document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+
+        function showToast(type, title, msg) { const c = document.getElementById('toast-container'); const id = 't' + Date.now(); const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' }; c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid ${icons[type] || 'fa-circle-info'} toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button></div>`); setTimeout(() => document.getElementById(id)?.remove(), 4000); }
+
+        renderWishlist();
+        renderRecommend();
+        updateCartUI();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- SEO -->
+  <title>HeelsUp – Ladies Footwear &amp; Bags | Online Shopping India | Heels, Flats, Sandals</title>
+  <meta name="description" content="HeelsUp – India's most stylish ladies footwear &amp; bags shop. Heels, Flats, Sandals, Wedges, Tote Bags – best prices. Free shipping above ₹499. Shop now!" />
+  <meta name="keywords" content="ladies footwear online, women heels india, ladies sandals online, women shoes india, heels online shopping, ladies bags online, tote bags india, block heels, wedge heels, flat sandals women" />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="HeelsUp" />
+  <link rel="canonical" href="https://heelsup.in/" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="HeelsUp – Ladies Footwear &amp; Bags | Online Shopping India" />
+  <meta property="og:description" content="Shop latest ladies footwear &amp; bags at HeelsUp. Best quality. Affordable prices. Fast delivery across India." />
+  <meta property="og:image" content="/logo.png" />
+  <meta property="og:url" content="https://heelsup.in/" />
+  <meta property="og:site_name" content="HeelsUp" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="HeelsUp – Ladies Footwear &amp; Bags" />
+  <meta name="twitter:description" content="Shop latest ladies footwear &amp; bags. Free shipping above ₹499." />
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ClothingStore",
+    "name": "HeelsUp",
+    "description": "Ladies footwear and bags online store – Heels, Flats, Sandals, Bags",
+    "url": "https://heelsup.in",
+    "logo": "https://heelsup.in/logo.png",
+    "priceRange": "₹₹",
+    "currenciesAccepted": "INR",
+    "paymentAccepted": "Cash, Credit Card, Debit Card, UPI",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Jodhpur",
+      "addressRegion": "Rajasthan",
+      "addressCountry": "IN"
+    },
+    "sameAs": [
+      "https://instagram.com/heelsup.in",
+      "https://facebook.com/heelsup.in"
+    ]
+  }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <!-- Global CSS -->
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    /* ===== HOMEPAGE-SPECIFIC STYLES ===== */
+
+    /* --- ANNOUNCEMENT BAR --- */
+    .announcement-bar {
+      background: var(--color-dark);
+      color: rgba(255,255,255,0.85);
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      padding: 9px 0;
+      text-align: center;
+      position: relative;
+      z-index: calc(var(--z-sticky) + 1);
+    }
+    .announcement-bar strong { color: var(--color-primary-light); }
+    .announcement-bar a { color: var(--color-primary-light); text-decoration: underline; }
+
+    /* --- HERO --- */
+    .hero {
+      position: relative;
+      height: 100vh;
+      min-height: 620px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+    }
+    .hero-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(110deg, rgba(13,13,13,0.78) 0%, rgba(13,13,13,0.42) 55%, rgba(13,13,13,0.12) 100%);
+    }
+    .hero-content-wrap {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--color-primary-light);
+      padding: 7px 20px;
+      border: 1px solid rgba(201,169,110,0.5);
+      border-radius: 100px;
+      background: rgba(201,169,110,0.1);
+      backdrop-filter: blur(8px);
+      margin-bottom: 22px;
+      animation: fadeUp 0.8s ease 0.3s both;
+    }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3rem, 8vw, 6.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: #fff;
+      letter-spacing: -0.02em;
+      margin-bottom: 20px;
+      animation: fadeUp 0.8s ease 0.5s both;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--color-primary-light);
+    }
+    .hero-sub {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.72);
+      max-width: 460px;
+      line-height: 1.75;
+      margin-bottom: 38px;
+      animation: fadeUp 0.8s ease 0.7s both;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fadeUp 0.8s ease 0.9s both;
+    }
+    .hero-scroll-ind {
+      position: absolute;
+      bottom: 32px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: rgba(255,255,255,0.45);
+      font-size: 9px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      animation: bounceDown 2s ease infinite;
+    }
+    .hero-scroll-line {
+      width: 1px;
+      height: 50px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes bounceDown {
+      0%,100% { transform: translateX(-50%) translateY(0); }
+      50%      { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* --- MARQUEE STRIP --- */
+    .marquee-strip {
+      background: var(--color-primary);
+      padding: 12px 0;
+      overflow: hidden;
+      display: flex;
+    }
+    .marquee-track {
+      display: flex;
+      animation: marqueeMove 20s linear infinite;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .marquee-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      padding: 0 32px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--color-dark);
+    }
+    .marquee-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: rgba(13,13,13,0.35);
+      flex-shrink: 0;
+    }
+    @keyframes marqueeMove {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+
+    /* --- CATEGORIES --- */
+    .categories-section {
+      padding: 90px 0 70px;
+      background: var(--color-light);
+    }
+    .cat-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr 1fr;
+      gap: 16px;
+      align-items: start;
+    }
+    .cat-card {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      text-decoration: none;
+    }
+    .cat-card-img { aspect-ratio: 3/4; overflow: hidden; }
+    .cat-card.cat-large .cat-card-img { aspect-ratio: 2/3; }
+    .cat-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s ease;
+    }
+    .cat-card:hover .cat-card-img img { transform: scale(1.07); }
+    .cat-card-over {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(13,13,13,0.82) 0%, rgba(13,13,13,0.1) 50%, transparent 100%);
+      transition: all 0.4s ease;
+    }
+    .cat-card:hover .cat-card-over {
+      background: linear-gradient(to top, rgba(13,13,13,0.9) 0%, rgba(13,13,13,0.25) 55%, rgba(13,13,13,0.05) 100%);
+    }
+    .cat-card-body {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 24px 22px;
+      color: #fff;
+    }
+    .cat-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--color-primary-light);
+      margin-bottom: 5px;
+      display: block;
+    }
+    .cat-name {
+      font-family: var(--font-heading);
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.15;
+      margin-bottom: 5px;
+    }
+    .cat-count {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      margin-bottom: 14px;
+    }
+    .cat-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--color-primary-light);
+      transform: translateY(8px);
+      opacity: 0;
+      transition: all 0.35s ease;
+    }
+    .cat-card:hover .cat-cta { transform: translateY(0); opacity: 1; }
+    .cat-cta-arrow { transition: transform 0.25s ease; }
+    .cat-card:hover .cat-cta-arrow { transform: translateX(5px); }
+
+    /* --- FEATURED / TRENDING PRODUCTS --- */
+    .featured-section { padding: 90px 0; background: var(--bg-page); }
+    .products-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    /* Skeleton Cards */
+    .skeleton-card {
+      background: var(--color-white);
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+    .skeleton-img {
+      aspect-ratio: 4/5;
+      background: linear-gradient(90deg, #f0ebe3 25%, #ede8df 50%, #f0ebe3 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+    .skeleton-body { padding: 16px; }
+    .skeleton-line {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, #f0ebe3 25%, #ede8df 50%, #f0ebe3 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      margin-bottom: 10px;
+    }
+    .skeleton-line.w-60 { width: 60%; }
+    .skeleton-line.w-80 { width: 80%; }
+    .skeleton-line.w-40 { width: 40%; }
+    @keyframes shimmer {
+      from { background-position: 200% 0; }
+      to   { background-position: -200% 0; }
+    }
+
+    /* --- PROMO BANNER --- */
+    .promo-banner {
+      padding: 80px 0;
+      background: var(--color-dark-2);
+      position: relative;
+      overflow: hidden;
+    }
+    .promo-banner-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .promo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--color-accent);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+      border-radius: 100px;
+      margin-bottom: 18px;
+    }
+    .promo-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4.2rem);
+      font-weight: 300;
+      color: #fff;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      letter-spacing: -0.02em;
+    }
+    .promo-title em { font-style: italic; color: var(--color-primary-light); }
+    .promo-desc {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.75;
+      margin-bottom: 32px;
+    }
+    .promo-timer { display: flex; gap: 16px; margin-bottom: 36px; }
+    .timer-box {
+      text-align: center;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 68px;
+    }
+    .timer-num {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--color-primary-light);
+      line-height: 1;
+      display: block;
+    }
+    .timer-label {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.4);
+      margin-top: 4px;
+      display: block;
+    }
+    .promo-img-side { position: relative; }
+    .promo-img-frame {
+      border-radius: 24px;
+      overflow: hidden;
+      aspect-ratio: 4/5;
+      position: relative;
+    }
+    .promo-img-frame img { width: 100%; height: 100%; object-fit: cover; }
+    .promo-discount-tag {
+      position: absolute;
+      top: 20px;
+      right: -12px;
+      background: var(--color-accent);
+      color: #fff;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(212,69,107,0.4);
+      z-index: 2;
+    }
+    .promo-discount-pct { font-family: var(--font-heading); font-size: 1.4rem; font-weight: 700; line-height: 1; }
+    .promo-discount-off { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+    /* --- TRENDING --- */
+    .trending-section { padding: 90px 0; background: var(--color-light); }
+    .trending-tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 40px;
+      justify-content: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .trending-tab {
+      padding: 12px 28px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+    }
+    .trending-tab:hover { color: var(--color-primary); }
+    .trending-tab.active { color: var(--color-primary); border-bottom-color: var(--color-primary); }
+    .trending-pane { display: none; }
+    .trending-pane.active {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+    }
+
+    /* --- USP --- */
+    .usp-section { padding: 80px 0; background: var(--color-dark); }
+    .usp-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: rgba(255,255,255,0.06);
+    }
+    .usp-item {
+      padding: 44px 36px;
+      background: var(--color-dark);
+      text-align: center;
+      transition: background 0.3s ease;
+    }
+    .usp-item:hover { background: var(--color-dark-2); }
+    .usp-icon-wrap {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 20px;
+      border-radius: 50%;
+      background: var(--color-primary-glow);
+      border: 1px solid rgba(201,169,110,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      transition: all 0.3s ease;
+    }
+    .usp-item:hover .usp-icon-wrap { background: var(--color-primary); color: var(--color-dark); transform: scale(1.1); }
+    .usp-title { font-family: var(--font-heading); font-size: 1.15rem; font-weight: 600; color: #fff; margin-bottom: 10px; }
+    .usp-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.7; }
+
+    /* --- TESTIMONIALS --- */
+    .testimonials-section { padding: 100px 0; background: var(--bg-page); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .t-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: 22px;
+      padding: 36px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .t-card:hover { box-shadow: 0 12px 40px rgba(0,0,0,0.12); transform: translateY(-4px); }
+    .t-stars { color: var(--color-primary); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 18px; }
+    .t-text { font-family: var(--font-display); font-size: 1.1rem; font-style: italic; color: var(--text-secondary); line-height: 1.75; margin-bottom: 24px; }
+    .t-author { display: flex; align-items: center; gap: 14px; }
+    .t-avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: var(--color-primary-glow);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; color: var(--color-primary); font-size: 1rem;
+      border: 2px solid var(--color-primary-light);
+      flex-shrink: 0;
+    }
+    .t-name { font-size: 14px; font-weight: 600; color: var(--text-primary); }
+    .t-loc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+    .t-verified { font-size: 11px; color: var(--color-success); font-weight: 600; margin-top: 3px; display: flex; align-items: center; gap: 4px; }
+
+    /* --- NEWSLETTER --- */
+    .newsletter-section {
+      padding: 100px 0;
+      background: linear-gradient(135deg, var(--color-dark) 0%, #1a1008 50%, var(--color-dark) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .newsletter-decor {
+      position: absolute;
+      pointer-events: none;
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,169,110,0.06);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .newsletter-decor-2 {
+      position: absolute;
+      pointer-events: none;
+      width: 900px; height: 900px;
+      border-radius: 50%;
+      border: 1px solid rgba(201,169,110,0.03);
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%);
+    }
+    .newsletter-inner { position: relative; z-index: 1; text-align: center; max-width: 600px; margin: 0 auto; }
+    .newsletter-icon { font-size: 2.5rem; margin-bottom: 16px; display: block; }
+    .newsletter-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      font-weight: 300; color: #fff;
+      line-height: 1.2; margin-bottom: 12px; letter-spacing: -0.01em;
+    }
+    .newsletter-title em { font-style: italic; color: var(--color-primary-light); }
+    .newsletter-sub { font-size: 1rem; color: rgba(255,255,255,0.5); margin-bottom: 36px; line-height: 1.7; }
+    .newsletter-form {
+      display: flex;
+      max-width: 460px;
+      margin: 0 auto 20px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 100px;
+      overflow: hidden;
+      padding: 6px 6px 6px 22px;
+    }
+    .newsletter-input { flex: 1; background: transparent; color: #fff; font-size: 14px; }
+    .newsletter-input::placeholder { color: rgba(255,255,255,0.35); }
+    .newsletter-btn {
+      flex-shrink: 0;
+      padding: 11px 24px;
+      background: var(--color-primary);
+      color: var(--color-dark);
+      font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+      border-radius: 100px; border: none; cursor: pointer; transition: all 0.25s ease;
+    }
+    .newsletter-btn:hover { background: var(--color-primary-dark); }
+    .newsletter-note { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* --- FOOTER --- */
+    .footer { background: var(--color-dark); border-top: 1px solid rgba(255,255,255,0.06); }
+    .footer-top { padding: 70px 0 50px; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.6fr 1fr 1fr 1fr;
+      gap: 48px;
+    }
+    .footer-brand-logo {
+      height: 44px;
+      margin-bottom: 18px;
+      filter: brightness(0) invert(1);
+    }
+    .footer-tagline { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.75; margin-bottom: 22px; }
+    .footer-socials { display: flex; gap: 10px; }
+    .footer-social-btn {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: rgba(255,255,255,0.55);
+      font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .footer-social-btn:hover { border-color: var(--color-primary); color: var(--color-primary); background: var(--color-primary-glow); }
+    .footer-col-title {
+      font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(255,255,255,0.75); margin-bottom: 20px;
+    }
+    .footer-links { display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-size: 13px; color: rgba(255,255,255,0.45); transition: color 0.2s;
+      text-decoration: none;
+    }
+    .footer-links a:hover { color: var(--color-primary-light); }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 22px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-copy { font-size: 12px; color: rgba(255,255,255,0.3); }
+    .footer-legal { display: flex; gap: 20px; }
+    .footer-legal a { font-size: 12px; color: rgba(255,255,255,0.3); text-decoration: none; transition: color 0.2s; }
+    .footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+    /* --- TOAST --- */
+    .toast {
+      position: fixed;
+      bottom: 90px;
+      right: 28px;
+      z-index: var(--z-toast);
+      background: var(--color-dark);
+      color: #fff;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: all 0.3s ease;
+      max-width: 320px;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast.success { border-left: 3px solid var(--color-success); }
+    .toast.error { border-left: 3px solid var(--color-error); }
+    .toast-icon { font-size: 1.1rem; flex-shrink: 0; }
+
+    /* --- STICKY WHATSAPP --- */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 28px; right: 28px;
+      z-index: var(--z-toast);
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: #25D366;
+      color: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 8px 24px rgba(37,211,102,0.4);
+      transition: all 0.25s ease;
+      text-decoration: none;
+    }
+    .whatsapp-float:hover { transform: scale(1.1) rotate(-5deg); box-shadow: 0 12px 32px rgba(37,211,102,0.5); }
+
+    /* --- SCROLL TOP --- */
+    .scroll-top-btn {
+      position: fixed;
+      bottom: 28px; left: 28px;
+      z-index: var(--z-toast);
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--color-white);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border-color);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      opacity: 0;
+      transform: translateY(12px);
+      transition: all 0.3s ease;
+    }
+    .scroll-top-btn.visible { opacity: 1; transform: translateY(0); }
+    .scroll-top-btn:hover { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-dark); }
+
+    /* --- RESPONSIVE --- */
+    @media (max-width: 1024px) {
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+      .cat-card.cat-large .cat-card-img { aspect-ratio: 3/4; }
+      .products-grid { grid-template-columns: repeat(3, 1fr); }
+      .trending-pane.active { grid-template-columns: repeat(3, 1fr); }
+      .usp-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .promo-banner-inner { grid-template-columns: 1fr; }
+      .promo-img-side { display: none; }
+    }
+    @media (max-width: 768px) {
+      .hero { height: 88vh; min-height: 520px; }
+      .cat-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .trending-pane.active { grid-template-columns: repeat(2, 1fr); gap: 14px; }
+      .usp-grid { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2.8rem; }
+      .hero-btns { flex-direction: column; }
+      .cat-grid { grid-template-columns: 1fr 1fr; }
+      .products-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .trending-pane.active { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .usp-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ==========================================
+       ANNOUNCEMENT BAR
+  =========================================== -->
+  <div class="announcement-bar" id="announcement-bar">
+    🚚 <strong>Free Shipping above ₹499</strong> &nbsp;|&nbsp; Use code <strong>HEELS10</strong> for 10% off &nbsp;|&nbsp; Pan-India Delivery
+    <button onclick="document.getElementById('announcement-bar').style.display='none'" style="position:absolute;right:16px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:12px;" aria-label="Close">✕</button>
+  </div>
+
+  <!-- ==========================================
+       NAVBAR
+  =========================================== -->
+  <nav class="navbar" id="navbar">
+    <div class="container">
+      <div class="navbar-inner">
+        <!-- Logo -->
+        <a href="index.html" class="navbar-logo">
+          <img src="logo.png" alt="HeelsUp Logo" id="navbar-logo-img" onerror="this.style.display='none'" />
+          <span class="navbar-logo-text">Heels<span>Up</span></span>
+        </a>
+
+        <!-- Nav Menu -->
+        <ul class="navbar-menu" id="nav-menu">
+          <li class="nav-item"><a href="index.html" class="nav-link active">Home</a></li>
+          <li class="nav-item">
+            <a href="shop.html" class="nav-link">Shop <i class="fa-solid fa-chevron-down" style="font-size:9px;opacity:0.6"></i></a>
+            <div class="nav-dropdown">
+              <a href="shop.html?category=Heels"><span class="nav-dropdown-icon">👠</span> Heels</a>
+              <a href="shop.html?category=Flats"><span class="nav-dropdown-icon">🥿</span> Flats</a>
+              <a href="shop.html?category=Sandals"><span class="nav-dropdown-icon">👡</span> Sandals</a>
+              <a href="shop.html?category=Wedges"><span class="nav-dropdown-icon">👢</span> Wedges</a>
+              <a href="shop.html?category=Bags"><span class="nav-dropdown-icon">👜</span> Bags</a>
+              <a href="shop.html?category=Accessories"><span class="nav-dropdown-icon">✨</span> Accessories</a>
+            </div>
+          </li>
+          <li class="nav-item"><a href="shop.html?category=Heels" class="nav-link">Heels</a></li>
+          <li class="nav-item"><a href="shop.html?category=Sandals" class="nav-link">Sandals</a></li>
+          <li class="nav-item"><a href="shop.html?category=Bags" class="nav-link">Bags</a></li>
+          <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+          <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
+        </ul>
+
+        <!-- Actions -->
+        <div class="navbar-actions">
+          <button class="nav-icon-btn" id="search-toggle-btn" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+          <a href="wishlist.html" class="nav-icon-btn" aria-label="Wishlist">
+            <i class="fa-regular fa-heart"></i>
+          </a>
+          <!-- Auth-aware account link -->
+          <a href="profile.html" class="nav-icon-btn" aria-label="Account" id="nav-account-btn" title="My Account">
+            <i class="fa-regular fa-user"></i>
+          </a>
+          <button class="nav-icon-btn" id="cart-open-btn" aria-label="Cart" onclick="window.location.href='cart.html'">
+            <i class="fa-solid fa-bag-shopping"></i>
+            <span class="nav-badge cart-badge" id="cart-count" style="display:none">0</span>
+          </button>
+          <button class="navbar-hamburger" id="hamburger-btn" aria-label="Menu">
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+            <span class="hamburger-line"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobile-menu">
+    <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
+    <div class="mobile-menu-panel">
+      <div class="mobile-menu-header">
+        <span class="navbar-logo-text">Heels<span style="color:var(--color-primary)">Up</span></span>
+        <button id="mobile-menu-close" style="font-size:1.3rem;color:var(--text-muted);cursor:pointer;background:none;border:none">✕</button>
+      </div>
+      <div class="mobile-menu-body">
+        <a href="index.html">🏠 Home</a>
+        <a href="shop.html">🛍️ Shop All</a>
+        <a href="shop.html?category=Heels">👠 Heels</a>
+        <a href="shop.html?category=Sandals">👡 Sandals</a>
+        <a href="shop.html?category=Bags">👜 Bags</a>
+        <a href="shop.html?category=Accessories">✨ Accessories</a>
+        <a href="about.html">📄 About Us</a>
+        <a href="contact.html">📞 Contact</a>
+        <hr style="border:none;border-top:1px solid var(--border-color);margin:12px 0" />
+        <a href="login.html" id="mobile-login-link">👤 Login</a>
+        <a href="profile.html" id="mobile-profile-link" style="display:none">👤 My Account</a>
+        <a href="cart.html">🛒 Cart</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEARCH OVERLAY -->
+  <div class="search-overlay" id="search-overlay">
+    <div class="search-box">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" class="search-input" id="search-input" placeholder="Search for heels, bags, sandals…" autocomplete="off" />
+      <button class="search-close" id="search-close-btn" aria-label="Close search">✕</button>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       HERO SECTION
+  =========================================== -->
+  <section class="hero" aria-label="Hero banner">
+    <div class="hero-bg">
+      <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=80&auto=format&fit=crop" alt="Premium ladies heels collection 2025" loading="eager" fetchpriority="high" />
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content-wrap">
+      <div class="container">
+        <div class="hero-content">
+          <span class="hero-tag"><i class="fa-solid fa-sparkles" style="font-size:0.65rem"></i> New Collection 2025</span>
+          <h1 class="hero-title">Step Into <em>Elegance</em></h1>
+          <p class="hero-sub">Premium ladies footwear crafted for the modern Indian woman. Free shipping above ₹499.</p>
+          <div class="hero-btns">
+            <a href="shop.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-bag-shopping"></i> Shop Now</a>
+            <a href="shop.html" class="btn btn-outline btn-lg" style="border-color:rgba(255,255,255,0.35);color:#fff;background:rgba(255,255,255,0.08);backdrop-filter:blur(8px)">View Collection</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Scroll indicator -->
+    <div class="hero-scroll-ind" aria-hidden="true">
+      <div class="hero-scroll-line"></div>
+      <span>Scroll</span>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       MARQUEE STRIP
+  =========================================== -->
+  <div class="marquee-strip" aria-hidden="true">
+    <div class="marquee-track">
+      <span class="marquee-item">FREE SHIPPING ABOVE ₹499</span><span class="marquee-dot"></span>
+      <span class="marquee-item">NEW ARRIVALS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">HEELS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">SANDALS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">BAGS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">USE CODE HEELS10 FOR 10% OFF</span><span class="marquee-dot"></span>
+      <span class="marquee-item">PAN-INDIA DELIVERY</span><span class="marquee-dot"></span>
+      <span class="marquee-item">FREE SHIPPING ABOVE ₹499</span><span class="marquee-dot"></span>
+      <span class="marquee-item">NEW ARRIVALS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">HEELS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">SANDALS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">BAGS</span><span class="marquee-dot"></span>
+      <span class="marquee-item">USE CODE HEELS10 FOR 10% OFF</span><span class="marquee-dot"></span>
+      <span class="marquee-item">PAN-INDIA DELIVERY</span><span class="marquee-dot"></span>
+    </div>
+  </div>
+
+  <!-- ==========================================
+       CATEGORIES SECTION
+  =========================================== -->
+  <section class="categories-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Shop By Category</span>
+        <h2>Find Your <em style="font-style:italic;color:var(--color-primary)">Perfect</em> Style</h2>
+      </div>
+      <div class="cat-grid">
+        <!-- Heels - Large -->
+        <a href="shop.html?category=Heels" class="cat-card cat-large">
+          <div class="cat-card-img">
+            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80&auto=format&fit=crop" alt="Heels" loading="lazy" />
+          </div>
+          <div class="cat-card-over"></div>
+          <div class="cat-card-body">
+            <span class="cat-label">Category</span>
+            <div class="cat-name">Heels</div>
+            <div class="cat-count" id="cat-count-heels">Loading…</div>
+            <span class="cat-cta">Shop Now <i class="fa-solid fa-arrow-right cat-cta-arrow"></i></span>
+          </div>
+        </a>
+        <!-- Sandals -->
+        <a href="shop.html?category=Sandals" class="cat-card">
+          <div class="cat-card-img">
+            <img src="https://images.unsplash.com/photo-1603487742131-4160ec999306?w=600&q=80&auto=format&fit=crop" alt="Sandals" loading="lazy" />
+          </div>
+          <div class="cat-card-over"></div>
+          <div class="cat-card-body">
+            <span class="cat-label">Category</span>
+            <div class="cat-name">Sandals</div>
+            <div class="cat-count" id="cat-count-sandals">Loading…</div>
+            <span class="cat-cta">Shop Now <i class="fa-solid fa-arrow-right cat-cta-arrow"></i></span>
+          </div>
+        </a>
+        <!-- Bags -->
+        <a href="shop.html?category=Bags" class="cat-card">
+          <div class="cat-card-img">
+            <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=80&auto=format&fit=crop" alt="Bags" loading="lazy" />
+          </div>
+          <div class="cat-card-over"></div>
+          <div class="cat-card-body">
+            <span class="cat-label">Category</span>
+            <div class="cat-name">Bags</div>
+            <div class="cat-count" id="cat-count-bags">Loading…</div>
+            <span class="cat-cta">Shop Now <i class="fa-solid fa-arrow-right cat-cta-arrow"></i></span>
+          </div>
+        </a>
+        <!-- Accessories -->
+        <a href="shop.html?category=Accessories" class="cat-card">
+          <div class="cat-card-img">
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?w=600&q=80&auto=format&fit=crop" alt="Accessories" loading="lazy" />
+          </div>
+          <div class="cat-card-over"></div>
+          <div class="cat-card-body">
+            <span class="cat-label">Category</span>
+            <div class="cat-name">Accessories</div>
+            <div class="cat-count" id="cat-count-accessories">Loading…</div>
+            <span class="cat-cta">Shop Now <i class="fa-solid fa-arrow-right cat-cta-arrow"></i></span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FEATURED PRODUCTS
+  =========================================== -->
+  <section class="featured-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">Bestsellers</span>
+        <h2>Featured <em style="font-style:italic;color:var(--color-primary)">Products</em></h2>
+        <p>Our most-loved pieces, handpicked for you</p>
+      </div>
+
+      <!-- Loading Skeletons -->
+      <div class="products-grid" id="featured-skeleton">
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+      </div>
+
+      <!-- Products Grid (populated by JS) -->
+      <div class="products-grid" id="featured-grid" style="display:none"></div>
+
+      <!-- Error State -->
+      <div id="featured-error" style="display:none;text-align:center;padding:40px;color:var(--text-muted)">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;margin-bottom:12px;display:block;color:var(--color-primary-light)"></i>
+        <p>Unable to load products. Please refresh the page.</p>
+      </div>
+
+      <div style="text-align:center;margin-top:48px">
+        <a href="shop.html" class="btn btn-outline btn-lg">View All Products <i class="fa-solid fa-arrow-right"></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       PROMO BANNER
+  =========================================== -->
+  <section class="promo-banner">
+    <div class="container">
+      <div class="promo-banner-inner">
+        <!-- Left: Content -->
+        <div class="promo-banner-content">
+          <div class="promo-badge">LIMITED TIME OFFER 🔥</div>
+          <h2 class="promo-title">Get <em>Flat 10%</em> Off</h2>
+          <p class="promo-desc">Use code HEELS10 at checkout. Valid on all orders above ₹499. New arrivals included. Don't miss out on this exclusive offer for our valued customers.</p>
+          <div class="promo-timer">
+            <div class="timer-box"><span class="timer-num" id="timer-hrs">00</span><span class="timer-label">Hours</span></div>
+            <div class="timer-box"><span class="timer-num" id="timer-min">00</span><span class="timer-label">Mins</span></div>
+            <div class="timer-box"><span class="timer-num" id="timer-sec">00</span><span class="timer-label">Secs</span></div>
+          </div>
+          <a href="shop.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-bolt"></i> Shop Now</a>
+        </div>
+        <!-- Right: Image -->
+        <div class="promo-img-side">
+          <div class="promo-img-frame">
+            <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=600&q=80&auto=format&fit=crop" alt="Exclusive offer on ladies heels" loading="lazy" />
+          </div>
+          <div class="promo-discount-tag">
+            <span class="promo-discount-pct">-10%</span>
+            <span class="promo-discount-off">Off</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       TRENDING NOW
+  =========================================== -->
+  <section class="trending-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">What's Hot</span>
+        <h2>Trending <em style="font-style:italic;color:var(--color-primary)">Now</em></h2>
+      </div>
+
+      <!-- Tabs -->
+      <div class="trending-tabs">
+        <button class="trending-tab active" data-tab="all">All</button>
+        <button class="trending-tab" data-tab="Heels">Heels</button>
+        <button class="trending-tab" data-tab="Sandals">Sandals</button>
+        <button class="trending-tab" data-tab="Bags">Bags</button>
+      </div>
+
+      <!-- Panes (populated by JS) -->
+      <div class="trending-pane active" id="trending-all">
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+        <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+      </div>
+      <div class="trending-pane" id="trending-Heels"></div>
+      <div class="trending-pane" id="trending-Sandals"></div>
+      <div class="trending-pane" id="trending-Bags"></div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       USP SECTION
+  =========================================== -->
+  <section class="usp-section">
+    <div class="container">
+      <div class="usp-grid">
+        <div class="usp-item">
+          <div class="usp-icon-wrap"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="usp-title">Free Shipping</div>
+          <div class="usp-desc">Above ₹499 across India. Fast, reliable Pan-India delivery at your doorstep.</div>
+        </div>
+        <div class="usp-item">
+          <div class="usp-icon-wrap"><i class="fa-solid fa-rotate-left"></i></div>
+          <div class="usp-title">Easy Returns</div>
+          <div class="usp-desc">7-day hassle-free returns. No questions asked. We value your satisfaction.</div>
+        </div>
+        <div class="usp-item">
+          <div class="usp-icon-wrap"><i class="fa-solid fa-gem"></i></div>
+          <div class="usp-title">100% Authentic</div>
+          <div class="usp-desc">Genuine quality products only. Every pair is quality-checked before dispatch.</div>
+        </div>
+        <div class="usp-item">
+          <div class="usp-icon-wrap"><i class="fa-solid fa-lock"></i></div>
+          <div class="usp-title">Secure Payment</div>
+          <div class="usp-desc">UPI, Cards, Net Banking &amp; COD accepted. Your payment is always safe with us.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       TESTIMONIALS
+  =========================================== -->
+  <section class="testimonials-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-label">What Our Customers Say</span>
+        <h2>Loved by <em style="font-style:italic;color:var(--color-primary)">10,000+</em> Women</h2>
+        <p>Real reviews from our happy customers across India</p>
+      </div>
+      <div class="testimonials-grid">
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"The block heels I ordered are absolutely stunning! Perfect for office wear and evening outings. The quality is top-notch and delivery was super fast. Will definitely order again!"</p>
+          <div class="t-author">
+            <div class="t-avatar">P</div>
+            <div>
+              <div class="t-name">Priya Sharma</div>
+              <div class="t-loc">Mumbai, Maharashtra</div>
+              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+            </div>
+          </div>
+        </div>
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"I ordered the golden strappy sandals and they fit perfectly! The finish is beautiful — I wore them to a wedding and got so many compliments. Packaging was also very premium."</p>
+          <div class="t-author">
+            <div class="t-avatar">A</div>
+            <div>
+              <div class="t-name">Ananya Reddy</div>
+              <div class="t-loc">Hyderabad, Telangana</div>
+              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+            </div>
+          </div>
+        </div>
+        <div class="t-card">
+          <div class="t-stars">★★★★★</div>
+          <p class="t-text">"HeelsUp has become my go-to for footwear! The tote bag I purchased is so spacious and stylish. Great prices, authentic products, and the HEELS10 discount code was a cherry on top!"</p>
+          <div class="t-author">
+            <div class="t-avatar">R</div>
+            <div>
+              <div class="t-name">Rekha Joshi</div>
+              <div class="t-loc">Jaipur, Rajasthan</div>
+              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       NEWSLETTER
+  =========================================== -->
+  <section class="newsletter-section">
+    <div class="newsletter-decor"></div>
+    <div class="newsletter-decor-2"></div>
+    <div class="container">
+      <div class="newsletter-inner">
+        <span class="newsletter-icon">💌</span>
+        <h2 class="newsletter-title">Get <em>Exclusive</em> Offers</h2>
+        <p class="newsletter-sub">Subscribe to our newsletter and be the first to know about new arrivals, flash sales, and exclusive discounts just for you.</p>
+        <form class="newsletter-form" id="newsletter-form" onsubmit="handleNewsletter(event)">
+          <input type="email" class="newsletter-input" id="newsletter-email" placeholder="Enter your email address…" required />
+          <button type="submit" class="newsletter-btn" id="newsletter-btn">Subscribe</button>
+        </form>
+        <p class="newsletter-note">No spam. Unsubscribe anytime. We respect your privacy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ==========================================
+       FOOTER
+  =========================================== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-top">
+        <div class="footer-grid">
+          <!-- Brand -->
+          <div>
+            <img src="logo.png" alt="HeelsUp" class="footer-brand-logo" onerror="this.style.display='none'" />
+            <p class="footer-tagline">Premium ladies footwear &amp; bags for the modern Indian woman. Quality, style, and comfort — all in one place.</p>
+            <div class="footer-socials">
+              <a href="https://instagram.com/heelsup.in" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+              <a href="https://facebook.com/heelsup.in" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+              <a href="https://wa.me/919876543210" target="_blank" rel="noopener" class="footer-social-btn" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+              <a href="https://twitter.com/heelsup_in" target="_blank" rel="noopener" class="footer-social-btn" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+            </div>
+          </div>
+          <!-- Quick Links -->
+          <div>
+            <div class="footer-col-title">Quick Links</div>
+            <nav class="footer-links">
+              <a href="index.html">Home</a>
+              <a href="shop.html">Shop All</a>
+              <a href="about.html">About Us</a>
+              <a href="contact.html">Contact</a>
+              <a href="blog.html">Blog</a>
+              <a href="login.html">Login</a>
+              <a href="register.html">Register</a>
+            </nav>
+          </div>
+          <!-- Categories -->
+          <div>
+            <div class="footer-col-title">Categories</div>
+            <nav class="footer-links">
+              <a href="shop.html?category=Heels">Heels</a>
+              <a href="shop.html?category=Sandals">Sandals</a>
+              <a href="shop.html?category=Bags">Bags</a>
+              <a href="shop.html?category=Flats">Flats</a>
+              <a href="shop.html?category=Wedges">Wedges</a>
+              <a href="shop.html?category=Accessories">Accessories</a>
+            </nav>
+          </div>
+          <!-- Help -->
+          <div>
+            <div class="footer-col-title">Help</div>
+            <nav class="footer-links">
+              <a href="faq.html">FAQ</a>
+              <a href="shipping-info.html">Shipping Info</a>
+              <a href="returns.html">Returns &amp; Exchange</a>
+              <a href="size-guide.html">Size Guide</a>
+              <a href="order-tracking.html">Track Order</a>
+              <a href="contact.html">Customer Support</a>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 HeelsUp. All rights reserved. Made with ❤️ in India.</p>
+        <div class="footer-legal">
+          <a href="policy/privacy.html">Privacy Policy</a>
+          <a href="policy/terms.html">Terms of Service</a>
+          <a href="policy/shipping.html">Shipping Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- TOAST Notification -->
+  <div class="toast" id="toast">
+    <i class="fa-solid fa-circle-check toast-icon" id="toast-icon"></i>
+    <span id="toast-msg">Message here</span>
+  </div>
+
+  <!-- WhatsApp Float -->
+  <a href="https://wa.me/919876543210?text=Hi%20HeelsUp%2C%20I%20need%20help" target="_blank" rel="noopener" class="whatsapp-float" aria-label="Chat on WhatsApp">
+    <i class="fa-brands fa-whatsapp"></i>
+  </a>
+
+  <!-- Scroll Top -->
+  <button class="scroll-top-btn" id="scroll-top-btn" aria-label="Scroll to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">
+    <i class="fa-solid fa-arrow-up"></i>
+  </button>
+
+  <!-- ==========================================
+       SCRIPTS
+  =========================================== -->
+  <script src="app-config.js"></script>
+  <script src="app-auth.js"></script>
+  <script src="js/cart.js"></script>
+
+  <script>
+    /* ============================================================
+       HOMEPAGE JAVASCRIPT
+    ============================================================ */
+    document.addEventListener('DOMContentLoaded', function () {
+
+      // ── AUTH STATE ──
+      (function initAuth() {
+        const user = HeelsUpAuth.getUser();
+        const accountBtn = document.getElementById('nav-account-btn');
+        const mobileLoginLink = document.getElementById('mobile-login-link');
+        const mobileProfileLink = document.getElementById('mobile-profile-link');
+        if (user) {
+          if (accountBtn) {
+            accountBtn.innerHTML = '<i class="fa-solid fa-user"></i>';
+            accountBtn.title = 'Hello, ' + (user.firstName || user.name || 'User');
+          }
+          if (mobileLoginLink) mobileLoginLink.style.display = 'none';
+          if (mobileProfileLink) mobileProfileLink.style.display = '';
+        } else {
+          if (accountBtn) { accountBtn.href = 'login.html'; accountBtn.title = 'Login'; }
+        }
+      })();
+
+      // ── MOBILE MENU ──
+      const hamburgerBtn = document.getElementById('hamburger-btn');
+      const mobileMenu   = document.getElementById('mobile-menu');
+      const mobileClose  = document.getElementById('mobile-menu-close');
+      const mobileBack   = document.getElementById('mobile-backdrop');
+      function openMenu()  { mobileMenu.classList.add('open'); document.body.style.overflow = 'hidden'; }
+      function closeMenu() { mobileMenu.classList.remove('open'); document.body.style.overflow = ''; }
+      if (hamburgerBtn) hamburgerBtn.addEventListener('click', openMenu);
+      if (mobileClose)  mobileClose.addEventListener('click', closeMenu);
+      if (mobileBack)   mobileBack.addEventListener('click', closeMenu);
+
+      // ── SEARCH ──
+      const searchToggle = document.getElementById('search-toggle-btn');
+      const searchOverlay = document.getElementById('search-overlay');
+      const searchInput  = document.getElementById('search-input');
+      const searchCloseBtn = document.getElementById('search-close-btn');
+      if (searchToggle) searchToggle.addEventListener('click', () => { searchOverlay.classList.add('open'); searchInput && searchInput.focus(); });
+      if (searchCloseBtn) searchCloseBtn.addEventListener('click', () => searchOverlay.classList.remove('open'));
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') searchOverlay && searchOverlay.classList.remove('open'); });
+      if (searchInput) {
+        searchInput.addEventListener('keydown', e => {
+          if (e.key === 'Enter' && searchInput.value.trim()) {
+            window.location.href = 'search.html?q=' + encodeURIComponent(searchInput.value.trim());
+          }
+        });
+      }
+
+      // ── NAVBAR SCROLL ──
+      const navbar = document.getElementById('navbar');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 60) { navbar.classList.add('scrolled'); } else { navbar.classList.remove('scrolled'); }
+        const scrollBtn = document.getElementById('scroll-top-btn');
+        if (scrollBtn) { scrollBtn.classList.toggle('visible', window.scrollY > 400); }
+      }, { passive: true });
+
+      // ── COUNTDOWN TIMER (to midnight) ──
+      function updateCountdown() {
+        const now = new Date();
+        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0);
+        const diff = midnight - now;
+        const hrs = Math.floor(diff / 3600000);
+        const mins = Math.floor((diff % 3600000) / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        const pad = n => String(n).padStart(2, '0');
+        const elH = document.getElementById('timer-hrs');
+        const elM = document.getElementById('timer-min');
+        const elS = document.getElementById('timer-sec');
+        if (elH) elH.textContent = pad(hrs);
+        if (elM) elM.textContent = pad(mins);
+        if (elS) elS.textContent = pad(secs);
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+
+      // ── TOAST UTILITY ──
+      function showToast(msg, type = 'success', duration = 3500) {
+        const toast = document.getElementById('toast');
+        const toastMsg = document.getElementById('toast-msg');
+        const toastIcon = document.getElementById('toast-icon');
+        if (!toast) return;
+        toast.className = 'toast ' + type;
+        toastMsg.textContent = msg;
+        toastIcon.className = type === 'success' ? 'fa-solid fa-circle-check toast-icon' : 'fa-solid fa-circle-xmark toast-icon';
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), duration);
+      }
+      window.showToast = showToast;
+
+      // ── PRODUCT CARD HTML ──
+      function renderProductCard(p) {
+        const img = (p.images && p.images[0]) || p.image_url || 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=70';
+        const discount = p.original_price && p.price < p.original_price
+          ? Math.round(100 - (p.price / p.original_price) * 100) : 0;
+        const stars = '★'.repeat(Math.round(p.rating || 4.5)) + '☆'.repeat(5 - Math.round(p.rating || 4.5));
+        return `
+          <div class="product-card" data-id="${p.id}">
+            <div class="product-card-img-wrap">
+              <a href="product.html?id=${p.id}">
+                <img src="${img}" alt="${p.name}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=70'" />
+              </a>
+              <div class="product-card-badges">
+                ${p.is_new ? '<span class="badge badge-new">New</span>' : ''}
+                ${discount > 0 ? `<span class="badge badge-sale">-${discount}%</span>` : ''}
+              </div>
+              <div class="product-card-actions">
+                <button onclick="addToCartQuick(${p.id})" class="btn-icon" title="Add to Cart"><i class="fa-solid fa-bag-shopping"></i></button>
+                <a href="product.html?id=${p.id}" class="btn-icon" title="View"><i class="fa-solid fa-eye"></i></a>
+              </div>
+            </div>
+            <div class="product-card-body">
+              <div class="product-card-cat">${p.category || ''}</div>
+              <h3 class="product-card-name"><a href="product.html?id=${p.id}">${p.name}</a></h3>
+              <div class="product-card-rating">${stars} (${p.review_count || p.reviews || Math.floor(Math.random() * 80) + 12})</div>
+              <div class="product-card-price">
+                <span class="price-current">₹${p.price ? p.price.toLocaleString('en-IN') : ''}</span>
+                ${p.original_price ? `<span class="price-original">₹${p.original_price.toLocaleString('en-IN')}</span>` : ''}
+              </div>
+            </div>
+          </div>`;
+      }
+
+      // ── FETCH FEATURED PRODUCTS ──
+      async function loadFeatured() {
+        const skeleton = document.getElementById('featured-skeleton');
+        const grid = document.getElementById('featured-grid');
+        const errEl = document.getElementById('featured-error');
+        try {
+          const data = await HeelsUpAuth.api('/api/products?featured=true&limit=8');
+          const products = data.products || data.data || data || [];
+          skeleton.style.display = 'none';
+          if (!products.length) {
+            errEl.style.display = 'block';
+            return;
+          }
+          grid.innerHTML = products.map(renderProductCard).join('');
+          grid.style.display = 'grid';
+        } catch (e) {
+          console.error('Featured products error:', e);
+          skeleton.style.display = 'none';
+          errEl.style.display = 'block';
+        }
+      }
+      loadFeatured();
+
+      // ── LOAD CATEGORY COUNTS ──
+      async function loadCategoryCounts() {
+        const cats = ['Heels', 'Sandals', 'Bags', 'Accessories'];
+        for (const cat of cats) {
+          try {
+            const data = await HeelsUpAuth.api(`/api/products?category=${cat}&limit=1`);
+            const total = data.total || data.count || (data.products && data.products.length) || '';
+            const el = document.getElementById('cat-count-' + cat.toLowerCase());
+            if (el) el.textContent = total ? `${total}+ products` : '';
+          } catch (e) {
+            const el = document.getElementById('cat-count-' + cat.toLowerCase());
+            if (el) el.textContent = '';
+          }
+        }
+      }
+      loadCategoryCounts();
+
+      // ── TRENDING TABS ──
+      const trendingCache = {};
+      async function loadTrending(tab) {
+        const pane = document.getElementById('trending-' + tab);
+        if (!pane) return;
+        if (trendingCache[tab]) { pane.innerHTML = trendingCache[tab]; return; }
+        const url = tab === 'all'
+          ? '/api/products?limit=8'
+          : `/api/products?category=${tab}&limit=8`;
+        // Show skeleton
+        pane.innerHTML = `
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>
+          <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w-60"></div><div class="skeleton-line w-80"></div><div class="skeleton-line w-40"></div></div></div>`;
+        try {
+          const data = await HeelsUpAuth.api(url);
+          const products = data.products || data.data || data || [];
+          const html = products.length
+            ? products.map(renderProductCard).join('')
+            : '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px">No products found in this category.</p>';
+          trendingCache[tab] = html;
+          pane.innerHTML = html;
+        } catch (e) {
+          pane.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text-muted);padding:40px">Unable to load products.</p>';
+        }
+      }
+      loadTrending('all');
+
+      document.querySelectorAll('.trending-tab').forEach(btn => {
+        btn.addEventListener('click', function () {
+          document.querySelectorAll('.trending-tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.trending-pane').forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          const tab = this.dataset.tab;
+          const pane = document.getElementById('trending-' + tab);
+          if (pane) pane.classList.add('active');
+          loadTrending(tab);
+        });
+      });
+
+      // ── NEWSLETTER ──
+      window.handleNewsletter = async function (e) {
+        e.preventDefault();
+        const emailEl = document.getElementById('newsletter-email');
+        const btn = document.getElementById('newsletter-btn');
+        const email = emailEl ? emailEl.value.trim() : '';
+        if (!email) return;
+        btn.textContent = 'Subscribing…';
+        btn.disabled = true;
+        try {
+          await HeelsUpAuth.api('/api/newsletter', {
+            method: 'POST',
+            body: JSON.stringify({ email })
+          });
+          showToast('🎉 You\'re subscribed! Check your inbox for the welcome offer.', 'success');
+          emailEl.value = '';
+        } catch (err) {
+          showToast(err.message || 'Subscription failed. Please try again.', 'error');
+        } finally {
+          btn.textContent = 'Subscribe';
+          btn.disabled = false;
+        }
+      };
+
+      // ── ADD TO CART QUICK ──
+      window.addToCartQuick = async function (productId) {
+        try {
+          const data = await HeelsUpAuth.api(`/api/products/${productId}`);
+          const product = data.product || data;
+          HeelsUpCart.addItem(product, 1, '');
+          showToast(`✓ "${product.name}" added to cart!`, 'success');
+        } catch (e) {
+          showToast('Could not add to cart. Please try again.', 'error');
+        }
+      };
+
+    }); // DOMContentLoaded
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Reviews</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Review Specific Styles */
+        .review-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-white);
+            padding: var(--space-4) var(--space-6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            border-bottom: none;
+        }
+
+        .star-rating {
+            color: var(--color-primary);
+            font-size: 13px;
+            letter-spacing: 2px;
+            display: inline-block;
+        }
+
+        .star-rating .fa-regular {
+            color: var(--border-color);
+        }
+
+        .review-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.4;
+            max-width: 400px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            margin-top: 4px;
+        }
+
+        .review-prod-img {
+            width: 40px;
+            height: 48px;
+            border-radius: 4px;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .badge-verified {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--color-success-light);
+            color: var(--color-success);
+            margin-left: 6px;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            background: var(--color-light);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--color-white);
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+
+        .review-detail-box {
+            background: var(--color-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-5);
+            margin-bottom: var(--space-5);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
+                        <span class="admin-nav-badge">4</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Reviews</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search reviews..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Product Reviews</h2>
+                        <p>Manage customer feedback, approve reviews, and reply to concerns.</p>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3)">
+                        <button class="btn btn-white">Import Reviews</button>
+                        <button class="btn btn-primary" onclick="alert('Auto-publish settings opened')">
+                            <i class="fa-solid fa-gear"></i> Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="review-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Average Rating</div>
+                            <div class="stat-value">4.6 <i class="fa-solid fa-star"
+                                    style="font-size:18px; color:var(--color-primary);"></i></div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-star-half-stroke"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Reviews</div>
+                            <div class="stat-value">1,248</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-comments"></i></div>
+                    </div>
+                    <div class="stat-card"
+                        style="border: 1px solid var(--color-warning-light); background: var(--color-warning-light);">
+                        <div>
+                            <div class="stat-label" style="color:var(--color-warning)">Pending Approval</div>
+                            <div class="stat-value" style="color:var(--color-warning)">4</div>
+                        </div>
+                        <div class="stat-card-icon" style="background:var(--color-warning); color:#fff;"><i
+                                class="fa-solid fa-hourglass-half"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Replied</div>
+                            <div class="stat-value text-success">89%</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-green"><i class="fa-solid fa-reply"></i></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="adv-filter-bar">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select class="form-control" style="width:160px; padding: 8px 12px;">
+                            <option>All Status</option>
+                            <option>Pending (4)</option>
+                            <option>Published</option>
+                            <option>Hidden</option>
+                        </select>
+                        <select class="form-control" style="width:140px; padding: 8px 12px;">
+                            <option>All Ratings</option>
+                            <option>5 Stars</option>
+                            <option>4 Stars</option>
+                            <option>3 Stars</option>
+                            <option>1-2 Stars</option>
+                        </select>
+                    </div>
+                    <div>
+                        <button class="btn btn-ghost btn-sm">Clear Filters</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="admin-table-wrap"
+                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="table-checkbox" id="selectAllRev" /></th>
+                                    <th>Product</th>
+                                    <th>Rating & Review</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Review 1 (Pending) -->
+                                <tr style="background:var(--color-warning-light); opacity: 0.95;">
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=100&q=80&auto=format&fit=crop"
+                                                class="review-prod-img" alt="">
+                                            <div style="max-width: 120px;">
+                                                <div class="admin-table-name"
+                                                    style="font-size:12px; white-space:normal; line-height:1.2;">Classic
+                                                    Tote Bag</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="star-rating">
+                                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i>
+                                        </div>
+                                        <div class="admin-table-name" style="margin-top:4px;">Absolutely Love It!</div>
+                                        <div class="review-text">The quality of the leather is amazing. It fits my
+                                            laptop perfectly and looks very premium. Highly recommend.</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Sneha P. <span class="badge-verified"><i
+                                                    class="fa-solid fa-check"></i></span></div>
+                                        <div class="admin-table-sub">sneha@gmail.com</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">Today, 10:30 AM</div>
+                                    </td>
+                                    <td><span class="status-badge status-draft">Pending</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Approve"
+                                                style="color:var(--color-success); border-color:var(--color-success);"
+                                                onclick="alert('Review Approved')"><i
+                                                    class="fa-solid fa-check"></i></button>
+                                            <button class="table-action-btn" title="Reply"
+                                                onclick="openModal('modal-reply')"><i
+                                                    class="fa-solid fa-reply"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Review 2 (Pending) -->
+                                <tr style="background:var(--color-warning-light); opacity: 0.95;">
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=100&q=80&auto=format&fit=crop"
+                                                class="review-prod-img" alt="">
+                                            <div style="max-width: 120px;">
+                                                <div class="admin-table-name"
+                                                    style="font-size:12px; white-space:normal; line-height:1.2;">
+                                                    Stiletto Block Heel</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="star-rating">
+                                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i><i class="fa-regular fa-star"></i><i
+                                                class="fa-regular fa-star"></i>
+                                        </div>
+                                        <div class="admin-table-name" style="margin-top:4px;">Size issue</div>
+                                        <div class="review-text">The shoe looks nice but it runs small. I ordered a 38
+                                            but it feels like a 37. I had to initiate a return.</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Ritu A. <span class="badge-verified"><i
+                                                    class="fa-solid fa-check"></i></span></div>
+                                        <div class="admin-table-sub">ritu.a@outlook.com</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">Yesterday</div>
+                                    </td>
+                                    <td><span class="status-badge status-draft">Pending</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Approve"
+                                                style="color:var(--color-success); border-color:var(--color-success);"><i
+                                                    class="fa-solid fa-check"></i></button>
+                                            <button class="table-action-btn" title="Reply"
+                                                onclick="openModal('modal-reply')"><i
+                                                    class="fa-solid fa-reply"></i></button>
+                                            <button class="table-action-btn danger" title="Reject/Hide"><i
+                                                    class="fa-solid fa-ban"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Review 3 (Published) -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?w=100&q=80&auto=format&fit=crop"
+                                                class="review-prod-img" alt="">
+                                            <div style="max-width: 120px;">
+                                                <div class="admin-table-name"
+                                                    style="font-size:12px; white-space:normal; line-height:1.2;">Rose
+                                                    Gold Sandals</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="star-rating">
+                                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star-half-stroke"></i>
+                                        </div>
+                                        <div class="admin-table-name" style="margin-top:4px;">Perfect for weddings</div>
+                                        <div class="review-text">Wore this to my friend's wedding. Very comfortable to
+                                            dance in and looks stunning.</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Kavya S. <span class="badge-verified"><i
+                                                    class="fa-solid fa-check"></i></span></div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">05 May 2026</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Published</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Reply"
+                                                onclick="openModal('modal-reply')"><i
+                                                    class="fa-solid fa-reply"></i></button>
+                                            <button class="table-action-btn danger" title="Hide"><i
+                                                    class="fa-regular fa-eye-slash"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Review 4 (Published & Replied) -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:10px">
+                                            <img src="https://images.unsplash.com/photo-1554141220-83411835a60b?w=100&q=80&auto=format&fit=crop"
+                                                class="review-prod-img" alt="">
+                                            <div style="max-width: 120px;">
+                                                <div class="admin-table-name"
+                                                    style="font-size:12px; white-space:normal; line-height:1.2;">Mini
+                                                    Sling Crossbody</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="star-rating">
+                                            <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                                class="fa-regular fa-star"></i>
+                                        </div>
+                                        <div class="admin-table-name" style="margin-top:4px;">Good everyday bag</div>
+                                        <div class="review-text">Nice bag, but the strap is slightly long for me (I'm
+                                            5'2"). Otherwise quality is good.</div>
+                                        <div
+                                            style="font-size:11px; color:var(--color-primary); margin-top:4px; font-weight:600;">
+                                            <i class="fa-solid fa-reply"></i> Admin replied</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Anita M. <span class="badge-verified"><i
+                                                    class="fa-solid fa-check"></i></span></div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">02 May 2026</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Published</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View/Edit Reply"
+                                                onclick="openModal('modal-reply')"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Reply to Review -->
+    <div class="modal-overlay" id="modal-reply">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Reply to Review</div>
+                <button class="modal-close" onclick="closeModal('modal-reply')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="review-detail-box">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <div style="font-weight:600; font-size:var(--text-base);">Sneha P.</div>
+                        <div class="star-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                                class="fa-solid fa-star"></i></div>
+                    </div>
+                    <div style="font-weight:600; margin-bottom:5px;">Absolutely Love It!</div>
+                    <p style="font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5;">The quality of
+                        the leather is amazing. It fits my laptop perfectly and looks very premium. Highly recommend.
+                    </p>
+                </div>
+
+                <div class="form-group-full">
+                    <label class="form-label">Your Reply (Public)</label>
+                    <textarea class="form-control"
+                        placeholder="Type your response here... This will be visible on the product page.">Hi Sneha! We are so glad you loved the Classic Tote. Thanks for the kind words!</textarea>
+                </div>
+
+                <div style="margin-top:15px; display:flex; align-items:center; justify-content:space-between;">
+                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
+                        <input type="checkbox" style="width:16px; height:16px;" checked>
+                        <span style="font-size:var(--text-sm); font-weight:600;">Approve & Publish Review</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-reply')">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-reply'); alert('Reply posted!');">Post
+                    Reply</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        document.getElementById('selectAllRev')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    </script>
+</body>
+
+</html>

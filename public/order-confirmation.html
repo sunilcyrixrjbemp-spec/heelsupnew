@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Order Confirmed! — HeelsUp</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    :root{--gold:#c9a96e;--gold-dark:#8b6914;--bg:#0d0d0d;--card:#1a1a1a;--border:#2a2a2a}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:20px;max-width:560px;width:100%;overflow:hidden}
+    .card-top{background:linear-gradient(135deg,#1a2e1a,#0d1f0d);padding:40px 32px;text-align:center;border-bottom:1px solid var(--border)}
+    .success-anim{width:80px;height:80px;background:radial-gradient(circle,#38a169,#276749);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:36px;color:#fff;animation:pop 0.5s cubic-bezier(0.175,0.885,0.32,1.275)}
+    @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+    .card-top h1{font-family:'Playfair Display',serif;font-size:1.8rem;color:#fff;margin-bottom:6px}
+    .card-top p{color:#9ca3af;font-size:14px}
+    .card-body{padding:28px 32px}
+    .info-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border)}
+    .info-row:last-child{border-bottom:none}
+    .info-label{font-size:13px;color:#888}
+    .info-value{font-size:13px;font-weight:600;color:#fff}
+    .status-badge{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;background:#1a3a2a;color:#4ade80;border:1px solid #276749}
+    .total-row{margin-top:16px;padding:16px;background:#111;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+    .total-row .label{font-size:14px;color:#888}
+    .total-row .amount{font-size:20px;font-weight:700;color:var(--gold)}
+    .btn-group{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+    .btn{padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;text-align:center;text-decoration:none;display:flex;align-items:center;justify-content:center;gap:6px}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff;border:none}
+    .btn-outline{background:none;border:1.5px solid #333;color:#ccc}
+    .btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+    .print-btn{width:100%;margin-top:10px;background:#222;border:1px solid #333;color:#888;padding:10px;border-radius:8px;cursor:pointer;font-size:13px;font-family:'Inter',sans-serif}
+    .print-btn:hover{background:#2a2a2a;color:#fff}
+    @media print{
+      body{background:#fff;color:#000}
+      .card{box-shadow:none;border:1px solid #ddd;max-width:100%}
+      .btn-group,.print-btn{display:none}
+      .card-top{background:#f8f4ee}
+      .card-top h1,.card-top p{color:#000}
+    }
+  </style>
+</head>
+<body>
+<div class="card" id="order-card">
+  <div class="card-top">
+    <div class="success-anim"><i class="fa-solid fa-check"></i></div>
+    <h1>Order Confirmed! 🎉</h1>
+    <p>Thank you! Your payment was successful and order is confirmed.</p>
+  </div>
+  <div class="card-body">
+    <div class="info-row">
+      <span class="info-label">Order Number</span>
+      <span class="info-value" id="order-num">Loading…</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Payment Status</span>
+      <span class="status-badge">✓ Paid</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Order Status</span>
+      <span class="status-badge" id="order-status">Confirmed</span>
+    </div>
+    <div class="info-row">
+      <span class="info-label">Estimated Delivery</span>
+      <span class="info-value" id="est-delivery">3–5 Business Days</span>
+    </div>
+
+    <div class="total-row">
+      <span class="label">Amount Paid</span>
+      <span class="amount" id="order-total">₹—</span>
+    </div>
+
+    <div class="btn-group">
+      <a href="orders.html" class="btn btn-outline"><i class="fa-solid fa-bag-shopping"></i> My Orders</a>
+      <a href="shop.html" class="btn btn-primary"><i class="fa-solid fa-store"></i> Continue Shopping</a>
+    </div>
+    <button class="print-btn" onclick="window.print()"><i class="fa-solid fa-print"></i> Print Order Confirmation</button>
+  </div>
+</div>
+
+<script src="app-config.js"></script>
+<script src="app-auth.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', async function() {
+    const params = new URLSearchParams(location.search);
+    const num = params.get('num') || 'HU-XXXXXXXX-XXXX';
+    const id = params.get('id');
+
+    document.getElementById('order-num').textContent = num;
+
+    if (id) {
+      try {
+        const data = await HeelsUpAuth.api('/api/orders/my');
+        const order = (data.orders || []).find(o => o.id == id);
+        if (order) {
+          document.getElementById('order-total').textContent = '₹' + Number(order.totalAmount).toLocaleString('en-IN');
+          document.getElementById('order-status').textContent = order.orderStatus.charAt(0).toUpperCase() + order.orderStatus.slice(1);
+        }
+      } catch(e) {}
+    }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Your Order – HeelsUp</title>
+  <!--
+  ============================================================
+  PAGE: order-tracking.html
+  PURPOSE: Customer ke liye order ka real-time tracking page.
+
+  YE PAGE KYA KAREGA:
+  - Customer apna Order ID ya phone number daalkaar order status track kar sakta hai
+  - Ek visual stepper/timeline dikhega: Placed → Confirmed → Packed → Shipped → Out for Delivery → Delivered
+  - Current step highlight hoga (e.g. "Shipped" pe hai toh woh active hoga)
+  - Courier name, tracking number aur estimated delivery date dikhegi
+  - Map ya courier website ka link bhi de sakte ho (optional)
+  - Orders page (orders.html) se bhi is page par ?id=ORDER_ID ke saath redirect hoga
+
+  URL PATTERN:
+  order-tracking.html?id=ORD-001234
+
+  RELATED PAGES:
+  - orders.html      → Order history, wahan se "Track" button is page pe aata hai
+  - checkout.html    → Order place hone ke baad confirmation ke saath yahan redirect kar sakte ho
+  ============================================================
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Page-specific styles yahan likhna */
+  </style>
+</head>
+<body>
+  <!-- NAVBAR (copy from any existing page) -->
+
+  <main>
+    <!-- TODO: Ye cheezein banani hain:
+      1. Search bar — Order ID ya phone number se track karo
+      2. Order info card — Order date, items, total amount
+      3. Tracking timeline/stepper — Placed > Confirmed > Packed > Shipped > Delivered
+      4. Estimated delivery date
+      5. Courier details (name + tracking number + link)
+    -->
+    <p style="text-align:center; padding: 4rem; font-family: var(--font-body); color: var(--text-muted);">
+      order-tracking.html — Abhi khaali hai, code likhna baaki hai.
+    </p>
+  </main>
+
+  <!-- FOOTER (copy from any existing page) -->
+</body>
+</html>

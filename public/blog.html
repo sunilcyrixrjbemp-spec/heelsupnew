@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Style Blog | HeelsUp – Fashion Tips, Footwear Guides & Trends</title>
+    <meta name="description"
+        content="HeelsUp Style Blog — Ladies footwear fashion tips, styling guides, new trends aur care tips. India ki sabse stylish shoe blog." />
+    <meta name="keywords"
+        content="ladies footwear tips, heels styling guide, women fashion india, shoe care tips, footwear trends 2025, ladies bag styling" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://heelsup.in/blog.html" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Style Blog | HeelsUp" />
+    <meta property="og:description"
+        content="Footwear fashion tips, styling guides aur latest trends. HeelsUp ke saath stay stylish!" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        /* ---- BLOG HERO ---- */
+        .blog-hero {
+            position: relative;
+            height: 480px;
+            overflow: hidden;
+        }
+
+        .blog-hero-bg {
+            position: absolute;
+            inset: 0;
+        }
+
+        .blog-hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .blog-hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(110deg, rgba(13, 13, 13, 0.85) 0%, rgba(13, 13, 13, 0.5) 55%, rgba(13, 13, 13, 0.15) 100%);
+        }
+
+        .blog-hero-content {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+        }
+
+        .blog-hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-primary-light);
+            padding: 6px 16px;
+            border: 1px solid rgba(201, 169, 110, 0.4);
+            border-radius: 100px;
+            background: rgba(201, 169, 110, 0.1);
+            backdrop-filter: blur(8px);
+            margin-bottom: 18px;
+        }
+
+        .blog-hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #fff;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 14px;
+        }
+
+        .blog-hero-title em {
+            color: var(--color-primary-light);
+            font-style: italic;
+        }
+
+        .blog-hero-sub {
+            font-size: 1.05rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 460px;
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        /* ---- BLOG FILTER TABS ---- */
+        .blog-tabs-section {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: var(--navbar-height);
+            z-index: 50;
+        }
+
+        .blog-tabs-inner {
+            display: flex;
+            align-items: center;
+            gap: 0;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .blog-tabs-inner::-webkit-scrollbar {
+            display: none;
+        }
+
+        .blog-tab {
+            padding: 16px 22px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            background: none;
+            border-top: none;
+            border-left: none;
+            border-right: none;
+        }
+
+        .blog-tab:hover {
+            color: var(--color-primary);
+        }
+
+        .blog-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        /* ---- BLOG MAIN LAYOUT ---- */
+        .blog-main {
+            padding: 72px 0;
+            background: var(--bg-page);
+        }
+
+        .blog-layout {
+            display: grid;
+            grid-template-columns: 1fr 320px;
+            gap: 60px;
+            align-items: start;
+        }
+
+        /* ---- FEATURED ARTICLE ---- */
+        .featured-article {
+            background: var(--color-white);
+            border-radius: 24px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 40px;
+            cursor: pointer;
+            transition: box-shadow 0.3s ease, transform 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .featured-article:hover {
+            box-shadow: var(--shadow-xl);
+            transform: translateY(-3px);
+        }
+
+        .featured-article-img {
+            position: relative;
+            height: 340px;
+            overflow: hidden;
+        }
+
+        .featured-article-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.7s ease;
+        }
+
+        .featured-article:hover .featured-article-img img {
+            transform: scale(1.04);
+        }
+
+        .featured-badge {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: var(--color-primary);
+            color: var(--color-dark);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            padding: 5px 12px;
+            border-radius: 100px;
+        }
+
+        .featured-article-body {
+            padding: 36px;
+        }
+
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+
+        .article-category {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            background: var(--color-primary-glow);
+            border: 1px solid var(--color-primary-light);
+            padding: 4px 10px;
+            border-radius: 100px;
+        }
+
+        .article-date {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .article-read-time {
+            font-size: 12px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .featured-article-title {
+            font-family: var(--font-heading);
+            font-size: 1.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.2;
+            margin-bottom: 14px;
+        }
+
+        .featured-article-excerpt {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+        }
+
+        .article-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .author-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--color-primary-glow);
+            border: 2px solid var(--color-primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: var(--color-primary-dark);
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .author-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .author-title {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 1px;
+        }
+
+        .article-read-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--color-primary);
+            margin-left: auto;
+        }
+
+        .article-read-link:hover {
+            gap: 12px;
+        }
+
+        .article-read-link i {
+            transition: transform 0.2s ease;
+        }
+
+        .article-read-link:hover i {
+            transform: translateX(4px);
+        }
+
+        /* ---- ARTICLES GRID ---- */
+        .articles-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .article-card {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+        }
+
+        .article-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .article-card-img {
+            height: 200px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .article-card-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s ease;
+        }
+
+        .article-card:hover .article-card-img img {
+            transform: scale(1.06);
+        }
+
+        .article-card-body {
+            padding: 22px;
+        }
+
+        .article-card-title {
+            font-family: var(--font-heading);
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.3;
+            margin-bottom: 10px;
+        }
+
+        .article-card-excerpt {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .article-card-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* ---- LOAD MORE ---- */
+        .load-more-wrap {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        /* ---- SIDEBAR ---- */
+        .blog-sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+
+        .sidebar-widget {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: 18px;
+            padding: 28px;
+            box-shadow: var(--shadow-xs);
+        }
+
+        .widget-title {
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 14px;
+            border-bottom: 2px solid var(--color-primary-light);
+        }
+
+        /* Popular Posts */
+        .popular-post {
+            display: flex;
+            gap: 14px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            text-decoration: none;
+        }
+
+        .popular-post:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .popular-post-img {
+            width: 70px;
+            height: 80px;
+            border-radius: 10px;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .popular-post-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .popular-post-num {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--color-primary-light);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .popular-post-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            margin-bottom: 4px;
+            transition: color 0.2s ease;
+        }
+
+        .popular-post:hover .popular-post-title {
+            color: var(--color-primary);
+        }
+
+        .popular-post-date {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        /* Categories Widget */
+        .cat-widget-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 4px;
+        }
+
+        .cat-widget-item:hover {
+            background: var(--color-primary-glow);
+            color: var(--color-primary);
+        }
+
+        .cat-widget-count {
+            font-size: 11px;
+            background: var(--color-light-2);
+            border-radius: 100px;
+            padding: 2px 8px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Tags Widget */
+        .tags-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag-chip {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            padding: 5px 12px;
+            border-radius: 100px;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: var(--color-light);
+        }
+
+        .tag-chip:hover {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--color-dark);
+        }
+
+        /* Newsletter Widget */
+        .sidebar-newsletter {
+            background: linear-gradient(135deg, var(--color-dark), #1a1008);
+            border-radius: 18px;
+            padding: 28px;
+            text-align: center;
+        }
+
+        .sidebar-newsletter h3 {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-newsletter h3 em {
+            color: var(--color-primary-light);
+            font-style: italic;
+        }
+
+        .sidebar-newsletter p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 18px;
+        }
+
+        .sidebar-email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .sidebar-email-input {
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 13px;
+        }
+
+        .sidebar-email-input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ---- BLOG CATEGORIES BANNER ---- */
+        .blog-categories-section {
+            padding: 0 0 72px;
+            background: var(--bg-page);
+        }
+
+        .blog-cat-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 14px;
+        }
+
+        .blog-cat-item {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 22px 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .blog-cat-item:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-gold);
+            transform: translateY(-3px);
+        }
+
+        .blog-cat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .blog-cat-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .blog-cat-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 3px;
+        }
+
+        /* Responsive */
+        @media(max-width:1024px) {
+            .blog-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-sidebar {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+
+            .blog-cat-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .blog-hero {
+                height: 360px;
+            }
+
+            .articles-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-sidebar {
+                grid-template-columns: 1fr;
+            }
+
+            .blog-cat-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .featured-article-title {
+                font-size: 1.5rem;
+            }
+
+            .featured-article-body {
+                padding: 24px;
+            }
+        }
+
+        @media(max-width:480px) {
+            .blog-hero {
+                height: 300px;
+            }
+
+            .blog-cat-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .articles-grid {
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- TOPBAR -->
+    <div class="topbar" id="topbar">
+        <div class="topbar-marquee">
+            <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">🚚 FREE Shipping above <strong>₹499</strong></span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">🏷️ Use code <strong>HEELS10</strong> for 10% off</span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">💳 EMI available on orders above <strong>₹1999</strong></span>
+        </div>
+        <button class="topbar-close" id="topbar-close">✕</button>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="navbar-logo">
+                    <span class="navbar-logo-text">Heels<span>Up</span></span>
+                </a>
+                <ul class="navbar-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item">
+                        <a href="shop.html" class="nav-link">Shop <i class="fa-solid fa-chevron-down"
+                                style="font-size:9px;opacity:0.6"></i></a>
+                        <div class="nav-dropdown">
+                            <a href="category.html?cat=heels"><span class="nav-dropdown-icon">👠</span> Heels</a>
+                            <a href="category.html?cat=flats"><span class="nav-dropdown-icon">🥿</span> Flats</a>
+                            <a href="category.html?cat=sandals"><span class="nav-dropdown-icon">👡</span> Sandals</a>
+                            <a href="category.html?cat=wedges"><span class="nav-dropdown-icon">👢</span> Wedges</a>
+                            <a href="category.html?cat=bags"><span class="nav-dropdown-icon">👜</span> Bags</a>
+                            <a href="category.html?cat=clutches"><span class="nav-dropdown-icon">👝</span> Clutches</a>
+                        </div>
+                    </li>
+                    <li class="nav-item"><a href="category.html?cat=new" class="nav-link">New Arrivals</a></li>
+                    <li class="nav-item"><a href="category.html?cat=sale" class="nav-link"
+                            style="color:var(--color-accent)"><i class="fa-solid fa-fire" style="font-size:0.8rem"></i>
+                            Sale</a></li>
+                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
+                    <li class="nav-item"><a href="blog.html" class="nav-link active">Blog</a></li>
+                </ul>
+                <div class="navbar-actions">
+                    <button class="nav-icon-btn" id="search-toggle-btn"><i
+                            class="fa-solid fa-magnifying-glass"></i></button>
+                    <a href="wishlist.html" class="nav-icon-btn"><i class="fa-regular fa-heart"></i></a>
+                    <a href="profile.html" class="nav-icon-btn"><i class="fa-regular fa-user"></i></a>
+                    <button class="nav-icon-btn" id="cart-open-btn"><i class="fa-solid fa-bag-shopping"></i><span
+                            class="nav-badge" id="cart-count">0</span></button>
+                    <button class="navbar-hamburger" id="hamburger-btn"><span class="hamburger-line"></span><span
+                            class="hamburger-line"></span><span class="hamburger-line"></span></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
+        <div class="mobile-menu-panel">
+            <div class="mobile-menu-header">
+                <span class="navbar-logo-text">Heels<span style="color:var(--color-primary)">Up</span></span>
+                <button id="mobile-menu-close"
+                    style="font-size:1.3rem;color:var(--text-muted);cursor:pointer;background:none;border:none">✕</button>
+            </div>
+            <div class="mobile-menu-body">
+                <a href="index.html">🏠 Home</a>
+                <a href="shop.html">🛍️ Shop All</a>
+                <a href="category.html?cat=heels">👠 Heels</a>
+                <a href="category.html?cat=flats">🥿 Flats</a>
+                <a href="category.html?cat=sandals">👡 Sandals</a>
+                <a href="category.html?cat=bags">👜 Bags</a>
+                <a href="category.html?cat=new">✨ New Arrivals</a>
+                <a href="category.html?cat=sale" style="color:var(--color-accent)">🔥 Sale</a>
+                <a href="blog.html" style="color:var(--color-primary)">📝 Style Blog</a>
+                <a href="about.html">📄 About Us</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- SEARCH OVERLAY -->
+    <div class="search-overlay" id="search-overlay">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="search-input" placeholder="Search articles, tips, trends…"
+                autocomplete="off" />
+            <button class="search-close" id="search-close-btn">✕</button>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="blog-hero">
+        <div class="blog-hero-bg">
+            <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1600&q=80&auto=format&fit=crop"
+                alt="HeelsUp Style Blog" loading="eager" fetchpriority="high" />
+        </div>
+        <div class="blog-hero-overlay"></div>
+        <div class="blog-hero-content">
+            <div class="container">
+                <div class="blog-hero-tag"><i class="fa-solid fa-pen-nib" style="font-size:0.65rem"></i> Style Blog by
+                    HeelsUp</div>
+                <h1 class="blog-hero-title">Fashion <em>Tips,</em> Trends<br />& Style Stories</h1>
+                <p class="blog-hero-sub">Footwear care se styling secrets tak — sab kuch yahan milega. Inspired raho,
+                    stylish raho.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- BREADCRUMB + TABS -->
+    <div class="blog-tabs-section">
+        <div class="container">
+            <div class="blog-tabs-inner">
+                <button class="blog-tab active" data-cat="all">All Posts</button>
+                <button class="blog-tab" data-cat="styling">Styling Tips</button>
+                <button class="blog-tab" data-cat="trends">Trends</button>
+                <button class="blog-tab" data-cat="care">Shoe Care</button>
+                <button class="blog-tab" data-cat="occasions">Occasions</button>
+                <button class="blog-tab" data-cat="bags">Bags & Accessories</button>
+                <button class="blog-tab" data-cat="festive">Festive Fashion</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BLOG MAIN -->
+    <section class="blog-main">
+        <div class="container">
+            <div class="blog-layout">
+
+                <!-- ARTICLES COLUMN -->
+                <div>
+
+                    <!-- FEATURED ARTICLE -->
+                    <a href="#" class="featured-article reveal" onclick="return false;">
+                        <div class="featured-article-img">
+                            <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=900&q=80&auto=format&fit=crop"
+                                alt="How to style block heels" loading="lazy" />
+                            <span class="featured-badge">⭐ Featured</span>
+                        </div>
+                        <div class="featured-article-body">
+                            <div class="article-meta">
+                                <span class="article-category">Styling Tips</span>
+                                <span class="article-date">15 Jan 2025</span>
+                                <span class="article-read-time"><i class="fa-regular fa-clock"></i> 5 min read</span>
+                            </div>
+                            <h2 class="featured-article-title">Block Heels Ko 5 Alag Looks Ke Saath Kaise Style Karein —
+                                Office Se Party Tak</h2>
+                            <p class="featured-article-excerpt">Block heels ek versatile footwear choice hai jo almost
+                                har occasion ke liye perfect hai. Office meetings se shuru hokar weekend parties tak —
+                                is guide mein hum batayenge ki in heels ko kaise style karo ki hamesha perfect lago.
+                                Saath mein best color combinations aur outfit pairing tips bhi honge.</p>
+                            <div class="article-author" style="justify-content:space-between">
+                                <div style="display:flex;align-items:center;gap:12px">
+                                    <div class="author-avatar">P</div>
+                                    <div>
+                                        <div class="author-name">Priya Kapoor</div>
+                                        <div class="author-title">Style Editor, HeelsUp</div>
+                                    </div>
+                                </div>
+                                <span class="article-read-link">Read Article <i
+                                        class="fa-solid fa-arrow-right"></i></span>
+                            </div>
+                        </div>
+                    </a>
+
+                    <!-- SECTION TITLE -->
+                    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:24px">
+                        <h3
+                            style="font-family:var(--font-heading);font-size:1.3rem;font-weight:600;color:var(--text-primary)">
+                            Latest Articles</h3>
+                        <span style="font-size:12px;color:var(--text-muted)">12 articles</span>
+                    </div>
+
+                    <!-- ARTICLES GRID -->
+                    <div class="articles-grid reveal" id="articles-grid">
+                        <!-- Populated by JS -->
+                    </div>
+
+                    <!-- LOAD MORE -->
+                    <div class="load-more-wrap reveal">
+                        <button class="btn btn-secondary btn-lg" id="load-more-btn">
+                            <i class="fa-solid fa-refresh"></i> Load More Articles
+                        </button>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR -->
+                <aside class="blog-sidebar">
+
+                    <!-- Search -->
+                    <div class="sidebar-widget">
+                        <div class="widget-title">Search Articles</div>
+                        <div style="position:relative">
+                            <input type="text" placeholder="Search tips, trends…" class="form-input"
+                                style="padding-right:44px" />
+                            <button
+                                style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--color-primary);font-size:1rem;background:none;border:none;cursor:pointer">
+                                <i class="fa-solid fa-magnifying-glass"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Popular Posts -->
+                    <div class="sidebar-widget">
+                        <div class="widget-title">Popular Posts</div>
+                        <a href="#" class="popular-post" onclick="return false;">
+                            <div class="popular-post-img">
+                                <img src="https://images.unsplash.com/photo-1522163182402-834f871fd851?w=200&q=70&auto=format&fit=crop"
+                                    alt="Popular post" loading="lazy" />
+                            </div>
+                            <div>
+                                <div class="popular-post-num">01</div>
+                                <div class="popular-post-title">Sandals Ki Care Kaise Karein — Monsoon Guide</div>
+                                <div class="popular-post-date">12 Jan 2025</div>
+                            </div>
+                        </a>
+                        <a href="#" class="popular-post" onclick="return false;">
+                            <div class="popular-post-img">
+                                <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=200&q=70&auto=format&fit=crop"
+                                    alt="Popular post" loading="lazy" />
+                            </div>
+                            <div>
+                                <div class="popular-post-num">02</div>
+                                <div class="popular-post-title">Best Bags for Office-Going Women in 2025</div>
+                                <div class="popular-post-date">8 Jan 2025</div>
+                            </div>
+                        </a>
+                        <a href="#" class="popular-post" onclick="return false;">
+                            <div class="popular-post-img">
+                                <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=200&q=70&auto=format&fit=crop"
+                                    alt="Popular post" loading="lazy" />
+                            </div>
+                            <div>
+                                <div class="popular-post-num">03</div>
+                                <div class="popular-post-title">Saree Ke Saath Kaun Si Heels Acchi Lagti Hain?</div>
+                                <div class="popular-post-date">3 Jan 2025</div>
+                            </div>
+                        </a>
+                        <a href="#" class="popular-post" onclick="return false;">
+                            <div class="popular-post-img">
+                                <img src="https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=200&q=70&auto=format&fit=crop"
+                                    alt="Popular post" loading="lazy" />
+                            </div>
+                            <div>
+                                <div class="popular-post-num">04</div>
+                                <div class="popular-post-title">Wedge Heels vs Block Heels — Kaun Better Hai?</div>
+                                <div class="popular-post-date">28 Dec 2024</div>
+                            </div>
+                        </a>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="sidebar-widget">
+                        <div class="widget-title">Browse Categories</div>
+                        <div class="cat-widget-item"><span>👠 Styling Tips</span><span class="cat-widget-count">8</span>
+                        </div>
+                        <div class="cat-widget-item"><span>✨ Trends 2025</span><span class="cat-widget-count">5</span>
+                        </div>
+                        <div class="cat-widget-item"><span>🧹 Shoe Care</span><span class="cat-widget-count">4</span>
+                        </div>
+                        <div class="cat-widget-item"><span>🎉 Occasions</span><span class="cat-widget-count">6</span>
+                        </div>
+                        <div class="cat-widget-item"><span>👜 Bags & Acc.</span><span class="cat-widget-count">3</span>
+                        </div>
+                        <div class="cat-widget-item"><span>🪔 Festive</span><span class="cat-widget-count">4</span>
+                        </div>
+                    </div>
+
+                    <!-- Tags -->
+                    <div class="sidebar-widget">
+                        <div class="widget-title">Popular Tags</div>
+                        <div class="tags-cloud">
+                            <span class="tag-chip">#BlockHeels</span>
+                            <span class="tag-chip">#SummerStyle</span>
+                            <span class="tag-chip">#WeddingSeason</span>
+                            <span class="tag-chip">#Flats</span>
+                            <span class="tag-chip">#ToteBag</span>
+                            <span class="tag-chip">#OfficeWear</span>
+                            <span class="tag-chip">#Jodhpur</span>
+                            <span class="tag-chip">#Rajasthan</span>
+                            <span class="tag-chip">#ShoeCare</span>
+                            <span class="tag-chip">#FestiveWear</span>
+                            <span class="tag-chip">#Sandals</span>
+                            <span class="tag-chip">#Monsoon</span>
+                        </div>
+                    </div>
+
+                    <!-- Newsletter -->
+                    <div class="sidebar-newsletter">
+                        <h3>Style Updates <em>Weekly</em></h3>
+                        <p>Subscribe karo aur pao fashion tips seedha inbox mein — free!</p>
+                        <div class="sidebar-email-form">
+                            <input type="email" placeholder="Your email…" class="sidebar-email-input"
+                                id="sidebar-email" />
+                            <button class="btn btn-primary btn-full" onclick="subscribeSidebar()">
+                                <i class="fa-solid fa-paper-plane"></i> Subscribe Free
+                            </button>
+                        </div>
+                        <p style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:12px;margin-bottom:0">No spam.
+                            Unsubscribe anytime.</p>
+                    </div>
+
+                    <!-- Shop CTA -->
+                    <div
+                        style="background:linear-gradient(135deg,var(--color-primary-glow),var(--color-light));border:1px solid var(--color-primary-light);border-radius:18px;padding:28px;text-align:center">
+                        <div style="font-size:2.5rem;margin-bottom:12px">👠</div>
+                        <h4
+                            style="font-family:var(--font-heading);font-size:1.1rem;margin-bottom:8px;color:var(--text-primary)">
+                            Shop New Arrivals</h4>
+                        <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px">Blog padhke inspire ho
+                            gaye? Ab collection dekho!</p>
+                        <a href="category.html?cat=new" class="btn btn-primary btn-full" style="font-size:11px">Shop Now
+                            <i class="fa-solid fa-arrow-right"></i></a>
+                    </div>
+
+                </aside>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOG CATEGORIES QUICK LINKS -->
+    <section class="blog-categories-section">
+        <div class="container">
+            <div class="section-header reveal">
+                <span class="section-label">Explore</span>
+                <h2>Browse By <em style="font-family:var(--font-display);font-style:italic;font-weight:400">Topic</em>
+                </h2>
+            </div>
+            <div class="blog-cat-grid reveal">
+                <div class="blog-cat-item">
+                    <div class="blog-cat-icon">👠</div>
+                    <div class="blog-cat-name">Styling Tips</div>
+                    <div class="blog-cat-count">8 articles</div>
+                </div>
+                <div class="blog-cat-item">
+                    <div class="blog-cat-icon">✨</div>
+                    <div class="blog-cat-name">Trends</div>
+                    <div class="blog-cat-count">5 articles</div>
+                </div>
+                <div class="blog-cat-item">
+                    <div class="blog-cat-icon">🧹</div>
+                    <div class="blog-cat-name">Shoe Care</div>
+                    <div class="blog-cat-count">4 articles</div>
+                </div>
+                <div class="blog-cat-item">
+                    <div class="blog-cat-icon">🎉</div>
+                    <div class="blog-cat-name">Occasions</div>
+                    <div class="blog-cat-count">6 articles</div>
+                </div>
+                <div class="blog-cat-item">
+                    <div class="blog-cat-icon">🪔</div>
+                    <div class="blog-cat-name">Festive</div>
+                    <div class="blog-cat-count">4 articles</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top grid grid-4">
+                <div>
+                    <div style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:12px">
+                        Heels<span style="color:var(--color-primary)">Up</span></div>
+                    <p class="footer-tagline">Jodhpur se India tak — stylish ladies footwear & bags ka sabse trusted
+                        naam.</p>
+                    <div class="footer-social">
+                        <a href="https://instagram.com/heelsup.in" class="footer-social-link"><i
+                                class="fa-brands fa-instagram"></i></a>
+                        <a href="https://facebook.com/heelsup.in" class="footer-social-link"><i
+                                class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://wa.me/919xxxxxxxxx" class="footer-social-link"><i
+                                class="fa-brands fa-whatsapp"></i></a>
+                        <a href="https://pinterest.com/heelsup" class="footer-social-link"><i
+                                class="fa-brands fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="footer-col-title">Quick Links</div>
+                    <ul class="footer-links">
+                        <li><a href="shop.html" class="footer-link">Shop All</a></li>
+                        <li><a href="category.html?cat=new" class="footer-link">New Arrivals</a></li>
+                        <li><a href="category.html?cat=sale" class="footer-link">Sale</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="blog.html" class="footer-link">Style Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">Categories</div>
+                    <ul class="footer-links">
+                        <li><a href="category.html?cat=heels" class="footer-link">👠 Heels</a></li>
+                        <li><a href="category.html?cat=flats" class="footer-link">🥿 Flats</a></li>
+                        <li><a href="category.html?cat=sandals" class="footer-link">👡 Sandals</a></li>
+                        <li><a href="category.html?cat=bags" class="footer-link">👜 Bags</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">Help & Support</div>
+                    <ul class="footer-links">
+                        <li><a href="policy/returns.html" class="footer-link">Return Policy</a></li>
+                        <li><a href="policy/privacy.html" class="footer-link">Privacy Policy</a></li>
+                        <li><a href="policy/terms.html" class="footer-link">Terms & Conditions</a></li>
+                        <li><a href="faq.html" class="footer-link">FAQs</a></li>
+                    </ul>
+                    <div style="margin-top:20px">
+                        <a href="https://wa.me/919xxxxxxxxx" class="footer-link"><i class="fa-brands fa-whatsapp"
+                                style="color:var(--color-primary)"></i> +91 9XXXXXXXXX</a>
+                        <a href="mailto:hello@heelsup.in" class="footer-link" style="margin-top:8px"><i
+                                class="fa-solid fa-envelope" style="color:var(--color-primary)"></i>
+                            hello@heelsup.in</a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 HeelsUp. All rights reserved. Made with ❤️ in Jodhpur, Rajasthan.</p>
+                <div class="footer-bottom-links">
+                    <a href="policy/privacy.html">Privacy</a>
+                    <a href="policy/terms.html">Terms</a>
+                    <a href="policy/returns.html">Returns</a>
+                    <a href="sitemap.xml">Sitemap</a>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:rgba(255,255,255,0.3)">
+                    <span>We Accept:</span>
+                    <span style="color:var(--color-primary-light);font-weight:600;font-size:12px">UPI · Cards · COD ·
+                        EMI</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART DRAWER -->
+    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <div style="display:flex;align-items:center;gap:12px">
+                <h3>My Cart</h3><span class="cart-count-badge" id="cart-drawer-count">0 items</span>
+            </div>
+            <button class="cart-close-btn" id="cart-close-btn">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cart-body">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛍️</div>
+                <div class="cart-empty-text">Your cart is empty</div>
+                <p style="font-size:13px;color:var(--text-muted)">Add some amazing products to get started!</p>
+                <a href="shop.html" class="btn btn-primary" style="margin-top:12px">Shop Now</a>
+            </div>
+        </div>
+        <div class="cart-drawer-footer" id="cart-footer" style="display:none">
+            <div class="cart-summary-row"><span>Subtotal</span><span id="cart-subtotal">₹0</span></div>
+            <div class="cart-summary-row"><span>Shipping</span><span style="color:var(--color-success)">Free</span>
+            </div>
+            <div class="cart-summary-row cart-summary-total"><span>Total</span><span id="cart-total">₹0</span></div>
+            <a href="checkout.html" class="btn btn-primary btn-full" style="margin-top:14px"><i
+                    class="fa-solid fa-lock"></i> Checkout</a>
+        </div>
+    </aside>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <a href="https://wa.me/919xxxxxxxxx" target="_blank"
+        style="position:fixed;bottom:28px;right:28px;z-index:500;width:56px;height:56px;border-radius:50%;background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5rem;box-shadow:0 8px 24px rgba(37,211,102,0.4);text-decoration:none">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <button class="scroll-top-btn" id="scroll-top"><i class="fa-solid fa-chevron-up"></i></button>
+
+    <script>
+        // Blog articles data
+        const BLOG_ARTICLES = [
+            {
+                id: 1, title: "Summer 2025 Mein Kaun Se Sandals Trend Ho Rahe Hain?",
+                category: "Trends", date: "10 Jan 2025", readTime: "4 min",
+                img: "https://images.unsplash.com/photo-1522163182402-834f871fd851?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Is summer ke top sandal trends jo har woman ko apni wardrobe mein add karne chahiye…",
+                tag: "trends"
+            },
+            {
+                id: 2, title: "Heels Mein Poora Din Comfortable Rehne Ke 7 Secret Tips",
+                category: "Styling Tips", date: "8 Jan 2025", readTime: "6 min",
+                img: "https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Office mein 9 ghante heels pehne ke baad bhi comfortable rehna chahti ho? Ye tips try karo…",
+                tag: "styling"
+            },
+            {
+                id: 3, title: "Leather Bags Ki Care Kaise Karein — Detailed Guide",
+                category: "Bag Care", date: "5 Jan 2025", readTime: "5 min",
+                img: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Apni premium leather bag ki life badhaani hai? Ye simple care tips regularly follow karo…",
+                tag: "bags"
+            },
+            {
+                id: 4, title: "Dulhan Ke Liye Perfect Bridal Footwear — Wedding Guide",
+                category: "Occasions", date: "2 Jan 2025", readTime: "7 min",
+                img: "https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Shaadi ke sabse important din ke liye perfect heels choose karna ek art hai. Yeh guide help karegi…",
+                tag: "occasions"
+            },
+            {
+                id: 5, title: "Monsoon Mein Footwear Care — Baarish Se Kaise Bachayein?",
+                category: "Shoe Care", date: "28 Dec 2024", readTime: "5 min",
+                img: "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Monsoon season mein apni favourite shoes protect karne ke best tips aur tricks…",
+                tag: "care"
+            },
+            {
+                id: 6, title: "Kolhapuri Chappals — Rajasthan Ki Heritage Footwear Ka Jadoo",
+                category: "Styling Tips", date: "24 Dec 2024", readTime: "4 min",
+                img: "https://images.unsplash.com/photo-1554141220-83411835a60b?w=600&q=75&auto=format&fit=crop",
+                excerpt: "Kolhapuri chappals sirf footwear nahi, ek cultural heritage hai. In ko modern look ke saath kaise pair karein…",
+                tag: "styling"
+            },
+        ];
+
+        let page = 1;
+        let currentFilter = 'all';
+        const ARTICLES_PER_PAGE = 6;
+
+        function makeArticleCard(article) {
+            return `
+            <a href="#" class="article-card" onclick="return false;">
+                <div class="article-card-img">
+                    <img src="${article.img}" alt="${article.title}" loading="lazy" />
+                </div>
+                <div class="article-card-body">
+                    <div class="article-meta" style="margin-bottom:12px">
+                        <span class="article-category">${article.category}</span>
+                        <span class="article-read-time" style="font-size:11px;color:var(--text-muted)"><i class="fa-regular fa-clock"></i> ${article.readTime}</span>
+                    </div>
+                    <h3 class="article-card-title">${article.title}</h3>
+                    <p class="article-card-excerpt">${article.excerpt}</p>
+                    <div class="article-card-footer">
+                        <span style="font-size:11px;color:var(--text-muted)">${article.date}</span>
+                        <span class="article-read-link" style="font-size:11px">Read <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </a>`;
+        }
+
+        function renderArticles(filter = 'all', reset = false) {
+            const grid = document.getElementById('articles-grid');
+            let filtered = filter === 'all' ? BLOG_ARTICLES : BLOG_ARTICLES.filter(a => a.tag === filter);
+            if (reset) { grid.innerHTML = ''; page = 1; }
+            const start = (page - 1) * ARTICLES_PER_PAGE;
+            const slice = filtered.slice(0, Math.min(start + ARTICLES_PER_PAGE, filtered.length));
+            grid.innerHTML = slice.map(makeArticleCard).join('');
+            document.getElementById('load-more-btn').style.display = filtered.length > slice.length ? 'inline-flex' : 'none';
+        }
+
+        // Blog tabs
+        document.querySelectorAll('.blog-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.blog-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.cat;
+                renderArticles(currentFilter, true);
+            });
+        });
+
+        document.getElementById('load-more-btn').addEventListener('click', () => {
+            page++;
+            renderArticles(currentFilter);
+        });
+
+        // Sidebar newsletter
+        window.subscribeSidebar = function () {
+            const email = document.getElementById('sidebar-email').value.trim();
+            if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showToast('error', 'Invalid Email', 'Valid email enter karo.');
+                return;
+            }
+            document.getElementById('sidebar-email').value = '';
+            showToast('success', '🎉 Subscribed!', 'Weekly style updates ab aayengi aapke inbox mein!');
+        };
+
+        // Navbar
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+            document.getElementById('scroll-top').classList.toggle('visible', window.scrollY > 400);
+        });
+        document.getElementById('topbar-close')?.addEventListener('click', () => {
+            const tb = document.getElementById('topbar'); tb.style.height = '0'; tb.style.overflow = 'hidden'; tb.style.padding = '0';
+        });
+        const hamburger = document.getElementById('hamburger-btn'), mobileMenu = document.getElementById('mobile-menu');
+        hamburger?.addEventListener('click', () => { hamburger.classList.toggle('open'); mobileMenu.classList.toggle('open'); document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : ''; });
+        document.getElementById('mobile-backdrop')?.addEventListener('click', () => { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); document.body.style.overflow = ''; });
+        document.getElementById('mobile-menu-close')?.addEventListener('click', () => { hamburger.classList.remove('open'); mobileMenu.classList.remove('open'); document.body.style.overflow = ''; });
+
+        // Search
+        const searchOverlay = document.getElementById('search-overlay'), searchInput = document.getElementById('search-input');
+        document.getElementById('search-toggle-btn')?.addEventListener('click', () => { searchOverlay.classList.add('open'); document.body.style.overflow = 'hidden'; setTimeout(() => searchInput.focus(), 300); });
+        document.getElementById('search-close-btn')?.addEventListener('click', () => { searchOverlay.classList.remove('open'); document.body.style.overflow = ''; searchInput.value = ''; });
+
+        // Cart
+        document.getElementById('cart-open-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open'); document.body.style.overflow = 'hidden'; });
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); document.body.style.overflow = ''; });
+        document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); document.body.style.overflow = ''; });
+        document.getElementById('scroll-top')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+        // Scroll reveal
+        const observer = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); observer.unobserve(e.target); } }), { threshold: 0.1 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Toast
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
+            container.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid ${icons[type] || icons.info} toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${message}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button></div>`);
+            setTimeout(() => document.getElementById(id)?.remove(), 4000);
+        }
+
+        // Cart count
+        const cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
+        document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+        document.getElementById('cart-drawer-count').textContent = cart.reduce((s, i) => s + i.qty, 0) + ' items';
+
+        // Init
+        renderArticles();
+    </script>
+</body>
+
+</html>

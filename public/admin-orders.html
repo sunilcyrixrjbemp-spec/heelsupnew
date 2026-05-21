@@ -1,0 +1,950 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Orders</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Order Specific Styles */
+        .order-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .order-tabs-wrapper {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            padding: 0 var(--space-6);
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: none;
+            border-bottom: none;
+        }
+
+        .order-tab-btn {
+            padding: var(--space-4) var(--space-5);
+            font-size: var(--text-sm);
+            font-weight: var(--font-semibold);
+            color: var(--text-muted);
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .order-tab-btn:hover {
+            color: var(--color-primary-dark);
+        }
+
+        .order-tab-btn.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        .order-tab-badge {
+            background: var(--color-light-3);
+            color: var(--text-secondary);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: var(--radius-pill);
+        }
+
+        .order-tab-btn.active .order-tab-badge {
+            background: var(--color-primary-glow);
+            color: var(--color-primary-dark);
+        }
+
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-light);
+            padding: var(--space-3) var(--space-6);
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: var(--space-4);
+        }
+
+        .filter-select {
+            padding: 6px 30px 6px 12px;
+            font-size: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--color-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238c8580'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 6px center / 14px;
+            appearance: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .badge-channel {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .badge-channel.online {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-channel.offline {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .badge-channel.social {
+            background: #fce7f3;
+            color: #be185d;
+        }
+
+        .payment-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .payment-status.paid {
+            color: var(--color-success);
+        }
+
+        .payment-status.unpaid {
+            color: var(--color-error);
+        }
+
+        .payment-status.refunded {
+            color: var(--text-muted);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+            background: var(--color-light);
+        }
+
+        .order-detail-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-5);
+        }
+
+        .order-card {
+            background: var(--color-white);
+            border-radius: var(--radius-md);
+            padding: var(--space-5);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xs);
+            margin-bottom: var(--space-4);
+        }
+
+        .order-card-title {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: var(--space-3);
+            margin-bottom: var(--space-3);
+            color: var(--text-secondary);
+        }
+
+        .order-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3);
+        }
+
+        .order-item-row {
+            display: flex;
+            gap: var(--space-3);
+            align-items: center;
+            padding-bottom: var(--space-3);
+            border-bottom: 1px solid var(--border-color-dark);
+        }
+
+        .order-item-row:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .order-item-img {
+            width: 50px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: var(--text-sm);
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .summary-row.total {
+            font-size: var(--text-base);
+            font-weight: 700;
+            color: var(--text-primary);
+            border-top: 1px solid var(--border-color);
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .customer-info-p {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
+                        <span class="admin-nav-badge">12</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar mobile overlay -->
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Orders</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search by Order ID, Customer, or Phone..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="admin-notif-btn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="admin-notif-dot"></span>
+                    </button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Order Management</h2>
+                        <p>Process orders, manage fulfillment, and track payments.</p>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3); flex-wrap:wrap;">
+                        <button class="btn btn-white"><i class="fa-solid fa-download"></i> Export CSV</button>
+                        <button class="btn btn-primary"
+                            onclick="showToast('info', 'Create Order', 'Draft order functionality opening soon.')">
+                            <i class="fa-solid fa-plus"></i> Create Order
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="order-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Orders (30D)</div>
+                            <div class="stat-value">1,284</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-bag-shopping"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Unfulfilled</div>
+                            <div class="stat-value text-warning">48</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-orange"><i class="fa-solid fa-box-open"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Unpaid</div>
+                            <div class="stat-value text-error">12</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-red"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Returns / Refunds</div>
+                            <div class="stat-value text-muted">34</div>
+                        </div>
+                        <div class="stat-card-icon"
+                            style="background:var(--color-light-3); color:var(--text-secondary);"><i
+                                class="fa-solid fa-rotate-left"></i></div>
+                    </div>
+                </div>
+
+                <!-- Tabs & Filters -->
+                <div class="order-tabs-wrapper">
+                    <div class="order-tab-btn active">All Orders</div>
+                    <div class="order-tab-btn">Unfulfilled <span class="order-tab-badge">48</span></div>
+                    <div class="order-tab-btn">Unpaid <span class="order-tab-badge">12</span></div>
+                    <div class="order-tab-btn">Completed</div>
+                    <div class="order-tab-btn">Returns</div>
+                </div>
+                <div class="adv-filter-bar">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select class="filter-select">
+                            <option>Payment Status</option>
+                            <option>Paid</option>
+                            <option>Pending</option>
+                            <option>Refunded</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Fulfillment</option>
+                            <option>Unfulfilled</option>
+                            <option>Processing</option>
+                            <option>Shipped</option>
+                            <option>Delivered</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Channel</option>
+                            <option>Online Store</option>
+                            <option>Offline POS</option>
+                            <option>Instagram / Social</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-white btn-sm"><i class="fa-solid fa-filter-circle-xmark"></i>
+                            Clear</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="admin-table-wrap"
+                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="table-checkbox" id="selectAllOrders" /></th>
+                                    <th class="sortable sorted">Order <i class="fa-solid fa-arrow-down sort-icon"></i>
+                                    </th>
+                                    <th>Date</th>
+                                    <th>Customer</th>
+                                    <th>Channel</th>
+                                    <th class="sortable">Total</th>
+                                    <th>Payment</th>
+                                    <th>Fulfillment</th>
+                                    <th>Items</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Order 1 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span style="font-weight:700; color:var(--color-primary); cursor:pointer;"
+                                            onclick="openOrderModal('#ORD-1042')">#ORD-1042</span></td>
+                                    <td>
+                                        <div class="admin-table-name">07 May 2026</div>
+                                        <div class="admin-table-sub">10:24 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Priya Sharma</div>
+                                        <div class="admin-table-sub">Jodhpur, RJ</div>
+                                    </td>
+                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,798</div>
+                                    </td>
+                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
+                                            Paid</span></td>
+                                    <td><span class="status-badge status-pending">Unfulfilled</span></td>
+                                    <td>2 items</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"
+                                                onclick="openOrderModal('#ORD-1042')"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="btn btn-primary btn-xs"
+                                                style="padding:4px 8px; border-radius:4px;">Fulfill</button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Order 2 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span
+                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1041</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">07 May 2026</div>
+                                        <div class="admin-table-sub">09:55 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Sneha Patel</div>
+                                        <div class="admin-table-sub">Jaipur, RJ</div>
+                                    </td>
+                                    <td><span class="badge-channel offline"><i class="fa-solid fa-store"></i> POS</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,299</div>
+                                    </td>
+                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
+                                            Paid</span></td>
+                                    <td><span class="status-badge status-delivered">Fulfilled</span></td>
+                                    <td>1 item</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Print Invoice"><i
+                                                    class="fa-solid fa-print"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Order 3 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span
+                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1040</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">07 May 2026</div>
+                                        <div class="admin-table-sub">08:10 AM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Ritu Agarwal</div>
+                                        <div class="admin-table-sub">Delhi, DL</div>
+                                    </td>
+                                    <td><span class="badge-channel social"><i class="fa-brands fa-instagram"></i>
+                                            IG</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹2,496</div>
+                                    </td>
+                                    <td><span class="payment-status unpaid"><i class="fa-regular fa-clock"></i> Pending
+                                            (COD)</span></td>
+                                    <td><span class="status-badge status-shipped">Shipped</span></td>
+                                    <td>3 items</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Mark Paid"><i
+                                                    class="fa-solid fa-indian-rupee-sign"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Order 4 -->
+                                <tr style="background:var(--color-error-light); opacity:0.9;">
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span
+                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1039</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">06 May 2026</div>
+                                        <div class="admin-table-sub">11:30 PM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Anita Mehra</div>
+                                        <div class="admin-table-sub">Udaipur, RJ</div>
+                                    </td>
+                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹799</div>
+                                    </td>
+                                    <td><span class="payment-status refunded"><i
+                                                class="fa-solid fa-arrow-rotate-left"></i> Refunded</span></td>
+                                    <td><span class="status-badge status-cancelled">Cancelled</span></td>
+                                    <td>1 item</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Order 5 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span
+                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1038</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">06 May 2026</div>
+                                        <div class="admin-table-sub">06:20 PM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Kavya Singh</div>
+                                        <div class="admin-table-sub">Mumbai, MH</div>
+                                    </td>
+                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,698</div>
+                                    </td>
+                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
+                                            Paid</span></td>
+                                    <td><span class="status-badge status-delivered">Delivered</span></td>
+                                    <td>2 items</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Print Invoice"><i
+                                                    class="fa-solid fa-print"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Order 6 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td><span
+                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1037</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">06 May 2026</div>
+                                        <div class="admin-table-sub">02:15 PM</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Meera Gupta</div>
+                                        <div class="admin-table-sub">Ahmedabad, GJ</div>
+                                    </td>
+                                    <td><span class="badge-channel social"><i class="fa-brands fa-whatsapp"></i>
+                                            WA</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹649</div>
+                                    </td>
+                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
+                                            Paid</span></td>
+                                    <td><span class="status-badge status-processing">Processing</span></td>
+                                    <td>1 item</td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Details"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Print Label"><i
+                                                    class="fa-solid fa-tag"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-table-footer">
+                        <div class="table-page-info">Showing <strong>1–6</strong> of <strong>1,284</strong> orders</div>
+                        <div class="pagination" style="margin:0">
+                            <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"
+                                    style="font-size:10px"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <span class="page-ellipsis">…</span>
+                            <button class="page-btn">214</button>
+                            <button class="page-btn"><i class="fa-solid fa-chevron-right"
+                                    style="font-size:10px"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Order Quick View -->
+    <div class="modal-overlay" id="modal-order-view">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title"><span id="modal-order-id">#ORD-1042</span> <span class="badge-channel online"
+                        style="font-size:11px;"><i class="fa-solid fa-globe"></i> Web Store</span></div>
+                <button class="modal-close" onclick="closeModal('modal-order-view')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div style="display:flex; justify-content:space-between; margin-bottom:var(--space-5);">
+                    <div>
+                        <div style="font-size:var(--text-sm); color:var(--text-muted);">May 7, 2026 at 10:24 AM</div>
+                        <div style="display:flex; gap:10px; margin-top:8px;">
+                            <span class="payment-status paid"><i class="fa-solid fa-circle-check"></i> Paid</span>
+                            <span class="status-badge status-pending">Unfulfilled</span>
+                        </div>
+                    </div>
+                    <div style="text-align:right;">
+                        <button class="btn btn-primary btn-sm">Fulfill Order</button>
+                        <button class="btn btn-white btn-sm" style="margin-left:5px;"><i
+                                class="fa-solid fa-ellipsis-vertical"></i></button>
+                    </div>
+                </div>
+
+                <div class="order-detail-grid">
+                    <!-- Left Col -->
+                    <div>
+                        <div class="order-card">
+                            <div class="order-card-title">Order Items (2)</div>
+                            <div class="order-item-list">
+                                <div class="order-item-row">
+                                    <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=100&q=80&auto=format&fit=crop"
+                                        class="order-item-img" alt="">
+                                    <div style="flex:1;">
+                                        <div style="font-weight:600; font-size:var(--text-sm);">Stiletto Block Heel
+                                            Pumps</div>
+                                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Size: 38 |
+                                            Black | SKU: HU-HLS-042-38B</div>
+                                        <div style="font-size:var(--text-sm); font-weight:600; margin-top:4px;">₹899 × 1
+                                        </div>
+                                    </div>
+                                    <div style="font-weight:700;">₹899</div>
+                                </div>
+                                <div class="order-item-row">
+                                    <img src="https://images.unsplash.com/photo-1554141220-83411835a60b?w=100&q=80&auto=format&fit=crop"
+                                        class="order-item-img" alt="">
+                                    <div style="flex:1;">
+                                        <div style="font-weight:600; font-size:var(--text-sm);">Mini Sling Crossbody Bag
+                                        </div>
+                                        <div style="font-size:11px; color:var(--text-muted); margin-top:2px;">Size: OS |
+                                            Black | SKU: HU-BAG-031-BLK</div>
+                                        <div style="font-size:var(--text-sm); font-weight:600; margin-top:4px;">₹899 × 1
+                                        </div>
+                                    </div>
+                                    <div style="font-weight:700;">₹899</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="order-card">
+                            <div class="order-card-title">Payment Summary</div>
+                            <div class="summary-row"><span>Subtotal</span><span>₹1,798</span></div>
+                            <div class="summary-row"><span>Shipping (Standard)</span><span>₹0</span></div>
+                            <div class="summary-row"><span>Discount</span><span>₹0</span></div>
+                            <div class="summary-row"><span>Tax (Included)</span><span>₹124</span></div>
+                            <div class="summary-row total"><span>Total Paid</span><span>₹1,798</span></div>
+                            <div style="font-size:11px; color:var(--text-muted); margin-top:10px; text-align:right;">
+                                Paid via Razorpay (UPI) at 10:25 AM</div>
+                        </div>
+                    </div>
+
+                    <!-- Right Col -->
+                    <div>
+                        <div class="order-card">
+                            <div class="order-card-title" style="display:flex; justify-content:space-between;">
+                                Customer
+                                <a href="admin-customers.html" style="color:var(--color-primary); font-size:11px;">View
+                                    Profile</a>
+                            </div>
+                            <p class="customer-info-p" style="font-weight:600; color:var(--text-primary);">Priya Sharma
+                            </p>
+                            <p class="customer-info-p"><a href="mailto:priya.s@example.com">priya.s@example.com</a></p>
+                            <p class="customer-info-p">+91 98765 43210</p>
+                            <div style="margin-top:10px; font-size:11px; color:var(--text-muted);">14 Orders (VIP
+                                Customer)</div>
+                        </div>
+
+                        <div class="order-card">
+                            <div class="order-card-title" style="display:flex; justify-content:space-between;">
+                                Shipping Address
+                                <span style="color:var(--color-primary); cursor:pointer; font-size:11px;">Edit</span>
+                            </div>
+                            <p class="customer-info-p">Priya Sharma</p>
+                            <p class="customer-info-p">45, Heritage Enclave, Near Clock Tower</p>
+                            <p class="customer-info-p">Jodhpur, Rajasthan 342001</p>
+                            <p class="customer-info-p">India</p>
+                            <p class="customer-info-p" style="margin-top:8px;">Phone: +91 98765 43210</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger btn-sm" style="margin-right:auto;"
+                    onclick="confirm('Are you sure you want to cancel this order?'); closeModal('modal-order-view');">Cancel
+                    Order</button>
+                <button class="btn btn-white" onclick="closeModal('modal-order-view')">Close</button>
+                <a href="#" class="btn btn-primary">Go to Full Order Page</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+            document.getElementById('sidebar-toggle-icon').className = sidebar.classList.contains('mini') ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+
+        // Select All Logic
+        document.getElementById('selectAllOrders')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        // Modals
+        function openOrderModal(orderId) {
+            document.getElementById('modal-order-id').innerText = orderId;
+            document.getElementById('modal-order-view').classList.add('open');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('open');
+        }
+
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', function (e) {
+                if (e.target === this) this.classList.remove('open');
+            });
+        });
+
+        // Toasts
+        function showToast(type, title, message) {
+            alert(title + ": " + message); // Simple fallback for demo
+        }
+    </script>
+</body>
+
+</html>

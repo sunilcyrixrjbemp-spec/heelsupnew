@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Notifications</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .notif-page-layout {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .notif-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: var(--space-6);
+        }
+
+        .notif-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .notif-tab {
+            padding: 6px 14px;
+            border-radius: var(--radius-pill);
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notif-tab:hover {
+            border-color: var(--color-primary);
+        }
+
+        .notif-tab.active {
+            background: var(--color-dark);
+            color: var(--color-white);
+            border-color: var(--color-dark);
+        }
+
+        .notif-timeline {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius);
+            box-shadow: var(--shadow-xs);
+            overflow: hidden;
+        }
+
+        .date-divider {
+            background: var(--color-light);
+            padding: 8px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+            border-top: 1px solid var(--border-color);
+        }
+
+        .date-divider:first-child {
+            border-top: none;
+        }
+
+        .notif-list-item {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-4);
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            transition: background 0.2s;
+            position: relative;
+        }
+
+        .notif-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .notif-list-item:hover {
+            background: var(--color-light);
+        }
+
+        .notif-list-item.unread {
+            background: rgba(201, 169, 110, 0.05);
+        }
+
+        .notif-list-item.unread::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: var(--color-primary);
+        }
+
+        .notif-icon-lg {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Icon Colors */
+        .icon-order {
+            background: var(--color-info-light);
+            color: var(--color-info);
+        }
+
+        .icon-alert {
+            background: var(--color-error-light);
+            color: var(--color-error);
+        }
+
+        .icon-success {
+            background: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .icon-system {
+            background: var(--color-light-3);
+            color: var(--text-secondary);
+        }
+
+        .notif-content {
+            flex: 1;
+        }
+
+        .notif-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .notif-desc {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 8px;
+        }
+
+        .notif-meta {
+            font-size: var(--text-xs);
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notif-action {
+            padding: 6px 12px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+            background: var(--color-white);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .notif-action:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary-dark);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link"><i
+                            class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span></a>
+                    <a href="admin-analytics.html" class="admin-nav-link"><i
+                            class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span></a>
+                </div>
+                <!-- ... Truncated for brevity, normally full nav here ... -->
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Notifications</div>
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+
+                <div class="notif-page-layout">
+                    <!-- Header -->
+                    <div class="admin-page-header">
+                        <div class="admin-page-header-left">
+                            <h2>Your Inbox</h2>
+                            <p>All system alerts, order updates, and messages in one place.</p>
+                        </div>
+                        <button class="btn btn-ghost" onclick="markAllRead()"><i class="fa-solid fa-check-double"></i>
+                            Mark all as read</button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="notif-filter-bar">
+                        <div class="notif-tabs">
+                            <div class="notif-tab active">All</div>
+                            <div class="notif-tab">Unread (3)</div>
+                            <div class="notif-tab">Orders</div>
+                            <div class="notif-tab">Alerts</div>
+                        </div>
+                    </div>
+
+                    <!-- Timeline -->
+                    <div class="notif-timeline">
+
+                        <div class="date-divider">Today</div>
+
+                        <!-- Item 1: Unread Order -->
+                        <div class="notif-list-item unread">
+                            <div class="notif-icon-lg icon-order"><i class="fa-solid fa-bag-shopping"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">New Order Received: #ORD-1042</div>
+                                <div class="notif-desc">Priya Sharma placed an order for 2 items totaling ₹1,798.
+                                    Payment was successful via Razorpay.</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> 2 minutes ago</span>
+                                </div>
+                            </div>
+                            <button class="notif-action">View Order</button>
+                        </div>
+
+                        <!-- Item 2: Unread Alert -->
+                        <div class="notif-list-item unread">
+                            <div class="notif-icon-lg icon-alert"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">Low Stock Alert: Stiletto Block Heel</div>
+                                <div class="notif-desc">SKU: HU-HLS-042-38B has dropped below the minimum threshold.
+                                    Only 3 units remaining in Jodhpur Main Warehouse.</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> 18 minutes ago</span>
+                                </div>
+                            </div>
+                            <button class="notif-action">Manage Inventory</button>
+                        </div>
+
+                        <!-- Item 3: Unread Success -->
+                        <div class="notif-list-item unread">
+                            <div class="notif-icon-lg icon-success"><i class="fa-solid fa-star"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">New 5-Star Review</div>
+                                <div class="notif-desc">Sneha Patel left a 5-star review for 'Classic Tote Bag – Tan'.
+                                    Requires approval to be published on the storefront.</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> 1 hour ago</span>
+                                </div>
+                            </div>
+                            <button class="notif-action">Review & Publish</button>
+                        </div>
+
+                        <!-- Item 4: System -->
+                        <div class="notif-list-item">
+                            <div class="notif-icon-lg icon-system"><i class="fa-solid fa-cloud-arrow-down"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">Export Completed</div>
+                                <div class="notif-desc">Your request to export 'Orders_April_2026.csv' has been
+                                    completed. The file is ready to download.</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> 3 hours ago</span>
+                                </div>
+                            </div>
+                            <button class="notif-action">Download CSV</button>
+                        </div>
+
+                        <div class="date-divider">Yesterday</div>
+
+                        <!-- Item 5: Order -->
+                        <div class="notif-list-item">
+                            <div class="notif-icon-lg icon-order"><i class="fa-solid fa-rotate-left"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">Return Request #RET-089</div>
+                                <div class="notif-desc">Divya Sharma requested a return for Order #ORD-1037. Reason
+                                    stated: "Size too small".</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> May 6, 2:15 PM</span>
+                                </div>
+                            </div>
+                            <button class="notif-action">Review Request</button>
+                        </div>
+
+                        <!-- Item 6: System -->
+                        <div class="notif-list-item">
+                            <div class="notif-icon-lg icon-system"><i class="fa-solid fa-shield-halved"></i></div>
+                            <div class="notif-content">
+                                <div class="notif-title">New Login from Unknown Device</div>
+                                <div class="notif-desc">Your admin account was accessed from a new device (Mac OS,
+                                    Chrome) in Mumbai, India. If this was you, you can ignore this alert.</div>
+                                <div class="notif-meta">
+                                    <span><i class="fa-regular fa-clock"></i> May 6, 9:00 AM</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        function markAllRead() {
+            document.querySelectorAll('.notif-list-item.unread').forEach(item => {
+                item.classList.remove('unread');
+            });
+            document.querySelector('.notif-tab:nth-child(2)').innerText = "Unread (0)";
+            alert('All notifications marked as read.');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Settings — HeelsUp Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#c9a96e;--gold-dark:#8b6914;--bg:#f1f5f9;--sidebar:#0f172a;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--success:#22c55e;--error:#ef4444}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
+
+/* Layout */
+.wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+
+/* Sidebar */
+.sidebar{background:var(--sidebar);color:#94a3b8;display:flex;flex-direction:column;height:100vh;position:sticky;top:0}
+.sidebar-brand{padding:20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.sidebar-logo{width:36px;height:36px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-size:1rem;font-weight:700;flex-shrink:0}
+.sidebar-nav{flex:1;overflow-y:auto;padding:12px 0}
+.nav-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#475569;padding:14px 18px 5px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 18px;color:#94a3b8;font-size:.85rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;text-decoration:none}
+.nav-item:hover{background:#1e293b;color:#e2e8f0}
+.nav-item.active{background:#1e293b;color:var(--gold);border-left-color:var(--gold)}
+.nav-item i{width:16px;text-align:center;font-size:.85rem;flex-shrink:0}
+.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.06)}
+.sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.s-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
+.s-name{font-size:.8rem;font-weight:600;color:#e2e8f0}
+.s-role{font-size:.65rem;color:#64748b}
+.btn-logout{width:100%;padding:7px;border-radius:8px;background:rgba(255,255,255,.05);color:#94a3b8;font-size:.78rem;display:flex;align-items:center;gap:8px;justify-content:center;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.15);color:#f87171}
+@media(max-width:900px){.sidebar{display:none}}
+
+/* Topbar */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-store{padding:7px 14px;border-radius:8px;border:1.5px solid var(--border);font-size:.8rem;font-weight:600;color:var(--muted);display:flex;align-items:center;gap:6px;transition:all .2s}
+.btn-store:hover{border-color:var(--gold);color:var(--gold)}
+
+/* Main */
+.main{min-height:100vh;display:flex;flex-direction:column}
+.content{padding:24px;flex:1}
+.page-header{margin-bottom:24px}
+.page-header h1{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--text);margin-bottom:4px}
+.page-header p{font-size:.85rem;color:var(--muted)}
+
+/* Settings grid */
+.settings-grid{display:grid;grid-template-columns:200px 1fr;gap:20px;align-items:start}
+@media(max-width:700px){.settings-grid{grid-template-columns:1fr}}
+
+/* Settings nav */
+.settings-nav{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden;position:sticky;top:80px}
+.settings-nav-item{display:flex;align-items:center;gap:8px;padding:11px 16px;font-size:.83rem;font-weight:500;color:var(--muted);border-left:3px solid transparent;cursor:pointer;transition:all .2s}
+.settings-nav-item:hover{color:var(--text);background:#f8fafc}
+.settings-nav-item.active{color:var(--gold-dark);background:rgba(201,169,110,.06);border-left-color:var(--gold);font-weight:600}
+.settings-nav-item i{width:16px;text-align:center;font-size:.85rem}
+.settings-nav-sep{height:1px;background:var(--border);margin:4px 0}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:16px;overflow:hidden}
+.card-header{padding:16px 20px;border-bottom:1px solid var(--border);background:#f8fafc}
+.card-header h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:2px}
+.card-header p{font-size:.78rem;color:var(--muted)}
+.card-body{padding:20px}
+
+/* Form elements */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.form-row.single{grid-template-columns:1fr}
+.form-group{margin-bottom:14px}
+.form-group:last-child{margin-bottom:0}
+.form-label{display:block;font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em}
+.form-input,.form-select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.87rem;font-family:'Inter',sans-serif;transition:all .2s;background:#fff;color:var(--text);outline:none}
+.form-input:focus,.form-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,169,110,.12)}
+.form-input.secret{font-family:monospace;letter-spacing:.08em}
+.form-hint{font-size:.72rem;color:var(--muted);margin-top:4px}
+.form-input.success-border{border-color:var(--success)}
+.form-input.error-border{border-color:var(--error)}
+.input-group{display:flex;gap:8px}
+.input-group .form-input{flex:1}
+
+/* Toggle */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
+.toggle-row:last-child{border-bottom:none;padding-bottom:0}
+.toggle-info h4{font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:2px}
+.toggle-info p{font-size:.75rem;color:var(--muted)}
+.toggle{position:relative;width:42px;height:24px;flex-shrink:0}
+.toggle input{display:none}
+.toggle-track{width:42px;height:24px;border-radius:12px;background:#d1d5db;cursor:pointer;transition:all .2s;position:relative;display:block}
+.toggle-track::after{content:'';position:absolute;left:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:all .2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.toggle input:checked+.toggle-track{background:var(--gold)}
+.toggle input:checked+.toggle-track::after{left:21px}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:.85rem;font-weight:600;transition:all .2s;font-family:'Inter',sans-serif;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-outline{border:1.5px solid var(--border);color:var(--muted);background:#fff}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:6px 14px;font-size:.78rem;border-radius:6px}
+.btn-danger{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
+.btn-danger:hover{background:#fecaca}
+
+/* Alert box */
+.alert{padding:12px 16px;border-radius:8px;font-size:.83rem;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
+.alert-warning{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#166534}
+.alert-error{background:#fef2f2;border:1px solid #fecaca;color:#b91c1c}
+
+/* Sticky save bar */
+.save-bar{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 20px;border-radius:50px;display:flex;align-items:center;gap:14px;box-shadow:0 8px 32px rgba(0,0,0,.3);z-index:500;font-size:.85rem;font-weight:500;transition:all .3s;opacity:0;pointer-events:none;transform:translateX(-50%) translateY(20px)}
+.save-bar.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+
+/* Loading */
+.skeleton{background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:6px;height:38px}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* Panel visibility */
+.panel{display:none}
+.panel.active{display:block}
+
+/* Toast */
+@keyframes slideInRight{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">H</div>
+      <div>
+        <div style="font-size:.88rem;font-weight:700;color:#f1f5f9">HeelsUp</div>
+        <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</div>
+      <a href="admin.html" class="nav-item"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+      <div class="nav-label">Catalogue</div>
+      <a href="admin-products.html" class="nav-item"><i class="fa-solid fa-box"></i> Products</a>
+      <a href="admin-inventory.html" class="nav-item"><i class="fa-solid fa-boxes-stacked"></i> Inventory</a>
+      <div class="nav-label">Sales</div>
+      <a href="admin-orders.html" class="nav-item"><i class="fa-solid fa-bag-shopping"></i> Orders</a>
+      <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
+      <a href="admin-coupons.html" class="nav-item"><i class="fa-solid fa-ticket"></i> Coupons</a>
+      <a href="admin-pos.html" class="nav-item"><i class="fa-solid fa-cash-register"></i> POS / Offline Sales</a>
+      <a href="admin-reviews.html" class="nav-item"><i class="fa-solid fa-star"></i> Reviews</a>
+      <div class="nav-label">Reports</div>
+      <a href="admin-reports.html" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+      <a href="admin-analytics.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <div class="nav-label">System</div>
+      <a href="admin-settings.html" class="nav-item active"><i class="fa-solid fa-gear"></i> Settings</a>
+      <a href="admin-banners.html" class="nav-item"><i class="fa-solid fa-image"></i> Banners</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="s-avatar" id="s-avatar">A</div>
+        <div>
+          <div class="s-name" id="s-name">Admin</div>
+          <div class="s-role">Super Admin</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <div class="main">
+    <!-- Topbar -->
+    <div class="topbar">
+      <div class="topbar-title">⚙️ Settings</div>
+      <div class="topbar-right">
+        <a href="index.html" target="_blank" class="btn-store"><i class="fa-solid fa-store"></i> View Store</a>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="page-header">
+        <h1>Store Settings</h1>
+        <p>Manage Razorpay keys, OTP configuration, shipping, security and all core settings — saved directly to database.</p>
+      </div>
+
+      <div class="settings-grid">
+        <!-- Settings Nav -->
+        <div class="settings-nav">
+          <div class="settings-nav-item active" onclick="showPanel('razorpay',this)" id="tab-razorpay">
+            <i class="fa-solid fa-credit-card"></i> Razorpay
+          </div>
+          <div class="settings-nav-item" onclick="showPanel('otp',this)">
+            <i class="fa-solid fa-shield-halved"></i> OTP / Auth
+          </div>
+          <div class="settings-nav-item" onclick="showPanel('shipping',this)">
+            <i class="fa-solid fa-truck"></i> Shipping
+          </div>
+          <div class="settings-nav-item" onclick="showPanel('store',this)">
+            <i class="fa-solid fa-store"></i> Store Info
+          </div>
+          <div class="settings-nav-sep"></div>
+          <div class="settings-nav-item" onclick="showPanel('security',this)">
+            <i class="fa-solid fa-lock"></i> Security
+          </div>
+          <div class="settings-nav-item" onclick="showPanel('maintenance',this)">
+            <i class="fa-solid fa-wrench"></i> Maintenance
+          </div>
+        </div>
+
+        <!-- Panels -->
+        <div>
+          <!-- Loading overlay -->
+          <div id="settings-loading" class="card">
+            <div class="card-body">
+              <div class="skeleton" style="margin-bottom:10px"></div>
+              <div class="skeleton"></div>
+            </div>
+          </div>
+
+          <!-- RAZORPAY PANEL -->
+          <div class="panel active" id="panel-razorpay">
+            <div class="alert alert-info" style="margin-bottom:16px">
+              <i class="fa-solid fa-circle-info"></i>
+              <div>Razorpay keys are stored securely in your database. Only enter Live keys here. Get them from <a href="https://dashboard.razorpay.com" target="_blank" style="color:#1d4ed8;font-weight:600">Razorpay Dashboard → Settings → API Keys</a>.</div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-key" style="color:var(--gold)"></i> Razorpay Live Keys</h3>
+                <p>These keys are used for all payment transactions. No COD — all payments go through Razorpay.</p>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Razorpay Key ID (rzp_live_...)</label>
+                  <input type="text" class="form-input" id="razorpay_key_id" placeholder="rzp_live_xxxxxxxxxxxxxxxxxx" oninput="markDirty()"/>
+                  <div class="form-hint">Starts with <code>rzp_live_</code> for live mode or <code>rzp_test_</code> for test mode</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Razorpay Key Secret</label>
+                  <div class="input-group">
+                    <input type="password" class="form-input secret" id="razorpay_key_secret" placeholder="Enter your Razorpay secret key" oninput="markDirty()"/>
+                    <button class="btn btn-outline btn-sm" onclick="toggleSecret('razorpay_key_secret',this)"><i class="fa-regular fa-eye"></i></button>
+                  </div>
+                  <div class="form-hint">Never share this key. Used for server-side payment verification.</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Razorpay Mode</label>
+                  <select class="form-select" id="razorpay_mode" onchange="markDirty()">
+                    <option value="live">🟢 Live Mode (Real payments)</option>
+                    <option value="test">🟡 Test Mode (No real charges)</option>
+                  </select>
+                </div>
+                <div style="margin-top:16px;display:flex;gap:10px;align-items:center">
+                  <button class="btn btn-primary" onclick="saveSection('razorpay')" id="btn-save-razorpay">
+                    <i class="fa-solid fa-floppy-disk"></i> Save Razorpay Settings
+                  </button>
+                  <button class="btn btn-outline btn-sm" onclick="testRazorpay()">
+                    <i class="fa-solid fa-vial"></i> Test Connection
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- OTP / AUTH PANEL -->
+          <div class="panel" id="panel-otp">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-envelope-open-text" style="color:var(--gold)"></i> Google Apps Script — OTP Mailer</h3>
+                <p>OTP emails for registration, forgot password, and order updates are sent via your Google Apps Script URL.</p>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-info" style="margin-bottom:14px">
+                  <i class="fa-brands fa-google"></i>
+                  <div>Your current OTP script URL is pre-configured. You can update it anytime if you deploy a new script.</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Google Apps Script URL</label>
+                  <input type="url" class="form-input" id="otp_script_url" placeholder="https://script.google.com/macros/s/..." oninput="markDirty()"/>
+                  <div class="form-hint">Deploy your Apps Script as a web app (anyone can access) and paste the URL here.</div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">OTP Expiry (minutes)</label>
+                  <input type="number" class="form-input" id="otp_expiry_minutes" min="5" max="60" placeholder="10" oninput="markDirty()"/>
+                </div>
+                <button class="btn btn-outline btn-sm" onclick="testOTP()" style="margin-bottom:20px">
+                  <i class="fa-solid fa-paper-plane"></i> Send Test OTP to Admin Email
+                </button>
+
+                <div style="border-top:1px solid var(--border);padding-top:16px">
+                  <div class="toggle-row">
+                    <div class="toggle-info">
+                      <h4>Require Email OTP for Registration</h4>
+                      <p>Users must verify their email via OTP before account is created</p>
+                    </div>
+                    <label class="toggle">
+                      <input type="checkbox" id="require_email_otp" onchange="markDirty()"/>
+                      <div class="toggle-track"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <div style="margin-top:16px">
+                  <button class="btn btn-primary" onclick="saveSection('otp')" id="btn-save-otp">
+                    <i class="fa-solid fa-floppy-disk"></i> Save OTP Settings
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SHIPPING PANEL -->
+          <div class="panel" id="panel-shipping">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-truck" style="color:var(--gold)"></i> Shipping Configuration</h3>
+                <p>Set free shipping threshold and standard delivery charge.</p>
+              </div>
+              <div class="card-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Free Shipping Above (₹)</label>
+                    <input type="number" class="form-input" id="shipping_free_above" min="0" placeholder="499" oninput="markDirty()"/>
+                    <div class="form-hint">Orders above this amount get free shipping</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Standard Shipping Charge (₹)</label>
+                    <input type="number" class="form-input" id="shipping_standard_charge" min="0" placeholder="49" oninput="markDirty()"/>
+                    <div class="form-hint">Charged when order is below free threshold</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSection('shipping')" id="btn-save-shipping">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Shipping Settings
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- STORE INFO PANEL -->
+          <div class="panel" id="panel-store">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-store" style="color:var(--gold)"></i> Store Information</h3>
+                <p>Basic store details used in emails, invoices and customer-facing pages.</p>
+              </div>
+              <div class="card-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Store Name</label>
+                    <input type="text" class="form-input" id="site_name" placeholder="HeelsUp" oninput="markDirty()"/>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Support Phone</label>
+                    <input type="text" class="form-input" id="support_phone" placeholder="+91-9876543210" oninput="markDirty()"/>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Admin / Support Email</label>
+                  <input type="email" class="form-input" id="site_email" placeholder="suniljani012@gmail.com" oninput="markDirty()"/>
+                  <div class="form-hint">This email receives order notifications and admin alerts.</div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSection('store')" id="btn-save-store">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Store Info
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- SECURITY PANEL -->
+          <div class="panel" id="panel-security">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-shield-halved" style="color:var(--gold)"></i> Security Settings</h3>
+                <p>Configure rate limiting, login lockout, and session security.</p>
+              </div>
+              <div class="card-body">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label class="form-label">Max Failed Login Attempts</label>
+                    <input type="number" class="form-input" id="max_login_attempts" min="3" max="20" placeholder="5" oninput="markDirty()"/>
+                    <div class="form-hint">Account locks after this many failed attempts</div>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Lockout Duration (minutes)</label>
+                    <input type="number" class="form-input" id="lockout_duration_minutes" min="5" max="1440" placeholder="30" oninput="markDirty()"/>
+                  </div>
+                </div>
+                <button class="btn btn-primary" onclick="saveSection('security')" id="btn-save-security">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Security Settings
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- MAINTENANCE PANEL -->
+          <div class="panel" id="panel-maintenance">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-wrench" style="color:var(--gold)"></i> Maintenance Mode</h3>
+                <p>Enable maintenance mode to take the store offline temporarily.</p>
+              </div>
+              <div class="card-body">
+                <div class="alert alert-warning">
+                  <i class="fa-solid fa-triangle-exclamation"></i>
+                  <div><strong>Warning:</strong> Enabling maintenance mode will make the store inaccessible to customers. Only admin can access the site.</div>
+                </div>
+                <div class="toggle-row" style="margin-top:16px">
+                  <div class="toggle-info">
+                    <h4>Maintenance Mode</h4>
+                    <p>Store shows a "Coming Soon / Under Maintenance" page to visitors</p>
+                  </div>
+                  <label class="toggle">
+                    <input type="checkbox" id="maintenance_mode" onchange="markDirty()"/>
+                    <div class="toggle-track"></div>
+                  </label>
+                </div>
+                <div style="margin-top:16px">
+                  <button class="btn btn-primary" onclick="saveSection('maintenance')" id="btn-save-maintenance">
+                    <i class="fa-solid fa-floppy-disk"></i> Save
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-header">
+                <h3 style="color:#b91c1c"><i class="fa-solid fa-circle-exclamation"></i> Danger Zone</h3>
+                <p>These actions are irreversible. Proceed with extreme caution.</p>
+              </div>
+              <div class="card-body">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border)">
+                  <div>
+                    <div style="font-size:.85rem;font-weight:600;color:var(--text)">Clear All Sessions</div>
+                    <div style="font-size:.75rem;color:var(--muted)">Force logout all users immediately</div>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="clearSessions()"><i class="fa-solid fa-right-from-bracket"></i> Clear Sessions</button>
+                </div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">
+                  <div>
+                    <div style="font-size:.85rem;font-weight:600;color:var(--text)">Clear Login Attempt Locks</div>
+                    <div style="font-size:.75rem;color:var(--muted)">Unlock all rate-limited accounts</div>
+                  </div>
+                  <button class="btn btn-danger btn-sm" onclick="clearLocks()"><i class="fa-solid fa-unlock"></i> Clear Locks</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /panels end -->
+      </div>
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
+
+<!-- Save bar -->
+<div class="save-bar" id="save-bar">
+  <span>You have unsaved changes</span>
+  <button class="btn btn-outline btn-sm" style="color:#fff;border-color:rgba(255,255,255,.3)" onclick="loadAllSettings()">Discard</button>
+  <button class="btn btn-sm" style="background:var(--gold);color:#fff" onclick="saveCurrentPanel()">Save Changes</button>
+</div>
+
+<script src="app-config.js"></script>
+<script src="app-auth.js"></script>
+<script>
+  // ── Auth Check ──────────────────────────────────────────
+  const user = HeelsUpAuth.getUser();
+  if (!user || user.role !== 'admin') { window.location = 'login.html?redirect=admin-settings.html'; }
+  const name = (user?.firstName || user?.first_name || 'Admin');
+  document.getElementById('s-avatar').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('s-name').textContent = name;
+
+  // ── State ────────────────────────────────────────────────
+  let currentPanel = 'razorpay';
+  let isDirty = false;
+  let allSettings = {};
+
+  // ── Panel switching ──────────────────────────────────────
+  function showPanel(name, el) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.settings-nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById('panel-'+name).classList.add('active');
+    if (el) el.classList.add('active');
+    currentPanel = name;
+    isDirty = false;
+    document.getElementById('save-bar').classList.remove('show');
+  }
+
+  function markDirty() {
+    isDirty = true;
+    document.getElementById('save-bar').classList.add('show');
+  }
+
+  // ── Load All Settings from DB ────────────────────────────
+  async function loadAllSettings() {
+    document.getElementById('settings-loading').style.display = 'block';
+    isDirty = false;
+    document.getElementById('save-bar').classList.remove('show');
+    try {
+      const data = await HeelsUpAuth.api('/api/admin/settings');
+      allSettings = data.settings || {};
+
+      // Razorpay
+      setVal('razorpay_key_id', allSettings.razorpay_key_id || '');
+      setVal('razorpay_key_secret', allSettings.razorpay_key_secret || '');
+      setSelect('razorpay_mode', allSettings.razorpay_mode || 'live');
+
+      // OTP
+      setVal('otp_script_url', allSettings.otp_script_url || '');
+      setVal('otp_expiry_minutes', allSettings.otp_expiry_minutes || '10');
+      setCheck('require_email_otp', allSettings.require_email_otp === 'true');
+
+      // Shipping
+      setVal('shipping_free_above', allSettings.shipping_free_above || '499');
+      setVal('shipping_standard_charge', allSettings.shipping_standard_charge || '49');
+
+      // Store
+      setVal('site_name', allSettings.site_name || 'HeelsUp');
+      setVal('site_email', allSettings.site_email || '');
+      setVal('support_phone', allSettings.support_phone || '');
+
+      // Security
+      setVal('max_login_attempts', allSettings.max_login_attempts || '5');
+      setVal('lockout_duration_minutes', allSettings.lockout_duration_minutes || '30');
+
+      // Maintenance
+      setCheck('maintenance_mode', allSettings.maintenance_mode === 'true');
+
+    } catch(e) {
+      showToast('Failed to load settings: ' + (e.message || 'Server error'), 'error');
+    } finally {
+      document.getElementById('settings-loading').style.display = 'none';
+    }
+  }
+
+  function setVal(id, val) { const el = document.getElementById(id); if (el) el.value = val; }
+  function setSelect(id, val) { const el = document.getElementById(id); if (el) { for (let o of el.options) { if (o.value === val) { o.selected = true; break; } } } }
+  function setCheck(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
+  function getVal(id) { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+  function getCheck(id) { const el = document.getElementById(id); return el ? el.checked : false; }
+
+  // ── Save sections ────────────────────────────────────────
+  const sectionKeys = {
+    razorpay: ['razorpay_key_id', 'razorpay_key_secret', 'razorpay_mode'],
+    otp: ['otp_script_url', 'otp_expiry_minutes', 'require_email_otp'],
+    shipping: ['shipping_free_above', 'shipping_standard_charge'],
+    store: ['site_name', 'site_email', 'support_phone'],
+    security: ['max_login_attempts', 'lockout_duration_minutes'],
+    maintenance: ['maintenance_mode']
+  };
+  const toggleKeys = ['require_email_otp', 'maintenance_mode'];
+
+  async function saveSection(section) {
+    const btn = document.getElementById('btn-save-' + section);
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
+    try {
+      const keys = sectionKeys[section] || [];
+      const updates = {};
+      keys.forEach(k => {
+        updates[k] = toggleKeys.includes(k) ? String(getCheck(k)) : getVal(k);
+      });
+      await HeelsUpAuth.api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ settings: updates }) });
+      isDirty = false;
+      document.getElementById('save-bar').classList.remove('show');
+      showToast('Settings saved successfully!', 'success');
+    } catch(e) {
+      showToast('Save failed: ' + (e.message || 'Server error'), 'error');
+    } finally {
+      if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> ' + (section === 'razorpay' ? 'Save Razorpay Settings' : section === 'otp' ? 'Save OTP Settings' : 'Save'); }
+    }
+  }
+
+  function saveCurrentPanel() { saveSection(currentPanel); }
+
+  // ── Test functions ────────────────────────────────────────
+  async function testRazorpay() {
+    const key = getVal('razorpay_key_id');
+    if (!key) { showToast('Enter your Razorpay Key ID first', 'error'); return; }
+    if (!key.startsWith('rzp_')) { showToast('Key ID must start with rzp_live_ or rzp_test_', 'error'); return; }
+    showToast('Key format looks valid! Save and do a test transaction to confirm.', 'success');
+  }
+
+  async function testOTP() {
+    try {
+      await HeelsUpAuth.api('/api/admin/test-otp', { method: 'POST', body: JSON.stringify({ email: user?.email || '' }) });
+      showToast('Test OTP sent to ' + (user?.email || 'admin email'), 'success');
+    } catch(e) {
+      showToast('OTP test failed: ' + (e.message || 'Check your script URL'), 'error');
+    }
+  }
+
+  async function clearSessions() {
+    if (!confirm('This will force logout ALL users including yourself. Continue?')) return;
+    try {
+      await HeelsUpAuth.api('/api/admin/clear-sessions', { method: 'POST' });
+      showToast('All sessions cleared. You will be logged out now.', 'success');
+      setTimeout(() => { HeelsUpAuth.clearSession(); window.location = 'login.html'; }, 2000);
+    } catch(e) { showToast(e.message || 'Failed', 'error'); }
+  }
+
+  async function clearLocks() {
+    if (!confirm('Clear all login attempt locks?')) return;
+    try {
+      await HeelsUpAuth.api('/api/admin/clear-locks', { method: 'POST' });
+      showToast('All login locks cleared!', 'success');
+    } catch(e) { showToast(e.message || 'Failed', 'error'); }
+  }
+
+  function toggleSecret(id, btn) {
+    const el = document.getElementById(id);
+    el.type = el.type === 'password' ? 'text' : 'password';
+    btn.querySelector('i').className = el.type === 'text' ? 'fa-regular fa-eye-slash' : 'fa-regular fa-eye';
+  }
+
+  function doLogout() { HeelsUpAuth.clearSession(); window.location = 'login.html'; }
+
+  // ── Toast ─────────────────────────────────────────────────
+  function showToast(msg, type='success') {
+    const id = 'toast-'+Date.now();
+    const colors = {success:'#276749',error:'#c53030',warning:'#d97706'};
+    const icons = {success:'fa-circle-check',error:'fa-circle-xmark',warning:'fa-triangle-exclamation'};
+    document.body.insertAdjacentHTML('beforeend', `<div id="${id}" style="position:fixed;bottom:80px;right:24px;background:${colors[type]||colors.success};color:#fff;padding:13px 18px;border-radius:10px;display:flex;align-items:center;gap:10px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);animation:slideInRight 0.3s ease;max-width:340px;font-family:'Inter',sans-serif;font-size:13px"><i class="fa-solid ${icons[type]||'fa-circle-info'}"></i><span>${msg}</span><button onclick="document.getElementById('${id}').remove()" style="background:none;border:none;color:#fff;cursor:pointer;margin-left:8px;font-size:16px">×</button></div>`);
+    setTimeout(() => document.getElementById(id)?.remove(), 5000);
+  }
+
+  // ── Init ─────────────────────────────────────────────────
+  document.addEventListener('DOMContentLoaded', loadAllSettings);
+</script>
+</body>
+</html>

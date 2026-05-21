@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Search – HeelsUp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .search-page {
+            background: var(--color-light);
+            min-height: 100vh;
+            padding: 40px 0 80px;
+        }
+
+        .search-hero {
+            background: var(--color-dark);
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .search-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 32px;
+        }
+
+        .search-hero h1 em {
+            font-style: italic;
+            color: var(--color-primary-light);
+        }
+
+        .search-bar-big {
+            display: flex;
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 100px;
+            overflow: hidden;
+            padding: 6px 6px 6px 24px;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-bar-big input {
+            flex: 1;
+            background: transparent;
+            color: #fff;
+            font-size: 16px;
+        }
+
+        .search-bar-big input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .search-bar-big button {
+            padding: 11px 28px;
+            background: var(--color-primary);
+            color: var(--color-dark);
+            font-size: 13px;
+            font-weight: 700;
+            border-radius: 100px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-popular {
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .search-popular span {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .popular-tag {
+            padding: 5px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 100px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.65);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popular-tag:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary-light);
+            background: rgba(201, 169, 110, 0.1);
+        }
+
+        /* Results */
+        .search-results-section {
+            padding: 40px 0;
+        }
+
+        .search-results-meta {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 24px;
+        }
+
+        .search-results-meta strong {
+            color: var(--text-primary);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 22px;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .no-results-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        @media(max-width:1024px) {
+            .results-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media(max-width:768px) {
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-marquee"><span class="topbar-text">🔍 Kuch bhi search karo — heels, bags, sandals!</span>
+        </div>
+    </div>
+    <nav class="navbar" id="navbar"
+        style="position:relative;background:var(--color-dark);border-bottom-color:rgba(255,255,255,0.08)">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="navbar-logo"><span class="navbar-logo-text"
+                        style="color:#fff">Heels<span>Up</span></span></a>
+                <div class="navbar-actions">
+                    <a href="wishlist.html" class="nav-icon-btn" style="color:rgba(255,255,255,0.7)"><i
+                            class="fa-regular fa-heart"></i></a>
+                    <a href="profile.html" class="nav-icon-btn" style="color:rgba(255,255,255,0.7)"><i
+                            class="fa-regular fa-user"></i></a>
+                    <button class="nav-icon-btn" id="cart-open-btn" style="color:rgba(255,255,255,0.7)"><i
+                            class="fa-solid fa-bag-shopping"></i><span class="nav-badge"
+                            id="cart-count">0</span></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="search-hero">
+        <div class="container">
+            <h1>Kya <em>dhundh rahe ho</em>?</h1>
+            <div class="search-bar-big">
+                <input type="text" id="main-search" placeholder="Heels, bags, sandals..." autocomplete="off" />
+                <button onclick="doSearch()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+            </div>
+            <div class="search-popular">
+                <span>Popular:</span>
+                <span class="popular-tag" onclick="setSearch('block heels')">Block Heels</span>
+                <span class="popular-tag" onclick="setSearch('tote bag')">Tote Bag</span>
+                <span class="popular-tag" onclick="setSearch('flat sandals')">Flat Sandals</span>
+                <span class="popular-tag" onclick="setSearch('wedge')">Wedge</span>
+                <span class="popular-tag" onclick="setSearch('bags')">Bags</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-page">
+        <div class="container">
+            <div id="search-results-section" class="search-results-section" style="display:none">
+                <div class="search-results-meta" id="results-meta"></div>
+                <div class="results-grid" id="results-grid"></div>
+            </div>
+            <div id="no-results" class="no-results" style="display:none">
+                <div class="no-results-icon">🔍</div>
+                <h3 style="font-family:var(--font-heading);margin-bottom:10px">Koi result nahi mila</h3>
+                <p style="color:var(--text-muted);margin-bottom:24px">Koi aur keyword try karo</p>
+                <a href="shop.html" class="btn btn-primary">Shop All Products</a>
+            </div>
+            <!-- Default state -->
+            <div id="default-state">
+                <h2 style="font-family:var(--font-heading);font-size:1.5rem;font-weight:600;margin-bottom:24px">Trending
+                    Searches</h2>
+                <div class="results-grid" id="trending-default"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>My Cart</h3><button class="cart-close-btn" id="cart-close-btn">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cart-body">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛍️</div>
+                <div class="cart-empty-text">Cart is empty</div>
+            </div>
+        </div>
+    </aside>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        const PRODUCTS = [
+            { id: 1, name: 'Stiletto Block Heel Pumps', category: 'heels', price: 899, original_price: 1499, images: ['https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.8, review_count: 124 },
+            { id: 2, name: 'Rose Gold Strappy Sandals', category: 'sandals', price: 649, original_price: 999, images: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&auto=format&fit=crop'], rating: 4.7, review_count: 89 },
+            { id: 3, name: 'Classic Tote Bag – Tan', category: 'bags', price: 1299, original_price: 1999, images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80&auto=format&fit=crop'], is_new: true, rating: 4.9, review_count: 203 },
+            { id: 4, name: 'Embroidered Juttis (Flats)', category: 'flats', price: 549, original_price: 849, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&auto=format&fit=crop'], rating: 4.6, review_count: 67 },
+            { id: 5, name: 'Wedge Ankle Strap Heels', category: 'heels', price: 799, original_price: 1299, images: ['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.5, review_count: 56 },
+            { id: 6, name: 'Mini Sling Crossbody Bag', category: 'bags', price: 899, original_price: 1299, images: ['https://images.unsplash.com/photo-1554141220-83411835a60b?w=500&q=80&auto=format&fit=crop'], is_new: true, is_trending: true, rating: 4.8, review_count: 91 },
+            { id: 7, name: 'Platform Mule Heels', category: 'heels', price: 749, original_price: 1199, images: ['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.7, review_count: 78 },
+            { id: 8, name: 'Kolhapuri Flats', category: 'flats', price: 499, original_price: 799, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&fit=crop&crop=top'], rating: 4.9, review_count: 145 },
+        ];
+        let cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
+
+        function makeCard(p) {
+            const disc = p.original_price ? Math.round((1 - p.price / p.original_price) * 100) : 0;
+            return `<div class="product-card"><div class="product-img-wrap"><img src="${p.images[0]}" alt="${p.name}" loading="lazy" /><div class="product-badges">${p.is_new ? '<span class="badge badge-new">New</span>' : ''}${disc >= 20 ? `<span class="badge badge-sale">-${disc}%</span>` : ''}</div><button class="product-quick-add" onclick='addCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div><div class="product-info"><div class="product-category">${p.category}</div><a href="product.html?id=${p.id}" class="product-name">${p.name}</a><div class="product-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span>${p.original_price ? `<span class="price-original">₹${p.original_price.toLocaleString('en-IN')}</span>` : ''}</div><div class="product-rating"><span class="stars">${'★'.repeat(Math.round(p.rating))}${'☆'.repeat(5 - Math.round(p.rating))}</span><span class="rating-count">(${p.review_count || 0})</span></div></div></div>`;
+        }
+
+        function addCart(p) { const ex = cart.find(i => i.id === p.id); if (ex) ex.qty++; else cart.push({ id: p.id, name: p.name, price: p.price, img: p.images[0], qty: 1, category: p.category }); localStorage.setItem('heelsup_cart', JSON.stringify(cart)); document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0); document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open'); showToast('success', 'Added!', p.name + ' added to cart.'); }
+
+        function doSearch() {
+            const q = document.getElementById('main-search').value.trim().toLowerCase();
+            if (!q) return;
+            const results = PRODUCTS.filter(p => p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q));
+            document.getElementById('default-state').style.display = 'none';
+            document.getElementById('no-results').style.display = 'none';
+            document.getElementById('search-results-section').style.display = 'none';
+            if (!results.length) { document.getElementById('no-results').style.display = 'block'; return; }
+            document.getElementById('results-meta').innerHTML = `<strong>"${q}"</strong> ke liye ${results.length} results mile`;
+            document.getElementById('results-grid').innerHTML = results.map(makeCard).join('');
+            document.getElementById('search-results-section').style.display = 'block';
+        }
+        function setSearch(q) { document.getElementById('main-search').value = q; doSearch(); }
+
+        document.getElementById('main-search')?.addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+
+        // Check URL params
+        const params = new URLSearchParams(location.search);
+        const q = params.get('q');
+        if (q) { document.getElementById('main-search').value = q; doSearch(); }
+        else {
+            document.getElementById('trending-default').innerHTML = PRODUCTS.filter(p => p.is_trending).map(makeCard).join('');
+        }
+
+        window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+        document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+        document.getElementById('cart-open-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open'); });
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+        document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+        function showToast(type, title, msg) { const c = document.getElementById('toast-container'); const id = 't' + Date.now(); c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid fa-circle-check toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button></div>`); setTimeout(() => document.getElementById(id)?.remove(), 4000); }
+    </script>
+</body>
+
+</html>

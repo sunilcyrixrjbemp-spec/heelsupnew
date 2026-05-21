@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeelsUp Admin — Shipping Management</title>
+  <!--
+  ============================================================
+  PAGE: admin-shipping.html
+  PURPOSE: Admin ke liye shipping zones, delivery charges aur courier settings manage karna.
+
+  YE PAGE KYA KAREGA:
+
+  1. SHIPPING ZONES:
+     - Zone banao: e.g. "Rajasthan", "Metro Cities", "Rest of India", "Remote Areas"
+     - Har zone mein pincodes add karo (bulk import ka option bhi)
+     - Zone-wise delivery time set karo
+
+  2. SHIPPING RATES:
+     - Har zone ke liye rate set karo:
+       - Flat rate (e.g. ₹49 flat)
+       - Weight based (e.g. ₹30/kg)
+       - Price based (e.g. Free above ₹999, ₹49 below)
+     - Free shipping threshold global setting
+
+  3. DELIVERY METHODS:
+     - Standard Delivery (5-7 days)
+     - Express Delivery (2-3 days)
+     - Same-day Delivery (sirf specific pincodes)
+     - Enable/disable per method
+
+  4. COURIER PARTNERS:
+     - Active couriers list: Delhivery, Shiprocket, BlueDart, etc.
+     - AWB/tracking prefix settings
+
+  5. COD SETTINGS:
+     - COD enable/disable toggle (global + per-zone)
+     - COD extra charge (e.g. ₹30)
+     - COD order limit (e.g. max ₹10,000)
+
+  6. BULK PINCODE MANAGEMENT:
+     - CSV upload karo serviceable pincodes ka
+     - Non-serviceable pincodes block karo
+
+  LINKED FROM:
+  - admin.html sidebar → Shipping
+  - admin-orders.html → shipping label generate karne ke liye
+  - admin-settings.html → "Shipping Settings" shortcut
+  ============================================================
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Page-specific styles yahan likhna */
+  </style>
+</head>
+<body>
+  <!-- ADMIN SIDEBAR (copy from any admin-*.html page) -->
+  <!-- ADMIN TOPBAR -->
+
+  <main class="admin-main">
+    <!-- TODO: Ye cheezein banani hain:
+      1. Tab navigation: Zones | Rates | Couriers | COD Settings | Pincodes
+      2. Shipping Zones tab:
+         - Zone cards (name, states covered, rate, status toggle)
+         - "Add Zone" modal
+      3. Shipping Rates tab:
+         - Rate table per zone per method
+         - Inline edit
+         - Free shipping threshold input
+      4. COD Settings tab:
+         - Enable/disable toggle
+         - COD charge input
+         - COD max order amount
+      5. Pincodes tab:
+         - CSV upload
+         - Search pincode — serviceable ya nahi
+      6. Save Changes button
+    -->
+    <p style="text-align:center; padding: 4rem; font-family: var(--font-body); color: var(--text-muted);">
+      admin-shipping.html — Abhi khaali hai, code likhna baaki hai.
+    </p>
+  </main>
+</body>
+</html>

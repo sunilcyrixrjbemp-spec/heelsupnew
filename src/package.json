@@ -1,0 +1,15 @@
+{
+    "name": "heelsup-worker",
+    "version": "1.0.0",
+    "private": true,
+    "scripts": {
+        "dev": "wrangler dev src/index.js --local",
+        "deploy": "wrangler deploy",
+        "db:init": "wrangler d1 execute heelsup-db --file=./schema/schema.sql",
+        "db:seed": "wrangler d1 execute heelsup-db --file=./schema/seed.sql",
+        "db:console": "wrangler d1 execute heelsup-db --command"
+    },
+    "devDependencies": {
+        "wrangler": "^3.0.0"
+    }
+}

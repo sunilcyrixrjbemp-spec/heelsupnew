@@ -1,0 +1,16 @@
+# Cloudflare runtime vars (non-secret)
+APP_NAME=HeelsUp
+CORS_ORIGIN=*
+API_BASE_URL=https://heelsup-api.YOUR-SUBDOMAIN.workers.dev
+GOOGLE_APPSCRIPT_ENDPOINT=https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec
+GOOGLE_APPSCRIPT_TOKEN=your-gas-shared-token
+JWT_EXPIRES_DAYS=30
+OTP_EXPIRY_MINUTES=10
+REQUIRE_EMAIL_OTP=false
+
+# Cloudflare secrets (set via wrangler secret put ...)
+# JWT_SECRET=
+# RAZORPAY_KEY_ID=
+# RAZORPAY_KEY_SECRET=
+# ADMIN_BOOTSTRAP_EMAIL=
+# ADMIN_BOOTSTRAP_PASSWORD=

@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FAQs – HeelsUp | Frequently Asked Questions</title>
+    <meta name="description" content="HeelsUp ke baare mein aapke saare sawaal aur unke jawab." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        .faq-hero {
+            background: linear-gradient(135deg, var(--color-dark) 0%, #1a1008 100%);
+            padding: 80px 0;
+            text-align: center;
+        }
+
+        .faq-hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(2.2rem, 5vw, 4rem);
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 14px;
+        }
+
+        .faq-hero h1 em {
+            font-style: italic;
+            color: var(--color-primary-light);
+        }
+
+        .faq-hero p {
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.55);
+            max-width: 500px;
+            margin: 0 auto 32px;
+        }
+
+        .faq-search-wrap {
+            display: flex;
+            max-width: 480px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 100px;
+            padding: 6px 6px 6px 22px;
+        }
+
+        .faq-search-wrap input {
+            flex: 1;
+            background: transparent;
+            color: #fff;
+            font-size: 15px;
+        }
+
+        .faq-search-wrap input::placeholder {
+            color: rgba(255, 255, 255, 0.35);
+        }
+
+        .faq-search-wrap button {
+            padding: 10px 22px;
+            background: var(--color-primary);
+            color: var(--color-dark);
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+        }
+
+        .faq-page {
+            background: var(--color-light);
+            padding: 70px 0;
+        }
+
+        .faq-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        /* Category Nav */
+        .faq-cats {
+            background: var(--color-white);
+            border-radius: 18px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: sticky;
+            top: 90px;
+        }
+
+        .faq-cats-title {
+            padding: 20px 22px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .faq-cat-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 22px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .faq-cat-item:hover {
+            color: var(--color-primary);
+            background: var(--color-primary-glow);
+        }
+
+        .faq-cat-item.active {
+            color: var(--color-primary);
+            background: var(--color-primary-glow);
+            border-left-color: var(--color-primary);
+        }
+
+        .faq-cat-count {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--text-muted);
+            background: var(--color-light-3);
+            padding: 2px 8px;
+            border-radius: 100px;
+        }
+
+        /* FAQ Groups */
+        .faq-group {
+            margin-bottom: 40px;
+        }
+
+        .faq-group-title {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .faq-group-icon {
+            color: var(--color-primary);
+        }
+
+        /* Accordion */
+        .faq-item {
+            background: var(--color-white);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin-bottom: 10px;
+            overflow: hidden;
+            transition: box-shadow 0.2s;
+        }
+
+        .faq-item.open {
+            box-shadow: var(--shadow-md);
+        }
+
+        .faq-question {
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            gap: 16px;
+        }
+
+        .faq-question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .faq-item.open .faq-question-text {
+            color: var(--color-primary-dark);
+        }
+
+        .faq-toggle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 1.5px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            flex-shrink: 0;
+            transition: all 0.3s;
+        }
+
+        .faq-item.open .faq-toggle {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--color-dark);
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 0 24px 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            border-top: 1px solid var(--border-color);
+            padding-top: 16px;
+        }
+
+        .faq-item.open .faq-answer {
+            display: block;
+        }
+
+        /* Contact CTA */
+        .faq-contact-cta {
+            background: var(--color-dark);
+            border-radius: 20px;
+            padding: 44px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        .faq-contact-cta h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 300;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .faq-contact-cta h3 em {
+            font-style: italic;
+            color: var(--color-primary-light);
+        }
+
+        .faq-contact-cta p {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .faq-contact-btns {
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        @media(max-width:900px) {
+            .faq-layout {
+                grid-template-columns: 1fr;
+            }
+
+            .faq-cats {
+                position: static;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="topbar">
+        <div class="topbar-marquee"><span class="topbar-text">🚚 FREE Shipping above ₹499</span><span
+                class="topbar-dot"></span><span class="topbar-text">💬 24/7 WhatsApp Support</span></div>
+    </div>
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="navbar-logo"><span class="navbar-logo-text">Heels<span>Up</span></span></a>
+                <ul class="navbar-menu">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li><a href="contact.html" class="nav-link">Contact</a></li>
+                </ul>
+                <div class="navbar-actions">
+                    <a href="wishlist.html" class="nav-icon-btn"><i class="fa-regular fa-heart"></i></a>
+                    <a href="profile.html" class="nav-icon-btn"><i class="fa-regular fa-user"></i></a>
+                    <button class="nav-icon-btn" id="cart-open-btn"><i class="fa-solid fa-bag-shopping"></i><span
+                            class="nav-badge" id="cart-count">0</span></button>
+                    <button class="navbar-hamburger" id="hamburger-btn"><span class="hamburger-line"></span><span
+                            class="hamburger-line"></span><span class="hamburger-line"></span></button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero -->
+    <div class="faq-hero">
+        <div class="container">
+            <h1>Frequently Asked <em>Questions</em></h1>
+            <p>Aapke sawaalon ke jawab ek jagah par. Nahi mila? Hum se seedha poochho.</p>
+            <div class="faq-search-wrap">
+                <input type="text" id="faq-search" placeholder="Koi sawaal dhundho..." />
+                <button><i class="fa-solid fa-magnifying-glass"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <div class="faq-page">
+        <div class="container">
+            <nav class="breadcrumb"><span class="breadcrumb-item"><a href="index.html">Home</a></span><span
+                    class="breadcrumb-sep"><i class="fa-solid fa-chevron-right" style="font-size:8px"></i></span><span
+                    class="breadcrumb-item active">FAQs</span></nav>
+            <div class="faq-layout">
+                <!-- Category Nav -->
+                <aside class="faq-cats">
+                    <div class="faq-cats-title">Categories</div>
+                    <div class="faq-cat-item active" data-cat="all"><i class="fa-solid fa-list"
+                            style="color:var(--color-primary)"></i> All Questions <span class="faq-cat-count">20</span>
+                    </div>
+                    <div class="faq-cat-item" data-cat="orders"><i class="fa-solid fa-box"
+                            style="color:var(--color-primary)"></i> Orders <span class="faq-cat-count">5</span></div>
+                    <div class="faq-cat-item" data-cat="shipping"><i class="fa-solid fa-truck"
+                            style="color:var(--color-primary)"></i> Shipping <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="returns"><i class="fa-solid fa-rotate-left"
+                            style="color:var(--color-primary)"></i> Returns <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="payment"><i class="fa-solid fa-credit-card"
+                            style="color:var(--color-primary)"></i> Payments <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="products"><i class="fa-solid fa-shoe-prints"
+                            style="color:var(--color-primary)"></i> Products <span class="faq-cat-count">3</span></div>
+                </aside>
+
+                <!-- FAQs -->
+                <div>
+                    <!-- Orders -->
+                    <div class="faq-group" data-cat="orders">
+                        <div class="faq-group-title"><i class="fa-solid fa-box faq-group-icon"></i> Orders</div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Order kaise place
+                                    karein?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">HeelsUp pe order karna bahut easy hai! Apni pasand ki product choose
+                                karo, size select karo, cart mein add karo, aur checkout karo. Hum UPI, cards, aur COD
+                                accept karte hain.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Order place karne ke baad cancel
+                                    kar sakte hain?</span><span class="faq-toggle"><i
+                                        class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Haan! Agar order shipped nahi hua hai, toh aap profile mein jaake
+                                cancel kar sakte hain. Shipped hone ke baad return policy apply hogi.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Order track kaise
+                                    karein?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Order place hone ke baad aapko email/SMS mein tracking ID milegi.
+                                Profile &gt; Orders mein bhi track kar sakte hain. Koi problem ho toh WhatsApp karo.
+                            </div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Mujhe order confirmation kab
+                                    milega?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Order place karte hi aapko email aur SMS confirmation milega. Agar
+                                30 minutes mein na mile, toh spam folder check karo ya hum se contact karo.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Bulk order possible
+                                    hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Bilkul! Bulk orders ke liye special discounts milte hain. WhatsApp
+                                pe contact karo aur hum best price offer karenge.</div>
+                        </div>
+                    </div>
+
+                    <!-- Shipping -->
+                    <div class="faq-group" data-cat="shipping">
+                        <div class="faq-group-title"><i class="fa-solid fa-truck faq-group-icon"></i> Shipping &
+                            Delivery</div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Delivery charge kitna
+                                    hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">₹499 se upar ke orders pe FREE shipping milti hai. ₹499 se kam ke
+                                orders pe ₹49 shipping charge lagta hai.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Delivery kitne din mein
+                                    hogi?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Jodhpur mein same-day ya next-day delivery milti hai. Baaki
+                                Rajasthan mein 2-3 din, India-wide 3-5 business days mein delivery hoti hai.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Kya aap India ke bahar deliver
+                                    karte ho?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span>
+                            </div>
+                            <div class="faq-answer">Abhi hum sirf India mein deliver karte hain. International shipping
+                                jald hi shuru hogi. Updates ke liye newsletter subscribe karo!</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Delivery partner kaun
+                                    hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Hum Blue Dart, Delhivery, aur India Post ke saath kaam karte hain
+                                best delivery experience ke liye.</div>
+                        </div>
+                    </div>
+
+                    <!-- Returns -->
+                    <div class="faq-group" data-cat="returns">
+                        <div class="faq-group-title"><i class="fa-solid fa-rotate-left faq-group-icon"></i> Returns &
+                            Exchange</div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Return policy kya hai?</span><span
+                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Delivery ke 7 din ke andar return ya exchange kar sakte hain.
+                                Product original condition mein, tags ke saath honi chahiye. <a
+                                    href="policy/returns.html" style="color:var(--color-primary)">Full return policy
+                                    padhein.</a></div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Size galat ayi — kya exchange
+                                    milegi?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Bilkul! Size exchange ke liye WhatsApp karo. Hum pickup arrange
+                                karenge aur sahi size bhej denge. Agar stock mein available ho toh 3-5 din mein exchange
+                                ho jaati hai.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Refund kab milega?</span><span
+                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Return receive hone ke 5-7 business days mein refund original
+                                payment method pe aa jaata hai. UPI/Wallet refunds faster hoti hain.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Damaged product mila — kya
+                                    karein?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Immediately WhatsApp pe photos bhejo. Hum 24 hours mein replacement
+                                arrange karenge. Damaged products ke liye koi extra charge nahi hoga.</div>
+                        </div>
+                    </div>
+
+                    <!-- Payment -->
+                    <div class="faq-group" data-cat="payment">
+                        <div class="faq-group-title"><i class="fa-solid fa-credit-card faq-group-icon"></i> Payments
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Kaun se payment methods accept
+                                    hote hain?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span>
+                            </div>
+                            <div class="faq-answer">UPI (GPay, PhonePe, Paytm), Credit/Debit Cards, Net Banking, aur
+                                Cash on Delivery (COD) accept karte hain.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">EMI available hai?</span><span
+                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Haan! ₹1999 se upar ke orders pe EMI available hai major credit
+                                cards pe (3, 6, 12 months).</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">COD pe extra charge
+                                    hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">₹49 COD handling charge lagta hai. Prepaid orders pe yeh charge nahi
+                                hota.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Discount code kaise use
+                                    karein?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Checkout page pe "Apply Coupon" field mein code daalo aur Apply
+                                button dabao. Discount automatically apply ho jaayega.</div>
+                        </div>
+                    </div>
+
+                    <!-- Products -->
+                    <div class="faq-group" data-cat="products">
+                        <div class="faq-group-title"><i class="fa-solid fa-shoe-prints faq-group-icon"></i> Products &
+                            Sizing</div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Size chart kahan hai?</span><span
+                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Har product page pe size chart available hai. Generally India size
+                                3-9 mein available hain. Doubt ho toh WhatsApp karo — hum guide karenge.</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">Products ki quality kaisi
+                                    hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Har product quality-checked hai. Hum premium materials use karte
+                                hain. 10,000+ customers ne 4.8★ rating di hai — quality ki guarantee hai!</div>
+                        </div>
+                        <div class="faq-item">
+                            <div class="faq-question"><span class="faq-question-text">New arrivals kab aate
+                                    hain?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-answer">Har hafte naye products aate hain! Instagram @heelsup.in follow karo
+                                ya newsletter subscribe karo — pehle notification aapko milega.</div>
+                        </div>
+                    </div>
+
+                    <!-- Contact CTA -->
+                    <div class="faq-contact-cta">
+                        <h3>Aur <em>Sawaal</em> Hai?</h3>
+                        <p>Hum hamesha available hain — WhatsApp pe ya email pe seedha poochho</p>
+                        <div class="faq-contact-btns">
+                            <a href="https://wa.me/919xxxxxxxxx" class="btn btn-primary" target="_blank"><i
+                                    class="fa-brands fa-whatsapp"></i> WhatsApp Chat</a>
+                            <a href="contact.html" class="btn btn-white">Contact Form</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer minimal -->
+    <footer style="background:var(--color-dark);padding:32px 0;border-top:1px solid rgba(255,255,255,0.06)">
+        <div class="container"
+            style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+            <span style="font-family:var(--font-display);font-size:1.4rem;color:#fff">Heels<span
+                    style="color:var(--color-primary)">Up</span></span>
+            <p style="font-size:12px;color:rgba(255,255,255,0.35)">© 2025 HeelsUp. Made with ❤️ in Jodhpur.</p>
+            <div style="display:flex;gap:20px">
+                <a href="policy/privacy.html" style="font-size:12px;color:rgba(255,255,255,0.4)">Privacy</a>
+                <a href="policy/terms.html" style="font-size:12px;color:rgba(255,255,255,0.4)">Terms</a>
+                <a href="policy/returns.html" style="font-size:12px;color:rgba(255,255,255,0.4)">Returns</a>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>My Cart</h3><button class="cart-close-btn" id="cart-close-btn">✕</button>
+        </div>
+        <div class="cart-drawer-body">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛍️</div>
+                <div class="cart-empty-text">Cart is empty</div><a href="shop.html" class="btn btn-primary"
+                    style="margin-top:12px">Shop Now</a>
+            </div>
+        </div>
+    </aside>
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
+        // Accordion
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.querySelector('.faq-question').addEventListener('click', () => {
+                const wasOpen = item.classList.contains('open');
+                document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+                if (!wasOpen) item.classList.add('open');
+            });
+        });
+        // Category filter
+        document.querySelectorAll('.faq-cat-item').forEach(cat => {
+            cat.addEventListener('click', () => {
+                document.querySelectorAll('.faq-cat-item').forEach(c => c.classList.remove('active'));
+                cat.classList.add('active');
+                const filter = cat.dataset.cat;
+                document.querySelectorAll('.faq-group').forEach(g => {
+                    g.style.display = (filter === 'all' || g.dataset.cat === filter) ? 'block' : 'none';
+                });
+            });
+        });
+        // Search
+        document.getElementById('faq-search')?.addEventListener('input', function () {
+            const q = this.value.trim().toLowerCase();
+            if (!q) { document.querySelectorAll('.faq-item').forEach(i => i.style.display = 'block'); return; }
+            document.querySelectorAll('.faq-item').forEach(item => {
+                const text = item.querySelector('.faq-question-text').textContent.toLowerCase() + item.querySelector('.faq-answer').textContent.toLowerCase();
+                item.style.display = text.includes(q) ? 'block' : 'none';
+            });
+        });
+        const cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
+        document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+        document.getElementById('cart-open-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open'); });
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+        document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
+    </script>
+</body>
+
+</html>

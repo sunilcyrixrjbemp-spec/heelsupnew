@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Coupons & Discounts</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Coupons Stats */
+        .coupon-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-white);
+            padding: var(--space-4) var(--space-6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            border-bottom: none;
+        }
+
+        .coupon-code-badge {
+            background: var(--color-light);
+            border: 1px dashed var(--color-primary-dark);
+            color: var(--color-primary-dark);
+            padding: 4px 10px;
+            border-radius: var(--radius-sm);
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 1px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .coupon-type {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .coupon-value {
+            font-size: var(--text-lg);
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .usage-bar-wrap {
+            width: 100px;
+            height: 6px;
+            background: var(--color-light-3);
+            border-radius: var(--radius-pill);
+            margin-top: 4px;
+            overflow: hidden;
+        }
+
+        .usage-bar-fill {
+            height: 100%;
+            background: var(--color-info);
+            border-radius: var(--radius-pill);
+        }
+
+        .usage-bar-fill.high {
+            background: var(--color-warning);
+        }
+
+        .usage-bar-fill.full {
+            background: var(--color-error);
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            background: var(--color-light);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--color-white);
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group .form-control {
+            border-radius: var(--radius-base) 0 0 var(--radius-base);
+        }
+
+        .input-group-addon {
+            padding: 10px 14px;
+            background: var(--color-light-3);
+            border: 1px solid var(--border-color);
+            border-left: none;
+            border-radius: 0 var(--radius-base) var(--radius-base) 0;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Coupons & Discounts</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search by coupon code..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Discounts & Offers</h2>
+                        <p>Manage promo codes, automatic discounts, and track usage.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-add-coupon')">
+                        <i class="fa-solid fa-plus"></i> Create Coupon
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="coupon-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Active Coupons</div>
+                            <div class="stat-value text-primary-dark">8</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-ticket"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Uses (30D)</div>
+                            <div class="stat-value">412</div>
+                            <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> +12%</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-users"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Saved by Customers</div>
+                            <div class="stat-value">₹45.2K</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-green"><i class="fa-solid fa-piggy-bank"></i></div>
+                    </div>
+                    <div class="stat-card"
+                        style="border: 1px solid var(--border-color); background: var(--color-white);">
+                        <div>
+                            <div class="stat-label">Expiring Soon</div>
+                            <div class="stat-value text-warning">2</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-orange"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="adv-filter-bar">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select class="form-control" style="width:160px; padding: 8px 12px;">
+                            <option>All Status</option>
+                            <option>Active</option>
+                            <option>Scheduled</option>
+                            <option>Expired</option>
+                        </select>
+                        <select class="form-control" style="width:160px; padding: 8px 12px;">
+                            <option>Discount Type</option>
+                            <option>Percentage</option>
+                            <option>Fixed Amount</option>
+                            <option>Free Shipping</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="admin-table-wrap"
+                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="table-checkbox" id="selectAllCoupons" /></th>
+                                    <th class="sortable sorted">Coupon Code <i
+                                            class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                    <th>Value</th>
+                                    <th>Conditions</th>
+                                    <th>Usage</th>
+                                    <th>Valid Until</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Coupon 1 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div class="coupon-code-badge">WELCOME20 <i class="fa-regular fa-copy"
+                                                style="cursor:pointer; opacity:0.6;"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="coupon-value">20% OFF</div>
+                                        <div class="coupon-type">Percentage</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Min. order ₹999</div>
+                                        <div class="admin-table-sub">All Products</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">145 / 500</div>
+                                        <div class="usage-bar-wrap">
+                                            <div class="usage-bar-fill" style="width:29%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">31 Dec 2026</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Deactivate"><i
+                                                    class="fa-solid fa-ban"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Coupon 2 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div class="coupon-code-badge">FLAT500 <i class="fa-regular fa-copy"
+                                                style="cursor:pointer; opacity:0.6;"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="coupon-value">₹500 OFF</div>
+                                        <div class="coupon-type">Fixed Amount</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Min. order ₹2,499</div>
+                                        <div class="admin-table-sub">Heels Only</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">89 / 100</div>
+                                        <div class="usage-bar-wrap">
+                                            <div class="usage-bar-fill high" style="width:89%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">15 May 2026</div>
+                                        <div class="admin-table-sub text-warning">Expiring Soon</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Deactivate"><i
+                                                    class="fa-solid fa-ban"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Coupon 3 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div class="coupon-code-badge">FREESHIP <i class="fa-regular fa-copy"
+                                                style="cursor:pointer; opacity:0.6;"></i></div>
+                                    </td>
+                                    <td>
+                                        <div class="coupon-value"><i class="fa-solid fa-truck-fast"></i> FREE</div>
+                                        <div class="coupon-type">Shipping</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">No Minimum</div>
+                                        <div class="admin-table-sub">Specific Regions</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">312 / ∞</div>
+                                        <div class="usage-bar-wrap">
+                                            <div class="usage-bar-fill"
+                                                style="width:100%; background:var(--color-success);"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Never</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Deactivate"><i
+                                                    class="fa-solid fa-ban"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Coupon 4 -->
+                                <tr style="background:var(--color-light);">
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div class="coupon-code-badge" style="opacity:0.6;">SUMMER30</div>
+                                    </td>
+                                    <td>
+                                        <div class="coupon-value text-muted">30% OFF</div>
+                                        <div class="coupon-type">Percentage</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name text-muted">Min. order ₹1,999</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name text-muted">500 / 500</div>
+                                        <div class="usage-bar-wrap">
+                                            <div class="usage-bar-fill full" style="width:100%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name text-muted">01 Apr 2026</div>
+                                    </td>
+                                    <td><span class="status-badge status-inactive">Expired</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Coupon 5 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div class="coupon-code-badge"
+                                            style="border-color:var(--color-info); color:var(--color-info);">DIWALI50
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="coupon-value">50% OFF</div>
+                                        <div class="coupon-type">Percentage</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Specific Customers</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">0 / 1000</div>
+                                        <div class="usage-bar-wrap">
+                                            <div class="usage-bar-fill" style="width:0%;"></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">10 Nov 2026</div>
+                                    </td>
+                                    <td><span class="status-badge status-processing"
+                                            style="background:var(--color-info-light); color:var(--color-info);">Scheduled</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Add Coupon -->
+    <div class="modal-overlay" id="modal-add-coupon">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Create Discount Code</div>
+                <button class="modal-close" onclick="closeModal('modal-add-coupon')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group-full">
+                        <label class="form-label">Discount Code</label>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" class="form-control" placeholder="e.g. VIP2026"
+                                style="text-transform:uppercase; font-family:monospace; font-size:16px; font-weight:700;" />
+                            <button class="btn btn-secondary">Generate</button>
+                        </div>
+                        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Customers will enter this
+                            at checkout.</div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Discount Type</label>
+                        <select class="form-control">
+                            <option>Percentage (%)</option>
+                            <option>Fixed Amount (₹)</option>
+                            <option>Free Shipping</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Discount Value</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" placeholder="e.g. 20" />
+                            <span class="input-group-addon">%</span>
+                        </div>
+                    </div>
+
+                    <div class="form-group-full">
+                        <div style="border-top:1px solid var(--border-color); margin:10px 0;"></div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Minimum Requirements</label>
+                        <select class="form-control">
+                            <option>None</option>
+                            <option>Minimum purchase amount (₹)</option>
+                            <option>Minimum quantity of items</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Applies To</label>
+                        <select class="form-control">
+                            <option>All Products</option>
+                            <option>Specific Categories</option>
+                            <option>Specific Products</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label class="form-label">Usage Limits</label>
+                        <div style="display:flex; flex-direction:column; gap:10px;">
+                            <label style="display:flex; align-items:center; gap:8px;">
+                                <input type="checkbox" style="width:16px; height:16px;">
+                                <span style="font-size:var(--text-sm);">Limit number of times this discount can be used
+                                    in total</span>
+                            </label>
+                            <label style="display:flex; align-items:center; gap:8px;">
+                                <input type="checkbox" style="width:16px; height:16px;" checked>
+                                <span style="font-size:var(--text-sm);">Limit to one use per customer</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group-full">
+                        <div style="border-top:1px solid var(--border-color); margin:10px 0;"></div>
+                    </div>
+
+                    <div>
+                        <label class="form-label">Active Dates</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                    <div>
+                        <label class="form-label">End Date (Optional)</label>
+                        <input type="date" class="form-control" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-add-coupon')">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-add-coupon'); alert('Coupon Created!');">Save
+                    Coupon</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        document.getElementById('selectAllCoupons')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    </script>
+</body>
+
+</html>

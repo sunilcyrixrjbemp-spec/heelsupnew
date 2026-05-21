@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Account – HeelsUp</title>
+    <meta name="description" content="Manage your HeelsUp account — profile, orders, addresses and security settings." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+    <style>
+        * { box-sizing: border-box; }
+
+        body { background: #F5F3F0; }
+
+        /* ─── Page wrapper ─── */
+        .profile-page {
+            min-height: 100vh;
+            padding: 32px 0 80px;
+        }
+
+        /* ─── Breadcrumb ─── */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 28px;
+        }
+
+        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
+        .breadcrumb a:hover { color: var(--color-primary); }
+        .breadcrumb-active { color: var(--text-primary); font-weight: 600; }
+
+        /* ─── Layout: sidebar + content ─── */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            gap: 24px;
+            align-items: start;
+        }
+
+        /* ─── Sidebar ─── */
+        .profile-sidebar {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            position: sticky;
+            top: 90px;
+        }
+
+        .sidebar-head {
+            background: linear-gradient(145deg, #0D0D0D 0%, #1f1208 100%);
+            padding: 28px 22px 24px;
+            text-align: center;
+        }
+
+        .sidebar-avatar {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: var(--color-primary);
+            color: #0D0D0D;
+            font-size: 1.6rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            border: 3px solid rgba(201,169,110,0.35);
+            font-family: var(--font-display);
+        }
+
+        .sidebar-name {
+            font-family: var(--font-heading);
+            font-size: 1rem;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 4px;
+        }
+
+        .sidebar-email {
+            font-size: 11.5px;
+            color: rgba(255,255,255,0.42);
+        }
+
+        .sidebar-nav {
+            padding: 10px 0;
+        }
+
+        .sidebar-nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 22px;
+            font-size: 13.5px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            text-decoration: none;
+            background: none;
+            border-right: none;
+            border-top: none;
+            border-bottom: none;
+            width: 100%;
+            text-align: left;
+            font-family: var(--font-body);
+        }
+
+        .sidebar-nav-item:hover {
+            color: var(--color-primary);
+            background: rgba(201,169,110,0.06);
+        }
+
+        .sidebar-nav-item.active {
+            color: var(--color-primary);
+            background: rgba(201,169,110,0.07);
+            border-left-color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .sidebar-nav-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .sidebar-nav-item.nav-logout {
+            color: var(--color-accent, #D4456B);
+            border-top: 1px solid var(--border-color);
+            margin-top: 6px;
+        }
+
+        .sidebar-nav-item.nav-logout:hover {
+            background: rgba(212,69,107,0.05);
+        }
+
+        /* ─── Panels ─── */
+        .profile-panel { display: none; }
+        .profile-panel.active { display: block; }
+
+        /* ─── Panel card ─── */
+        .panel-card {
+            background: #fff;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            padding: 32px 36px;
+            margin-bottom: 20px;
+        }
+
+        .panel-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .panel-card-title {
+            font-family: var(--font-heading);
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .panel-card-sub {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ─── Stats row ─── */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            padding: 22px 18px;
+            text-align: center;
+            transition: box-shadow 0.2s;
+        }
+
+        .stat-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+
+        .stat-card-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(201,169,110,0.1);
+            border: 1px solid rgba(201,169,110,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-size: 1.1rem;
+            color: var(--color-primary);
+        }
+
+        .stat-card-num {
+            font-family: var(--font-display);
+            font-size: 1.9rem;
+            font-weight: 300;
+            color: var(--color-primary);
+            line-height: 1;
+            margin-bottom: 4px;
+        }
+
+        .stat-card-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            font-weight: 500;
+            letter-spacing: 0.04em;
+        }
+
+        /* ─── Recent orders mini ─── */
+        .order-mini {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .order-mini:last-child { border-bottom: none; }
+
+        .order-mini-img {
+            width: 52px;
+            height: 64px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--color-light);
+            flex-shrink: 0;
+        }
+
+        .order-mini-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .order-mini-info { flex: 1; min-width: 0; }
+
+        .order-mini-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .order-mini-meta { font-size: 12px; color: var(--text-muted); }
+
+        .order-mini-badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            padding: 4px 11px;
+            border-radius: 100px;
+            flex-shrink: 0;
+        }
+
+        .badge-delivered { background: #dcfce7; color: #16a34a; }
+        .badge-shipped   { background: #dbeafe; color: #2563eb; }
+        .badge-processing { background: #fef9c3; color: #a16207; }
+        .badge-placed    { background: rgba(201,169,110,0.12); color: var(--color-primary); }
+
+        /* ─── Form elements ─── */
+        .form-row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .form-group { margin-bottom: 18px; }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 7px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 11px;
+            font-family: var(--font-body);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: var(--color-light, #FAF8F5);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            outline: none;
+        }
+
+        .form-input:focus {
+            border-color: var(--color-primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+        }
+
+        .form-input:disabled {
+            background: #f5f5f5;
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Password input wrap */
+        .input-wrap { position: relative; }
+
+        .input-wrap .form-input { padding-right: 44px; }
+
+        .eye-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .eye-toggle:hover { color: var(--color-primary); }
+
+        /* Save button */
+        .btn-save {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 28px;
+            background: var(--color-primary);
+            color: var(--color-dark);
+            border: none;
+            border-radius: 11px;
+            font-family: var(--font-body);
+            font-size: 13.5px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.04em;
+        }
+
+        .btn-save:hover:not(:disabled) {
+            background: var(--color-primary-dark, #b8904a);
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(201,169,110,0.35);
+        }
+
+        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
+
+        /* Address card */
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .address-card {
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            padding: 18px 20px;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .address-card.is-default { border-color: var(--color-primary); }
+
+        .address-default-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(201,169,110,0.12);
+            color: var(--color-primary);
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            padding: 3px 10px;
+            border-radius: 100px;
+            border: 1px solid rgba(201,169,110,0.3);
+        }
+
+        .address-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+
+        .address-detail {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .address-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .btn-ghost-sm {
+            padding: 7px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background: none;
+            font-family: var(--font-body);
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-ghost-sm:hover { border-color: var(--color-primary); color: var(--color-primary); }
+
+        /* Add address button */
+        .btn-add-address {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            height: 100%;
+            min-height: 120px;
+            border: 2px dashed var(--border-color);
+            border-radius: 14px;
+            background: none;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add-address:hover {
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+            background: rgba(201,169,110,0.04);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 14px 18px;
+            background: #fff;
+            border-radius: 14px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+            border-left: 4px solid var(--color-primary);
+            min-width: 280px;
+            max-width: 360px;
+            animation: toastIn 0.35s ease;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateX(30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .toast-error { border-left-color: #D4456B; }
+        .toast-success { border-left-color: #22c55e; }
+        .toast-info { border-left-color: #3b82f6; }
+        .toast-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+        .toast-error .toast-icon { color: #D4456B; }
+        .toast-success .toast-icon { color: #22c55e; }
+        .toast-info .toast-icon { color: #3b82f6; }
+        .toast-body { flex: 1; }
+        .toast-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
+        .toast-message { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+        .toast-close { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-muted); padding: 0; flex-shrink: 0; }
+
+        /* ─── Loading spinner ─── */
+        .profile-loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 300px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--color-primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ─── Responsive ─── */
+        @media (max-width: 960px) {
+            .profile-layout { grid-template-columns: 1fr; }
+            .profile-sidebar { position: static; }
+        }
+
+        @media (max-width: 640px) {
+            .panel-card { padding: 22px 20px; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+            .form-row-2 { grid-template-columns: 1fr; }
+            .address-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- ── Topbar ── -->
+    <div class="topbar">
+        <div class="topbar-marquee">
+            <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">🚚 FREE Shipping on orders above <strong>₹499</strong></span>
+            <span class="topbar-dot"></span>
+            <span class="topbar-text">🏷️ Use code <strong>HEELS10</strong> for 10% off</span>
+        </div>
+    </div>
+
+    <!-- ── Navbar ── -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="navbar-inner">
+                <a href="index.html" class="navbar-logo">
+                    <img src="logo.png" alt="HeelsUp" onerror="this.style.display='none'" />
+                </a>
+                <ul class="navbar-menu" id="nav-menu">
+                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
+                    <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
+                    <li class="nav-item"><a href="category.html?cat=new" class="nav-link">New Arrivals</a></li>
+                    <li class="nav-item"><a href="category.html?cat=sale" class="nav-link" style="color:var(--color-accent)"><i class="fa-solid fa-fire" style="font-size:0.8rem"></i> Sale</a></li>
+                </ul>
+                <div class="navbar-actions">
+                    <a href="wishlist.html" class="nav-icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
+                    <a href="profile.html" class="nav-icon-btn" title="My Account" style="color:var(--color-primary)">
+                        <i class="fa-solid fa-user"></i>
+                        <span id="nav-user-name" style="font-size:12px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none"></span>
+                    </a>
+                    <button class="nav-icon-btn" id="cart-open-btn" title="Cart">
+                        <i class="fa-solid fa-bag-shopping"></i>
+                        <span class="nav-badge cart-badge" id="cart-count">0</span>
+                    </button>
+                    <button class="navbar-hamburger" id="hamburger-btn" aria-label="Menu">
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                        <span class="hamburger-line"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobile-menu">
+        <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
+        <div class="mobile-menu-panel">
+            <div class="mobile-menu-header">
+                <span class="navbar-logo-text">Heels<span style="color:var(--color-primary)">Up</span></span>
+                <button id="mobile-menu-close" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted)">✕</button>
+            </div>
+            <div class="mobile-menu-body">
+                <a href="index.html">🏠 Home</a>
+                <a href="shop.html">🛍️ Shop All</a>
+                <a href="category.html?cat=heels">👠 Heels</a>
+                <a href="category.html?cat=sandals">👡 Sandals</a>
+                <a href="category.html?cat=bags">👜 Bags</a>
+                <a href="category.html?cat=new">✨ New Arrivals</a>
+                <hr style="border:none;border-top:1px solid var(--border-color);margin:10px 0" />
+                <a href="profile.html">👤 My Account</a>
+                <a href="orders.html">📦 My Orders</a>
+                <a href="wishlist.html">❤️ Wishlist</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── Page content ── -->
+    <div class="profile-page">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <nav class="breadcrumb">
+                <a href="index.html">Home</a>
+                <i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i>
+                <span class="breadcrumb-active">My Account</span>
+            </nav>
+
+            <div class="profile-layout">
+                <!-- ── Sidebar ── -->
+                <aside class="profile-sidebar">
+                    <div class="sidebar-head">
+                        <div class="sidebar-avatar" id="sidebar-avatar">?</div>
+                        <div class="sidebar-name" id="sidebar-name">Loading…</div>
+                        <div class="sidebar-email" id="sidebar-email"></div>
+                    </div>
+
+                    <nav class="sidebar-nav">
+                        <button class="sidebar-nav-item active" data-tab="profile">
+                            <i class="fa-regular fa-user"></i> My Profile
+                        </button>
+                        <a href="orders.html" class="sidebar-nav-item">
+                            <i class="fa-solid fa-box"></i> My Orders
+                        </a>
+                        <button class="sidebar-nav-item" data-tab="addresses">
+                            <i class="fa-solid fa-location-dot"></i> Addresses
+                        </button>
+                        <button class="sidebar-nav-item" data-tab="password">
+                            <i class="fa-solid fa-lock"></i> Change Password
+                        </button>
+                        <button class="sidebar-nav-item nav-logout" id="logout-btn">
+                            <i class="fa-solid fa-right-from-bracket"></i> Logout
+                        </button>
+                    </nav>
+                </aside>
+
+                <!-- ── Main content ── -->
+                <div>
+                    <!-- PROFILE TAB -->
+                    <div class="profile-panel active" id="tab-profile">
+                        <!-- Stats -->
+                        <div class="stats-row" id="stats-row">
+                            <div class="stat-card">
+                                <div class="stat-card-icon"><i class="fa-solid fa-box"></i></div>
+                                <div class="stat-card-num" id="stat-orders">–</div>
+                                <div class="stat-card-label">Total Orders</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-icon"><i class="fa-regular fa-heart"></i></div>
+                                <div class="stat-card-num" id="stat-wishlist">–</div>
+                                <div class="stat-card-label">Wishlist Items</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-card-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
+                                <div class="stat-card-num" id="stat-spent">–</div>
+                                <div class="stat-card-label">Total Spent</div>
+                            </div>
+                        </div>
+
+                        <!-- Edit profile form -->
+                        <div class="panel-card">
+                            <div class="panel-card-header">
+                                <div>
+                                    <div class="panel-card-title">My Profile</div>
+                                    <div class="panel-card-sub">Update your personal information</div>
+                                </div>
+                            </div>
+
+                            <div class="form-row-2">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" class="form-input" id="edit-first-name" placeholder="Priya" />
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" class="form-input" id="edit-last-name" placeholder="Sharma" />
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-input" id="edit-email" disabled />
+                                <div class="form-hint"><i class="fa-solid fa-lock" style="font-size:10px"></i> Email cannot be changed</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Phone Number</label>
+                                <input type="tel" class="form-input" id="edit-phone" placeholder="9876543210" maxlength="10" />
+                                <div class="form-hint">Used for order notifications via SMS</div>
+                            </div>
+
+                            <button class="btn-save" id="save-profile-btn">
+                                <i class="fa-solid fa-check"></i> Save Changes
+                            </button>
+                        </div>
+
+                        <!-- Recent orders mini -->
+                        <div class="panel-card">
+                            <div class="panel-card-header">
+                                <div class="panel-card-title">Recent Orders</div>
+                                <a href="orders.html" class="btn-save" style="font-size:12px;padding:8px 18px;text-decoration:none">
+                                    View All <i class="fa-solid fa-arrow-right" style="font-size:0.75rem"></i>
+                                </a>
+                            </div>
+                            <div id="recent-orders-list">
+                                <div class="profile-loading"><div class="spinner"></div></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ADDRESSES TAB -->
+                    <div class="profile-panel" id="tab-addresses">
+                        <div class="panel-card">
+                            <div class="panel-card-header">
+                                <div>
+                                    <div class="panel-card-title">Saved Addresses</div>
+                                    <div class="panel-card-sub">Manage your delivery addresses</div>
+                                </div>
+                                <button class="btn-save" onclick="showToast('info','Coming Soon','Address management will be available soon.')">
+                                    <i class="fa-solid fa-plus"></i> Add New
+                                </button>
+                            </div>
+                            <div class="address-grid">
+                                <div class="address-card is-default" id="default-address">
+                                    <span class="address-default-badge">Default</span>
+                                    <div class="address-name" id="addr-name">—</div>
+                                    <div class="address-detail" id="addr-detail">Loading address…</div>
+                                    <div class="address-actions">
+                                        <button class="btn-ghost-sm" onclick="showToast('info','Coming Soon','Edit address coming soon.')">Edit</button>
+                                        <button class="btn-ghost-sm" style="color:var(--color-accent)" onclick="showToast('info','Coming Soon','Delete address coming soon.')">Delete</button>
+                                    </div>
+                                </div>
+                                <button class="btn-add-address" onclick="showToast('info','Coming Soon','Address management will be available soon.')">
+                                    <i class="fa-solid fa-plus" style="font-size:1.2rem"></i>
+                                    Add New Address
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- CHANGE PASSWORD TAB -->
+                    <div class="profile-panel" id="tab-password">
+                        <div class="panel-card">
+                            <div class="panel-card-header">
+                                <div>
+                                    <div class="panel-card-title">Change Password</div>
+                                    <div class="panel-card-sub">Keep your account secure with a strong password</div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <div class="input-wrap">
+                                    <input type="password" class="form-input" id="current-password" placeholder="••••••••" />
+                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-curr-pass"></i>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <div class="input-wrap">
+                                    <input type="password" class="form-input" id="new-password" placeholder="Minimum 8 characters" />
+                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-new-pass"></i>
+                                </div>
+                                <div class="form-hint">Use a mix of letters, numbers and symbols for best security</div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Confirm New Password</label>
+                                <div class="input-wrap">
+                                    <input type="password" class="form-input" id="confirm-new-password" placeholder="Repeat new password" />
+                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-conf-pass"></i>
+                                </div>
+                            </div>
+
+                            <button class="btn-save" id="update-password-btn">
+                                <i class="fa-solid fa-shield-halved"></i> Update Password
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Drawer -->
+    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3>My Cart</h3>
+            <button class="cart-close-btn" id="cart-close-btn">✕</button>
+        </div>
+        <div class="cart-drawer-body" id="cart-body">
+            <div class="cart-empty">
+                <div class="cart-empty-icon">🛍️</div>
+                <div class="cart-empty-text">Your cart is empty</div>
+                <a href="shop.html" class="btn btn-primary" style="margin-top:12px">Shop Now</a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-top grid grid-4">
+                <div>
+                    <div style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:12px">
+                        Heels<span style="color:var(--color-primary)">Up</span>
+                    </div>
+                    <p class="footer-tagline">Jodhpur se India tak — stylish ladies footwear &amp; bags ka sabse trusted naam.</p>
+                    <div class="footer-social">
+                        <a href="https://instagram.com/heelsup.in" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
+                        <a href="https://facebook.com/heelsup.in" class="footer-social-link" aria-label="Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
+                        <a href="https://wa.me/919999999999" class="footer-social-link" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <div class="footer-col-title">Quick Links</div>
+                    <ul class="footer-links">
+                        <li><a href="shop.html" class="footer-link">Shop All</a></li>
+                        <li><a href="category.html?cat=new" class="footer-link">New Arrivals</a></li>
+                        <li><a href="about.html" class="footer-link">About Us</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">Categories</div>
+                    <ul class="footer-links">
+                        <li><a href="category.html?cat=heels" class="footer-link">👠 Heels</a></li>
+                        <li><a href="category.html?cat=flats" class="footer-link">🥿 Flats</a></li>
+                        <li><a href="category.html?cat=sandals" class="footer-link">👡 Sandals</a></li>
+                        <li><a href="category.html?cat=bags" class="footer-link">👜 Bags</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <div class="footer-col-title">Help &amp; Support</div>
+                    <ul class="footer-links">
+                        <li><a href="orders.html" class="footer-link">Track Order</a></li>
+                        <li><a href="returns.html" class="footer-link">Return Policy</a></li>
+                        <li><a href="faq.html" class="footer-link">FAQs</a></li>
+                        <li><a href="contact.html" class="footer-link">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="footer-copyright">© 2025 HeelsUp. All rights reserved. Made with ❤️ in Jodhpur.</p>
+                <div class="footer-bottom-links">
+                    <a href="policy/privacy.html">Privacy</a>
+                    <a href="policy/terms.html">Terms</a>
+                    <a href="policy/returns.html">Returns</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script src="app-config.js"></script>
+    <script src="app-auth.js"></script>
+    <script src="js/cart.js"></script>
+    <script>
+        // ── Auth guard ──
+        (function () {
+            if (!HeelsUpAuth.getToken()) {
+                window.location.href = 'login.html?redirect=profile.html';
+            }
+        })();
+
+        // ── Navbar scroll ──
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+        });
+
+        // ── Mobile menu ──
+        const hamburger = document.getElementById('hamburger-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        hamburger?.addEventListener('click', () => {
+            hamburger.classList.toggle('open');
+            mobileMenu.classList.toggle('open');
+        });
+        ['mobile-backdrop','mobile-menu-close'].forEach(id => {
+            document.getElementById(id)?.addEventListener('click', () => {
+                hamburger.classList.remove('open');
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // ── Cart ──
+        document.getElementById('cart-open-btn')?.addEventListener('click', () => {
+            document.getElementById('cart-drawer').classList.add('open');
+            document.getElementById('cart-backdrop').classList.add('open');
+        });
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => {
+            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('cart-backdrop').classList.remove('open');
+        });
+        document.getElementById('cart-backdrop')?.addEventListener('click', () => {
+            document.getElementById('cart-drawer').classList.remove('open');
+            document.getElementById('cart-backdrop').classList.remove('open');
+        });
+
+        // ── Toast ──
+        function showToast(type, title, msg) {
+            const c = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
+            c.insertAdjacentHTML('beforeend', `
+                <div class="toast toast-${type}" id="${id}">
+                    <i class="fa-solid ${icons[type] || icons.info} toast-icon"></i>
+                    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
+                    <button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button>
+                </div>
+            `);
+            setTimeout(() => document.getElementById(id)?.remove(), 5000);
+        }
+
+        // ── Tab switching ──
+        document.querySelectorAll('.sidebar-nav-item[data-tab]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tab = btn.dataset.tab;
+                document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
+                btn.classList.add('active');
+                document.getElementById('tab-' + tab)?.classList.add('active');
+            });
+        });
+
+        // ── Password eye toggles ──
+        [
+            ['toggle-curr-pass', 'current-password'],
+            ['toggle-new-pass',  'new-password'],
+            ['toggle-conf-pass', 'confirm-new-password'],
+        ].forEach(([toggleId, inputId]) => {
+            document.getElementById(toggleId)?.addEventListener('click', function () {
+                const inp = document.getElementById(inputId);
+                inp.type = inp.type === 'password' ? 'text' : 'password';
+                this.classList.toggle('fa-eye');
+                this.classList.toggle('fa-eye-slash');
+            });
+        });
+
+        // ── Format currency ──
+        function formatInr(n) {
+            if (n >= 100000) return '₹' + (n / 100000).toFixed(1) + 'L';
+            if (n >= 1000) return '₹' + (n / 1000).toFixed(1) + 'K';
+            return '₹' + Number(n || 0).toLocaleString('en-IN');
+        }
+
+        // ── Render recent orders ──
+        function renderRecentOrders(orders) {
+            const container = document.getElementById('recent-orders-list');
+            if (!orders || !orders.length) {
+                container.innerHTML = `
+                    <div style="text-align:center;padding:32px;color:var(--text-muted)">
+                        <i class="fa-solid fa-box-open" style="font-size:2rem;margin-bottom:8px;display:block;opacity:0.3"></i>
+                        No orders yet. <a href="shop.html" style="color:var(--color-primary);font-weight:600">Start shopping</a>
+                    </div>`;
+                return;
+            }
+
+            const statusMap = {
+                placed:    'badge-placed',
+                confirmed: 'badge-processing',
+                processing:'badge-processing',
+                shipped:   'badge-shipped',
+                delivered: 'badge-delivered',
+            };
+
+            const imgFallback = 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=100&q=60&auto=format&fit=crop';
+
+            container.innerHTML = orders.slice(0, 3).map(order => {
+                const st = (order.orderStatus || 'placed').toLowerCase();
+                const badgeClass = statusMap[st] || 'badge-placed';
+                const img = order.items?.[0]?.image || imgFallback;
+                const itemName = order.items?.[0]?.name || 'Product';
+                const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—';
+                return `
+                    <div class="order-mini">
+                        <div class="order-mini-img"><img src="${img}" alt="${itemName}" loading="lazy" /></div>
+                        <div class="order-mini-info">
+                            <div class="order-mini-name">${itemName}</div>
+                            <div class="order-mini-meta">Order #${order.orderNumber || order.id} · ${date}</div>
+                        </div>
+                        <span class="order-mini-badge ${badgeClass}" style="text-transform:capitalize">${st}</span>
+                    </div>`;
+            }).join('');
+        }
+
+        // ── Load profile ──
+        async function loadProfile() {
+            try {
+                const data = await HeelsUpAuth.api('/api/me');
+                const user = data.user || {};
+
+                const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Customer';
+                const initials = (user.firstName?.[0] || '') + (user.lastName?.[0] || '');
+
+                // Sidebar
+                document.getElementById('sidebar-avatar').textContent = initials.toUpperCase() || '?';
+                document.getElementById('sidebar-name').textContent = fullName;
+                document.getElementById('sidebar-email').textContent = user.email || '';
+
+                // Navbar
+                const navName = document.getElementById('nav-user-name');
+                navName.textContent = user.firstName || '';
+                navName.style.display = 'inline';
+
+                // Profile form
+                document.getElementById('edit-first-name').value = user.firstName || '';
+                document.getElementById('edit-last-name').value  = user.lastName || '';
+                document.getElementById('edit-email').value      = user.email || '';
+                document.getElementById('edit-phone').value      = user.phone || '';
+
+                // Addresses
+                document.getElementById('addr-name').textContent = fullName;
+                document.getElementById('addr-detail').textContent = user.phone
+                    ? `Phone: ${user.phone}\n${user.email}`
+                    : user.email || 'No address saved yet.';
+
+                // Wishlist stat
+                const wl = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[]');
+                document.getElementById('stat-wishlist').textContent = wl.length;
+
+            } catch (err) {
+                if (err.status === 401) {
+                    HeelsUpAuth.clearSession();
+                    window.location.href = 'login.html?redirect=profile.html';
+                } else {
+                    showToast('error', 'Load Failed', 'Could not load profile. Please refresh.');
+                }
+            }
+        }
+
+        // ── Load orders stats ──
+        async function loadOrderStats() {
+            try {
+                const data = await HeelsUpAuth.api('/api/orders/my');
+                const orders = data.orders || [];
+                document.getElementById('stat-orders').textContent = orders.length;
+
+                const totalSpent = orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
+                document.getElementById('stat-spent').textContent = formatInr(totalSpent);
+
+                renderRecentOrders(orders);
+            } catch (e) {
+                document.getElementById('stat-orders').textContent = '—';
+                document.getElementById('stat-spent').textContent = '—';
+                document.getElementById('recent-orders-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted)">Could not load recent orders.</div>';
+            }
+        }
+
+        // ── Save profile ──
+        document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
+            const btn = document.getElementById('save-profile-btn');
+            const firstName = document.getElementById('edit-first-name').value.trim();
+            const lastName  = document.getElementById('edit-last-name').value.trim();
+            const phone     = document.getElementById('edit-phone').value.trim();
+
+            if (!firstName) { showToast('error', 'Required', 'First name is required.'); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+            try {
+                await HeelsUpAuth.api('/api/me', {
+                    method: 'PUT',
+                    body: JSON.stringify({ firstName, lastName, phone })
+                });
+                showToast('success', 'Profile Updated!', 'Your changes have been saved successfully.');
+                await loadProfile();
+            } catch (err) {
+                showToast('error', 'Update Failed', err.message || 'Please try again.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+            }
+        });
+
+        // ── Update password ──
+        document.getElementById('update-password-btn')?.addEventListener('click', async () => {
+            const btn             = document.getElementById('update-password-btn');
+            const currentPassword = document.getElementById('current-password').value;
+            const newPassword     = document.getElementById('new-password').value;
+            const confirmPass     = document.getElementById('confirm-new-password').value;
+
+            if (!currentPassword) { showToast('error', 'Required', 'Current password is required.'); return; }
+            if (!newPassword || newPassword.length < 8) { showToast('error', 'Too Short', 'New password must be at least 8 characters.'); return; }
+            if (newPassword !== confirmPass) { showToast('error', 'Mismatch', 'New passwords do not match.'); return; }
+            if (newPassword === currentPassword) { showToast('warning', 'Same Password', 'New password must be different from current password.'); return; }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating…';
+
+            try {
+                await HeelsUpAuth.api('/api/me/password', {
+                    method: 'PUT',
+                    body: JSON.stringify({ currentPassword, newPassword })
+                });
+                document.getElementById('current-password').value = '';
+                document.getElementById('new-password').value = '';
+                document.getElementById('confirm-new-password').value = '';
+                showToast('success', 'Password Updated!', 'Your password has been changed successfully.');
+            } catch (err) {
+                showToast('error', 'Update Failed', err?.data?.error || err.message || 'Please check your current password.');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Update Password';
+            }
+        });
+
+        // ── Logout ──
+        document.getElementById('logout-btn')?.addEventListener('click', () => {
+            HeelsUpAuth.clearSession();
+            showToast('info', 'Logged out', 'See you soon! 👋');
+            setTimeout(() => { window.location.href = 'index.html'; }, 800);
+        });
+
+        // ── Cart badge update ──
+        (function () {
+            try {
+                const cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
+                document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
+            } catch (e) {}
+        })();
+
+        // ── Init ──
+        loadProfile();
+        loadOrderStats();
+    </script>
+</body>
+
+</html>

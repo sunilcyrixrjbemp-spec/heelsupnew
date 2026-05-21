@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Customers</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Customer Specific Styles */
+        .cust-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-white);
+            padding: var(--space-4) var(--space-6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            border-bottom: none;
+        }
+
+        .filter-select {
+            padding: 8px 30px 8px 12px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            background: var(--color-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238c8580'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center / 14px;
+            appearance: none;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .filter-select:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        .customer-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 10px;
+            border-radius: var(--radius-pill);
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 4px;
+        }
+
+        .tag-vip {
+            background: rgba(201, 169, 110, 0.15);
+            color: var(--color-primary-dark);
+            border: 1px solid var(--color-primary-light);
+        }
+
+        .tag-new {
+            background: var(--color-info-light);
+            color: var(--color-info);
+        }
+
+        .tag-repeat {
+            background: var(--color-success-light);
+            color: var(--color-success);
+        }
+
+        .tag-churn {
+            background: var(--color-error-light);
+            color: var(--color-error);
+        }
+
+        .customer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--color-primary-glow), var(--color-light-3));
+            color: var(--color-primary-dark);
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            border: 1.5px solid var(--color-primary-light);
+        }
+
+        .customer-avatar.gold {
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+            color: #fff;
+            border-color: #d97706;
+        }
+
+        .customer-avatar.blue {
+            background: linear-gradient(135deg, #93c5fd, #3b82f6);
+            color: #fff;
+            border-color: #2563eb;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            background: var(--color-light);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--color-white);
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar mobile overlay -->
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Customers</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search customers by name, email, or phone..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="admin-notif-btn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Customer Management</h2>
+                        <p>View customer details, purchase history, and manage segments.</p>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3); flex-wrap:wrap;">
+                        <button class="btn btn-white"><i class="fa-solid fa-download"></i> Export</button>
+                        <button class="btn btn-white"><i class="fa-solid fa-upload"></i> Import</button>
+                        <button class="btn btn-primary" onclick="openModal('modal-add-customer')">
+                            <i class="fa-solid fa-user-plus"></i> Add Customer
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="cust-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Customers</div>
+                            <div class="stat-value">8,452</div>
+                            <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> +347 this month</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-users"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">VIP / Loyal</div>
+                            <div class="stat-value text-primary-dark">1,240</div>
+                            <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> 14% of base</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-crown"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Avg. Lifetime Value</div>
+                            <div class="stat-value">₹4,250</div>
+                            <div class="stat-change up"><i class="fa-solid fa-arrow-up"></i> +₹120 vs last yr</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-green"><i class="fa-solid fa-chart-line"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Email Subscribers</div>
+                            <div class="stat-value">5,890</div>
+                            <div class="stat-change neutral"><i class="fa-solid fa-envelope"></i> 69% Opt-in rate</div>
+                        </div>
+                        <div class="stat-card-icon"
+                            style="background:var(--color-light-3); color:var(--text-secondary);"><i
+                                class="fa-solid fa-paper-plane"></i></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="adv-filter-bar">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <select class="filter-select">
+                            <option>All Segments</option>
+                            <option>VIP Customers</option>
+                            <option>New Customers (30D)</option>
+                            <option>Repeat Buyers</option>
+                            <option>At Risk / Churning</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Email Status</option>
+                            <option>Subscribed</option>
+                            <option>Unsubscribed</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Location</option>
+                            <option>Rajasthan</option>
+                            <option>Maharashtra</option>
+                            <option>Delhi NCR</option>
+                        </select>
+                    </div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-white btn-sm"><i class="fa-solid fa-filter-circle-xmark"></i>
+                            Clear</button>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="admin-table-wrap"
+                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="table-checkbox" id="selectAllCust" /></th>
+                                    <th class="sortable sorted">Customer Name <i
+                                            class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                    <th>Location</th>
+                                    <th class="sortable">Orders</th>
+                                    <th class="sortable">Total Spent</th>
+                                    <th>Last Order</th>
+                                    <th>Tags</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Customer 1 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="customer-avatar gold">PS</div>
+                                            <div>
+                                                <div class="admin-table-name"
+                                                    style="font-weight:700; cursor:pointer; color:var(--color-primary-dark);">
+                                                    Priya Sharma</div>
+                                                <div class="admin-table-sub">priya.s@example.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Jodhpur</div>
+                                        <div class="admin-table-sub">Rajasthan, India</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name" style="font-weight:600;">14</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹12,840</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">Today</div>
+                                    </td>
+                                    <td><span class="customer-tag tag-vip"><i class="fa-solid fa-crown"></i>
+                                            VIP</span><span class="customer-tag tag-repeat">Repeat</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Profile"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Customer 2 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="customer-avatar blue">SP</div>
+                                            <div>
+                                                <div class="admin-table-name"
+                                                    style="font-weight:700; cursor:pointer; color:var(--text-primary);">
+                                                    Sneha Patel</div>
+                                                <div class="admin-table-sub">sneha.p@gmail.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Jaipur</div>
+                                        <div class="admin-table-sub">Rajasthan, India</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name" style="font-weight:600;">11</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹9,420</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">2 days ago</div>
+                                    </td>
+                                    <td><span class="customer-tag tag-vip"><i class="fa-solid fa-crown"></i> VIP</span>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Profile"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Customer 3 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="customer-avatar">RA</div>
+                                            <div>
+                                                <div class="admin-table-name"
+                                                    style="font-weight:700; cursor:pointer; color:var(--text-primary);">
+                                                    Ritu Agarwal</div>
+                                                <div class="admin-table-sub">ritu.a@outlook.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Delhi</div>
+                                        <div class="admin-table-sub">Delhi NCR, India</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name" style="font-weight:600;">9</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹7,650</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">5 days ago</div>
+                                    </td>
+                                    <td><span class="customer-tag tag-repeat">Repeat</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Profile"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Customer 4 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="customer-avatar"
+                                                style="background:var(--color-success-light); color:var(--color-success); border-color:var(--color-success);">
+                                                MG</div>
+                                            <div>
+                                                <div class="admin-table-name"
+                                                    style="font-weight:700; cursor:pointer; color:var(--text-primary);">
+                                                    Meera Gupta</div>
+                                                <div class="admin-table-sub">meera99@yahoo.com</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Ahmedabad</div>
+                                        <div class="admin-table-sub">Gujarat, India</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name" style="font-weight:600;">1</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹649</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub">Yesterday</div>
+                                    </td>
+                                    <td><span class="customer-tag tag-new">New</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Profile"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Customer 5 (Churn Risk) -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="customer-avatar"
+                                                style="background:var(--color-light-3); color:var(--text-muted); border-color:var(--border-color);">
+                                                VK</div>
+                                            <div>
+                                                <div class="admin-table-name"
+                                                    style="font-weight:700; cursor:pointer; color:var(--text-primary);">
+                                                    Vandana Khanna</div>
+                                                <div class="admin-table-sub">+91 98765 12345</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Mumbai</div>
+                                        <div class="admin-table-sub">Maharashtra, India</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name" style="font-weight:600;">2</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,850</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-sub" style="color:var(--color-error);">7 months ago
+                                        </div>
+                                    </td>
+                                    <td><span class="customer-tag tag-churn">At Risk</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="View Profile"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-table-footer">
+                        <div class="table-page-info">Showing <strong>1–5</strong> of <strong>8,452</strong> customers
+                        </div>
+                        <div class="pagination" style="margin:0">
+                            <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"
+                                    style="font-size:10px"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <span class="page-ellipsis">…</span>
+                            <button class="page-btn">845</button>
+                            <button class="page-btn"><i class="fa-solid fa-chevron-right"
+                                    style="font-size:10px"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Add Customer -->
+    <div class="modal-overlay" id="modal-add-customer">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Add New Customer</div>
+                <button class="modal-close" onclick="closeModal('modal-add-customer')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">First Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Aditi" />
+                    </div>
+                    <div>
+                        <label class="form-label">Last Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Rao" />
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-control" placeholder="aditi.rao@example.com" />
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" class="form-control" placeholder="+91 " />
+                    </div>
+                    <div class="form-group-full" style="margin-top:10px;">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" style="width:16px; height:16px;" checked />
+                            <span style="font-size:var(--text-sm); color:var(--text-secondary);">Customer accepts email
+                                marketing</span>
+                        </label>
+                    </div>
+                    <div class="form-group-full" style="margin-top:5px;">
+                        <label style="display:flex; align-items:center; gap:10px; cursor:pointer;">
+                            <input type="checkbox" style="width:16px; height:16px;" checked />
+                            <span style="font-size:var(--text-sm); color:var(--text-secondary);">Customer accepts
+                                WhatsApp updates</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-add-customer')">Cancel</button>
+                <button class="btn btn-primary"
+                    onclick="closeModal('modal-add-customer'); alert('Customer added successfully!');">Save
+                    Customer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+            document.getElementById('sidebar-toggle-icon').className = sidebar.classList.contains('mini') ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+
+        document.getElementById('selectAllCust')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('.table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('open');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('open');
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Offline Sale Entry</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Offline Sale Entry Specific Layout */
+        .admin-card {
+            background: var(--color-white);
+            border-radius: var(--admin-card-radius);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xs);
+            overflow: hidden;
+            margin-bottom: var(--space-6);
+        }
+
+        .admin-card-header {
+            padding: var(--space-4) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            background: var(--color-light);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .admin-card-title {
+            font-size: var(--text-base);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .admin-card-body {
+            padding: var(--space-6);
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-5);
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-2);
+        }
+
+        .form-label .required {
+            color: var(--color-error);
+            margin-left: 2px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            color: var(--text-primary);
+            background: var(--color-white);
+            transition: all 0.2s;
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            outline: none;
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+        }
+
+        .form-control:disabled {
+            background: var(--color-light-3);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        select.form-control {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238c8580'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+        }
+
+        .input-group .form-control {
+            border-radius: 0 var(--radius-base) var(--radius-base) 0;
+            border-left: none;
+        }
+
+        .input-group-addon {
+            padding: 12px 16px;
+            background: var(--color-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base) 0 0 var(--radius-base);
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: var(--text-sm);
+        }
+
+        /* Products Table in Entry Form */
+        .entry-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: var(--space-4);
+        }
+
+        .entry-table th {
+            text-align: left;
+            padding: var(--space-3) var(--space-4);
+            background: var(--color-light);
+            border-bottom: 2px solid var(--border-color);
+            font-size: var(--text-xs);
+            font-weight: 700;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .entry-table td {
+            padding: var(--space-3) var(--space-4);
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        .entry-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .td-product {
+            width: 40%;
+        }
+
+        .td-qty {
+            width: 15%;
+        }
+
+        .td-price {
+            width: 20%;
+        }
+
+        .td-total {
+            width: 20%;
+            font-weight: 600;
+            text-align: right;
+        }
+
+        .td-action {
+            width: 5%;
+            text-align: center;
+        }
+
+        .btn-remove-row {
+            color: var(--color-error);
+            background: rgba(192, 57, 43, 0.1);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-remove-row:hover {
+            background: var(--color-error);
+            color: var(--color-white);
+        }
+
+        .add-row-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--color-primary);
+            font-weight: 600;
+            font-size: var(--text-sm);
+            cursor: pointer;
+            padding: var(--space-2) 0;
+            transition: color 0.2s;
+        }
+
+        .add-row-btn:hover {
+            color: var(--color-primary-dark);
+        }
+
+        /* Summary Section */
+        .summary-box {
+            background: var(--color-light);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-5);
+            margin-top: var(--space-6);
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: var(--space-2) 0;
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+        }
+
+        .summary-row.total {
+            border-top: 1px solid var(--border-color-dark);
+            margin-top: var(--space-3);
+            padding-top: var(--space-4);
+            font-size: var(--text-xl);
+            font-weight: 700;
+            color: var(--text-primary);
+            font-family: var(--font-heading);
+        }
+
+        /* Footer Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-4);
+            margin-top: var(--space-6);
+            padding-top: var(--space-6);
+            border-top: 1px solid var(--border-color);
+        }
+
+        /* Payment Method Radio Cards */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-4);
+            margin-top: var(--space-2);
+        }
+
+        .pm-card {
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--radius-base);
+            padding: var(--space-4);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--color-white);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pm-card i {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            transition: color 0.2s;
+        }
+
+        .pm-card span {
+            font-size: var(--text-sm);
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .pm-card.active {
+            border-color: var(--color-primary);
+            background: var(--color-primary-glow);
+        }
+
+        .pm-card.active i {
+            color: var(--color-primary-dark);
+        }
+
+        /* Toast Container */
+        .toast-container {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (max-width: 768px) {
+
+            .form-grid,
+            .payment-methods {
+                grid-template-columns: 1fr;
+            }
+
+            .entry-table th,
+            .entry-table td {
+                padding: var(--space-2);
+            }
+
+            .td-price,
+            .td-total {
+                min-width: 80px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link"><i
+                            class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span></a>
+                    <a href="admin-analytics.html" class="admin-nav-link"><i
+                            class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span></a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link"><i
+                            class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span></a>
+                    <a href="admin-categories.html" class="admin-nav-link"><i
+                            class="fa-solid fa-tags nav-icon"></i><span>Categories</span></a>
+                    <a href="admin-inventory.html" class="admin-nav-link"><i
+                            class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span></a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link"><i
+                            class="fa-solid fa-bag-shopping nav-icon"></i><span>Online Orders</span></a>
+                    <a href="admin-pos.html" class="admin-nav-link active"><i
+                            class="fa-solid fa-cash-register nav-icon"></i><span>Offline Sale Entry</span></a>
+                    <a href="admin-customers.html" class="admin-nav-link"><i
+                            class="fa-solid fa-users nav-icon"></i><span>Customers</span></a>
+                </div>
+
+                <!-- OTHERS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link"><i
+                            class="fa-solid fa-gear nav-icon"></i><span>Settings</span></a>
+                </div>
+            </nav>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Offline Sale Entry</div>
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="btn btn-white btn-sm" onclick="window.location.href='admin-orders.html'"><i
+                            class="fa-solid fa-list"></i> View All Sales</button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="Admin User">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Record New Sale</h2>
+                        <p>Manually enter details for a sale that occurred in-store or offline.</p>
+                    </div>
+                </div>
+
+                <form id="offline-sale-form" onsubmit="submitSale(event)">
+
+                    <div class="grid grid-2">
+                        <!-- Sale Details Card -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <div class="admin-card-title"><i class="fa-solid fa-file-invoice"></i> Sale Information
+                                </div>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="form-grid">
+                                    <div>
+                                        <label class="form-label">Invoice Number <span class="required">*</span></label>
+                                        <input type="text" class="form-control" id="invoiceNumber" value="INV-2026-0507"
+                                            required />
+                                        <span
+                                            style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Auto-generated.
+                                            You can modify if needed.</span>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Date of Sale <span class="required">*</span></label>
+                                        <input type="date" class="form-control" id="saleDate" required />
+                                    </div>
+                                    <div class="form-group-full">
+                                        <label class="form-label">Handled By (Employee) <span
+                                                class="required">*</span></label>
+                                        <select class="form-control" required>
+                                            <option value="">Select Employee...</option>
+                                            <option value="admin" selected>Admin User (You)</option>
+                                            <option value="priya">Priya S. (Store Manager)</option>
+                                            <option value="rahul">Rahul M. (Sales Exec)</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group-full">
+                                        <label class="form-label">Store Location</label>
+                                        <select class="form-control">
+                                            <option value="jodhpur" selected>Jodhpur Main Store</option>
+                                            <option value="delhi">Delhi Pop-up</option>
+                                            <option value="exhibition">Exhibition / Event</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Customer Details Card -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <div class="admin-card-title"><i class="fa-solid fa-user"></i> Customer Details</div>
+                            </div>
+                            <div class="admin-card-body">
+                                <div class="form-grid">
+                                    <div class="form-group-full">
+                                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                                        <div class="input-group">
+                                            <span class="input-group-addon">+91</span>
+                                            <input type="tel" class="form-control" id="customerPhone"
+                                                placeholder="10-digit mobile number" required pattern="[0-9]{10}" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group-full">
+                                        <label class="form-label">Customer Name</label>
+                                        <input type="text" class="form-control" id="customerName"
+                                            placeholder="Enter full name" />
+                                    </div>
+                                    <div class="form-group-full">
+                                        <label class="form-label">Email Address (Optional)</label>
+                                        <input type="email" class="form-control" id="customerEmail"
+                                            placeholder="For digital receipt" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Products Card -->
+                    <div class="admin-card">
+                        <div class="admin-card-header">
+                            <div class="admin-card-title"><i class="fa-solid fa-box-open"></i> Products Sold</div>
+                        </div>
+                        <div class="admin-card-body" style="padding-top: var(--space-3);">
+                            <table class="entry-table" id="productsTable">
+                                <thead>
+                                    <tr>
+                                        <th class="td-product">Product Name / SKU</th>
+                                        <th class="td-qty">Quantity</th>
+                                        <th class="td-price">Unit Price (₹)</th>
+                                        <th class="td-total">Total (₹)</th>
+                                        <th class="td-action"></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="productRows">
+                                    <!-- Initial Row -->
+                                    <tr>
+                                        <td class="td-product">
+                                            <input type="text" class="form-control"
+                                                placeholder="Search product or enter SKU..." required
+                                                oninput="calculateTotals()">
+                                        </td>
+                                        <td class="td-qty">
+                                            <input type="number" class="form-control qty-input" value="1" min="1"
+                                                required oninput="calculateTotals()">
+                                        </td>
+                                        <td class="td-price">
+                                            <input type="number" class="form-control price-input" placeholder="0.00"
+                                                min="0" required oninput="calculateTotals()">
+                                        </td>
+                                        <td class="td-total line-total">0.00</td>
+                                        <td class="td-action">
+                                            <button type="button" class="btn-remove-row" onclick="removeRow(this)"
+                                                disabled style="opacity:0.3; cursor:not-allowed;"><i
+                                                    class="fa-solid fa-xmark"></i></button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="add-row-btn" onclick="addProductRow()">
+                                <i class="fa-solid fa-plus-circle"></i> Add another product
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Summary & Payment -->
+                    <div class="grid grid-2">
+                        <!-- Payment Details -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <div class="admin-card-title"><i class="fa-solid fa-wallet"></i> Payment Details</div>
+                            </div>
+                            <div class="admin-card-body">
+                                <label class="form-label">Payment Mode <span class="required">*</span></label>
+                                <div class="payment-methods" id="paymentMethods">
+                                    <div class="pm-card active" onclick="setPaymentMethod('cash', this)">
+                                        <i class="fa-solid fa-money-bill-wave"></i>
+                                        <span>Cash</span>
+                                    </div>
+                                    <div class="pm-card" onclick="setPaymentMethod('upi', this)">
+                                        <i class="fa-brands fa-google-pay"></i>
+                                        <span>UPI / QR</span>
+                                    </div>
+                                    <div class="pm-card" onclick="setPaymentMethod('card', this)">
+                                        <i class="fa-solid fa-credit-card"></i>
+                                        <span>Card POS</span>
+                                    </div>
+                                </div>
+                                <input type="hidden" id="selectedPaymentMethod" value="cash" required>
+
+                                <div id="referenceField" style="display:none; margin-top:var(--space-5);">
+                                    <label class="form-label">Transaction / Reference ID</label>
+                                    <input type="text" class="form-control" id="paymentRef"
+                                        placeholder="Enter UPI Ref or Card Auth Code" />
+                                </div>
+
+                                <div style="margin-top:var(--space-5);">
+                                    <label class="form-label">Sale Notes / Remarks</label>
+                                    <textarea class="form-control" rows="3"
+                                        placeholder="Any additional information about this sale..."></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Order Summary -->
+                        <div class="admin-card">
+                            <div class="admin-card-header">
+                                <div class="admin-card-title"><i class="fa-solid fa-calculator"></i> Order Summary</div>
+                            </div>
+                            <div class="admin-card-body">
+
+                                <div class="form-grid" style="margin-bottom:var(--space-4);">
+                                    <div class="form-group-full">
+                                        <label class="form-label">Apply Discount (Flat ₹)</label>
+                                        <input type="number" class="form-control" id="discountInput" value="0" min="0"
+                                            oninput="calculateTotals()" />
+                                    </div>
+                                </div>
+
+                                <div class="summary-box">
+                                    <div class="summary-row">
+                                        <span>Subtotal</span>
+                                        <span style="font-weight:600; color:var(--text-primary);"
+                                            id="summary-subtotal">₹0.00</span>
+                                    </div>
+                                    <div class="summary-row" style="color:var(--color-success);">
+                                        <span>Discount</span>
+                                        <span id="summary-discount">-₹0.00</span>
+                                    </div>
+                                    <div class="summary-row">
+                                        <span>Tax (Included 18% GST)</span>
+                                        <span id="summary-tax">₹0.00</span>
+                                    </div>
+                                    <div class="summary-row total">
+                                        <span>Grand Total</span>
+                                        <span id="summary-total">₹0.00</span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-white btn-lg" onclick="window.location.reload()">Clear
+                            Form</button>
+                        <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                            <i class="fa-solid fa-check"></i> Save Sale Entry
+                        </button>
+                    </div>
+                </form>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        // Set today's date automatically
+        document.getElementById('saleDate').valueAsDate = new Date();
+
+        // Sidebar logic
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        // Form Logic
+        function addProductRow() {
+            const tbody = document.getElementById('productRows');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td class="td-product">
+                    <input type="text" class="form-control" placeholder="Search product or enter SKU..." required oninput="calculateTotals()">
+                </td>
+                <td class="td-qty">
+                    <input type="number" class="form-control qty-input" value="1" min="1" required oninput="calculateTotals()">
+                </td>
+                <td class="td-price">
+                    <input type="number" class="form-control price-input" placeholder="0.00" min="0" required oninput="calculateTotals()">
+                </td>
+                <td class="td-total line-total">0.00</td>
+                <td class="td-action">
+                    <button type="button" class="btn-remove-row" onclick="removeRow(this)"><i class="fa-solid fa-xmark"></i></button>
+                </td>
+            `;
+            tbody.appendChild(tr);
+            updateRemoveButtons();
+        }
+
+        function removeRow(btn) {
+            const row = btn.closest('tr');
+            row.remove();
+            calculateTotals();
+            updateRemoveButtons();
+        }
+
+        function updateRemoveButtons() {
+            const rows = document.querySelectorAll('#productRows tr');
+            const btns = document.querySelectorAll('.btn-remove-row');
+            if (rows.length === 1) {
+                btns[0].disabled = true;
+                btns[0].style.opacity = '0.3';
+                btns[0].style.cursor = 'not-allowed';
+            } else {
+                btns.forEach(btn => {
+                    btn.disabled = false;
+                    btn.style.opacity = '1';
+                    btn.style.cursor = 'pointer';
+                });
+            }
+        }
+
+        function calculateTotals() {
+            const rows = document.querySelectorAll('#productRows tr');
+            let subtotal = 0;
+
+            rows.forEach(row => {
+                const qty = parseFloat(row.querySelector('.qty-input').value) || 0;
+                const price = parseFloat(row.querySelector('.price-input').value) || 0;
+                const lineTotal = qty * price;
+                row.querySelector('.line-total').textContent = lineTotal.toFixed(2);
+                subtotal += lineTotal;
+            });
+
+            const discount = parseFloat(document.getElementById('discountInput').value) || 0;
+            let grandTotal = subtotal - discount;
+            if (grandTotal < 0) grandTotal = 0;
+
+            // Assuming prices include 18% GST. Tax portion = Total - (Total / 1.18)
+            const taxPortion = grandTotal - (grandTotal / 1.18);
+
+            document.getElementById('summary-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-discount').textContent = '-₹' + discount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-tax').textContent = '₹' + taxPortion.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-total').textContent = '₹' + grandTotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        }
+
+        function setPaymentMethod(method, element) {
+            document.querySelectorAll('.pm-card').forEach(card => card.classList.remove('active'));
+            element.classList.add('active');
+            document.getElementById('selectedPaymentMethod').value = method;
+
+            const refField = document.getElementById('referenceField');
+            if (method === 'upi' || method === 'card') {
+                refField.style.display = 'block';
+                document.getElementById('paymentRef').required = true;
+            } else {
+                refField.style.display = 'none';
+                document.getElementById('paymentRef').required = false;
+                document.getElementById('paymentRef').value = '';
+            }
+        }
+
+        function submitSale(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            const originalText = btn.innerHTML;
+
+            // Basic validation check for totals
+            const totalStr = document.getElementById('summary-total').textContent.replace(/[^0-9.-]+/g, "");
+            const total = parseFloat(totalStr);
+
+            if (total <= 0) {
+                showToast('error', 'Invalid Amount', 'Sale total cannot be zero.');
+                return;
+            }
+
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+            btn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                showToast('success', 'Sale Recorded Successfully!', `Invoice ${document.getElementById('invoiceNumber').value} saved.`);
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+
+                // Reset form after short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }, 1000);
+        }
+
+        function showToast(type, title, message) {
+            const container = document.getElementById('toast-container');
+            const id = 'toast-' + Date.now();
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation', info: 'fa-circle-info' };
+
+            const toastHTML = `
+              <div class="toast toast-${type}" id="${id}" style="display:flex; align-items:flex-start; gap:12px; padding:16px; background:#fff; border-radius:8px; box-shadow:0 10px 30px rgba(0,0,0,0.1); border-left:4px solid var(--color-${type === 'error' ? 'error' : 'success'}); margin-bottom:10px; width:300px; animation: slideInRight 0.3s ease;">
+                <i class="fa-solid ${icons[type] || icons.info}" style="color:var(--color-${type === 'error' ? 'error' : 'success'}); font-size:1.2rem; margin-top:2px;"></i>
+                <div style="flex:1;">
+                  <div style="font-size:14px; font-weight:600; color:#111; margin-bottom:4px;">${title}</div>
+                  <div style="font-size:12px; color:#666; line-height:1.4;">${message}</div>
+                </div>
+                <button onclick="document.getElementById('${id}').remove()" style="background:none; border:none; cursor:pointer; color:#999;"><i class="fa-solid fa-xmark"></i></button>
+              </div>`;
+
+            container.insertAdjacentHTML('beforeend', toastHTML);
+            setTimeout(() => document.getElementById(id)?.remove(), 4000);
+        }
+
+        // Initialize empty state
+        updateRemoveButtons();
+    </script>
+</body>
+
+</html>

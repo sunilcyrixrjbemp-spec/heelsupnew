@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeelsUp Admin — Tax Management</title>
+  <!--
+  ============================================================
+  PAGE: admin-taxes.html
+  PURPOSE: Admin ke liye GST aur tax settings manage karna.
+           India mein GST compliance ke liye yeh page MANDATORY hai.
+
+  YE PAGE KYA KAREGA:
+
+  1. GST CONFIGURATION:
+     - Store ka GSTIN number enter karna
+     - GST registered hai ya nahi (toggle)
+     - GST inclusive pricing ya exclusive (price mein GST include hai ya alag dikhao)
+
+  2. TAX CATEGORIES / SLABS:
+     - Default GST slabs: 0% / 5% / 12% / 18% / 28%
+     - Footwear ke liye GST: ₹1000 se upar 18%, niche 5% (India rule)
+     - Bags ke liye GST: 18%
+     - Har product category ko correct tax slab se assign karo
+
+  3. TAX RULES TABLE:
+     | Category | Tax Rate | HSN Code | Notes              |
+     | Heels    | 18%      | 6402     | Above ₹1000        |
+     | Heels    | 5%       | 6402     | Up to ₹1000        |
+     | Bags     | 18%      | 4202     | -                  |
+     | Clutches | 18%      | 4202     | -                  |
+
+  4. TAX REPORTS LINK:
+     - "View Tax Report" → admin-reports.html#taxes pe redirect
+
+  5. INVOICE SETTINGS:
+     - GST invoice template settings
+     - HSN code per product category
+
+  LINKED FROM:
+  - admin.html sidebar → Settings > Taxes
+  - admin-settings.html → Tax section link
+  - admin-reports.html → Tax reports
+  ============================================================
+  -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Page-specific styles yahan likhna */
+  </style>
+</head>
+<body>
+  <!-- ADMIN SIDEBAR (copy from any admin-*.html page) -->
+  <!-- ADMIN TOPBAR -->
+
+  <main class="admin-main">
+    <!-- TODO: Ye cheezein banani hain:
+      1. GST Settings card:
+         - GSTIN input field
+         - GST registered toggle
+         - Pricing type: Inclusive / Exclusive radio
+      2. Tax Category Rules table:
+         - Category | HSN Code | Tax Rate | Actions
+         - Edit inline
+         - Add new rule button
+      3. Default Tax Slabs quick reference (0/5/12/18/28%)
+      4. India Footwear GST Rules info box
+         (shoes ₹1000 se kam → 5%, zyada → 18%)
+      5. "View Tax Report" button → admin-reports.html#taxes
+      6. Save Settings button
+    -->
+    <p style="text-align:center; padding: 4rem; font-family: var(--font-body); color: var(--text-muted);">
+      admin-taxes.html — Abhi khaali hai, code likhna baaki hai.
+    </p>
+  </main>
+</body>
+</html>

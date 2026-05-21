@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Products</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Products Page Specific */
+        .filter-bar {
+            background: var(--color-white);
+            border-radius: var(--admin-card-radius);
+            padding: var(--space-4) var(--space-6);
+            margin-bottom: var(--space-6);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: var(--space-4);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow-xs);
+            flex-wrap: wrap;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 8px 32px 8px 12px;
+            font-size: var(--text-sm);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            background: var(--color-light) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%238c8580'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E") no-repeat right 8px center / 16px;
+            appearance: none;
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .filter-select:focus {
+            border-color: var(--color-primary);
+            outline: none;
+        }
+
+        .product-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i>
+                        <span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i>
+                        <span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i>
+                        <span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i>
+                        <span>Products</span>
+                        <span class="admin-nav-badge">350</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i>
+                        <span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i>
+                        <span>Inventory</span>
+                        <span class="admin-nav-badge" style="background:var(--color-warning)">7</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i>
+                        <span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i>
+                        <span>Orders</span>
+                        <span class="admin-nav-badge">12</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i>
+                        <span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i>
+                        <span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i>
+                        <span>Reviews</span>
+                        <span class="admin-nav-badge" style="background:var(--color-success)">4</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link">
+                        <i class="fa-solid fa-image nav-icon"></i>
+                        <span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i>
+                        <span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i>
+                        <span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i>
+                        <span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i>
+                        <span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i>
+                        <span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar mobile overlay -->
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Products</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search by name, SKU, or tag..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="admin-notif-btn" aria-label="Notifications">
+                        <i class="fa-regular fa-bell"></i>
+                    </button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Product Catalogue</h2>
+                        <p>Manage your store's products, pricing, and variants.</p>
+                    </div>
+                    <div style="display:flex;gap:var(--space-3)">
+                        <button class="btn btn-white"><i class="fa-solid fa-download"></i> Export</button>
+                        <button class="btn btn-white"><i class="fa-solid fa-upload"></i> Import</button>
+                        <button class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Product</button>
+                    </div>
+                </div>
+
+                <!-- Stats -->
+                <div class="product-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Products</div>
+                            <div class="stat-value">350</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-shoe-prints"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Active Listing</div>
+                            <div class="stat-value text-success">312</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-green"><i class="fa-regular fa-circle-check"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Draft / Hidden</div>
+                            <div class="stat-value text-warning">38</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-orange"><i class="fa-regular fa-eye-slash"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Out of Stock</div>
+                            <div class="stat-value text-error">12</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-red"><i class="fa-solid fa-boxes-stacked"></i></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filter-bar">
+                    <div class="filter-group">
+                        <select class="filter-select">
+                            <option>All Categories</option>
+                            <option>Heels</option>
+                            <option>Flats</option>
+                            <option>Sandals</option>
+                            <option>Bags</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Product Status</option>
+                            <option>Active</option>
+                            <option>Draft</option>
+                            <option>Archived</option>
+                        </select>
+                        <select class="filter-select">
+                            <option>Inventory</option>
+                            <option>In Stock</option>
+                            <option>Low Stock</option>
+                            <option>Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <button class="btn btn-ghost btn-sm">Clear Filters</button>
+                        <div style="font-size:var(--text-sm);color:var(--text-muted)">Showing 1-10 of 350</div>
+                    </div>
+                </div>
+
+                <!-- Products Table -->
+                <div class="admin-table-wrap">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" class="table-checkbox" id="selectAll" /></th>
+                                    <th class="sortable sorted">Product Details <i
+                                            class="fa-solid fa-arrow-down sort-icon"></i></th>
+                                    <th class="sortable">Category</th>
+                                    <th class="sortable">Price</th>
+                                    <th class="sortable">Inventory</th>
+                                    <th>Sales</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Row 1 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=100&q=80&auto=format&fit=crop"
+                                                class="admin-table-img" alt="" />
+                                            <div>
+                                                <div class="admin-table-name">Stiletto Block Heel Pumps</div>
+                                                <div class="admin-table-sub">SKU: HU-HLS-042</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">Heels</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹899</div>
+                                        <div
+                                            style="font-size:10px; text-decoration:line-through; color:var(--text-muted)">
+                                            ₹1,299</div>
+                                    </td>
+                                    <td>
+                                        <div class="stock-indicator"><span class="stock-dot"
+                                                style="background:var(--color-error)"></span><span
+                                                class="stock-qty text-error">3 in stock</span></div>
+                                        <div class="admin-table-sub">4 Variants</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">284</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn" title="View in store"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 2 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <img src="https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=100&q=80&auto=format&fit=crop"
+                                                class="admin-table-img" alt="" />
+                                            <div>
+                                                <div class="admin-table-name">Classic Tote Bag – Tan</div>
+                                                <div class="admin-table-sub">SKU: HU-BAG-017</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">Bags</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,299</div>
+                                    </td>
+                                    <td>
+                                        <div class="stock-indicator"><span class="stock-dot"
+                                                style="background:var(--color-warning)"></span><span
+                                                class="stock-qty text-warning">8 in stock</span></div>
+                                        <div class="admin-table-sub">2 Variants</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">203</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn" title="View in store"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 3 (Draft) -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <div class="admin-table-img"
+                                                style="background:var(--color-light-3); display:flex; align-items:center; justify-content:center; color:var(--text-muted)">
+                                                <i class="fa-regular fa-image"></i></div>
+                                            <div>
+                                                <div class="admin-table-name text-muted">Bridal Embellished Sandal</div>
+                                                <div class="admin-table-sub">SKU: HU-SND-099</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">Sandals</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹1,599</div>
+                                    </td>
+                                    <td>
+                                        <div class="stock-indicator"><span class="stock-dot"
+                                                style="background:var(--color-success)"></span><span
+                                                class="stock-qty text-success">45 in stock</span></div>
+                                        <div class="admin-table-sub">1 Variant</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">0</div>
+                                    </td>
+                                    <td><span class="status-badge status-draft">Draft</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Row 4 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=100&q=80&auto=format&fit=crop"
+                                                class="admin-table-img" alt="" />
+                                            <div>
+                                                <div class="admin-table-name">Embroidered Juttis</div>
+                                                <div class="admin-table-sub">SKU: HU-FLT-009</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">Flats</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹549</div>
+                                    </td>
+                                    <td>
+                                        <div class="stock-indicator"><span class="stock-dot"
+                                                style="background:var(--text-muted)"></span><span
+                                                class="stock-qty text-muted">0 in stock</span></div>
+                                        <div class="admin-table-sub">3 Variants</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">145</div>
+                                    </td>
+                                    <td><span class="status-badge status-inactive">Out of Stock</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn" title="View in store"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <!-- Row 5 -->
+                                <tr>
+                                    <td><input type="checkbox" class="table-checkbox" /></td>
+                                    <td>
+                                        <div style="display:flex;align-items:center;gap:12px">
+                                            <img src="https://images.unsplash.com/photo-1554141220-83411835a60b?w=100&q=80&auto=format&fit=crop"
+                                                class="admin-table-img" alt="" />
+                                            <div>
+                                                <div class="admin-table-name">Mini Sling Crossbody Bag</div>
+                                                <div class="admin-table-sub">SKU: HU-BAG-031</div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td><span class="badge badge-gold">Bags</span></td>
+                                    <td>
+                                        <div class="admin-table-name">₹899</div>
+                                    </td>
+                                    <td>
+                                        <div class="stock-indicator"><span class="stock-dot"
+                                                style="background:var(--color-success)"></span><span
+                                                class="stock-qty text-success">18 in stock</span></div>
+                                        <div class="admin-table-sub">1 Variant</div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">191</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn" title="View in store"><i
+                                                    class="fa-regular fa-eye"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="admin-table-footer">
+                        <div class="table-page-info">Showing <strong>1–5</strong> of <strong>350</strong> products</div>
+                        <div class="pagination" style="margin:0">
+                            <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"
+                                    style="font-size:10px"></i></button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <span class="page-ellipsis">…</span>
+                            <button class="page-btn">70</button>
+                            <button class="page-btn"><i class="fa-solid fa-chevron-right"
+                                    style="font-size:10px"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+            document.getElementById('sidebar-toggle-icon').className = sidebar.classList.contains('mini') ? 'fa-solid fa-chevron-right' : 'fa-solid fa-chevron-left';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+            document.body.style.overflow = '';
+        });
+
+        document.getElementById('selectAll')?.addEventListener('change', function (e) {
+            const checkboxes = document.querySelectorAll('tbody .table-checkbox');
+            checkboxes.forEach(cb => cb.checked = e.target.checked);
+        });
+    </script>
+</body>
+
+</html>

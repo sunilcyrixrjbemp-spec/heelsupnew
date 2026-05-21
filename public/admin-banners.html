@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeelsUp Admin — Banners</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="style.css" />
+
+    <style>
+        body {
+            background: var(--admin-bg);
+        }
+
+        .sidebar-brand {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            color: var(--color-white);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        .sidebar-brand span {
+            color: var(--color-primary);
+        }
+
+        .sidebar-version {
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.25);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Banners Specific Styles */
+        .banner-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-5);
+            margin-bottom: var(--space-6);
+        }
+
+        .adv-filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--color-white);
+            padding: var(--space-4) var(--space-6);
+            border: 1px solid var(--border-color);
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            flex-wrap: wrap;
+            gap: var(--space-4);
+            border-bottom: none;
+        }
+
+        .banner-preview-img {
+            width: 120px;
+            height: 60px;
+            border-radius: var(--radius-sm);
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            background: var(--color-light-3);
+        }
+
+        .placement-badge {
+            background: var(--color-light-3);
+            color: var(--text-secondary);
+            font-size: 11px;
+            padding: 4px 10px;
+            border-radius: var(--radius-pill);
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .url-link {
+            font-size: 11px;
+            color: var(--color-info);
+            text-decoration: underline;
+            margin-top: 4px;
+            display: block;
+        }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: var(--space-4);
+        }
+
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-box {
+            background: var(--color-white);
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-2xl);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.open .modal-box {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: var(--space-5) var(--space-6);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: var(--color-white);
+            z-index: 10;
+        }
+
+        .modal-title {
+            font-family: var(--font-heading);
+            font-size: var(--text-xl);
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: var(--color-error);
+        }
+
+        .modal-body {
+            padding: var(--space-6);
+        }
+
+        .modal-footer {
+            padding: var(--space-4) var(--space-6);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: flex-end;
+            gap: var(--space-3);
+            background: var(--color-light);
+            position: sticky;
+            bottom: 0;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-4);
+            margin-bottom: var(--space-4);
+        }
+
+        .form-group-full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: var(--text-sm);
+            font-weight: 600;
+            margin-bottom: var(--space-2);
+            color: var(--text-primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-base);
+            font-size: var(--text-sm);
+            font-family: inherit;
+            transition: all 0.2s;
+            background: var(--color-white);
+        }
+
+        .form-control:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-glow);
+            outline: none;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: var(--space-6);
+            text-align: center;
+            background: var(--color-light);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-area:hover {
+            border-color: var(--color-primary);
+            background: var(--color-primary-glow);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="admin-sidebar-logo">
+                    <div>
+                        <div class="sidebar-brand">Heels<span>Up</span></div>
+                        <div class="sidebar-version">Admin Panel v2.0</div>
+                    </div>
+                </div>
+                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
+                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
+                </button>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav">
+                <!-- MAIN -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Main</div>
+                    <a href="admin.html" class="admin-nav-link">
+                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
+                    </a>
+                    <a href="admin-analytics.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
+                    </a>
+                    <a href="admin-reports.html" class="admin-nav-link">
+                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
+                    </a>
+                </div>
+
+                <!-- CATALOGUE -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Catalogue</div>
+                    <a href="admin-products.html" class="admin-nav-link">
+                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
+                    </a>
+                    <a href="admin-categories.html" class="admin-nav-link">
+                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
+                    </a>
+                    <a href="admin-inventory.html" class="admin-nav-link">
+                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
+                    </a>
+                    <a href="admin-collections.html" class="admin-nav-link">
+                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
+                    </a>
+                </div>
+
+                <!-- SALES -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Sales</div>
+                    <a href="admin-orders.html" class="admin-nav-link">
+                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
+                    </a>
+                    <a href="admin-customers.html" class="admin-nav-link">
+                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
+                    </a>
+                    <a href="admin-coupons.html" class="admin-nav-link">
+                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
+                    </a>
+                    <a href="admin-reviews.html" class="admin-nav-link">
+                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
+                    </a>
+                </div>
+
+                <!-- CONTENT -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">Content</div>
+                    <a href="admin-banners.html" class="admin-nav-link active">
+                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
+                    </a>
+                    <a href="admin-blog.html" class="admin-nav-link">
+                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
+                    </a>
+                    <a href="admin-pages.html" class="admin-nav-link">
+                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
+                    </a>
+                </div>
+
+                <!-- SETTINGS -->
+                <div class="admin-nav-section">
+                    <div class="admin-nav-title">System</div>
+                    <a href="admin-settings.html" class="admin-nav-link">
+                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
+                    </a>
+                    <a href="admin-staff.html" class="admin-nav-link">
+                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
+                    </a>
+                    <a href="index.html" class="admin-nav-link"
+                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
+                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-user-info">
+                    <div class="admin-user-avatar">A</div>
+                    <div>
+                        <div class="admin-user-name">Admin User</div>
+                        <div class="admin-user-role">Super Admin</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
+
+        <!-- MAIN CONTENT -->
+        <main class="admin-main" id="admin-main">
+            <!-- TOPBAR -->
+            <header class="admin-topbar">
+                <div style="display:flex;align-items:center;gap:var(--space-4)">
+                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
+                        style="background:var(--color-light);border:1px solid var(--border-color)">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <div class="admin-page-title">Banners & Sliders</div>
+                </div>
+
+                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
+                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
+                    <input type="text" placeholder="Search banners..." autocomplete="off" />
+                </div>
+
+                <div class="admin-topbar-actions">
+                    <button class="admin-notif-btn" aria-label="Notifications"><i
+                            class="fa-regular fa-bell"></i></button>
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
+                        title="My Profile">A</div>
+                </div>
+            </header>
+
+            <div class="admin-content">
+                <!-- Page Header -->
+                <div class="admin-page-header">
+                    <div class="admin-page-header-left">
+                        <h2>Banner Management</h2>
+                        <p>Upload and manage homepage sliders, promo banners, and category headers.</p>
+                    </div>
+                    <button class="btn btn-primary" onclick="openModal('modal-add-banner')">
+                        <i class="fa-solid fa-plus"></i> Upload Banner
+                    </button>
+                </div>
+
+                <!-- Stats -->
+                <div class="banner-stats">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Active Banners</div>
+                            <div class="stat-value">5</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-image"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Clicks (30D)</div>
+                            <div class="stat-value">12.4K</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-gold"><i class="fa-solid fa-hand-pointer"></i></div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Avg. Click-Through Rate</div>
+                            <div class="stat-value">4.2%</div>
+                        </div>
+                        <div class="stat-card-icon stat-icon-green"><i class="fa-solid fa-chart-line"></i></div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="adv-filter-bar">
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <span style="font-size:var(--text-sm); font-weight:600;">All Banners</span>
+                        <select class="form-control" style="width:160px; padding: 6px 12px; margin-left:10px;">
+                            <option>All Placements</option>
+                            <option>Homepage Hero</option>
+                            <option>Promo Strip</option>
+                            <option>Category Header</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Table -->
+                <div class="admin-table-wrap"
+                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                    <div style="overflow-x:auto">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Preview</th>
+                                    <th>Banner Details</th>
+                                    <th>Placement</th>
+                                    <th>Link / URL</th>
+                                    <th>Sort Order</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Banner 1 -->
+                                <tr>
+                                    <td>
+                                        <img src="https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=300&q=80&auto=format&fit=crop"
+                                            class="banner-preview-img" alt="">
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Summer Sale 2026</div>
+                                        <div class="admin-table-sub">Title: "Up to 50% Off"</div>
+                                    </td>
+                                    <td><span class="placement-badge">Homepage Hero</span></td>
+                                    <td><a href="#" class="url-link">/collections/summer-sale</a></td>
+                                    <td>
+                                        <div class="admin-table-name" style="text-align:center;">1</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Banner 2 -->
+                                <tr>
+                                    <td>
+                                        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&q=80&auto=format&fit=crop"
+                                            class="banner-preview-img" alt="">
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Festive Wedding Collection</div>
+                                        <div class="admin-table-sub">Title: "The Bridal Edit"</div>
+                                    </td>
+                                    <td><span class="placement-badge">Homepage Hero</span></td>
+                                    <td><a href="#" class="url-link">/collections/festive-wedding</a></td>
+                                    <td>
+                                        <div class="admin-table-name" style="text-align:center;">2</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Banner 3 -->
+                                <tr>
+                                    <td>
+                                        <div class="banner-preview-img"
+                                            style="background:var(--color-dark); display:flex; align-items:center; justify-content:center; color:var(--color-primary);">
+                                            USE CODE: VIP20
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name">Top Announcement Strip</div>
+                                        <div class="admin-table-sub">Text: "Free Shipping on orders above ₹999"</div>
+                                    </td>
+                                    <td><span class="placement-badge">Header Strip</span></td>
+                                    <td><span class="admin-table-sub">None</span></td>
+                                    <td>
+                                        <div class="admin-table-name" style="text-align:center;">-</div>
+                                    </td>
+                                    <td><span class="status-badge status-active">Active</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <!-- Banner 4 (Inactive) -->
+                                <tr style="background:var(--color-light);">
+                                    <td>
+                                        <img src="https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=300&q=80&auto=format&fit=crop"
+                                            class="banner-preview-img" style="opacity:0.5;" alt="">
+                                    </td>
+                                    <td>
+                                        <div class="admin-table-name text-muted">Winter Clearance</div>
+                                        <div class="admin-table-sub">Title: "End of Season Sale"</div>
+                                    </td>
+                                    <td><span class="placement-badge">Homepage Hero</span></td>
+                                    <td><a href="#" class="url-link"
+                                            style="color:var(--text-muted);">/collections/clearance</a></td>
+                                    <td>
+                                        <div class="admin-table-name text-muted" style="text-align:center;">3</div>
+                                    </td>
+                                    <td><span class="status-badge status-inactive">Draft / Hidden</span></td>
+                                    <td>
+                                        <div class="admin-table-actions">
+                                            <button class="table-action-btn" title="Edit"><i
+                                                    class="fa-regular fa-pen-to-square"></i></button>
+                                            <button class="table-action-btn danger" title="Delete"><i
+                                                    class="fa-regular fa-trash-can"></i></button>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL: Add Banner -->
+    <div class="modal-overlay" id="modal-add-banner">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-title">Upload New Banner</div>
+                <button class="modal-close" onclick="closeModal('modal-add-banner')"><i
+                        class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group-full">
+                        <label class="form-label">Banner Image (Desktop & Mobile)</label>
+                        <div class="upload-area">
+                            <i class="fa-solid fa-cloud-arrow-up upload-icon"></i>
+                            <p style="font-size:var(--text-sm); font-weight:600; color:var(--text-primary);">Drag & drop
+                                image here or click to browse</p>
+                            <p style="font-size:11px; color:var(--text-muted); margin-top:5px;">Recommended size:
+                                1920x800px (Desktop), 800x1000px (Mobile). Max 2MB.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label class="form-label">Internal Name</label>
+                        <input type="text" class="form-control" placeholder="e.g. Summer Sale Hero 2026" />
+                    </div>
+
+                    <div>
+                        <label class="form-label">Placement / Location</label>
+                        <select class="form-control">
+                            <option>Homepage Hero Slider</option>
+                            <option>Homepage Secondary Banner</option>
+                            <option>Category Page Header</option>
+                            <option>Top Announcement Strip</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">Sort Order (For sliders)</label>
+                        <input type="number" class="form-control" value="1" />
+                    </div>
+
+                    <div class="form-group-full">
+                        <div style="border-top:1px solid var(--border-color); margin:10px 0;"></div>
+                        <h4 style="font-size:var(--text-sm); margin-bottom:10px;">Overlay Content (Optional)</h4>
+                    </div>
+
+                    <div class="form-group-full">
+                        <label class="form-label">Heading Text</label>
+                        <input type="text" class="form-control" placeholder="e.g. Up to 50% Off" />
+                    </div>
+                    <div class="form-group-full">
+                        <label class="form-label">Subheading / Description</label>
+                        <input type="text" class="form-control" placeholder="e.g. Shop the biggest sale of the year." />
+                    </div>
+
+                    <div>
+                        <label class="form-label">Button Text</label>
+                        <input type="text" class="form-control" placeholder="e.g. Shop Now" />
+                    </div>
+                    <div>
+                        <label class="form-label">Button Link (URL)</label>
+                        <input type="text" class="form-control" placeholder="e.g. /collections/summer" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-white" onclick="closeModal('modal-add-banner')">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModal('modal-add-banner'); alert('Banner saved!');">Save
+                    Banner</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script>
+        const sidebar = document.getElementById('admin-sidebar');
+        const main = document.getElementById('admin-main');
+        const overlay = document.getElementById('sidebar-overlay');
+
+        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
+            sidebar.classList.toggle('mini');
+            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
+        });
+
+        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
+            sidebar.classList.add('open');
+            overlay.classList.add('open');
+        });
+
+        overlay?.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+            overlay.classList.remove('open');
+        });
+
+        function openModal(id) { document.getElementById(id).classList.add('open'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+    </script>
+</body>
+
+</html>

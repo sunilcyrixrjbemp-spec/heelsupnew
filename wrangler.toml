@@ -1,0 +1,27 @@
+name = "heelsup-api"
+main = "backend/index.js"
+compatibility_date = "2026-05-08"
+workers_dev = true
+
+[vars]
+APP_NAME = "HeelsUp"
+CORS_ORIGIN = "*"
+API_BASE_URL = "https://heelsup-api.heelsup.workers.dev"
+GOOGLE_APPSCRIPT_ENDPOINT = ""
+GOOGLE_APPSCRIPT_TOKEN = ""
+JWT_EXPIRES_DAYS = "30"
+OTP_EXPIRY_MINUTES = "10"
+REQUIRE_EMAIL_OTP = "false"
+R2_PUBLIC_URL = "https://media.heelsup.in"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "heelsup-live"
+database_id = "e1421396-862d-4be9-bc68-72ce70b1644c"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "heelsup-media"
+
+[observability.logs]
+enabled = true
