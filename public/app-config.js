@@ -1,3 +1,3 @@
 window.HEELSUP_CONFIG = {
-    API_BASE: "https://heelsup-api.heelsup.workers.dev"
+    API_BASE: "http://127.0.0.1:8787"
 };
