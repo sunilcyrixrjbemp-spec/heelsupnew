@@ -1,485 +1,1218 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Pos — HeelsUp Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#c9a96e;--gold-dark:#8b6914;--bg:#f1f5f9;--sidebar:#0f172a;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;border:none;background:none;font-family:inherit}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>POS / Offline Sales — HeelsUp Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
 
-/* Layout */
-.wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+        :root {
+            --gold: #c9a96e;
+            --gold-dark: #8b6914;
+            --bg: #f1f5f9;
+            --sidebar: #0f172a;
+            --card: #fff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b
+        }
 
-/* Sidebar */
-.sidebar{background:var(--sidebar);color:#94a3b8;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden}
-.sidebar-brand{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;min-height:62px}
-.sidebar-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;flex-shrink:0}
-.sidebar-nav{flex:1;padding:10px 0}
-.nav-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#475569;padding:13px 18px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 18px;color:#94a3b8;font-size:.83rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;text-decoration:none;cursor:pointer}
-.nav-item:hover{background:#1e293b;color:#e2e8f0}
-.nav-item.active{background:#1e293b;color:var(--gold);border-left-color:var(--gold)}
-.nav-item i{width:16px;text-align:center;font-size:.83rem;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--gold);color:#0f172a;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;min-width:18px;text-align:center}
-.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.06)}
-.sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.s-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
-.s-name{font-size:.8rem;font-weight:600;color:#e2e8f0}
-.s-role{font-size:.65rem;color:#64748b}
-.btn-logout{width:100%;padding:7px;border-radius:8px;background:rgba(255,255,255,.05);color:#94a3b8;font-size:.78rem;display:flex;align-items:center;gap:8px;justify-content:center;transition:all .2s}
-.btn-logout:hover{background:rgba(239,68,68,.15);color:#f87171}
-@media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:999;transition:left .3s;width:240px}.sidebar.open{left:0}}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh
+        }
 
-/* Topbar */
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.btn-menu{padding:8px;border-radius:8px;color:#64748b;display:none}
-.btn-menu:hover{background:#f1f5f9}
-@media(max-width:900px){.btn-menu{display:flex}}
+        a {
+            text-decoration: none;
+            color: inherit
+        }
 
-/* Main */
-.main{min-height:100vh;display:flex;flex-direction:column}
-.content{padding:24px;flex:1}
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit
+        }
 
-/* Sections */
-.sec{display:none}
-.sec.active{display:block}
+        /* Layout */
+        .wrap {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh
+        }
 
-/* Stats grid */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.stats-grid{grid-template-columns:1fr}}
-.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:14px;transition:transform .2s,box-shadow .2s}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
-.stat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-.gold-icon{background:rgba(201,169,110,.12);color:var(--gold)}
-.blue-icon{background:rgba(59,130,246,.1);color:#3b82f6}
-.green-icon{background:rgba(34,197,94,.1);color:#22c55e}
-.rose-icon{background:rgba(212,69,107,.1);color:#d4456b}
-.stat-label{font-size:.72rem;color:#94a3b8;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
-.stat-value{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--text);line-height:1}
-.stat-sub{font-size:.7rem;color:#94a3b8;margin-top:4px}
+        @media(max-width:900px) {
+            .wrap {
+                grid-template-columns: 1fr
+            }
+        }
 
-/* Cards & Tables */
-.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
-.card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--text)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:900px){.two-col{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse;font-size:.83rem}
-thead th{text-align:left;padding:9px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;border-bottom:2px solid #f1f5f9}
-tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s}
-tbody tr:hover{background:#f8fafc}
-tbody td{padding:11px 12px;vertical-align:middle}
-.tbl-img{width:38px;height:38px;object-fit:cover;border-radius:8px;background:#f1f5f9}
-.tbl-name{font-weight:600;color:var(--text)}
-.tbl-sub{font-size:.72rem;color:#94a3b8;margin-top:2px}
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar);
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            overflow-x: hidden
+        }
 
-/* Badges */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
-.badge-placed{background:#dbeafe;color:#1d4ed8}
-.badge-confirmed{background:#dcfce7;color:#15803d}
-.badge-shipped{background:#f3e8ff;color:#7e22ce}
-.badge-delivered{background:#d1fae5;color:#065f46}
-.badge-cancelled{background:#fee2e2;color:#b91c1c}
-.badge-returned{background:#fef3c7;color:#92400e}
-.badge-active{background:#dcfce7;color:#15803d}
-.badge-inactive{background:#f1f5f9;color:#64748b}
-.badge-paid{background:#dcfce7;color:#15803d}
-.badge-pending{background:#fef3c7;color:#b45309}
-.badge-approved{background:#dcfce7;color:#15803d}
-.badge-rejected{background:#fee2e2;color:#b91c1c}
-.badge-admin{background:rgba(201,169,110,.15);color:var(--gold-dark)}
-.badge-customer{background:#f1f5f9;color:#64748b}
+        .sidebar-brand {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 62px
+        }
 
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;transition:all .2s;font-family:'Inter',sans-serif;cursor:pointer;border:none}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.btn-outline{border:1.5px solid var(--border);color:var(--muted);background:#fff}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.btn-sm{padding:5px 12px;font-size:.76rem;border-radius:7px}
-.btn-danger{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
-.btn-danger:hover{background:#fecaca}
-.btn-icon{width:32px;height:32px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
-.btn-edit{background:#f0f9ff;color:#0284c7}
-.btn-edit:hover{background:#0284c7;color:#fff}
-.btn-del{background:#fef2f2;color:#dc2626}
-.btn-del:hover{background:#dc2626;color:#fff}
-.act-cell{display:flex;align-items:center;gap:5px}
+        .sidebar-logo {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: .95rem;
+            font-weight: 700;
+            flex-shrink: 0
+        }
 
-/* Search & Filter */
-.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.search-wrap{position:relative;flex:1;min-width:180px}
-.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.8rem}
-.search-input{width:100%;padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;transition:all .2s;background:#f8fafc;font-family:'Inter',sans-serif}
-.search-input:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
-.filter-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;background:#f8fafc;transition:all .2s;font-family:'Inter',sans-serif}
-.filter-select:focus{outline:none;border-color:var(--gold)}
+        .sidebar-nav {
+            flex: 1;
+            padding: 10px 0
+        }
 
-/* Modal */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.show{display:flex}
-.modal{background:#fff;border-radius:18px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25);animation:modalIn .3s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
-.modal-close{width:34px;height:34px;border-radius:8px;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.modal-close:hover{background:#fee2e2;color:#dc2626}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
-.form-field{display:flex;flex-direction:column;gap:5px}
-.form-field.full{grid-column:1/-1}
-.form-label{font-size:.72rem;font-weight:700;color:#64748b;letter-spacing:.04em;text-transform:uppercase}
-.form-input,.form-select,.form-textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;transition:all .2s;background:#f8fafc;width:100%;font-family:'Inter',sans-serif;color:var(--text)}
-.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
-.form-textarea{resize:vertical;min-height:80px}
-.form-check{display:flex;align-items:center;gap:8px;padding:3px 0}
-.form-check input{width:16px;height:16px;accent-color:var(--gold)}
-.form-check label{font-size:.87rem;color:#475569}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+        .nav-label {
+            font-size: .6rem;
+            font-weight: 700;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: #475569;
+            padding: 13px 18px 4px
+        }
 
-/* Pagination */
-.pagination{display:flex;align-items:center;gap:7px;margin-top:16px;justify-content:center}
-.pg-btn{padding:6px 13px;border-radius:7px;border:1.5px solid var(--border);font-size:.79rem;color:#64748b;background:#fff;transition:all .2s;font-family:'Inter',sans-serif}
-.pg-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-.pg-btn:disabled{opacity:.4;cursor:not-allowed}
-.pg-info{font-size:.79rem;color:#94a3b8}
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            color: #94a3b8;
+            font-size: .83rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all .2s;
+            text-decoration: none;
+            cursor: pointer
+        }
 
-/* Toast */
-.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.toast{background:#1e293b;color:#fff;padding:12px 18px;border-radius:10px;font-size:.83rem;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:toastIn .3s ease;min-width:240px}
-.toast.success{border-left:4px solid #22c55e}
-.toast.error{border-left:4px solid #ef4444}
-.toast.warning{border-left:4px solid #f59e0b}
-@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+        .nav-item:hover {
+            background: #1e293b;
+            color: #e2e8f0
+        }
 
-/* Welcome banner */
-.welcome{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:24px;margin-bottom:24px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
-.welcome::after{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:rgba(201,169,110,.07);border-radius:50%}
-.welcome-text h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:4px}
-.welcome-text p{font-size:.82rem;color:#94a3b8}
-.welcome-actions{display:flex;gap:10px;z-index:1}
+        .nav-item.active {
+            background: #1e293b;
+            color: var(--gold);
+            border-left-color: var(--gold)
+        }
 
-/* Loading */
-.loading-spinner{text-align:center;padding:40px;color:#94a3b8;font-size:.87rem}
-.loading-spinner i{font-size:1.8rem;color:var(--gold);display:block;margin-bottom:10px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+        .nav-item i {
+            width: 16px;
+            text-align: center;
+            font-size: .83rem;
+            flex-shrink: 0
+        }
 
-/* Mobile overlay */
-.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
-</style>
+        .nav-badge {
+            margin-left: auto;
+            background: var(--gold);
+            color: #0f172a;
+            font-size: .6rem;
+            font-weight: 800;
+            padding: 2px 7px;
+            border-radius: 20px;
+            min-width: 18px;
+            text-align: center
+        }
+
+        .sidebar-footer {
+            padding: 14px;
+            border-top: 1px solid rgba(255, 255, 255, .06)
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px
+        }
+
+        .s-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: .8rem;
+            flex-shrink: 0
+        }
+
+        .s-name {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #e2e8f0
+        }
+
+        .s-role {
+            font-size: .65rem;
+            color: #64748b
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 7px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .05);
+            color: #94a3b8;
+            font-size: .78rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            transition: all .2s
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, .15);
+            color: #f87171
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                top: 0;
+                bottom: 0;
+                z-index: 999;
+                transition: left .3s;
+                width: 240px
+            }
+
+            .sidebar.open {
+                left: 0
+            }
+        }
+
+        /* Topbar */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .05)
+        }
+
+        .topbar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text)
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .btn-menu {
+            padding: 8px;
+            border-radius: 8px;
+            color: #64748b;
+            display: none
+        }
+
+        .btn-menu:hover {
+            background: #f1f5f9
+        }
+
+        @media(max-width:900px) {
+            .btn-menu {
+                display: flex
+            }
+        }
+
+        /* Main */
+        .main {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column
+        }
+
+        .content {
+            padding: 24px;
+            flex: 1
+        }
+
+        /* Cards */
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+            margin-bottom: 20px
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            gap: 12px;
+            flex-wrap: wrap
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: .95rem;
+            font-weight: 700;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 8px
+        }
+
+        .card-title i {
+            color: var(--gold);
+            font-size: .85rem
+        }
+
+        /* Two col grid */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px
+        }
+
+        @media(max-width:900px) {
+            .two-col {
+                grid-template-columns: 1fr
+            }
+        }
+
+        /* Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .03em;
+            text-transform: uppercase;
+            white-space: nowrap
+        }
+
+        .badge-active {
+            background: #dcfce7;
+            color: #15803d
+        }
+
+        .badge-inactive {
+            background: #f1f5f9;
+            color: #64748b
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 600;
+            transition: all .2s;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border: none
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff
+        }
+
+        .btn-primary:hover {
+            opacity: .9;
+            transform: translateY(-1px)
+        }
+
+        .btn-primary:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none
+        }
+
+        .btn-outline {
+            border: 1.5px solid var(--border);
+            color: var(--muted);
+            background: #fff
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold)
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: .76rem;
+            border-radius: 7px
+        }
+
+        .btn-lg {
+            padding: 11px 24px;
+            font-size: .9rem;
+            border-radius: 10px
+        }
+
+        .btn-danger {
+            background: #fef2f2;
+            color: #b91c1c;
+            border: 1.5px solid #fecaca
+        }
+
+        .btn-danger:hover {
+            background: #fecaca
+        }
+
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .8rem;
+            transition: all .2s;
+            cursor: pointer;
+            border: none
+        }
+
+        .btn-del {
+            background: #fef2f2;
+            color: #dc2626
+        }
+
+        .btn-del:hover {
+            background: #dc2626;
+            color: #fff
+        }
+
+        /* Forms */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px
+        }
+
+        @media(max-width:600px) {
+            .form-grid {
+                grid-template-columns: 1fr
+            }
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px
+        }
+
+        .form-field.full {
+            grid-column: 1/-1
+        }
+
+        .form-label {
+            font-size: .72rem;
+            font-weight: 700;
+            color: #64748b;
+            letter-spacing: .04em;
+            text-transform: uppercase
+        }
+
+        .required {
+            color: #ef4444
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            padding: 9px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 9px;
+            font-size: .87rem;
+            transition: all .2s;
+            background: #f8fafc;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            color: var(--text)
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--gold);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, .1)
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px
+        }
+
+        .form-hint {
+            font-size: .71rem;
+            color: #94a3b8;
+            margin-top: 2px
+        }
+
+        /* Input group (phone prefix) */
+        .input-group {
+            display: flex;
+            align-items: stretch
+        }
+
+        .input-group-addon {
+            padding: 9px 12px;
+            background: #f1f5f9;
+            border: 1.5px solid var(--border);
+            border-right: none;
+            border-radius: 9px 0 0 9px;
+            font-size: .87rem;
+            font-weight: 600;
+            color: var(--muted);
+            white-space: nowrap
+        }
+
+        .input-group .form-input {
+            border-radius: 0 9px 9px 0
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .83rem
+        }
+
+        thead th {
+            text-align: left;
+            padding: 9px 12px;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            border-bottom: 2px solid #f1f5f9
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f8fafc
+        }
+
+        tbody td {
+            padding: 8px 12px;
+            vertical-align: middle
+        }
+
+        .td-product {
+            width: 45%
+        }
+
+        .td-qty {
+            width: 12%
+        }
+
+        .td-price {
+            width: 18%
+        }
+
+        .td-total {
+            width: 15%;
+            font-weight: 700;
+            color: var(--text)
+        }
+
+        .td-action {
+            width: 10%;
+            text-align: center
+        }
+
+        /* Add row */
+        .add-row-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-top: 12px;
+            padding: 7px 14px;
+            border-radius: 8px;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--gold);
+            border: 1.5px dashed rgba(201, 169, 110, .5);
+            cursor: pointer;
+            transition: all .2s;
+            background: rgba(201, 169, 110, .04)
+        }
+
+        .add-row-btn:hover {
+            background: rgba(201, 169, 110, .1);
+            border-color: var(--gold)
+        }
+
+        /* Payment method cards */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 10px 0 0
+        }
+
+        .pm-card {
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all .2s;
+            background: #f8fafc
+        }
+
+        .pm-card:hover {
+            border-color: var(--gold);
+            background: rgba(201, 169, 110, .06)
+        }
+
+        .pm-card.active {
+            border-color: var(--gold);
+            background: rgba(201, 169, 110, .1);
+            color: var(--gold-dark)
+        }
+
+        .pm-card i {
+            font-size: 1.3rem;
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted)
+        }
+
+        .pm-card.active i {
+            color: var(--gold)
+        }
+
+        .pm-card span {
+            font-size: .78rem;
+            font-weight: 600;
+            color: var(--muted)
+        }
+
+        .pm-card.active span {
+            color: var(--gold-dark)
+        }
+
+        /* Summary box */
+        .summary-box {
+            background: #f8fafc;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 16px;
+            margin-top: 4px
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 7px 0;
+            font-size: .85rem;
+            color: var(--muted);
+            border-bottom: 1px solid var(--border)
+        }
+
+        .summary-row:last-child {
+            border-bottom: none
+        }
+
+        .summary-row.total {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            padding-top: 12px;
+            margin-top: 4px
+        }
+
+        .summary-discount {
+            color: #22c55e
+        }
+
+        /* Page header */
+        .page-header {
+            margin-bottom: 24px
+        }
+
+        .page-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px
+        }
+
+        .page-header p {
+            font-size: .83rem;
+            color: var(--muted)
+        }
+
+        /* Form actions */
+        .form-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 8px
+        }
+
+        /* Toast */
+        .toast-wrap {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px
+        }
+
+        .toast {
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: .83rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+            animation: toastIn .3s ease;
+            min-width: 240px
+        }
+
+        .toast.success {
+            border-left: 4px solid #22c55e
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444
+        }
+
+        .toast.warning {
+            border-left: 4px solid #f59e0b
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(30px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0)
+            }
+        }
+
+        /* Mobile overlay */
+        .mob-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 998
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></a>
-<div class="toast-wrap" id="toastWrap"></a>
+    <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+    <div class="toast-wrap" id="toastWrap"></div>
 
-<div class="wrap">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-logo">H</a>
-      <div>
-        <div style="font-size:.87rem;font-weight:700;color:#f1f5f9">HeelsUp</a>
-        <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel</a>
-      </a>
-    </a>
-    <nav class="sidebar-nav">
-      <div class="nav-label">Main</a>
-      <a class="nav-item" href="admin.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-      <div class="nav-label">Catalogue</a>
-      <a class="nav-item" href="admin-products.html"><i class="fa-solid fa-box"></i> Products</a>
-      <div class="nav-label">Sales</a>
-      <a class="nav-item" href="admin-orders.html">
-        <i class="fa-solid fa-bag-shopping"></i> Orders
-        <span class="nav-badge" id="ordersBadge" style="display:none">0</span>
-      </a>
-      <a class="nav-item" href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
-      <a class="nav-item" href="admin-coupons.html"><i class="fa-solid fa-ticket"></i> Coupons</a>
-      <a class="nav-item" href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
-      <a class="nav-item" href="admin-returns.html"><i class="fa-solid fa-rotate-left"></i> Returns</a>
-      <div class="nav-label">More</a>
-      <a href="admin-pos.html" class="nav-item active"><i class="fa-solid fa-cash-register"></i> POS / Offline Sales</a>
-      <a href="admin-reports.html" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Reports</a>
-      <a href="admin-analytics.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-      <a href="admin-banners.html" class="nav-item"><i class="fa-solid fa-image"></i> Banners</a>
-
-      <div class="nav-label">System</a>
-      <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="s-avatar" id="s-avatar">A</a>
-        <div>
-          <div class="s-name" id="s-name">Admin</a>
-          <div class="s-role">Super Admin</a>
-        </a>
-      </a>
-      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-    </a>
-  </aside>
-
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <button class="btn-menu" id="menuBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-      <div class="topbar-title" id="topbarTitle">Dashboard</a>
-      <div class="topbar-right">
-        <button class="btn btn-sm btn-outline" onclick="window.open('index.html','_blank')"><i class="fa-solid fa-store"></i> View Store</button>
-      </a>
-    </a>
-
-    <div class="content">
-
-
-                <div class="admin-page-header">
-                    <div class="admin-page-header-left">
-                        <h2>Record New Sale</h2>
-                        <p>Manually enter details for a sale that occurred in-store or offline.</p>
+    <div class="wrap">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">H</div>
+                <div>
+                    <div style="font-size:.87rem;font-weight:700;color:#f1f5f9">HeelsUp</div>
+                    <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel
                     </div>
+                </div>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-label">Main</div>
+                <a class="nav-item" href="admin.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+
+                <div class="nav-label">Catalogue</div>
+                <a class="nav-item" href="admin-products.html"><i class="fa-solid fa-box"></i> Products</a>
+                <a class="nav-item" href="admin-categories.html"><i class="fa-solid fa-folder"></i> Categories</a>
+                <a class="nav-item" href="admin-collections.html"><i class="fa-solid fa-layer-group"></i>
+                    Collections</a>
+
+                <div class="nav-label">Sales</div>
+                <a class="nav-item" href="admin-orders.html"><i class="fa-solid fa-bag-shopping"></i> Orders</a>
+                <a class="nav-item" href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+                <a class="nav-item" href="admin-coupons.html"><i class="fa-solid fa-ticket"></i> Coupons</a>
+                <a class="nav-item" href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+
+                <div class="nav-label">Operations</div>
+                <a class="nav-item" href="admin-shipping.html"><i class="fa-solid fa-truck"></i> Shipping</a>
+                <a class="nav-item active" href="admin-pos.html"><i class="fa-solid fa-cash-register"></i> POS / Offline
+                    Sales</a>
+                <a class="nav-item" href="admin-staff.html"><i class="fa-solid fa-user-tie"></i> Staff</a>
+                <a class="nav-item" href="admin-notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
+
+                <div class="nav-label">Content</div>
+                <a class="nav-item" href="admin-banners.html"><i class="fa-solid fa-image"></i> Banners</a>
+                <a class="nav-item" href="admin-blog.html"><i class="fa-solid fa-pen-nib"></i> Blog</a>
+                <a class="nav-item" href="admin-pages.html"><i class="fa-solid fa-file"></i> Pages</a>
+
+                <div class="nav-label">Reports</div>
+                <a class="nav-item" href="admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+                <a class="nav-item" href="admin-reports.html"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+
+                <div class="nav-label">System</div>
+                <a class="nav-item" href="admin-settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="s-avatar" id="s-avatar">A</div>
+                    <div>
+                        <div class="s-name" id="s-name">Admin</div>
+                        <div class="s-role">Super Admin</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main -->
+        <div class="main">
+            <div class="topbar">
+                <button class="btn-menu" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+                <div class="topbar-title">POS / Offline Sales</div>
+                <div class="topbar-right">
+                    <button class="btn btn-sm btn-outline" onclick="window.open('index.html','_blank')"><i
+                            class="fa-solid fa-store"></i> View Store</button>
+                </div>
+            </div>
+
+            <div class="content">
+
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h2>Record New Sale</h2>
+                    <p>Manually enter details for a sale that occurred in-store or offline.</p>
                 </div>
 
                 <form id="offline-sale-form" onsubmit="submitSale(event)">
 
-                    <div class="grid grid-2">
-                        <!-- Sale Details Card -->
-                        <div class="admin-card">
-                            <div class="admin-card-header">
-                                <div class="admin-card-title"><i class="fa-solid fa-file-invoice"></i> Sale Information
-                                </div>
+                    <!-- Row 1: Sale Info + Customer -->
+                    <div class="two-col">
+
+                        <!-- Sale Information -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fa-solid fa-file-invoice"></i> Sale Information</div>
                             </div>
-                            <div class="admin-card-body">
-                                <div class="form-grid">
-                                    <div>
-                                        <label class="form-label">Invoice Number <span class="required">*</span></label>
-                                        <input type="text" class="form-control" id="invoiceNumber" value="INV-2026-0507"
-                                            required />
-                                        <span
-                                            style="font-size:11px; color:var(--text-muted); margin-top:4px; display:block;">Auto-generated.
-                                            You can modify if needed.</span>
-                                    </div>
-                                    <div>
-                                        <label class="form-label">Date of Sale <span class="required">*</span></label>
-                                        <input type="date" class="form-control" id="saleDate" required />
-                                    </div>
-                                    <div class="form-group-full">
-                                        <label class="form-label">Handled By (Employee) <span
-                                                class="required">*</span></label>
-                                        <select class="form-control" required>
-                                            <option value="">Select Employee...</option>
-                                            <option value="admin" selected>Admin User (You)</option>
-                                            <option value="priya">Priya S. (Store Manager)</option>
-                                            <option value="rahul">Rahul M. (Sales Exec)</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group-full">
-                                        <label class="form-label">Store Location</label>
-                                        <select class="form-control">
-                                            <option value="jodhpur" selected>Jodhpur Main Store</option>
-                                            <option value="delhi">Delhi Pop-up</option>
-                                            <option value="exhibition">Exhibition / Event</option>
-                                        </select>
-                                    </div>
+                            <div class="form-grid">
+                                <div class="form-field">
+                                    <label class="form-label">Invoice Number <span class="required">*</span></label>
+                                    <input type="text" class="form-input" id="invoiceNumber" value="INV-2026-0507"
+                                        required />
+                                    <span class="form-hint">Auto-generated. You can modify if needed.</span>
+                                </div>
+                                <div class="form-field">
+                                    <label class="form-label">Date of Sale <span class="required">*</span></label>
+                                    <input type="date" class="form-input" id="saleDate" required />
+                                </div>
+                                <div class="form-field full">
+                                    <label class="form-label">Handled By (Employee) <span
+                                            class="required">*</span></label>
+                                    <select class="form-select" required>
+                                        <option value="">Select Employee...</option>
+                                        <option value="admin" selected>Admin User (You)</option>
+                                        <option value="priya">Priya S. (Store Manager)</option>
+                                        <option value="rahul">Rahul M. (Sales Exec)</option>
+                                    </select>
+                                </div>
+                                <div class="form-field full">
+                                    <label class="form-label">Store Location</label>
+                                    <select class="form-select">
+                                        <option value="jodhpur" selected>Jodhpur Main Store</option>
+                                        <option value="delhi">Delhi Pop-up</option>
+                                        <option value="exhibition">Exhibition / Event</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Customer Details Card -->
-                        <div class="admin-card">
-                            <div class="admin-card-header">
-                                <div class="admin-card-title"><i class="fa-solid fa-user"></i> Customer Details</div>
+                        <!-- Customer Details -->
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fa-solid fa-user"></i> Customer Details</div>
                             </div>
-                            <div class="admin-card-body">
-                                <div class="form-grid">
-                                    <div class="form-group-full">
-                                        <label class="form-label">Phone Number <span class="required">*</span></label>
-                                        <div class="input-group">
-                                            <span class="input-group-addon">+91</span>
-                                            <input type="tel" class="form-control" id="customerPhone"
-                                                placeholder="10-digit mobile number" required pattern="[0-9]{10}" />
-                                        </div>
+                            <div class="form-grid">
+                                <div class="form-field full">
+                                    <label class="form-label">Phone Number <span class="required">*</span></label>
+                                    <div class="input-group">
+                                        <span class="input-group-addon">+91</span>
+                                        <input type="tel" class="form-input" id="customerPhone"
+                                            placeholder="10-digit mobile number" required pattern="[0-9]{10}" />
                                     </div>
-                                    <div class="form-group-full">
-                                        <label class="form-label">Customer Name</label>
-                                        <input type="text" class="form-control" id="customerName"
-                                            placeholder="Enter full name" />
-                                    </div>
-                                    <div class="form-group-full">
-                                        <label class="form-label">Email Address (Optional)</label>
-                                        <input type="email" class="form-control" id="customerEmail"
-                                            placeholder="For digital receipt" />
-                                    </div>
+                                </div>
+                                <div class="form-field full">
+                                    <label class="form-label">Customer Name</label>
+                                    <input type="text" class="form-input" id="customerName"
+                                        placeholder="Enter full name" />
+                                </div>
+                                <div class="form-field full">
+                                    <label class="form-label">Email Address <span
+                                            style="font-weight:400;text-transform:none;letter-spacing:0;color:#94a3b8">(Optional)</span></label>
+                                    <input type="email" class="form-input" id="customerEmail"
+                                        placeholder="For digital receipt" />
                                 </div>
                             </div>
                         </div>
+
                     </div>
 
-                    <!-- Products Card -->
-                    <div class="admin-card">
-                        <div class="admin-card-header">
-                            <div class="admin-card-title"><i class="fa-solid fa-box-open"></i> Products Sold</div>
+                    <!-- Products Table -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title"><i class="fa-solid fa-box-open"></i> Products Sold</div>
                         </div>
-                        <div class="admin-card-body" style="padding-top: var(--space-3);">
-                            <table class="entry-table" id="productsTable">
+                        <div style="overflow-x:auto">
+                            <table>
                                 <thead>
                                     <tr>
                                         <th class="td-product">Product Name / SKU</th>
-                                        <th class="td-qty">Quantity</th>
+                                        <th class="td-qty">Qty</th>
                                         <th class="td-price">Unit Price (₹)</th>
                                         <th class="td-total">Total (₹)</th>
                                         <th class="td-action"></th>
                                     </tr>
                                 </thead>
                                 <tbody id="productRows">
-                                    <!-- Initial Row -->
                                     <tr>
                                         <td class="td-product">
-                                            <input type="text" class="form-control"
+                                            <input type="text" class="form-input"
                                                 placeholder="Search product or enter SKU..." required
                                                 oninput="calculateTotals()">
                                         </td>
                                         <td class="td-qty">
-                                            <input type="number" class="form-control qty-input" value="1" min="1"
-                                                required oninput="calculateTotals()">
+                                            <input type="number" class="form-input qty-input" value="1" min="1" required
+                                                oninput="calculateTotals()" style="width:70px">
                                         </td>
                                         <td class="td-price">
-                                            <input type="number" class="form-control price-input" placeholder="0.00"
-                                                min="0" required oninput="calculateTotals()">
+                                            <input type="number" class="form-input price-input" placeholder="0.00"
+                                                min="0" required oninput="calculateTotals()" style="width:110px">
                                         </td>
-                                        <td class="td-total line-total">0.00</td>
+                                        <td class="td-total line-total">—</td>
                                         <td class="td-action">
-                                            <button type="button" class="btn-remove-row" onclick="removeRow(this)"
-                                                disabled style="opacity:0.3; cursor:not-allowed;"><i
-                                                    class="fa-solid fa-xmark"></i></button>
+                                            <button type="button" class="btn-icon btn-del" onclick="removeRow(this)"
+                                                disabled style="opacity:.3;cursor:not-allowed">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <div class="add-row-btn" onclick="addProductRow()">
-                                <i class="fa-solid fa-plus-circle"></i> Add another product
-                            </div>
+                        </div>
+                        <div class="add-row-btn" onclick="addProductRow()">
+                            <i class="fa-solid fa-plus-circle"></i> Add another product
                         </div>
                     </div>
 
-                    <!-- Summary & Payment -->
-                    <div class="grid grid-2">
+                    <!-- Row 3: Payment + Summary -->
+                    <div class="two-col">
+
                         <!-- Payment Details -->
-                        <div class="admin-card">
-                            <div class="admin-card-header">
-                                <div class="admin-card-title"><i class="fa-solid fa-wallet"></i> Payment Details</div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fa-solid fa-wallet"></i> Payment Details</div>
                             </div>
-                            <div class="admin-card-body">
+                            <div class="form-field" style="margin-bottom:14px">
                                 <label class="form-label">Payment Mode <span class="required">*</span></label>
-                                <div class="payment-methods" id="paymentMethods">
-                                    <div class="pm-card active" onclick="setPaymentMethod('cash', this)">
+                                <div class="payment-methods">
+                                    <div class="pm-card active" onclick="setPaymentMethod('cash',this)">
                                         <i class="fa-solid fa-money-bill-wave"></i>
                                         <span>Cash</span>
                                     </div>
-                                    <div class="pm-card" onclick="setPaymentMethod('upi', this)">
+                                    <div class="pm-card" onclick="setPaymentMethod('upi',this)">
                                         <i class="fa-brands fa-google-pay"></i>
                                         <span>UPI / QR</span>
                                     </div>
-                                    <div class="pm-card" onclick="setPaymentMethod('card', this)">
+                                    <div class="pm-card" onclick="setPaymentMethod('card',this)">
                                         <i class="fa-solid fa-credit-card"></i>
                                         <span>Card POS</span>
                                     </div>
                                 </div>
-                                <input type="hidden" id="selectedPaymentMethod" value="cash" required>
+                                <input type="hidden" id="selectedPaymentMethod" value="cash">
+                            </div>
 
-                                <div id="referenceField" style="display:none; margin-top:var(--space-5);">
+                            <div id="referenceField" style="display:none;margin-bottom:14px">
+                                <div class="form-field">
                                     <label class="form-label">Transaction / Reference ID</label>
-                                    <input type="text" class="form-control" id="paymentRef"
+                                    <input type="text" class="form-input" id="paymentRef"
                                         placeholder="Enter UPI Ref or Card Auth Code" />
                                 </div>
+                            </div>
 
-                                <div style="margin-top:var(--space-5);">
-                                    <label class="form-label">Sale Notes / Remarks</label>
-                                    <textarea class="form-control" rows="3"
-                                        placeholder="Any additional information about this sale..."></textarea>
-                                </div>
+                            <div class="form-field">
+                                <label class="form-label">Sale Notes / Remarks</label>
+                                <textarea class="form-textarea"
+                                    placeholder="Any additional information about this sale..."></textarea>
                             </div>
                         </div>
 
                         <!-- Order Summary -->
-                        <div class="admin-card">
-                            <div class="admin-card-header">
-                                <div class="admin-card-title"><i class="fa-solid fa-calculator"></i> Order Summary</div>
+                        <div class="card">
+                            <div class="card-header">
+                                <div class="card-title"><i class="fa-solid fa-calculator"></i> Order Summary</div>
                             </div>
-                            <div class="admin-card-body">
-
-                                <div class="form-grid" style="margin-bottom:var(--space-4);">
-                                    <div class="form-group-full">
-                                        <label class="form-label">Apply Discount (Flat ₹)</label>
-                                        <input type="number" class="form-control" id="discountInput" value="0" min="0"
-                                            oninput="calculateTotals()" />
-                                    </div>
+                            <div class="form-field" style="margin-bottom:16px">
+                                <label class="form-label">Apply Discount (Flat ₹)</label>
+                                <input type="number" class="form-input" id="discountInput" value="0" min="0"
+                                    oninput="calculateTotals()" style="max-width:180px" />
+                            </div>
+                            <div class="summary-box">
+                                <div class="summary-row">
+                                    <span>Subtotal</span>
+                                    <strong id="summary-subtotal">₹0.00</strong>
                                 </div>
-
-                                <div class="summary-box">
-                                    <div class="summary-row">
-                                        <span>Subtotal</span>
-                                        <span style="font-weight:600; color:var(--text-primary);"
-                                            id="summary-subtotal">₹0.00</span>
-                                    </div>
-                                    <div class="summary-row" style="color:var(--color-success);">
-                                        <span>Discount</span>
-                                        <span id="summary-discount">-₹0.00</span>
-                                    </div>
-                                    <div class="summary-row">
-                                        <span>Tax (Included 18% GST)</span>
-                                        <span id="summary-tax">₹0.00</span>
-                                    </div>
-                                    <div class="summary-row total">
-                                        <span>Grand Total</span>
-                                        <span id="summary-total">₹0.00</span>
-                                    </div>
+                                <div class="summary-row summary-discount">
+                                    <span>Discount</span>
+                                    <span id="summary-discount-val">-₹0.00</span>
                                 </div>
-
+                                <div class="summary-row">
+                                    <span>Tax (Included 18% GST)</span>
+                                    <span id="summary-tax">₹0.00</span>
+                                </div>
+                                <div class="summary-row total">
+                                    <span>Grand Total</span>
+                                    <span id="summary-total">₹0.00</span>
+                                </div>
                             </div>
                         </div>
+
                     </div>
 
+                    <!-- Actions -->
                     <div class="form-actions">
-                        <button type="button" class="btn btn-white btn-lg" onclick="window.location.reload()">Clear
-                            Form</button>
+                        <button type="button" class="btn btn-outline btn-lg" onclick="window.location.reload()">
+                            <i class="fa-solid fa-rotate-left"></i> Clear Form
+                        </button>
                         <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
                             <i class="fa-solid fa-check"></i> Save Sale Entry
                         </button>
                     </div>
+
                 </form>
 
-            </div>
-        
-    </div><!-- /content -->
-  
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div>
+            </div><!-- /content -->
+        </div><!-- /main -->
+    </div>
 
-<script src="app-config.js"></script>
-<script src="app-auth.js"></script>
-<script>
-function toggleSidebar(){
-  const s=document.getElementById('sidebar');
-  const o=document.getElementById('mobOverlay');
-  s.classList.toggle('open');
-  o.style.display = s.classList.contains('open')?'block':'none';
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('mobOverlay').style.display='none';
-}
-function doLogout(){ HeelsUpAuth.clearSession(); window.location='login.html'; }
-</script>
+    <script src="app-config.js"></script>
+    <script src="app-auth.js"></script>
+    <script>
+        // ── AUTH ────────────────────────────────────────────────────────
+        const user = HeelsUpAuth.getUser();
+        if (!user || user.role !== 'admin') { window.location = 'login.html?redirect=admin-pos.html'; }
+        const name = (user?.firstName || user?.first_name || 'Admin');
+        document.getElementById('s-avatar').textContent = name.charAt(0).toUpperCase();
+        document.getElementById('s-name').textContent = name;
+
+        // Set today's date
+        document.getElementById('saleDate').value = new Date().toISOString().split('T')[0];
+
+        // ── SIDEBAR ─────────────────────────────────────────────────────
+        function toggleSidebar() {
+            const s = document.getElementById('sidebar');
+            const o = document.getElementById('mobOverlay');
+            s.classList.toggle('open');
+            o.style.display = s.classList.contains('open') ? 'block' : 'none';
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mobOverlay').style.display = 'none';
+        }
+
+        // ── LOGOUT ──────────────────────────────────────────────────────
+        function doLogout() { HeelsUpAuth.clearSession(); window.location = 'login.html'; }
+
+        // ── TOAST ───────────────────────────────────────────────────────
+        function showToast(msg, type = 'success') {
+            const c = document.getElementById('toastWrap');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', warning: 'fa-triangle-exclamation' };
+            t.innerHTML = `<i class="fa-solid ${icons[type] || 'fa-circle-info'}"></i><span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300) }, 4000);
+        }
+
+        // ── PAYMENT METHOD ───────────────────────────────────────────────
+        function setPaymentMethod(method, el) {
+            document.querySelectorAll('.pm-card').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            document.getElementById('selectedPaymentMethod').value = method;
+            document.getElementById('referenceField').style.display = (method === 'upi' || method === 'card') ? 'block' : 'none';
+        }
+
+        // ── PRODUCT ROWS ─────────────────────────────────────────────────
+        function addProductRow() {
+            const tbody = document.getElementById('productRows');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+    <td class="td-product"><input type="text" class="form-input" placeholder="Search product or enter SKU..." required oninput="calculateTotals()"></td>
+    <td class="td-qty"><input type="number" class="form-input qty-input" value="1" min="1" required oninput="calculateTotals()" style="width:70px"></td>
+    <td class="td-price"><input type="number" class="form-input price-input" placeholder="0.00" min="0" required oninput="calculateTotals()" style="width:110px"></td>
+    <td class="td-total line-total">—</td>
+    <td class="td-action"><button type="button" class="btn-icon btn-del" onclick="removeRow(this)"><i class="fa-solid fa-xmark"></i></button></td>
+  `;
+            tbody.appendChild(tr);
+            updateRemoveButtons();
+        }
+
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+            updateRemoveButtons();
+            calculateTotals();
+        }
+
+        function updateRemoveButtons() {
+            const rows = document.querySelectorAll('#productRows tr');
+            rows.forEach((r, i) => {
+                const btn = r.querySelector('.btn-del');
+                if (!btn) return;
+                if (rows.length === 1) { btn.disabled = true; btn.style.opacity = '.3'; btn.style.cursor = 'not-allowed'; }
+                else { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+            });
+        }
+
+        function calculateTotals() {
+            let subtotal = 0;
+            document.querySelectorAll('#productRows tr').forEach(row => {
+                const qty = Number(row.querySelector('.qty-input')?.value) || 0;
+                const price = Number(row.querySelector('.price-input')?.value) || 0;
+                const line = qty * price;
+                const cell = row.querySelector('.line-total');
+                if (cell) cell.textContent = line > 0 ? '₹' + line.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—';
+                subtotal += line;
+            });
+            const discount = Math.min(Number(document.getElementById('discountInput').value) || 0, subtotal);
+            const afterDiscount = subtotal - discount;
+            const gst = afterDiscount - (afterDiscount / 1.18);
+            const total = afterDiscount;
+
+            document.getElementById('summary-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-discount-val').textContent = '-₹' + discount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-tax').textContent = '₹' + gst.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-total').textContent = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+        }
+
+        // ── SUBMIT ───────────────────────────────────────────────────────
+        async function submitSale(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+            const items = [];
+            document.querySelectorAll('#productRows tr').forEach(row => {
+                const name = row.querySelector('input[type=text]')?.value?.trim();
+                const qty = Number(row.querySelector('.qty-input')?.value) || 1;
+                const price = Number(row.querySelector('.price-input')?.value) || 0;
+                if (name && price > 0) items.push({ name, qty, price, total: qty * price });
+            });
+
+            const discount = Number(document.getElementById('discountInput').value) || 0;
+            const subtotal = items.reduce((s, i) => s + i.total, 0);
+            const grand_total = subtotal - discount;
+
+            const payload = {
+                invoice_number: document.getElementById('invoiceNumber').value.trim(),
+                sale_date: document.getElementById('saleDate').value,
+                customer_phone: document.getElementById('customerPhone').value.trim(),
+                customer_name: document.getElementById('customerName').value.trim(),
+                customer_email: document.getElementById('customerEmail').value.trim(),
+                payment_method: document.getElementById('selectedPaymentMethod').value,
+                payment_ref: document.getElementById('paymentRef')?.value?.trim() || '',
+                discount,
+                subtotal,
+                grand_total,
+                items
+            };
+
+            try {
+                await HeelsUpAuth.api('/api/admin/pos/sales', { method: 'POST', body: JSON.stringify(payload) });
+                showToast('Sale recorded successfully!');
+                setTimeout(() => window.location.reload(), 1500);
+            } catch (err) {
+                showToast(err.message || 'Failed to save sale', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Sale Entry';
+            }
+        }
+    </script>
 </body>
+
 </html>
