@@ -18,7 +18,7 @@ R2_PUBLIC_URL = "https://media.heelsup.in"
 binding = "DB"
 database_name = "heelsup-live"
 # Yahan wahi ID daalein jo 'npx wrangler d1 list' command se mili hai
-database_id = "YOUR_ACTUAL_DATABASE_ID_FROM_CLI"
+database_id = "e1421396-862d-4be9-bc68-72ce70b1644c"
 
 [[r2_buckets]]
 binding = "MEDIA"
