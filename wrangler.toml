@@ -1,12 +1,12 @@
 name = "heelsupnew"
-main = "src/index.js"
+main = "backend/index.js"
 compatibility_date = "2026-05-08"
 workers_dev = true
 
 [vars]
 APP_NAME = "HeelsUp"
 CORS_ORIGIN = "*"
-API_BASE_URL = "https://heelsupnew.heelsup.workers.dev"
+API_BASE_URL = "https://heelsupnew.heelsup.workers.dev/api/health"
 GOOGLE_APPSCRIPT_ENDPOINT = ""
 GOOGLE_APPSCRIPT_TOKEN = ""
 JWT_EXPIRES_DAYS = "30"
@@ -26,3 +26,6 @@ bucket_name = "heelsup-media"
 
 [observability.logs]
 enabled = true
+
+[assets]
+directory = "public"
