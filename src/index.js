@@ -17,6 +17,7 @@ import { bannersRouter } from './routes/banners.js';
 import { staffRouter } from './routes/staff.js';
 import { settingsRouter } from './routes/settings.js';
 import { contactRouter, newsletterRouter, inventoryRouter } from './routes/misc.js';
+import { handleReports } from './routes/reports.js';
 import { json } from './utils/response.js';
 
 export default {
@@ -57,6 +58,7 @@ export default {
         else if (path.startsWith('/api/contact')) response = await contactRouter(request, env);
         else if (path.startsWith('/api/newsletter')) response = await newsletterRouter(request, env);
         else if (path.startsWith('/api/inventory')) response = await inventoryRouter(request, env);
+        else if (path.startsWith('/api/reports')) response = await handleReports(request, env, path, request.method);
         else response = json({ success: false, error: 'API route not found' }, 404);
       } catch (err) {
         console.error('API Error:', err);

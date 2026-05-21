@@ -1,356 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HeelsUp Admin — Reviews</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Reviews — HeelsUp Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--gold:#c9a96e;--gold-dark:#8b6914;--bg:#f1f5f9;--sidebar:#0f172a;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;border:none;background:none;font-family:inherit}
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-        rel="stylesheet" />
-    <!-- Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <!-- Global CSS -->
-    <link rel="stylesheet" href="style.css" />
+/* Layout */
+.wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
 
-    <style>
-        body {
-            background: var(--admin-bg);
-        }
+/* Sidebar */
+.sidebar{background:var(--sidebar);color:#94a3b8;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden}
+.sidebar-brand{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;min-height:62px}
+.sidebar-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;flex-shrink:0}
+.sidebar-nav{flex:1;padding:10px 0}
+.nav-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#475569;padding:13px 18px 4px}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 18px;color:#94a3b8;font-size:.83rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;text-decoration:none;cursor:pointer}
+.nav-item:hover{background:#1e293b;color:#e2e8f0}
+.nav-item.active{background:#1e293b;color:var(--gold);border-left-color:var(--gold)}
+.nav-item i{width:16px;text-align:center;font-size:.83rem;flex-shrink:0}
+.nav-badge{margin-left:auto;background:var(--gold);color:#0f172a;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;min-width:18px;text-align:center}
+.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.06)}
+.sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.s-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
+.s-name{font-size:.8rem;font-weight:600;color:#e2e8f0}
+.s-role{font-size:.65rem;color:#64748b}
+.btn-logout{width:100%;padding:7px;border-radius:8px;background:rgba(255,255,255,.05);color:#94a3b8;font-size:.78rem;display:flex;align-items:center;gap:8px;justify-content:center;transition:all .2s}
+.btn-logout:hover{background:rgba(239,68,68,.15);color:#f87171}
+@media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:999;transition:left .3s;width:240px}.sidebar.open{left:0}}
 
-        .sidebar-brand {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            color: var(--color-white);
-            font-weight: 600;
-            letter-spacing: 0.05em;
-        }
+/* Topbar */
+.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.btn-menu{padding:8px;border-radius:8px;color:#64748b;display:none}
+.btn-menu:hover{background:#f1f5f9}
+@media(max-width:900px){.btn-menu{display:flex}}
 
-        .sidebar-brand span {
-            color: var(--color-primary);
-        }
+/* Main */
+.main{min-height:100vh;display:flex;flex-direction:column}
+.content{padding:24px;flex:1}
 
-        .sidebar-version {
-            font-size: 9px;
-            color: rgba(255, 255, 255, 0.25);
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            margin-top: 2px;
-        }
+/* Sections */
+.sec{display:none}
+.sec.active{display:block}
 
-        /* Review Specific Styles */
-        .review-stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: var(--space-5);
-            margin-bottom: var(--space-6);
-        }
+/* Stats grid */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.stats-grid{grid-template-columns:1fr}}
+.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:14px;transition:transform .2s,box-shadow .2s}
+.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
+.stat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.gold-icon{background:rgba(201,169,110,.12);color:var(--gold)}
+.blue-icon{background:rgba(59,130,246,.1);color:#3b82f6}
+.green-icon{background:rgba(34,197,94,.1);color:#22c55e}
+.rose-icon{background:rgba(212,69,107,.1);color:#d4456b}
+.stat-label{font-size:.72rem;color:#94a3b8;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
+.stat-value{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--text);line-height:1}
+.stat-sub{font-size:.7rem;color:#94a3b8;margin-top:4px}
 
-        .adv-filter-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: var(--color-white);
-            padding: var(--space-4) var(--space-6);
-            border: 1px solid var(--border-color);
-            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
-            flex-wrap: wrap;
-            gap: var(--space-4);
-            border-bottom: none;
-        }
+/* Cards & Tables */
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
+.card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--text)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:.83rem}
+thead th{text-align:left;padding:9px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;border-bottom:2px solid #f1f5f9}
+tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s}
+tbody tr:hover{background:#f8fafc}
+tbody td{padding:11px 12px;vertical-align:middle}
+.tbl-img{width:38px;height:38px;object-fit:cover;border-radius:8px;background:#f1f5f9}
+.tbl-name{font-weight:600;color:var(--text)}
+.tbl-sub{font-size:.72rem;color:#94a3b8;margin-top:2px}
 
-        .star-rating {
-            color: var(--color-primary);
-            font-size: 13px;
-            letter-spacing: 2px;
-            display: inline-block;
-        }
+/* Badges */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
+.badge-placed{background:#dbeafe;color:#1d4ed8}
+.badge-confirmed{background:#dcfce7;color:#15803d}
+.badge-shipped{background:#f3e8ff;color:#7e22ce}
+.badge-delivered{background:#d1fae5;color:#065f46}
+.badge-cancelled{background:#fee2e2;color:#b91c1c}
+.badge-returned{background:#fef3c7;color:#92400e}
+.badge-active{background:#dcfce7;color:#15803d}
+.badge-inactive{background:#f1f5f9;color:#64748b}
+.badge-paid{background:#dcfce7;color:#15803d}
+.badge-pending{background:#fef3c7;color:#b45309}
+.badge-approved{background:#dcfce7;color:#15803d}
+.badge-rejected{background:#fee2e2;color:#b91c1c}
+.badge-admin{background:rgba(201,169,110,.15);color:var(--gold-dark)}
+.badge-customer{background:#f1f5f9;color:#64748b}
 
-        .star-rating .fa-regular {
-            color: var(--border-color);
-        }
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;transition:all .2s;font-family:'Inter',sans-serif;cursor:pointer;border:none}
+.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff}
+.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
+.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
+.btn-outline{border:1.5px solid var(--border);color:var(--muted);background:#fff}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
+.btn-sm{padding:5px 12px;font-size:.76rem;border-radius:7px}
+.btn-danger{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
+.btn-danger:hover{background:#fecaca}
+.btn-icon{width:32px;height:32px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
+.btn-edit{background:#f0f9ff;color:#0284c7}
+.btn-edit:hover{background:#0284c7;color:#fff}
+.btn-del{background:#fef2f2;color:#dc2626}
+.btn-del:hover{background:#dc2626;color:#fff}
+.act-cell{display:flex;align-items:center;gap:5px}
 
-        .review-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.4;
-            max-width: 400px;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            margin-top: 4px;
-        }
+/* Search & Filter */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px}
+.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.8rem}
+.search-input{width:100%;padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;transition:all .2s;background:#f8fafc;font-family:'Inter',sans-serif}
+.search-input:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
+.filter-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;background:#f8fafc;transition:all .2s;font-family:'Inter',sans-serif}
+.filter-select:focus{outline:none;border-color:var(--gold)}
 
-        .review-prod-img {
-            width: 40px;
-            height: 48px;
-            border-radius: 4px;
-            object-fit: cover;
-            border: 1px solid var(--border-color);
-        }
+/* Modal */
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.show{display:flex}
+.modal{background:#fff;border-radius:18px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25);animation:modalIn .3s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
+.modal-close{width:34px;height:34px;border-radius:8px;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal-close:hover{background:#fee2e2;color:#dc2626}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
+.form-field{display:flex;flex-direction:column;gap:5px}
+.form-field.full{grid-column:1/-1}
+.form-label{font-size:.72rem;font-weight:700;color:#64748b;letter-spacing:.04em;text-transform:uppercase}
+.form-input,.form-select,.form-textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;transition:all .2s;background:#f8fafc;width:100%;font-family:'Inter',sans-serif;color:var(--text)}
+.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
+.form-textarea{resize:vertical;min-height:80px}
+.form-check{display:flex;align-items:center;gap:8px;padding:3px 0}
+.form-check input{width:16px;height:16px;accent-color:var(--gold)}
+.form-check label{font-size:.87rem;color:#475569}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
 
-        .badge-verified {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 2px 6px;
-            border-radius: var(--radius-sm);
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            background: var(--color-success-light);
-            color: var(--color-success);
-            margin-left: 6px;
-        }
+/* Pagination */
+.pagination{display:flex;align-items:center;gap:7px;margin-top:16px;justify-content:center}
+.pg-btn{padding:6px 13px;border-radius:7px;border:1.5px solid var(--border);font-size:.79rem;color:#64748b;background:#fff;transition:all .2s;font-family:'Inter',sans-serif}
+.pg-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
+.pg-btn:disabled{opacity:.4;cursor:not-allowed}
+.pg-info{font-size:.79rem;color:#94a3b8}
 
-        /* Modals */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(4px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            padding: var(--space-4);
-        }
+/* Toast */
+.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{background:#1e293b;color:#fff;padding:12px 18px;border-radius:10px;font-size:.83rem;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:toastIn .3s ease;min-width:240px}
+.toast.success{border-left:4px solid #22c55e}
+.toast.error{border-left:4px solid #ef4444}
+.toast.warning{border-left:4px solid #f59e0b}
+@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
 
-        .modal-overlay.open {
-            opacity: 1;
-            visibility: visible;
-        }
+/* Welcome banner */
+.welcome{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:24px;margin-bottom:24px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
+.welcome::after{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:rgba(201,169,110,.07);border-radius:50%}
+.welcome-text h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:4px}
+.welcome-text p{font-size:.82rem;color:#94a3b8}
+.welcome-actions{display:flex;gap:10px;z-index:1}
 
-        .modal-box {
-            background: var(--color-white);
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: var(--shadow-2xl);
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-        }
+/* Loading */
+.loading-spinner{text-align:center;padding:40px;color:#94a3b8;font-size:.87rem}
+.loading-spinner i{font-size:1.8rem;color:var(--gold);display:block;margin-bottom:10px;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-        .modal-overlay.open .modal-box {
-            transform: translateY(0);
-        }
-
-        .modal-header {
-            padding: var(--space-5) var(--space-6);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            background: var(--color-white);
-            z-index: 10;
-        }
-
-        .modal-title {
-            font-family: var(--font-heading);
-            font-size: var(--text-xl);
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .modal-close:hover {
-            color: var(--color-error);
-        }
-
-        .modal-body {
-            padding: var(--space-6);
-        }
-
-        .modal-footer {
-            padding: var(--space-4) var(--space-6);
-            border-top: 1px solid var(--border-color);
-            display: flex;
-            justify-content: flex-end;
-            gap: var(--space-3);
-            background: var(--color-light);
-            position: sticky;
-            bottom: 0;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 14px;
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-base);
-            font-size: var(--text-sm);
-            font-family: inherit;
-            transition: all 0.2s;
-            background: var(--color-white);
-        }
-
-        .form-control:focus {
-            border-color: var(--color-primary);
-            box-shadow: 0 0 0 3px var(--color-primary-glow);
-            outline: none;
-        }
-
-        .review-detail-box {
-            background: var(--color-light);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-md);
-            padding: var(--space-5);
-            margin-bottom: var(--space-5);
-        }
-    </style>
+/* Mobile overlay */
+.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
+</style>
 </head>
-
 <body>
-    <div class="admin-layout">
-        <!-- SIDEBAR -->
-        <aside class="admin-sidebar" id="admin-sidebar">
-            <div class="admin-sidebar-header">
-                <div class="admin-sidebar-logo">
-                    <div>
-                        <div class="sidebar-brand">Heels<span>Up</span></div>
-                        <div class="sidebar-version">Admin Panel v2.0</div>
-                    </div>
-                </div>
-                <button class="admin-sidebar-toggle" id="sidebar-collapse-btn" title="Collapse sidebar">
-                    <i class="fa-solid fa-chevron-left" id="sidebar-toggle-icon"></i>
-                </button>
-            </div>
 
-            <nav class="admin-nav" id="admin-nav">
-                <!-- MAIN -->
-                <div class="admin-nav-section">
-                    <div class="admin-nav-title">Main</div>
-                    <a href="admin.html" class="admin-nav-link">
-                        <i class="fa-solid fa-grid-2 nav-icon"></i><span>Dashboard</span>
-                    </a>
-                    <a href="admin-analytics.html" class="admin-nav-link">
-                        <i class="fa-solid fa-chart-line nav-icon"></i><span>Analytics</span>
-                    </a>
-                    <a href="admin-reports.html" class="admin-nav-link">
-                        <i class="fa-solid fa-chart-bar nav-icon"></i><span>Reports</span>
-                    </a>
-                </div>
+<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></a>
+<div class="toast-wrap" id="toastWrap"></a>
 
-                <!-- CATALOGUE -->
-                <div class="admin-nav-section">
-                    <div class="admin-nav-title">Catalogue</div>
-                    <a href="admin-products.html" class="admin-nav-link">
-                        <i class="fa-solid fa-shoe-prints nav-icon"></i><span>Products</span>
-                    </a>
-                    <a href="admin-categories.html" class="admin-nav-link">
-                        <i class="fa-solid fa-tags nav-icon"></i><span>Categories</span>
-                    </a>
-                    <a href="admin-inventory.html" class="admin-nav-link">
-                        <i class="fa-solid fa-boxes-stacked nav-icon"></i><span>Inventory</span>
-                    </a>
-                    <a href="admin-collections.html" class="admin-nav-link">
-                        <i class="fa-solid fa-layer-group nav-icon"></i><span>Collections</span>
-                    </a>
-                </div>
+<div class="wrap">
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="sidebar-logo">H</a>
+      <div>
+        <div style="font-size:.87rem;font-weight:700;color:#f1f5f9">HeelsUp</a>
+        <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel</a>
+      </a>
+    </a>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Main</a>
+      <a class="nav-item" href="admin.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
+      <div class="nav-label">Catalogue</a>
+      <a class="nav-item" href="admin-products.html"><i class="fa-solid fa-box"></i> Products</a>
+      <div class="nav-label">Sales</a>
+      <a class="nav-item" href="admin-orders.html">
+        <i class="fa-solid fa-bag-shopping"></i> Orders
+        <span class="nav-badge" id="ordersBadge" style="display:none">0</span>
+      </a>
+      <a class="nav-item" href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+      <a class="nav-item" href="admin-coupons.html"><i class="fa-solid fa-ticket"></i> Coupons</a>
+      <a class="nav-item" href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+      <a class="nav-item" href="admin-returns.html"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+      <div class="nav-label">More</a>
+      <a href="admin-pos.html" class="nav-item"><i class="fa-solid fa-cash-register"></i> POS / Offline Sales</a>
+      <a href="admin-reports.html" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+      <a href="admin-analytics.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+      <a href="admin-banners.html" class="nav-item"><i class="fa-solid fa-image"></i> Banners</a>
 
-                <!-- SALES -->
-                <div class="admin-nav-section">
-                    <div class="admin-nav-title">Sales</div>
-                    <a href="admin-orders.html" class="admin-nav-link">
-                        <i class="fa-solid fa-bag-shopping nav-icon"></i><span>Orders</span>
-                    </a>
-                    <a href="admin-customers.html" class="admin-nav-link">
-                        <i class="fa-solid fa-users nav-icon"></i><span>Customers</span>
-                    </a>
-                    <a href="admin-coupons.html" class="admin-nav-link">
-                        <i class="fa-solid fa-ticket nav-icon"></i><span>Coupons</span>
-                    </a>
-                    <a href="admin-reviews.html" class="admin-nav-link active">
-                        <i class="fa-solid fa-star nav-icon"></i><span>Reviews</span>
-                        <span class="admin-nav-badge">4</span>
-                    </a>
-                </div>
+      <div class="nav-label">System</a>
+      <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="sidebar-user">
+        <div class="s-avatar" id="s-avatar">A</a>
+        <div>
+          <div class="s-name" id="s-name">Admin</a>
+          <div class="s-role">Super Admin</a>
+        </a>
+      </a>
+      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+    </a>
+  </aside>
 
-                <!-- CONTENT -->
-                <div class="admin-nav-section">
-                    <div class="admin-nav-title">Content</div>
-                    <a href="admin-banners.html" class="admin-nav-link">
-                        <i class="fa-solid fa-image nav-icon"></i><span>Banners</span>
-                    </a>
-                    <a href="admin-blog.html" class="admin-nav-link">
-                        <i class="fa-solid fa-pen-nib nav-icon"></i><span>Blog</span>
-                    </a>
-                    <a href="admin-pages.html" class="admin-nav-link">
-                        <i class="fa-solid fa-file-lines nav-icon"></i><span>Pages</span>
-                    </a>
-                </div>
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <button class="btn-menu" id="menuBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+      <div class="topbar-title" id="topbarTitle">Dashboard</a>
+      <div class="topbar-right">
+        <button class="btn btn-sm btn-outline" onclick="window.open('index.html','_blank')"><i class="fa-solid fa-store"></i> View Store</button>
+      </a>
+    </a>
 
-                <!-- SETTINGS -->
-                <div class="admin-nav-section">
-                    <div class="admin-nav-title">System</div>
-                    <a href="admin-settings.html" class="admin-nav-link">
-                        <i class="fa-solid fa-gear nav-icon"></i><span>Settings</span>
-                    </a>
-                    <a href="admin-staff.html" class="admin-nav-link">
-                        <i class="fa-solid fa-user-shield nav-icon"></i><span>Staff Accounts</span>
-                    </a>
-                    <a href="index.html" class="admin-nav-link"
-                        style="margin-top:var(--space-4);border-top:1px solid rgba(255,255,255,0.06);padding-top:var(--space-4)">
-                        <i class="fa-solid fa-arrow-up-right-from-square nav-icon"></i><span>View Store</span>
-                    </a>
-                </div>
-            </nav>
+    <div class="content">
 
-            <div class="admin-sidebar-footer">
-                <div class="admin-user-info">
-                    <div class="admin-user-avatar">A</div>
-                    <div>
-                        <div class="admin-user-name">Admin User</div>
-                        <div class="admin-user-role">Super Admin</div>
-                    </div>
-                </div>
-            </div>
-        </aside>
 
-        <div class="admin-sidebar-overlay" id="sidebar-overlay"></div>
-
-        <!-- MAIN CONTENT -->
-        <main class="admin-main" id="admin-main">
-            <!-- TOPBAR -->
-            <header class="admin-topbar">
-                <div style="display:flex;align-items:center;gap:var(--space-4)">
-                    <button class="nav-icon-btn" id="sidebar-toggle-mobile"
-                        style="background:var(--color-light);border:1px solid var(--border-color)">
-                        <i class="fa-solid fa-bars"></i>
-                    </button>
-                    <div class="admin-page-title">Reviews</div>
-                </div>
-
-                <div class="admin-search" style="flex:1;max-width:380px;margin:0 var(--space-6)">
-                    <i class="fa-solid fa-magnifying-glass admin-search-icon"></i>
-                    <input type="text" placeholder="Search reviews..." autocomplete="off" />
-                </div>
-
-                <div class="admin-topbar-actions">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--color-primary),var(--color-primary-dark));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--color-dark);font-size:14px;cursor:pointer;box-shadow:var(--shadow-gold)"
-                        title="My Profile">A</div>
-                </div>
-            </header>
-
-            <div class="admin-content">
                 <!-- Page Header -->
                 <div class="admin-page-header">
                     <div class="admin-page-header-left">
@@ -624,81 +515,27 @@
                     </div>
                 </div>
             </div>
-        </main>
-    </div>
+        
+    </div><!-- /content -->
+  
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div>
 
-    <!-- MODAL: Reply to Review -->
-    <div class="modal-overlay" id="modal-reply">
-        <div class="modal-box">
-            <div class="modal-header">
-                <div class="modal-title">Reply to Review</div>
-                <button class="modal-close" onclick="closeModal('modal-reply')"><i
-                        class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-body">
-                <div class="review-detail-box">
-                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                        <div style="font-weight:600; font-size:var(--text-base);">Sneha P.</div>
-                        <div class="star-rating"><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
-                                class="fa-solid fa-star"></i></div>
-                    </div>
-                    <div style="font-weight:600; margin-bottom:5px;">Absolutely Love It!</div>
-                    <p style="font-size:var(--text-sm); color:var(--text-secondary); line-height:1.5;">The quality of
-                        the leather is amazing. It fits my laptop perfectly and looks very premium. Highly recommend.
-                    </p>
-                </div>
-
-                <div class="form-group-full">
-                    <label class="form-label">Your Reply (Public)</label>
-                    <textarea class="form-control"
-                        placeholder="Type your response here... This will be visible on the product page.">Hi Sneha! We are so glad you loved the Classic Tote. Thanks for the kind words!</textarea>
-                </div>
-
-                <div style="margin-top:15px; display:flex; align-items:center; justify-content:space-between;">
-                    <label style="display:flex; align-items:center; gap:8px; cursor:pointer;">
-                        <input type="checkbox" style="width:16px; height:16px;" checked>
-                        <span style="font-size:var(--text-sm); font-weight:600;">Approve & Publish Review</span>
-                    </label>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-white" onclick="closeModal('modal-reply')">Cancel</button>
-                <button class="btn btn-primary" onclick="closeModal('modal-reply'); alert('Reply posted!');">Post
-                    Reply</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Scripts -->
-    <script>
-        const sidebar = document.getElementById('admin-sidebar');
-        const main = document.getElementById('admin-main');
-        const overlay = document.getElementById('sidebar-overlay');
-
-        document.getElementById('sidebar-collapse-btn')?.addEventListener('click', () => {
-            sidebar.classList.toggle('mini');
-            main.style.marginLeft = sidebar.classList.contains('mini') ? '70px' : 'var(--admin-sidebar-width)';
-        });
-
-        document.getElementById('sidebar-toggle-mobile')?.addEventListener('click', () => {
-            sidebar.classList.add('open');
-            overlay.classList.add('open');
-        });
-
-        overlay?.addEventListener('click', () => {
-            sidebar.classList.remove('open');
-            overlay.classList.remove('open');
-        });
-
-        document.getElementById('selectAllRev')?.addEventListener('change', function (e) {
-            const checkboxes = document.querySelectorAll('.table-checkbox');
-            checkboxes.forEach(cb => cb.checked = e.target.checked);
-        });
-
-        function openModal(id) { document.getElementById(id).classList.add('open'); }
-        function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-    </script>
+<script src="app-config.js"></script>
+<script src="app-auth.js"></script>
+<script>
+function toggleSidebar(){
+  const s=document.getElementById('sidebar');
+  const o=document.getElementById('mobOverlay');
+  s.classList.toggle('open');
+  o.style.display = s.classList.contains('open')?'block':'none';
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('mobOverlay').style.display='none';
+}
+function doLogout(){ HeelsUpAuth.clearSession(); window.location='login.html'; }
+</script>
 </body>
-
 </html>
