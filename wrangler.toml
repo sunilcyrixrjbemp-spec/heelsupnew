@@ -1,12 +1,12 @@
 name = "heelsup-api"
-main = "src/index.js"
+main = "backend/index.js"
 compatibility_date = "2026-05-08"
 workers_dev = true
 
 [vars]
 APP_NAME = "HeelsUp"
 CORS_ORIGIN = "*"
-API_BASE_URL = "https://heelsup-api.heelsup.workers.dev"
+API_BASE_URL = "https://heelsupnew.heelsup.workers.dev/api/health"
 GOOGLE_APPSCRIPT_ENDPOINT = ""
 GOOGLE_APPSCRIPT_TOKEN = ""
 JWT_EXPIRES_DAYS = "30"
@@ -17,6 +17,7 @@ R2_PUBLIC_URL = "https://media.heelsup.in"
 [[d1_databases]]
 binding = "DB"
 database_name = "heelsup-live"
+# Yahan wahi ID daalein jo 'npx wrangler d1 list' command se mili hai
 database_id = "e1421396-862d-4be9-bc68-72ce70b1644c"
 
 [[r2_buckets]]
