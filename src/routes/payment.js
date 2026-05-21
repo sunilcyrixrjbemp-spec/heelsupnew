@@ -7,10 +7,10 @@
 // ============================================================
 
 import { razorpay } from '../utils/razorpay.js';
-import { ok, err }  from '../utils/response.js';
-import { verifyJWT } from '../middleware/auth.js';
+import { ok, error as err }  from '../utils/response.js';
+import { optionalAuth } from '../middleware/auth.js';
 
-export async function handlePayment(request, env) {
+export async function paymentRouter(request, env) {
   const url     = new URL(request.url);
   const path    = url.pathname.replace('/api/payment', '');
   const method  = request.method;
@@ -23,7 +23,7 @@ export async function handlePayment(request, env) {
   // ── POST /api/payment/create-order ───────────────────────
   if (method === 'POST' && path === '/create-order') {
     // JWT auth required
-    const user = await verifyJWT(request, env);
+    const user = await optionalAuth(request, env);
     if (!user) return err('Unauthorized', 401);
 
     let body;
@@ -121,7 +121,7 @@ export async function handlePayment(request, env) {
 
   // ── POST /api/payment/verify ─────────────────────────────
   if (method === 'POST' && path === '/verify') {
-    const user = await verifyJWT(request, env);
+    const user = await optionalAuth(request, env);
     if (!user) return err('Unauthorized', 401);
 
     let body;
