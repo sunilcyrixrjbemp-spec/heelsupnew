@@ -17,7 +17,6 @@ export async function uploadRouter(request, env) {
         try {
             const formData = await request.formData();
             const file = formData.get('file');
-
             if (!file) return error('No file provided');
             if (!ALLOWED_TYPES.includes(file.type)) return error('Only JPEG, PNG, WebP, GIF allowed');
 
@@ -48,7 +47,9 @@ export async function uploadRouter(request, env) {
             if (!key) return error('key required');
             await env.BUCKET.delete(key);
             return ok(null, 'File deleted');
-        } catch (e) { return serverError('Delete failed'); }
+        } catch (e) {
+            return serverError('Delete failed');
+        }
     }
 
     return error('Route not found', 404);

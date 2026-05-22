@@ -1477,23 +1477,14 @@
             const tracking = document.getElementById('updateTracking').value.trim();
 
             try {
-                await HeelsUpAuth.api(`/api/admin/orders/${id}`, {
+                // Use the correct PUT endpoint for admin order status
+                await HeelsUpAuth.api(`/api/admin/orders/${id}/status`, {
                     method: 'PUT',
                     body: JSON.stringify({ status: status, tracking_number: tracking || null })
                 });
-
                 showToast('Order status updated successfully');
-
-                // Update local array
-                const idx = allOrders.findIndex(x => x.id === id);
-                if (idx > -1) {
-                    allOrders[idx].order_status = status;
-                    if (tracking) allOrders[idx].tracking_number = tracking;
-                }
-
                 closeOrderModal();
-                calculateStats();
-                filterOrders();
+                loadOrders(); // refresh
             } catch (err) {
                 showToast(err.message || 'Failed to update order', 'error');
             } finally {

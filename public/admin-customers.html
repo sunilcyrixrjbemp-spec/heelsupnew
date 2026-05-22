@@ -902,25 +902,17 @@
 
         // ── ACTIONS ──────────────────────────────────────────────────────
         async function updateCustomerRole(id, newRole) {
-            const actionText = newRole === 'admin' ? 'make this user an Admin' : 'remove Admin privileges from this user';
-            if (!confirm(`Are you sure you want to ${actionText}?`)) return;
-
+            if (!confirm(`Set this user as ${newRole}?`)) return;
             try {
-                await HeelsUpAuth.api(`/api/admin/customers/${id}/role`, {
+                await HeelsUpAuth.api(`/api/admin/customers/${id}`, {
                     method: 'PUT',
                     body: JSON.stringify({ role: newRole })
                 });
-
-                showToast(`Role successfully updated to ${newRole}!`);
-
-                // Update local state without full reload
-                const idx = allCustomers.findIndex(c => c.id === id);
-                if (idx !== -1) {
-                    allCustomers[idx].role = newRole;
-                }
-                filterCustomers(); // Re-render to reflect changes
+                showToast(`Role updated to ${newRole}!`);
+                allCustomers = []; // force reload
+                loadCustomers(); // refresh
             } catch (e) {
-                showToast(e.message || 'Failed to update user role', 'error');
+                showToast(e.message || 'Failed', 'error');
             }
         }
 

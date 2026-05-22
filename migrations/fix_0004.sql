@@ -1,0 +1,18 @@
+ALTER TABLE products ADD COLUMN tags TEXT DEFAULT '';
+ALTER TABLE products ADD COLUMN sold_count INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE products ADD COLUMN meta_title TEXT DEFAULT '';
+ALTER TABLE products ADD COLUMN meta_description TEXT DEFAULT '';
+
+ALTER TABLE orders ADD COLUMN source TEXT DEFAULT 'online';
+ALTER TABLE orders ADD COLUMN cancelled_at TEXT;
+ALTER TABLE orders ADD COLUMN tracking_number TEXT;
+ALTER TABLE orders ADD COLUMN tracking_url TEXT;
+ALTER TABLE orders ADD COLUMN shipped_at TEXT;
+ALTER TABLE orders ADD COLUMN delivered_at TEXT;
+ALTER TABLE orders ADD COLUMN admin_notes TEXT;
+
+ALTER TABLE users ADD COLUMN staff_permissions TEXT DEFAULT '[]';
+ALTER TABLE users ADD COLUMN is_blocked INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN last_login_at TEXT;
+ALTER TABLE users ADD COLUMN total_orders INTEGER NOT NULL DEFAULT 0;
+ALTER TABLE users ADD COLUMN total_spent REAL NOT NULL DEFAULT 0;

@@ -2055,7 +2055,7 @@
     async function loadProducts() {
       if (allProducts.length) { filterProducts(); return; }
       document.getElementById('productsTableBody').innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading...</div></td></tr>';
-      try { allProducts = await HeelsUpAuth.api('/api/admin/products'); filterProducts(); } catch (e) { showToast('Failed to load products', 'error'); }
+      try { const data = await HeelsUpAuth.api('/api/admin/products'); allProducts = data.products || []; filterProducts(); } catch (e) { showToast('Failed to load products', 'error'); }
     }
 
     function filterProducts() {

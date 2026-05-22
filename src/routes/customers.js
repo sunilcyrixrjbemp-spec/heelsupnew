@@ -40,6 +40,19 @@ export async function customersRouter(request, env) {
         } catch (e) { return serverError('Failed to fetch customers'); }
     }
 
+    // PUT /api/customers/:id — admin update customer role (ADDED)
+    if (path.match(/^\/\d+$/) && method === 'PUT') {
+        const { user, error: authError } = await requireAdmin(request, env);
+        if (authError) return authError;
+        const id = path.slice(1);
+        const { role } = await request.json();
+        if (role && ['customer', 'admin'].includes(role)) {
+            await env.DB.prepare("UPDATE users SET role = ? WHERE id = ?").bind(role, id).run();
+            return ok(null, 'Role updated');
+        }
+        return error('Invalid role');
+    }
+
     // GET /api/customers/addresses
     if (path === '/addresses' && method === 'GET') {
         const { user, error: authError } = await requireAuth(request, env);
