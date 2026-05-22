@@ -985,6 +985,111 @@ async function handleAdmin(request, path, url, env) {
   if (method === "GET" && path === "/api/admin/dashboard") return adminDashboard(env);
   if (method === "GET" && path === "/api/admin/stats") return adminDashboard(env);
 
+  if (method === "GET" && path === "/api/admin/analytics/dashboard") {
+    const period = url.searchParams.get("period") || "30";
+    let start, end;
+    const now = new Date();
+    
+    if (period === 'custom') {
+      start = url.searchParams.get("start");
+      end = url.searchParams.get("end");
+    } else {
+      const days = toInt(period, 30);
+      const past = new Date(now.getTime() - days * 86400000);
+      start = past.toISOString().split("T")[0];
+      end = now.toISOString().split("T")[0];
+    }
+    
+    const startDate = start + "T00:00:00.000Z";
+    const endDate = end + "T23:59:59.999Z";
+
+    try {
+      const summaryRow = await env.DB.prepare(`
+        SELECT 
+          COUNT(id) as total_orders, 
+          SUM(total_amount) as total_revenue,
+          SUM(CASE WHEN order_status = 'delivered' THEN 1 ELSE 0 END) as delivered_orders,
+          SUM(CASE WHEN order_status IN ('placed', 'confirmed', 'processing', 'packed', 'shipped', 'out_for_delivery') THEN 1 ELSE 0 END) as pending_orders
+        FROM orders 
+        WHERE created_at >= ? AND created_at <= ?
+      `).bind(startDate, endDate).first();
+
+      const custRow = await env.DB.prepare("SELECT COUNT(id) as total FROM users WHERE role='customer'").first();
+      const newCustRow = await env.DB.prepare("SELECT COUNT(id) as total FROM users WHERE role='customer' AND created_at >= ? AND created_at <= ?").bind(startDate, endDate).first();
+
+      const { results: dailyRaw } = await env.DB.prepare(`
+        SELECT date(created_at) as d, SUM(total_amount) as rev, COUNT(id) as ords 
+        FROM orders 
+        WHERE created_at >= ? AND created_at <= ? 
+        GROUP BY d ORDER BY d ASC
+      `).bind(startDate, endDate).all();
+      
+      const daily_revenue = (dailyRaw || []).map(r => ({ date: r.d, revenue: r.rev || 0, orders: r.ords || 0 }));
+
+      const { results: statusRaw } = await env.DB.prepare(`
+        SELECT order_status, COUNT(id) as c 
+        FROM orders 
+        WHERE created_at >= ? AND created_at <= ? 
+        GROUP BY order_status
+      `).bind(startDate, endDate).all();
+      
+      const order_status_counts = {};
+      (statusRaw || []).forEach(r => { order_status_counts[r.order_status] = r.c; });
+
+      const { results: topProdRaw } = await env.DB.prepare(`
+        SELECT product_id, product_name as name, image_url, SUM(quantity) as quantity, SUM(line_total) as revenue 
+        FROM order_items oi
+        JOIN orders o ON oi.order_id = o.id 
+        WHERE o.created_at >= ? AND o.created_at <= ? 
+        GROUP BY product_id, product_name, image_url
+        ORDER BY revenue DESC LIMIT 10
+      `).bind(startDate, endDate).all();
+      
+      const top_products = topProdRaw || [];
+
+      const { results: catRaw } = await env.DB.prepare(`
+        SELECT p.category, SUM(oi.quantity) as quantity, SUM(oi.line_total) as revenue 
+        FROM order_items oi
+        JOIN products p ON oi.product_id = p.id
+        JOIN orders o ON oi.order_id = o.id
+        WHERE o.created_at >= ? AND o.created_at <= ? 
+        GROUP BY p.category 
+        ORDER BY revenue DESC LIMIT 8
+      `).bind(startDate, endDate).all();
+
+      const category_sales = catRaw || [];
+
+      const { results: payRaw } = await env.DB.prepare(`
+        SELECT payment_method, COUNT(id) as c 
+        FROM orders 
+        WHERE created_at >= ? AND created_at <= ? 
+        GROUP BY payment_method
+      `).bind(startDate, endDate).all();
+      
+      const payment_methods = {};
+      (payRaw || []).forEach(r => { payment_methods[r.payment_method] = r.c; });
+
+      return json({
+        summary: {
+          total_revenue: summaryRow?.total_revenue || 0,
+          total_orders: summaryRow?.total_orders || 0,
+          delivered_orders: summaryRow?.delivered_orders || 0,
+          pending_orders: summaryRow?.pending_orders || 0,
+          total_customers: custRow?.total || 0,
+          new_customers: newCustRow?.total || 0
+        },
+        daily_revenue,
+        order_status_counts,
+        top_products,
+        category_sales,
+        payment_methods
+      });
+    } catch (e) {
+      console.error(e);
+      return json({ error: "Failed to generate analytics dashboard", details: e.message }, 500);
+    }
+  }
+
 // ── DEV SQL EXECUTION ───────────────────────────────────────────
   if (method === "POST" && path === "/api/admin/dev-sql") {
     const body = await readJson(request);
@@ -1294,27 +1399,31 @@ async function handleAdmin(request, path, url, env) {
     await auditLog(env, auth.user.id, "order_status_updated", "orders", id, { status, trackingNumber: trackNo });
 
     // Send email notification to customer
-    const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
-    let scriptUrl = await getSetting(env, "otp_script_url", "");
-    if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
-      scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
-    }
-    const siteName = await getSetting(env, "site_name", "HeelsUp");
-    if (order && scriptUrl && order.customer_email) {
-      let emailMessage = `Your order #${order.order_number} has been updated.\nNew Status: ${status.toUpperCase()}\n`;
-      if (trackNo) emailMessage += `Tracking Number: ${trackNo}\n`;
-      emailMessage += `\nThank you for shopping with ${siteName}!`;
+    try {
+      const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
+      let scriptUrl = await getSetting(env, "otp_script_url", "");
+      if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
+        scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+      }
+      const siteName = await getSetting(env, "site_name", "HeelsUp");
+      if (order && scriptUrl && order.customer_email && scriptUrl.startsWith("http")) {
+        let emailMessage = `Your order #${order.order_number} has been updated.\nNew Status: ${status.toUpperCase()}\n`;
+        if (trackNo) emailMessage += `Tracking Number: ${trackNo}\n`;
+        emailMessage += `\nThank you for shopping with ${siteName}!`;
 
-      await fetch(scriptUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          to: order.customer_email,
-          subject: `Order Update: #${order.order_number} is now ${status.toUpperCase()} — ${siteName}`,
-          message: emailMessage,
-          html: `<div style="font-family:sans-serif;padding:20px;"><h2>Order Status Update</h2><p>Your order <b>#${order.order_number}</b> has been updated to <strong style="color:#c9a96e">${status.toUpperCase()}</strong>.</p>${trackNo ? `<p>Tracking Number: ${trackNo}</p>` : ''}<p>Thank you for shopping with us!</p></div>`
-        })
-      }).catch(() => { });
+        await fetch(scriptUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: order.customer_email,
+            subject: `Order Update: #${order.order_number} is now ${status.toUpperCase()} — ${siteName}`,
+            message: emailMessage,
+            html: `<div style="font-family:sans-serif;padding:20px;"><h2>Order Status Update</h2><p>Your order <b>#${order.order_number}</b> has been updated to <strong style="color:#c9a96e">${status.toUpperCase()}</strong>.</p>${trackNo ? `<p>Tracking Number: ${trackNo}</p>` : ''}<p>Thank you for shopping with us!</p></div>`
+          })
+        }).catch(() => { });
+      }
+    } catch (err) {
+      console.error("Email notification failed:", err);
     }
 
     return json({ ok: true });
