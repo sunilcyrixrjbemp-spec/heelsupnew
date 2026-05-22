@@ -853,7 +853,7 @@ async function verifyRazorpayPayment(request, env) {
     scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
   }
   if (user && scriptUrl) {
-    fetch(scriptUrl, {
+    await fetch(scriptUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -1305,7 +1305,7 @@ async function handleAdmin(request, path, url, env) {
       if (trackNo) emailMessage += `Tracking Number: ${trackNo}\n`;
       emailMessage += `\nThank you for shopping with ${siteName}!`;
 
-      fetch(scriptUrl, {
+      await fetch(scriptUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -1356,13 +1356,13 @@ async function handleAdmin(request, path, url, env) {
   // ── CUSTOMERS ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/customers") {
     const search = url.searchParams.get("q") || "";
-    const role = url.searchParams.get("role") || "";
+    const role = url.searchParams.get("role") || "customer";
     const limit = Math.min(toInt(url.searchParams.get("limit"), 200), 500);
     const offset = toInt(url.searchParams.get("offset"), 0);
     let sql = "SELECT id, first_name, last_name, email, phone, role, email_verified, is_blocked, last_login_at, total_orders, total_spent, created_at FROM users WHERE 1=1";
     const binds = [];
     if (search) { sql += " AND (email LIKE ? OR first_name LIKE ? OR phone LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
-    if (role) { sql += " AND role=?"; binds.push(role); }
+    if (role && role !== "all") { sql += " AND role=?"; binds.push(role); }
     sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
     binds.push(limit, offset);
     const { results } = await env.DB.prepare(sql).bind(...binds).all();
