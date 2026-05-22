@@ -1312,7 +1312,7 @@
                 if (name && price > 0) {
                     const lineTotal = qty * price;
                     subtotal += lineTotal;
-                    items.push({ product_id: pid || null, product_name: name, quantity: qty, price: price });
+                    items.push({ productId: pid || null, name: name, qty: qty, price: price });
                 }
             });
 

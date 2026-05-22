@@ -1213,14 +1213,24 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     const status = String(body?.status || "").trim();
     const validStatuses = ["placed", "confirmed", "processing", "packed", "shipped", "out_for_delivery", "delivered", "cancelled", "returned"];
-    if (!validStatuses.includes(status)) return json({ error: "Invalid status" }, 400);
-    const fields = ["order_status=?", "updated_at=?"];
-    const binds = [status, nowIso()];
+    
+    const fields = ["updated_at=?"];
+    const binds = [nowIso()];
+
+    if (status) {
+      if (!validStatuses.includes(status)) return json({ error: "Invalid status" }, 400);
+      fields.push("order_status=?");
+      binds.push(status);
+      if (status === "cancelled") { fields.push("cancelled_at=?"); binds.push(nowIso()); }
+      if (status === "shipped") { fields.push("shipped_at=?"); binds.push(nowIso()); }
+      if (status === "delivered") { fields.push("delivered_at=?"); binds.push(nowIso()); }
+    }
 
     const trackNo = body?.trackingNumber || body?.tracking_number;
     if (trackNo) { fields.push("tracking_number=?"); binds.push(trackNo); }
     if (body?.trackingUrl) { fields.push("tracking_url=?"); binds.push(body.trackingUrl); }
     if (body?.adminNotes) { fields.push("admin_notes=?"); binds.push(body.adminNotes); }
+    
     if (body?.payment_status) {
       fields.push("payment_status=?");
       binds.push(body.payment_status);
@@ -1229,9 +1239,9 @@ async function handleAdmin(request, path, url, env) {
         binds.push(nowIso());
       }
     }
-    if (status === "cancelled") { fields.push("cancelled_at=?"); binds.push(nowIso()); }
-    if (status === "shipped") { fields.push("shipped_at=?"); binds.push(nowIso()); }
-    if (status === "delivered") { fields.push("delivered_at=?"); binds.push(nowIso()); }
+
+    if (fields.length === 1) return json({ error: "Nothing to update" }, 400); // Only updated_at is there
+
     binds.push(id);
     await env.DB.prepare(`UPDATE orders SET ${fields.join(",")} WHERE id=?`).bind(...binds).run();
     await auditLog(env, auth.user.id, "order_status_updated", "orders", id, { status, trackingNumber: trackNo });
@@ -2020,44 +2030,63 @@ async function adminDashboard(env) {
   const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
   const last30Days = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
 
+  const safeFirst = async (query, ...args) => {
+    try {
+      const stmt = args.length ? env.DB.prepare(query).bind(...args) : env.DB.prepare(query);
+      const res = await stmt.first();
+      return res || { c: 0, r: 0 };
+    } catch (e) {
+      return { c: 0, r: 0 };
+    }
+  };
+
+  const safeAll = async (query, ...args) => {
+    try {
+      const stmt = args.length ? env.DB.prepare(query).bind(...args) : env.DB.prepare(query);
+      return await stmt.all();
+    } catch (e) {
+      return { results: [] };
+    }
+  };
+
   const [
     totalProducts, totalOrders, totalRevenue, totalCustomers,
     pendingOrders, pendingReturns, todayRev, monthData,
     yesterdayRev, pendingReviews, totalNewsletter
   ] = await Promise.all([
-    env.DB.prepare("SELECT COUNT(*) as c FROM products WHERE active=1").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM orders").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid'").first().catch(() => ({ r: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM users WHERE role='customer'").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_status IN ('placed','confirmed','processing')").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM return_requests WHERE status='pending'").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(today).first().catch(() => ({ r: 0 })),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r, COUNT(*) as c FROM orders WHERE payment_status='paid' AND created_at>=?").bind(monthStart).first().catch(() => ({ r: 0, c: 0 })),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(yesterday).first().catch(() => ({ r: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM product_reviews WHERE status='pending'").first().catch(() => ({ c: 0 })),
-    env.DB.prepare("SELECT COUNT(*) as c FROM newsletter_subscribers").first().catch(() => ({ c: 0 }))
+    safeFirst("SELECT COUNT(*) as c FROM products WHERE active=1"),
+    safeFirst("SELECT COUNT(*) as c FROM orders"),
+    safeFirst("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid'"),
+    safeFirst("SELECT COUNT(*) as c FROM users WHERE role='customer'"),
+    safeFirst("SELECT COUNT(*) as c FROM orders WHERE order_status IN ('placed','confirmed','processing')"),
+    safeFirst("SELECT COUNT(*) as c FROM return_requests WHERE status='pending'"),
+    safeFirst("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?", today),
+    safeFirst("SELECT COALESCE(SUM(total_amount),0) as r, COUNT(*) as c FROM orders WHERE payment_status='paid' AND created_at>=?", monthStart),
+    safeFirst("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?", yesterday),
+    safeFirst("SELECT COUNT(*) as c FROM product_reviews WHERE status='pending'"),
+    safeFirst("SELECT COUNT(*) as c FROM newsletter_subscribers")
   ]);
 
-  const { results: recentOrders } = await env.DB.prepare(
+  const { results: recentOrders } = await safeAll(
     "SELECT id, order_number, customer_name, customer_email, order_status, payment_status, total_amount, created_at FROM orders ORDER BY id DESC LIMIT 8"
-  ).all().catch(() => ({ results: [] }));
-  const { results: lowStock } = await env.DB.prepare(
+  );
+  const { results: lowStock } = await safeAll(
     "SELECT id, name, category, stock, image_url FROM products WHERE active=1 AND stock<=5 ORDER BY stock ASC LIMIT 8"
-  ).all().catch(() => ({ results: [] }));
-  const { results: topProducts } = await env.DB.prepare(
+  );
+  const { results: topProducts } = await safeAll(
     `SELECT p.id, p.name, p.category, p.image_url, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue
      FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id
      WHERE o.payment_status='paid' AND o.created_at>=?
-     GROUP BY p.id ORDER BY total_sold DESC LIMIT 5`
-  ).bind(monthStart).all().catch(() => ({ results: [] }));
-  const { results: salesTrend } = await env.DB.prepare(
+     GROUP BY p.id ORDER BY total_sold DESC LIMIT 5`, monthStart
+  );
+  const { results: salesTrend } = await safeAll(
     `SELECT date(created_at) as date, COUNT(*) as orders, COALESCE(SUM(total_amount),0) as revenue
      FROM orders WHERE payment_status='paid' AND created_at>=?
-     GROUP BY date(created_at) ORDER BY date ASC`
-  ).bind(last30Days).all().catch(() => ({ results: [] }));
-  const { results: unreadNotifications } = await env.DB.prepare(
+     GROUP BY date(created_at) ORDER BY date ASC`, last30Days
+  );
+  const { results: unreadNotifications } = await safeAll(
     "SELECT * FROM notifications WHERE read=0 ORDER BY id DESC LIMIT 5"
-  ).all().catch(() => ({ results: [] }));
+  );
 
   return json({
     totalProducts: totalProducts?.c || 0,
@@ -2103,6 +2132,15 @@ async function adminAnalytics(url, env) {
     binds = [since];
   }
 
+  const safeAll = async (query, ...args) => {
+    try {
+      const stmt = args.length ? env.DB.prepare(query).bind(...args) : env.DB.prepare(query);
+      return await stmt.all();
+    } catch (e) {
+      return { results: [] };
+    }
+  };
+
   try {
     const [
       { results: revRes },
@@ -2114,14 +2152,14 @@ async function adminAnalytics(url, env) {
       { results: payMethods },
       { results: custStats }
     ] = await Promise.all([
-      env.DB.prepare(`SELECT COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN order_status='delivered' THEN 1 ELSE 0 END) as delivered_orders, SUM(CASE WHEN order_status='placed' OR order_status='confirmed' THEN 1 ELSE 0 END) as pending_orders FROM orders WHERE ${sqlCond}`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT date(created_at) as date, SUM(total_amount) as revenue FROM orders WHERE payment_status='paid' AND ${sqlCond} GROUP BY date(created_at) ORDER BY date ASC`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT order_status, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY order_status`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT p.name, p.image_url, SUM(oi.line_total) as revenue, SUM(oi.quantity) as quantity FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.id, p.name, p.image_url ORDER BY revenue DESC LIMIT 10`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT p.category, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.category ORDER BY revenue DESC`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT event, COUNT(*) as c FROM analytics_events WHERE ${sqlCond} GROUP BY event`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT payment_method, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY payment_method`).bind(...binds).all().catch(e => ({ results: [] })),
-      env.DB.prepare(`SELECT (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers, (SELECT COUNT(*) FROM users WHERE role='customer' AND ${sqlCond}) as new_customers`).bind(...binds).all().catch(e => ({ results: [] }))
+      safeAll(`SELECT COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN order_status='delivered' THEN 1 ELSE 0 END) as delivered_orders, SUM(CASE WHEN order_status='placed' OR order_status='confirmed' THEN 1 ELSE 0 END) as pending_orders FROM orders WHERE ${sqlCond}`, ...binds),
+      safeAll(`SELECT date(created_at) as date, SUM(total_amount) as revenue FROM orders WHERE payment_status='paid' AND ${sqlCond} GROUP BY date(created_at) ORDER BY date ASC`, ...binds),
+      safeAll(`SELECT order_status, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY order_status`, ...binds),
+      safeAll(`SELECT p.name, p.image_url, SUM(oi.line_total) as revenue, SUM(oi.quantity) as quantity FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.id, p.name, p.image_url ORDER BY revenue DESC LIMIT 10`, ...binds),
+      safeAll(`SELECT p.category, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.category ORDER BY revenue DESC`, ...binds),
+      safeAll(`SELECT event, COUNT(*) as c FROM analytics_events WHERE ${sqlCond} GROUP BY event`, ...binds),
+      safeAll(`SELECT payment_method, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY payment_method`, ...binds),
+      safeAll(`SELECT (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers, (SELECT COUNT(*) FROM users WHERE role='customer' AND ${sqlCond}) as new_customers`, ...binds)
     ]);
 
     const summary = {
@@ -2172,11 +2210,28 @@ async function reportSales(url, env) {
   const groupBy = url.searchParams.get("group") || "day";
   const fmt = groupBy === "month" ? "strftime('%Y-%m', created_at)" : "strftime('%Y-%m-%d', created_at)";
 
+  const safeAll = async (query, ...args) => {
+    try {
+      const stmt = args.length ? env.DB.prepare(query).bind(...args) : env.DB.prepare(query);
+      return await stmt.all();
+    } catch (e) {
+      return { results: [] };
+    }
+  };
+  const safeFirst = async (query, ...args) => {
+    try {
+      const stmt = args.length ? env.DB.prepare(query).bind(...args) : env.DB.prepare(query);
+      return await stmt.first();
+    } catch (e) {
+      return null;
+    }
+  };
+
   const [salesByDate, topProducts, topCategories, summary] = await Promise.all([
-    env.DB.prepare(`SELECT ${fmt} as date, COUNT(*) as orders, SUM(total_amount) as revenue, SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END) as paid_revenue FROM orders WHERE created_at>=? AND created_at<=? GROUP BY date ORDER BY date ASC`).bind(dateFrom, `${dateTo}T23:59:59Z`).all().catch(e => ({ results: [] })),
-    env.DB.prepare(`SELECT oi.product_name, oi.product_id, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY oi.product_id, oi.product_name ORDER BY total_sold DESC LIMIT 10`).bind(dateFrom).all().catch(e => ({ results: [] })),
-    env.DB.prepare(`SELECT p.category, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY p.category ORDER BY revenue DESC`).bind(dateFrom).all().catch(e => ({ results: [] })),
-    env.DB.prepare(`SELECT COUNT(*) as total_orders, COALESCE(SUM(total_amount),0) as total_revenue, COALESCE(AVG(total_amount),0) as avg_order_value, SUM(CASE WHEN payment_status='paid' THEN 1 ELSE 0 END) as paid_orders FROM orders WHERE created_at>=? AND created_at<=?`).bind(dateFrom, `${dateTo}T23:59:59Z`).first().catch(e => null)
+    safeAll(`SELECT ${fmt} as date, COUNT(*) as orders, SUM(total_amount) as revenue, SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END) as paid_revenue FROM orders WHERE created_at>=? AND created_at<=? GROUP BY date ORDER BY date ASC`, dateFrom, `${dateTo}T23:59:59Z`),
+    safeAll(`SELECT oi.product_name, oi.product_id, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY oi.product_id, oi.product_name ORDER BY total_sold DESC LIMIT 10`, dateFrom),
+    safeAll(`SELECT p.category, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY p.category ORDER BY revenue DESC`, dateFrom),
+    safeFirst(`SELECT COUNT(*) as total_orders, COALESCE(SUM(total_amount),0) as total_revenue, COALESCE(AVG(total_amount),0) as avg_order_value, SUM(CASE WHEN payment_status='paid' THEN 1 ELSE 0 END) as paid_orders FROM orders WHERE created_at>=? AND created_at<=?`, dateFrom, `${dateTo}T23:59:59Z`)
   ]);
 
   return json({
