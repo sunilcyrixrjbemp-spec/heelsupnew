@@ -995,14 +995,16 @@ async function handleAdmin(request, path, url, env) {
   // R2 upload is auth-checked inside
 
   // Special: allow upload without full admin check? No — always require admin.
+  let auth;
+  let isAdmin = false;
   if (path !== "/api/admin/dev-sql") {
-    const auth = await requireAuth(request, env);
+    auth = await requireAuth(request, env);
     if (!auth.ok) return auth.response;
     if (!["admin", "staff"].includes((auth.user.role || "").toLowerCase()))
       return json({ error: "Admin access required" }, 403);
-    const isAdmin = auth.user.role === "admin";
+    isAdmin = auth.user.role === "admin";
   } else {
-    var isAdmin = true; // For dev-sql
+    isAdmin = true; // For dev-sql
   }
 
   // ── DASHBOARD ─────────────────────────────────────────────────
