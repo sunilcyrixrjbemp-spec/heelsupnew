@@ -906,7 +906,6 @@
     }
 
     .form-input,
-    .form-select,
     .form-textarea {
       padding: 9px 12px;
       border: 1.5px solid var(--border);
@@ -917,6 +916,23 @@
       width: 100%;
       font-family: 'Inter', sans-serif;
       color: var(--text)
+    }
+
+    .form-select {
+      padding: 9px 30px 9px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 9px;
+      font-size: .87rem;
+      transition: all .2s;
+      background: #f8fafc;
+      width: 100%;
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 14px;
     }
 
     .form-input:focus,
@@ -2027,18 +2043,21 @@
     // ── DASHBOARD ────────────────────────────────────────────────────
     async function loadDashboard() {
       try {
-        const [prods, ordRes] = await Promise.all([HeelsUpAuth.api('/api/admin/products'), HeelsUpAuth.api('/api/admin/orders')]);
-        allProducts = prods || [];
-        allOrders = (ordRes.orders || []);
-        document.getElementById('statProducts').textContent = allProducts.length;
-        document.getElementById('statOrders').textContent = allOrders.length;
-        const rev = allOrders.reduce((s, o) => s + Number(o.total_amount || 0), 0);
-        document.getElementById('statRevenue').textContent = '₹' + Math.round(rev).toLocaleString('en-IN');
-        const pend = allOrders.filter(o => o.order_status === 'placed').length;
-        document.getElementById('statPending').textContent = pend;
-        if (pend > 0) { const b = document.getElementById('ordersBadge'); b.textContent = pend; b.style.display = 'inline-block'; }
-        renderDashOrders(allOrders.slice(0, 6));
-        renderDashProducts(allProducts.slice(0, 6));
+        const dash = await HeelsUpAuth.api('/api/admin/dashboard');
+        
+        document.getElementById('statProducts').textContent = (dash.totalProducts || 0).toLocaleString();
+        document.getElementById('statOrders').textContent = (dash.totalOrders || 0).toLocaleString();
+        document.getElementById('statRevenue').textContent = '₹' + Math.round(dash.totalRevenue || 0).toLocaleString('en-IN');
+        document.getElementById('statPending').textContent = (dash.pendingOrders || 0).toLocaleString();
+        
+        if (dash.pendingOrders > 0) { 
+            const b = document.getElementById('ordersBadge'); 
+            b.textContent = dash.pendingOrders; 
+            b.style.display = 'inline-block'; 
+        }
+        
+        renderDashOrders(dash.recentOrders || []);
+        renderDashProducts(dash.topProducts || []);
       } catch (e) { showToast('Failed to load dashboard', 'error'); }
     }
 
@@ -2176,7 +2195,6 @@
         <div><b>Phone:</b> ${esc(o.customer_phone || '—')}</div>
         <div><b>Email:</b> ${esc(o.customer_email || '—')}</div>
         <div><b>Total:</b> ₹${Number(o.total_amount || 0).toLocaleString('en-IN')}</div>
-        <div><b>Payment:</b> ${esc(o.payment_status || '—')}</div>
         <div><b>Method:</b> ${esc(o.payment_method || 'Razorpay')}</div>
       </div>
       <div style="margin-top:8px"><b>Address:</b> ${esc(o.address_line1 || '')}${o.city ? ', ' + o.city : ''}, ${o.state || ''} - ${o.pincode || ''}</div>
@@ -2185,6 +2203,12 @@
       <label class="form-label">Order Status</label>
       <select class="form-select" id="orderStatusUpdate">
         ${['placed', 'confirmed', 'shipped', 'delivered', 'cancelled'].map(s => `<option value="${s}" ${o.order_status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`).join('')}
+      </select>
+    </div>
+    <div class="form-field" style="margin-bottom:16px">
+      <label class="form-label">Payment Status</label>
+      <select class="form-select" id="paymentStatusUpdate">
+        ${['pending', 'paid', 'failed', 'refunded'].map(s => `<option value="${s}" ${o.payment_status === s ? 'selected' : ''}>${s.charAt(0).toUpperCase() + s.slice(1)}</option>`).join('')}
       </select>
     </div>
     <div class="form-field" style="margin-bottom:16px">
@@ -2200,12 +2224,17 @@
     function closeOrderModal() { document.getElementById('orderModal').classList.remove('show'); }
     async function updateOrder(id) {
       const status = document.getElementById('orderStatusUpdate').value;
+      const payment_status = document.getElementById('paymentStatusUpdate').value;
       const tracking = document.getElementById('trackingNumber').value.trim();
       try {
-        await HeelsUpAuth.api(`/api/admin/orders/${id}`, { method: 'PUT', body: JSON.stringify({ status, tracking_number: tracking || null }) });
+        await HeelsUpAuth.api(`/api/admin/orders/${id}`, { method: 'PUT', body: JSON.stringify({ status, payment_status, tracking_number: tracking || null }) });
         showToast('Order updated!'); closeOrderModal();
         const idx = allOrders.findIndex(o => o.id === id);
-        if (idx >= 0) { allOrders[idx].order_status = status; if (tracking) allOrders[idx].tracking_number = tracking; }
+        if (idx >= 0) { 
+            allOrders[idx].order_status = status; 
+            allOrders[idx].payment_status = payment_status;
+            if (tracking) allOrders[idx].tracking_number = tracking; 
+        }
         filterOrders();
       } catch (e) { showToast(e.message || 'Failed to update order', 'error'); }
     }

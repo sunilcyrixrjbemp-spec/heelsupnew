@@ -1204,6 +1204,15 @@
                         </select>
                     </div>
                     <div class="form-field">
+                        <label class="form-label">Update Payment Status</label>
+                        <select class="form-input" id="updatePaymentStatus">
+                            <option value="pending">Pending</option>
+                            <option value="paid">Paid</option>
+                            <option value="failed">Failed</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
                         <label class="form-label">Tracking Number (optional)</label>
                         <input type="text" class="form-input" id="updateTracking" placeholder="e.g. AWB / Tracking ID">
                     </div>
@@ -1457,6 +1466,7 @@
 
             document.getElementById('updateOrderId').value = o.id;
             document.getElementById('updateOrderStatus').value = o.order_status || 'placed';
+            document.getElementById('updatePaymentStatus').value = o.payment_status || 'pending';
             document.getElementById('updateTracking').value = o.tracking_number || '';
 
             document.getElementById('orderModal').classList.add('show');
@@ -1474,13 +1484,14 @@
 
             const id = parseInt(document.getElementById('updateOrderId').value);
             const status = document.getElementById('updateOrderStatus').value;
+            const paymentStatus = document.getElementById('updatePaymentStatus').value;
             const tracking = document.getElementById('updateTracking').value.trim();
 
             try {
                 // Use the correct PUT endpoint for admin order status
                 await HeelsUpAuth.api(`/api/admin/orders/${id}/status`, {
                     method: 'PUT',
-                    body: JSON.stringify({ status: status, tracking_number: tracking || null })
+                    body: JSON.stringify({ status: status, payment_status: paymentStatus, tracking_number: tracking || null })
                 });
                 showToast('Order status updated successfully');
                 closeOrderModal();

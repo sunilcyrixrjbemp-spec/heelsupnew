@@ -261,18 +261,12 @@
     </aside>
     <div class="toast-container" id="toast-container"></div>
 
+    <script src="app-config.js"></script>
+    <script src="app-auth.js"></script>
     <script>
-        const DEMO = [
-            { id: 1, name: 'Stiletto Block Heel Pumps', category: 'heels', price: 899, original_price: 1499, images: ['https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.8 },
-            { id: 2, name: 'Rose Gold Strappy Sandals', category: 'sandals', price: 649, original_price: 999, images: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&auto=format&fit=crop'], rating: 4.7 },
-            { id: 3, name: 'Classic Tote Bag – Tan', category: 'bags', price: 1299, original_price: 1999, images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80&auto=format&fit=crop'], rating: 4.9 },
-            { id: 4, name: 'Embroidered Juttis', category: 'flats', price: 549, original_price: 849, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&auto=format&fit=crop'], rating: 4.6 },
-            { id: 5, name: 'Wedge Ankle Strap Heels', category: 'heels', price: 799, original_price: 1299, images: ['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80&auto=format&fit=crop'], rating: 4.5 },
-            { id: 6, name: 'Mini Sling Crossbody Bag', category: 'bags', price: 899, original_price: 1299, images: ['https://images.unsplash.com/photo-1554141220-83411835a60b?w=500&q=80&auto=format&fit=crop'], rating: 4.8 },
-        ];
-
+        let allProducts = [];
         let cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
-        let wishlist = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[1,3]');
+        let wishlist = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[]');
 
         function saveCart() { localStorage.setItem('heelsup_cart', JSON.stringify(cart)); updateCartUI(); }
         function updateCartUI() {
@@ -296,7 +290,7 @@
 
         function addToCart(p) {
             const ex = cart.find(i => i.id === p.id);
-            if (ex) ex.qty++; else cart.push({ id: p.id, name: p.name, price: p.price, img: p.images[0], qty: 1, category: p.category });
+            if (ex) ex.qty++; else cart.push({ id: p.id, name: p.name, price: p.price, img: Array.isArray(p.images) ? p.images[0] : p.image_url, qty: 1, category: p.category });
             saveCart(); document.getElementById('cart-drawer').classList.add('open'); document.getElementById('cart-backdrop').classList.add('open');
             showToast('success', 'Added to Cart!', p.name + ' added.');
         }
@@ -310,21 +304,25 @@
 
         function renderWishlist() {
             const el = document.getElementById('wishlist-content');
-            const items = DEMO.filter(p => wishlist.includes(p.id));
+            const items = allProducts.filter(p => wishlist.includes(p.id));
             document.getElementById('wish-count-label').textContent = items.length ? `(${items.length} items)` : '';
             if (!items.length) {
                 el.innerHTML = `<div class="wishlist-empty"><div class="wishlist-empty-icon">💔</div><h3 style="font-family:var(--font-heading);margin-bottom:10px">Wishlist Khali Hai</h3><p style="color:var(--text-muted);margin-bottom:28px">Koi product save nahi kiya abhi tak</p><a href="shop.html" class="btn btn-primary btn-lg">Shop Karo</a></div>`;
                 return;
             }
             el.innerHTML = `<div class="wishlist-grid">${items.map(p => {
-                const disc = Math.round((1 - p.price / p.original_price) * 100);
-                return `<div class="wishlist-card"><div class="wishlist-card-img"><img src="${p.images[0]}" alt="${p.name}" /><button class="remove-wish-btn" onclick="removeFromWishlist(${p.id})" title="Remove from wishlist"><i class="fa-solid fa-heart-crack"></i></button>${disc >= 10 ? `<div class="product-badges"><span class="badge badge-sale">-${disc}%</span></div>` : ''}</div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name">${p.name}</div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span><span class="price-original">₹${p.original_price.toLocaleString('en-IN')}</span></div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`;
+                const img = Array.isArray(p.images) && p.images[0] ? p.images[0] : (p.image_url || 'logo.png');
+                const disc = p.original_price ? Math.round((1 - p.price / p.original_price) * 100) : 0;
+                return `<div class="wishlist-card"><div class="wishlist-card-img"><a href="product.html?id=${p.id}"><img src="${img}" alt="${p.name}" /></a><button class="remove-wish-btn" onclick="removeFromWishlist(${p.id})" title="Remove from wishlist"><i class="fa-solid fa-heart-crack"></i></button>${disc >= 10 ? `<div class="product-badges"><span class="badge badge-sale">-${disc}%</span></div>` : ''}</div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name"><a href="product.html?id=${p.id}" style="color:inherit;text-decoration:none">${p.name}</a></div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span>${p.original_price ? `<span class="price-original">₹${p.original_price.toLocaleString('en-IN')}</span>` : ''}</div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`;
             }).join('')}</div>`;
         }
 
         function renderRecommend() {
-            const others = DEMO.filter(p => !wishlist.includes(p.id)).slice(0, 4);
-            document.getElementById('recommend-grid').innerHTML = others.map(p => `<div class="wishlist-card"><div class="wishlist-card-img"><img src="${p.images[0]}" alt="${p.name}" /></div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name">${p.name}</div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span></div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`).join('');
+            const others = allProducts.filter(p => !wishlist.includes(p.id)).slice(0, 4);
+            document.getElementById('recommend-grid').innerHTML = others.map(p => {
+                const img = Array.isArray(p.images) && p.images[0] ? p.images[0] : (p.image_url || 'logo.png');
+                return `<div class="wishlist-card"><div class="wishlist-card-img"><a href="product.html?id=${p.id}"><img src="${img}" alt="${p.name}" /></a></div><div class="wishlist-card-info"><div class="wishlist-card-cat">${p.category}</div><div class="wishlist-card-name"><a href="product.html?id=${p.id}" style="color:inherit;text-decoration:none">${p.name}</a></div><div class="wishlist-card-price"><span class="price-current">₹${p.price.toLocaleString('en-IN')}</span></div><button class="wishlist-add-btn" onclick='addToCart(${JSON.stringify(p)})'><i class="fa-solid fa-bag-shopping"></i> Add to Cart</button></div></div>`;
+            }).join('');
         }
 
         window.addEventListener('scroll', () => document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60));
@@ -334,9 +332,19 @@
 
         function showToast(type, title, msg) { const c = document.getElementById('toast-container'); const id = 't' + Date.now(); const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' }; c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid ${icons[type] || 'fa-circle-info'} toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button></div>`); setTimeout(() => document.getElementById(id)?.remove(), 4000); }
 
-        renderWishlist();
-        renderRecommend();
-        updateCartUI();
+        async function initData() {
+            try {
+                const data = await HeelsUpAuth.api('/api/products?limit=100');
+                allProducts = data || [];
+            } catch (e) {
+                console.error("Failed to load products", e);
+            }
+            renderWishlist();
+            renderRecommend();
+            updateCartUI();
+        }
+
+        document.addEventListener('DOMContentLoaded', initData);
     </script>
 </body>
 

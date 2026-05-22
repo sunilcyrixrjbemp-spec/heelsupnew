@@ -897,8 +897,7 @@
         }
 
         .form-input,
-        .form-textarea,
-        .form-select {
+        .form-textarea {
             padding: 10px 14px;
             border: 1px solid var(--border);
             border-radius: 8px;
@@ -908,6 +907,23 @@
             width: 100%;
             font-family: inherit;
             color: var(--text);
+        }
+
+        .form-select {
+            padding: 10px 30px 10px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            background: #fff;
+            width: 100%;
+            font-family: inherit;
+            color: var(--text);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
         }
 
         .form-input:focus,
@@ -1089,7 +1105,8 @@
                     <div style="display:flex;gap:var(--space-3)">
                         <button class="btn btn-white" onclick="exportProducts()"><i class="fa-solid fa-download"></i>
                             Export</button>
-                        <button class="btn btn-white" onclick="showToast('Import functionality coming soon', 'info')"><i
+                        <input type="file" id="csv-import-input" accept=".csv" style="display:none;" onchange="handleCsvImport(event)">
+                        <button class="btn btn-white" onclick="document.getElementById('csv-import-input').click()"><i
                                 class="fa-solid fa-upload"></i> Import</button>
                         <button class="btn btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i>
                             Add Product</button>
@@ -1352,19 +1369,143 @@
         async function saveProduct(e) {
             e.preventDefault(); const f = e.target, btn = document.getElementById('saveProductBtn'), original = btn.innerHTML;
             btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
-            const catMap = { "Heels": 1, "Sandals": 2, "Wedges": 3, "Flats": 4, "Bags": 5, "Accessories": 6 };
-            const category_id = catMap[f.category.value] || null;
-            const payload = { name: f.name.value.trim(), sku: f.sku.value.trim(), category_id: category_id, price: Number(f.price.value), mrp: f.mrp.value ? Number(f.mrp.value) : null, stock: Number(f.stock.value) || 0, description: f.description.value.trim(), image_url: f.image_url.value.trim(), images: f.image_url.value.trim() ? [f.image_url.value.trim()] : [], sizes: f.sizes?.value.split(',').map(s => s.trim()).filter(Boolean) || [], is_featured: f.featured?.checked ? 1 : 0, is_active: f.active.checked ? 1 : 0 };
+            
             try {
-                if (editingProductId) await HeelsUpAuth.api(`/api/admin/products/${editingProductId}`, { method: 'PUT', body: JSON.stringify(payload) });
-                else await HeelsUpAuth.api('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) });
-                showToast(editingProductId ? 'Product updated!' : 'Product added!'); closeProductModal(); await loadProducts();
-            } catch (err) { showToast(err.message || 'Failed to save product', 'error'); }
-            finally { btn.disabled = false; btn.innerHTML = original; }
+                // Handle file upload
+                const fileInput = document.getElementById('productImagesInput');
+                let uploadedUrls = [];
+                if (fileInput && fileInput.files.length > 0) {
+                    if (fileInput.files.length > 5) throw new Error("Max 5 images allowed");
+                    const formData = new FormData();
+                    for (let i = 0; i < fileInput.files.length; i++) {
+                        formData.append('files[]', fileInput.files[i]);
+                    }
+                    formData.append('folder', 'products');
+                    
+                    const token = HeelsUpAuth.getToken();
+                    const upRes = await fetch('/api/admin/upload', {
+                        method: 'POST',
+                        headers: { 'Authorization': 'Bearer ' + token },
+                        body: formData
+                    });
+                    const upData = await upRes.json();
+                    if (!upRes.ok) throw new Error(upData.error || 'Upload failed');
+                    uploadedUrls = upData.results.map(r => r.url);
+                }
+
+                const catMap = { "Heels": 1, "Sandals": 2, "Wedges": 3, "Flats": 4, "Bags": 5, "Accessories": 6 };
+                const category_id = catMap[f.category.value] || null;
+                
+                // Fallback URL if provided
+                const fallbackUrl = f.image_url.value.trim();
+                let finalImages = [...uploadedUrls];
+                if (fallbackUrl && !finalImages.includes(fallbackUrl)) finalImages.push(fallbackUrl);
+                
+                const mainImage = finalImages[0] || '';
+
+                const payload = { 
+                    name: f.name.value.trim(), 
+                    sku: f.sku.value.trim(), 
+                    category_id: category_id, 
+                    price: Number(f.price.value), 
+                    mrp: f.mrp.value ? Number(f.mrp.value) : null, 
+                    stock: Number(f.stock.value) || 0, 
+                    description: f.description.value.trim(), 
+                    image_url: mainImage, 
+                    images: finalImages, 
+                    sizes: f.sizes?.value.split(',').map(s => s.trim()).filter(Boolean) || [], 
+                    is_featured: f.featured?.checked ? 1 : 0, 
+                    is_active: f.active.checked ? 1 : 0 
+                };
+
+                let savedProduct;
+                if (editingProductId) {
+                    const res = await HeelsUpAuth.api(`/api/admin/products/${editingProductId}`, { method: 'PUT', body: JSON.stringify(payload) });
+                    savedProduct = { id: editingProductId };
+                } else {
+                    savedProduct = await HeelsUpAuth.api('/api/admin/products', { method: 'POST', body: JSON.stringify(payload) });
+                }
+
+                // If images were uploaded, post to product images endpoint
+                if (savedProduct && savedProduct.id && finalImages.length > 0) {
+                    // This relies on the backend either clearing old images or us just not caring because it's a demo
+                    // The backend `POST /api/admin/products/:id/images` is already there
+                    for (let i = 0; i < uploadedUrls.length; i++) {
+                         try {
+                             await HeelsUpAuth.api(`/api/admin/products/${savedProduct.id}/images`, {
+                                 method: 'POST',
+                                 body: JSON.stringify({ url: uploadedUrls[i], sort_order: i, is_primary: i === 0 })
+                             });
+                         } catch(e) { console.warn("Failed to attach image", e); }
+                    }
+                }
+
+                showToast(editingProductId ? 'Product updated!' : 'Product added!'); 
+                closeProductModal(); 
+                await loadProducts();
+            } catch (err) { 
+                showToast(err.message || 'Failed to save product', 'error'); 
+            } finally { 
+                btn.disabled = false; btn.innerHTML = original; 
+            }
         }
 
         async function deleteProduct(id) { if (!confirm('Are you sure?')) return; try { await HeelsUpAuth.api(`/api/admin/products/${id}`, { method: 'DELETE' }); showToast('Product deleted.'); await loadProducts(); } catch (e) { showToast(e.message || 'Failed', 'error'); } }
         function exportProducts() { if (!filteredProducts.length) { showToast('No data to export', 'warning'); return; } const headers = ['ID', 'Name', 'SKU', 'Category', 'Price', 'MRP', 'Stock', 'Status']; const rows = filteredProducts.map(p => [p.id, `"${(p.name || '').replace(/"/g, '""')}"`, p.sku || '', p.category || '', p.price || 0, p.mrp || '', p.stock || 0, (p.is_active !== 0 && p.is_active !== false) ? 'Active' : 'Draft']); const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n'); const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' }); const url = URL.createObjectURL(blob); const link = document.createElement('a'); link.setAttribute('href', url); link.setAttribute('download', `heelsup_products_${new Date().toISOString().split('T')[0]}.csv`); document.body.appendChild(link); link.click(); document.body.removeChild(link); showToast('Export started.'); }
+
+        function handleCsvImport(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = async function(evt) {
+                const text = evt.target.result;
+                const rows = text.split('\n').map(r => r.trim()).filter(r => r);
+                if (rows.length < 2) { showToast('Invalid CSV or empty', 'error'); return; }
+                const headers = rows[0].split(',').map(h => h.trim().toLowerCase());
+                const products = [];
+                for (let i = 1; i < rows.length; i++) {
+                    const rowText = rows[i];
+                    const cols = [];
+                    let inQuotes = false, current = '';
+                    for (let c = 0; c < rowText.length; c++) {
+                        if (rowText[c] === '"') inQuotes = !inQuotes;
+                        else if (rowText[c] === ',' && !inQuotes) { cols.push(current); current = ''; }
+                        else current += rowText[c];
+                    }
+                    cols.push(current);
+
+                    const p = {};
+                    headers.forEach((h, idx) => {
+                        let val = (cols[idx] || '').trim();
+                        if (val.startsWith('"') && val.endsWith('"')) val = val.substring(1, val.length - 1);
+                        if (h === 'name') p.name = val;
+                        else if (h === 'sku') p.sku = val;
+                        else if (h === 'category') p.category = val;
+                        else if (h === 'price') p.price = Number(val);
+                        else if (h === 'mrp' || h === 'original_price') p.original_price = Number(val);
+                        else if (h === 'stock') p.stock = Number(val);
+                        else if (h === 'status') p.is_active = val.toLowerCase() === 'active' ? 1 : 0;
+                    });
+                    if (p.name && p.price) products.push(p);
+                }
+                
+                if (!products.length) { showToast('No valid products found in CSV', 'error'); return; }
+                
+                try {
+                    showToast('Importing...', 'info');
+                    const res = await HeelsUpAuth.api('/api/admin/products/bulk', {
+                        method: 'POST',
+                        body: JSON.stringify({ filename: file.name, products })
+                    });
+                    showToast(`Imported: ${res.success} success, ${res.failed} failed`, 'success');
+                    loadProducts();
+                } catch (err) {
+                    showToast(err.message || 'Import failed', 'error');
+                }
+                e.target.value = '';
+            };
+            reader.readAsText(file);
+        }
     </script>
 </body>
 

@@ -977,6 +977,10 @@
                 <div class="topbar-title">Analytics</div>
                 <div class="topbar-right">
                     <div class="period-tabs">
+                        <input type="date" id="customStart" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem;" title="Start Date">
+                        <input type="date" id="customEnd" style="padding: 4px 8px; border: 1px solid var(--border); border-radius: 4px; font-size: 0.85rem;" title="End Date">
+                        <button class="period-tab" onclick="applyCustomFilter()" style="padding: 4px 12px; background: var(--dark); color: white;">Apply</button>
+                        <div style="width: 1px; height: 24px; background: var(--border); margin: 0 8px;"></div>
                         <button class="period-tab" onclick="setPeriod(7,this)">7D</button>
                         <button class="period-tab active" onclick="setPeriod(30,this)">30D</button>
                         <button class="period-tab" onclick="setPeriod(90,this)">90D</button>
@@ -1186,8 +1190,29 @@
         function payBadge(s) { return s === 'paid' ? '<span class="badge" style="background:#dcfce7;color:#15803d">Paid</span>' : `<span class="badge" style="background:#fef3c7;color:#b45309">${s || 'pending'}</span>`; }
 
         // ── PERIOD ─────────────────────────────────────────────────────────
+        let currentPeriod = 30;
+        let customStart = null;
+        let customEnd = null;
+
+        function applyCustomFilter() {
+            const start = document.getElementById('customStart').value;
+            const end = document.getElementById('customEnd').value;
+            if (!start || !end) {
+                showToast('Please select both start and end dates', 'error');
+                return;
+            }
+            customStart = start;
+            customEnd = end;
+            currentPeriod = 'custom';
+            document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
+            document.getElementById('welcomePeriod').textContent = `Custom (${start} to ${end}) · updated just now`;
+            loadAll();
+        }
+
         function setPeriod(days, btn) {
             currentPeriod = days;
+            customStart = null;
+            customEnd = null;
             document.querySelectorAll('.period-tab').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             document.getElementById('welcomePeriod').textContent = `Last ${days} days · updated just now`;
@@ -1197,8 +1222,12 @@
         // ── MAIN LOAD ──────────────────────────────────────────────────────
         async function loadAll() {
             try {
+                let url = `/api/admin/analytics/dashboard?period=${currentPeriod}`;
+                if (currentPeriod === 'custom' && customStart && customEnd) {
+                    url += `&start=${customStart}&end=${customEnd}`;
+                }
                 const [dash, orders] = await Promise.all([
-                    HeelsUpAuth.api(`/api/admin/analytics/dashboard?period=${currentPeriod}`),
+                    HeelsUpAuth.api(url),
                     HeelsUpAuth.api('/api/admin/orders')
                 ]);
                 analyticsData = dash;

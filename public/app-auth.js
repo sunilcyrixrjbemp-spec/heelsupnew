@@ -33,6 +33,9 @@
   async function api(path, options) {
     const opts = Object.assign({ method: "GET" }, options || {});
     opts.headers = authHeaders(opts.headers || {});
+    if (opts.body instanceof FormData) {
+      delete opts.headers["Content-Type"];
+    }
     const response = await fetch(`${API_BASE}${path}`, opts);
     const text = await response.text();
     let data = null;

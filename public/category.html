@@ -801,20 +801,7 @@
     <script src="app-auth.js"></script>
     <script>
         const CLOUDFLARE_WORKER_URL = HeelsUpAuth.API_BASE;
-        const DEMO_PRODUCTS = [
-            { id: 1, name: 'Stiletto Block Heel Pumps', category: 'heels', price: 899, original_price: 1499, images: ['https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=500&q=80&auto=format&fit=crop'], is_new: true, is_trending: true, rating: 4.8, review_count: 124 },
-            { id: 2, name: 'Rose Gold Strappy Sandals', category: 'sandals', price: 649, original_price: 999, images: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.7, review_count: 89 },
-            { id: 3, name: 'Classic Tote Bag – Tan', category: 'bags', price: 1299, original_price: 1999, images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80&auto=format&fit=crop'], is_new: true, rating: 4.9, review_count: 203 },
-            { id: 4, name: 'Embroidered Juttis (Flats)', category: 'flats', price: 549, original_price: 849, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&auto=format&fit=crop'], rating: 4.6, review_count: 67 },
-            { id: 5, name: 'Wedge Ankle Strap Heels', category: 'heels', price: 799, original_price: 1299, images: ['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.5, review_count: 56 },
-            { id: 6, name: 'Mini Sling Crossbody Bag', category: 'bags', price: 899, original_price: 1299, images: ['https://images.unsplash.com/photo-1554141220-83411835a60b?w=500&q=80&auto=format&fit=crop'], is_new: true, is_trending: true, rating: 4.8, review_count: 91 },
-            { id: 7, name: 'Platform Mule Heels', category: 'heels', price: 749, original_price: 1199, images: ['https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=500&q=80&auto=format&fit=crop'], is_trending: true, rating: 4.7, review_count: 78 },
-            { id: 8, name: 'Kolhapuri Flats – Handcrafted', category: 'flats', price: 499, original_price: 799, images: ['https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=500&q=80&fit=crop&crop=top'], rating: 4.9, review_count: 145 },
-            { id: 9, name: 'Ankle Strap Block Heels', category: 'heels', price: 999, original_price: 1599, images: ['https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=500&q=80&fit=crop&crop=center'], is_new: true, rating: 4.6, review_count: 54 },
-            { id: 10, name: 'Boho Fringe Sandals', category: 'sandals', price: 449, original_price: 699, images: ['https://images.unsplash.com/photo-1522163182402-834f871fd851?w=500&q=80&fit=crop&crop=bottom'], rating: 4.4, review_count: 32 },
-            { id: 11, name: 'Leather Clutch – Gold', category: 'clutches', price: 1099, original_price: 1699, images: ['https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=500&q=80&fit=crop&crop=right'], is_new: true, rating: 4.7, review_count: 67 },
-            { id: 12, name: 'Pointed Toe Kitten Heels', category: 'heels', price: 849, original_price: 1299, images: ['https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=500&q=80&fit=crop&crop=left'], rating: 4.5, review_count: 43 },
-        ];
+        const DEMO_PRODUCTS = [];
         const CAT_META = {
             heels: { title: 'Heels', sub: '120+ heel styles — block heels, stilettos, wedges aur aur bhi' },
             flats: { title: 'Flats', sub: '80+ flat styles — juttis, ballet flats, loafers' },

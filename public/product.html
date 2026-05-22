@@ -1122,18 +1122,17 @@
     // ======================================================
     async function loadProduct() {
       const params = new URLSearchParams(location.search);
-      const id = params.get('id') || '1';
+      const id = params.get('id');
+
+      if (!id) {
+        document.getElementById('product-loading').style.display = 'none';
+        document.getElementById('product-error').style.display = 'block';
+        return;
+      }
 
       try {
-        let product;
-        try {
-          product = await HeelsUpAuth.api(`/api/products/${id}`);
-        } catch (apiErr) {
-          // Fallback demo product
-          product = getDemoProduct(id);
-        }
-
-        if (!product) throw new Error('Product not found');
+        const product = await HeelsUpAuth.api(`/api/products/${id}`);
+        if (!product || product.error) throw new Error('Product not found');
         currentProduct = product;
         renderProduct(product);
         loadRelated(product.category, product.id);
@@ -1141,15 +1140,6 @@
         document.getElementById('product-loading').style.display = 'none';
         document.getElementById('product-error').style.display = 'block';
       }
-    }
-
-    function getDemoProduct(id) {
-      const demos = {
-        '1': { id: 1, name: 'Stiletto Block Heel Pumps', category: 'Heels', price: 899, original_price: 1499, description: 'Elevate every look with our bestselling Stiletto Block Heel Pumps. Crafted with premium faux leather upper, cushioned footbed, and a sturdy 3.5" block heel — perfect for both office and evenings. Available in classic black and nude.', images: FALLBACK_IMAGES, is_new: true, rating: 4.8, review_count: 124, stock: 15 },
-        '2': { id: 2, name: 'Rose Gold Strappy Sandals', category: 'Sandals', price: 649, original_price: 999, description: 'Turn heads at every party with our Rose Gold Strappy Sandals. Adjustable ankle strap, padded insole, and that signature rose gold metallic finish. A must-have for your summer wardrobe.', images: FALLBACK_IMAGES, rating: 4.7, review_count: 89, stock: 8 },
-        '3': { id: 3, name: 'Classic Tote Bag – Tan', category: 'Bags', price: 1299, original_price: 1999, description: 'The everyday bag that does it all. Our Classic Tote in warm tan features a structured silhouette, magnetic closure, interior zip pocket, and comfortable shoulder straps. Holds everything your day demands.', images: FALLBACK_IMAGES, is_new: true, rating: 4.9, review_count: 203, stock: 22 }
-      };
-      return demos[id] || demos['1'];
     }
 
     function renderProduct(p) {
@@ -1346,30 +1336,18 @@
       grid.innerHTML = `<div class="skeleton" style="aspect-ratio:3/4;border-radius:14px"></div>`.repeat(4);
 
       try {
-        let data;
-        try {
-          data = await HeelsUpAuth.api(`/api/products?category=${encodeURIComponent(category)}&limit=8`);
-        } catch {
-          data = { products: getDemoRelated(category, excludeId) };
+        const data = await HeelsUpAuth.api(`/api/products?category=${encodeURIComponent(category)}&limit=8`);
+        const products = (data.products || data || []).filter(p => p.id != excludeId).slice(0, 4);
+        
+        if (products.length === 0) {
+            grid.innerHTML = '<p style="color:#94a3b8;grid-column:1/-1;text-align:center">No related products found.</p>';
+            return;
         }
-
-        let products = (data.products || data || []).filter(p => p.id != excludeId).slice(0, 4);
-        if (products.length === 0) products = getDemoRelated(category, excludeId);
 
         grid.innerHTML = products.map(p => buildProductCard(p)).join('');
       } catch (e) {
-        grid.innerHTML = getDemoRelated(category, excludeId).map(p => buildProductCard(p)).join('');
+        grid.innerHTML = '<p style="color:#94a3b8;grid-column:1/-1;text-align:center">Failed to load related products.</p>';
       }
-    }
-
-    function getDemoRelated(cat, excludeId) {
-      const all = [
-        { id: 2, name: 'Rose Gold Strappy Sandals', category: 'Sandals', price: 649, original_price: 999, images: [FALLBACK_IMAGES[3]], rating: 4.7, review_count: 89 },
-        { id: 4, name: 'Embroidered Juttis', category: 'Flats', price: 549, original_price: 849, images: [FALLBACK_IMAGES[1]], rating: 4.6, review_count: 67 },
-        { id: 5, name: 'Wedge Ankle Strap Heels', category: 'Heels', price: 799, original_price: 1299, images: [FALLBACK_IMAGES[2]], is_new: true, rating: 4.5, review_count: 56 },
-        { id: 7, name: 'Platform Mule Heels', category: 'Heels', price: 749, original_price: 1199, images: [FALLBACK_IMAGES[0]], rating: 4.7, review_count: 78 }
-      ];
-      return all.filter(p => p.id != excludeId).slice(0, 4);
     }
 
     function buildProductCard(p) {

@@ -1360,20 +1360,26 @@
                 const orderPayload = {
                     order_number: invoiceNum, // Force sequence match
                     customer_id: custId,
-                    customer_name: customerName,
-                    customer_phone: phone,
-                    customer_email: customerEmail,
+                    customer_name: customerName || 'Store Customer',
+                    customer_phone: phone || '0000000000',
+                    customer_email: customerEmail || `${phone || 'pos'}@offline.heelsup.com`,
                     total_amount: totalAmount,
                     payment_status: 'paid',
                     payment_method: paymentMode === 'cash' ? 'pos_cash' : (paymentMode === 'upi' ? 'pos_upi' : 'pos_card'),
                     transaction_id: customRef,
                     order_status: 'delivered',
+                    deliveryMethod: 'pos',
                     shipping_address: 'In-Store Purchase (POS)',
                     city: 'Jodhpur',
                     state: 'Rajasthan',
                     pincode: '342001',
                     notes: document.getElementById('saleNotes').value.trim(),
-                    items: items
+                    items: items.map(i => ({
+                        productId: i.product_id,
+                        name: i.product_name,
+                        qty: i.quantity,
+                        price: i.price
+                    }))
                 };
 
                 await HeelsUpAuth.api('/api/admin/orders', {

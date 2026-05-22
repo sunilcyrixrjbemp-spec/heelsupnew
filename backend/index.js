@@ -15,19 +15,64 @@
  */
 
 // ════════════════════════════════════════════════════════════════
+// RATE LIMITING & SECURITY CACHE
+// ════════════════════════════════════════════════════════════════
+const rateLimitMap = new Map();
+function checkRateLimit(ip, limit = 100, windowMs = 60000) {
+  if (!ip) return true;
+  const now = Date.now();
+  const key = `${ip}_${Math.floor(now / windowMs)}`;
+  const count = (rateLimitMap.get(key) || 0) + 1;
+  rateLimitMap.set(key, count);
+  if (Math.random() < 0.05) { // cleanup
+    rateLimitMap.delete(`${ip}_${Math.floor(now / windowMs) - 1}`);
+  }
+  return count <= limit;
+}
+
+// ════════════════════════════════════════════════════════════════
 // ENTRY POINT
 // ════════════════════════════════════════════════════════════════
 export default {
-  async fetch(request, env) {
+  async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
+    const clientIp = request.headers.get("CF-Connecting-IP") || request.headers.get("x-real-ip") || "unknown";
+
+    if (method === "OPTIONS") return corsResponse();
+
+    // Rate Limiting (Enterprise Security)
+    if (path.startsWith("/api/auth/")) {
+      if (!checkRateLimit(clientIp, 20, 60000)) { // 20 reqs / min for auth routes
+        return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), { 
+          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } 
+        });
+      }
+    } else {
+      if (!checkRateLimit(clientIp, 500, 60000)) { // 500 reqs / min global
+        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), { 
+          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } 
+        });
+      }
+    }
+
+    // Caching (Enterprise Scalability)
+    let cache = null;
+    let cacheKey = null;
+    const isCacheable = method === "GET" && (path === "/api/products" || path === "/api/categories" || path === "/api/public-settings");
+    if (isCacheable) {
+      cache = caches.default;
+      cacheKey = new Request(url.toString(), request);
+      const cachedRes = await cache.match(cacheKey);
+      if (cachedRes) return cachedRes;
+    }
 
     if (path === "/api/test-db") {
       try {
         const user = { id: 1, email: "suniljani012@gmail.com", role: "admin", first_name: "Sunil" };
         const payload = { id: user.id, email: user.email, role: user.role, session: "test", name: user.first_name };
-        const expiresAt = new Date(Date.now() + 30*86400000).toISOString();
+        const expiresAt = new Date(Date.now() + 30 * 86400000).toISOString();
         const token = await signJwt(payload, env.JWT_SECRET || "heelsup-secret-2025");
         return new Response(JSON.stringify({ token }), { headers: { 'Content-Type': 'application/json' } });
       } catch (err) {
@@ -35,9 +80,18 @@ export default {
       }
     }
 
-    if (request.method === "OPTIONS") return corsResponse();
     try {
-      return await router(request, env);
+      const response = await router(request, env);
+      
+      // Store in cache if cacheable
+      if (isCacheable && response && response.status === 200) {
+        const cacheableRes = new Response(response.clone().body, response);
+        cacheableRes.headers.set("Cache-Control", "public, max-age=60"); // 60s
+        if (ctx && ctx.waitUntil) ctx.waitUntil(cache.put(cacheKey, cacheableRes));
+        else await cache.put(cacheKey, cacheableRes);
+      }
+      
+      return response;
     } catch (err) {
       console.error("Unhandled error:", err?.stack || err);
       return json({ error: "Internal server error" }, 500);
@@ -49,7 +103,7 @@ export default {
 // ROUTER
 // ════════════════════════════════════════════════════════════════
 async function router(request, env) {
-  const url  = new URL(request.url);
+  const url = new URL(request.url);
   const path = url.pathname.replace(/\/$/, "") || "/";
   const method = request.method;
 
@@ -58,18 +112,18 @@ async function router(request, env) {
     return json({ ok: true, version: "4.0", ts: nowIso() });
 
   // ── Auth ───────────────────────────────────────────────────────
-  if (path === "/api/auth/send-otp"      && method === "POST") return sendOtp(request, env);
-  if (path === "/api/auth/verify-otp"    && method === "POST") return verifyOtpRoute(request, env);
-  if (path === "/api/auth/register"      && method === "POST") return registerUser(request, env);
-  if (path === "/api/auth/login"         && method === "POST") return loginUser(request, env);
-  if (path === "/api/auth/logout"        && method === "POST") return logoutUser(request, env);
+  if (path === "/api/auth/send-otp" && method === "POST") return sendOtp(request, env);
+  if (path === "/api/auth/verify-otp" && method === "POST") return verifyOtpRoute(request, env);
+  if (path === "/api/auth/register" && method === "POST") return registerUser(request, env);
+  if (path === "/api/auth/login" && method === "POST") return loginUser(request, env);
+  if (path === "/api/auth/logout" && method === "POST") return logoutUser(request, env);
   if (path === "/api/auth/forgot-password" && method === "POST") return forgotPassword(request, env);
-  if (path === "/api/auth/reset-password"  && method === "POST") return resetPassword(request, env);
+  if (path === "/api/auth/reset-password" && method === "POST") return resetPassword(request, env);
 
   // ── Public Products ────────────────────────────────────────────
   if (path === "/api/products" && method === "GET") return listProducts(url, env);
   if (/^\/api\/products\/(\d+)$/.test(path) && method === "GET") return getProduct(path, env);
-  if (/^\/api\/products\/(\d+)\/reviews$/.test(path) && method === "GET")  return getProductReviews(path, env);
+  if (/^\/api\/products\/(\d+)\/reviews$/.test(path) && method === "GET") return getProductReviews(path, env);
   if (/^\/api\/products\/(\d+)\/reviews$/.test(path) && method === "POST") return addProductReview(request, path, env);
 
   // ── Public Categories ──────────────────────────────────────────
@@ -93,26 +147,26 @@ async function router(request, env) {
 
   // ── Newsletter & Contact ───────────────────────────────────────
   if (path === "/api/newsletter" && method === "POST") return createNewsletter(request, env);
-  if (path === "/api/contact"    && method === "POST") return createContact(request, env);
+  if (path === "/api/contact" && method === "POST") return createContact(request, env);
 
   // ── Analytics Tracking (public) ───────────────────────────────
   if (path === "/api/track" && method === "POST") return trackEvent(request, env);
 
   // ── User (Protected) ──────────────────────────────────────────
-  if (path === "/api/me" && method === "GET")  return getMe(request, env);
-  if (path === "/api/me" && method === "PUT")  return updateMe(request, env);
+  if (path === "/api/me" && method === "GET") return getMe(request, env);
+  if (path === "/api/me" && method === "PUT") return updateMe(request, env);
   if (path === "/api/me/password" && method === "PUT") return changePassword(request, env);
-  if (path === "/api/me/addresses" && method === "GET")  return listAddresses(request, env);
+  if (path === "/api/me/addresses" && method === "GET") return listAddresses(request, env);
   if (path === "/api/me/addresses" && method === "POST") return addAddress(request, env);
-  if (/^\/api\/me\/addresses\/(\d+)$/.test(path) && method === "PUT")    return updateAddress(request, path, env);
+  if (/^\/api\/me\/addresses\/(\d+)$/.test(path) && method === "PUT") return updateAddress(request, path, env);
   if (/^\/api\/me\/addresses\/(\d+)$/.test(path) && method === "DELETE") return deleteAddress(request, path, env);
-  if (path === "/api/me/wishlist" && method === "GET")   return getWishlist(request, env);
-  if (path === "/api/me/wishlist" && method === "POST")  return addWishlist(request, env);
-  if (/^\/api\/me\/wishlist\/(\d+)$/.test(path) && method === "DELETE")  return removeWishlist(request, path, env);
+  if (path === "/api/me/wishlist" && method === "GET") return getWishlist(request, env);
+  if (path === "/api/me/wishlist" && method === "POST") return addWishlist(request, env);
+  if (/^\/api\/me\/wishlist\/(\d+)$/.test(path) && method === "DELETE") return removeWishlist(request, path, env);
 
   // ── Orders ─────────────────────────────────────────────────────
-  if (path === "/api/orders/initiate"  && method === "POST") return initiateOrder(request, env);
-  if (path === "/api/orders/my"        && method === "GET")  return listMyOrders(request, env);
+  if (path === "/api/orders/initiate" && method === "POST") return initiateOrder(request, env);
+  if (path === "/api/orders/my" && method === "GET") return listMyOrders(request, env);
   if (/^\/api\/orders\/(\d+)\/return$/.test(path) && method === "POST") return submitReturn(request, path, env);
 
   // ── Payments ───────────────────────────────────────────────────
@@ -170,14 +224,16 @@ async function publicCategories(env) {
     ).all();
     return json({ categories: results || [] });
   } catch {
-    return json({ categories: [
-      { id:1, name:"Heels",        slug:"heels",        sort_order:1 },
-      { id:2, name:"Sandals",      slug:"sandals",      sort_order:2 },
-      { id:3, name:"Wedges",       slug:"wedges",       sort_order:3 },
-      { id:4, name:"Flats",        slug:"flats",        sort_order:4 },
-      { id:5, name:"Bags",         slug:"bags",         sort_order:5 },
-      { id:6, name:"Accessories",  slug:"accessories",  sort_order:6 }
-    ]});
+    return json({
+      categories: [
+        { id: 1, name: "Heels", slug: "heels", sort_order: 1 },
+        { id: 2, name: "Sandals", slug: "sandals", sort_order: 2 },
+        { id: 3, name: "Wedges", slug: "wedges", sort_order: 3 },
+        { id: 4, name: "Flats", slug: "flats", sort_order: 4 },
+        { id: 5, name: "Bags", slug: "bags", sort_order: 5 },
+        { id: 6, name: "Accessories", slug: "accessories", sort_order: 6 }
+      ]
+    });
   }
 }
 
@@ -189,9 +245,9 @@ async function publicBanners(env) {
 }
 
 async function publicBlogs(url, env) {
-  const limit  = Math.min(toInt(url.searchParams.get("limit"), 12), 50);
+  const limit = Math.min(toInt(url.searchParams.get("limit"), 12), 50);
   const offset = toInt(url.searchParams.get("offset"), 0);
-  const cat    = url.searchParams.get("category") || "";
+  const cat = url.searchParams.get("category") || "";
   let sql = "SELECT id, title, slug, excerpt, image_url, category, tags, author_id, views, published_at FROM blog_posts WHERE status='published'";
   const binds = [];
   if (cat) { sql += " AND category=?"; binds.push(cat); }
@@ -230,14 +286,14 @@ async function trackEvent(request, env) {
       String(body.event).slice(0, 50),
       String(body.page || "").slice(0, 200),
       body.product_id ? toInt(body.product_id, null) : null,
-      body.user_id    ? toInt(body.user_id, null) : null,
+      body.user_id ? toInt(body.user_id, null) : null,
       String(body.session_id || "").slice(0, 64),
       String(request.headers.get("referer") || "").slice(0, 200),
       String(request.headers.get("CF-IPCountry") || "").slice(0, 5),
       String(body.device || "").slice(0, 20),
       nowIso()
     ).run();
-  } catch {}
+  } catch { }
   return json({ ok: true });
 }
 
@@ -245,13 +301,16 @@ async function trackEvent(request, env) {
 // OTP
 // ════════════════════════════════════════════════════════════════
 async function sendOtpEmail(env, email, otp, purpose) {
-  const scriptUrl = await getSetting(env, "otp_script_url", "");
-  const siteName  = await getSetting(env, "site_name", "HeelsUp");
+  let scriptUrl = await getSetting(env, "otp_script_url", "");
+  if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
+    scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+  }
+  const siteName = await getSetting(env, "site_name", "HeelsUp");
   if (!scriptUrl) return { ok: false, error: "OTP script URL not configured" };
   const subjects = {
     register: `Verify your ${siteName} account`,
-    forgot:   `Reset your ${siteName} password`,
-    login:    `Your ${siteName} login OTP`
+    forgot: `Reset your ${siteName} password`,
+    login: `Your ${siteName} login OTP`
   };
   try {
     const res = await fetch(scriptUrl, {
@@ -261,7 +320,9 @@ async function sendOtpEmail(env, email, otp, purpose) {
         to: email,
         subject: subjects[purpose] || `Your ${siteName} OTP`,
         message: `Your OTP is: ${otp} (valid for 10 minutes)`,
-        html: buildOtpHtml(siteName, otp, purpose)
+        html: buildOtpHtml(siteName, otp, purpose),
+        otp: otp,
+        name: email.split('@')[0]
       })
     });
     return { ok: res.ok };
@@ -293,23 +354,22 @@ function buildOtpHtml(siteName, otp, purpose) {
 async function sendOtp(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const email   = normalizeEmail(body.email);
+  const email = normalizeEmail(body.email);
   const purpose = String(body.purpose || "register");
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
     return json({ error: "Valid email is required" }, 400);
   if (!["register", "forgot", "login"].includes(purpose))
     return json({ error: "Invalid purpose" }, 400);
   const hourAgo = new Date(Date.now() - 3600000).toISOString();
-  const recent  = await env.DB.prepare(
+  const recent = await env.DB.prepare(
     "SELECT COUNT(*) as c FROM otp_tokens WHERE email=? AND created_at>?"
   ).bind(email, hourAgo).first();
   if ((recent?.c || 0) >= 5) return json({ error: "Too many OTP requests. Wait 1 hour." }, 429);
-  const otp       = String(Math.floor(100000 + Math.random() * 900000));
-  const expiresAt = new Date(Date.now() + 10 * 60000).toISOString();
-  const otpHash   = await sha256Hex(otp);
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  const expiresAt = nowIso(parseInt(await getSetting(env, "otp_expiry_minutes", "10")));
   await env.DB.prepare(
     "INSERT INTO otp_tokens (email, otp_hash, purpose, attempts, verified, expires_at, created_at) VALUES (?,?,?,0,0,?,?)"
-  ).bind(email, otpHash, purpose, expiresAt, nowIso()).run();
+  ).bind(email, otp, purpose, expiresAt, nowIso()).run();
   const result = await sendOtpEmail(env, email, otp, purpose);
   if (!result.ok) return json({ error: "Failed to send OTP. Please try again." }, 502);
   return json({ ok: true, message: `OTP sent to ${email}` });
@@ -318,8 +378,8 @@ async function sendOtp(request, env) {
 async function verifyOtpRoute(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const email   = normalizeEmail(body.email);
-  const otp     = String(body.otp || "").trim();
+  const email = normalizeEmail(body.email);
+  const otp = String(body.otp || "").trim();
   const purpose = String(body.purpose || "register");
   if (!email || !otp) return json({ error: "Email and OTP required" }, 400);
   const result = await verifyOtp(env, email, otp, purpose);
@@ -328,15 +388,15 @@ async function verifyOtpRoute(request, env) {
 }
 
 async function verifyOtp(env, email, otp, purpose) {
-  const otpHash = await sha256Hex(String(otp).trim());
-  const token   = await env.DB.prepare(
+  const otpPlain = String(otp).trim();
+  const token = await env.DB.prepare(
     "SELECT * FROM otp_tokens WHERE email=? AND purpose=? AND verified=0 AND expires_at>? ORDER BY id DESC LIMIT 1"
   ).bind(email, purpose, nowIso()).first();
   if (!token) return { ok: false, error: "OTP expired or not found. Request a new OTP." };
   if ((token.attempts || 0) >= 5) return { ok: false, error: "Too many incorrect attempts. Request a new OTP." };
-  if (token.otp_hash !== otpHash) {
+  if (token.otp_hash !== otpPlain) {
     await env.DB.prepare("UPDATE otp_tokens SET attempts=attempts+1 WHERE id=?").bind(token.id).run();
-    const rem = 4 - (token.attempts || 0);
+    const rem = 5 - ((token.attempts || 0) + 1);
     return { ok: false, error: `Incorrect OTP. ${rem} attempts remaining.` };
   }
   await env.DB.prepare("UPDATE otp_tokens SET verified=1 WHERE id=?").bind(token.id).run();
@@ -350,11 +410,11 @@ async function registerUser(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
   const firstName = String(body.firstName || body.first_name || "").trim();
-  const lastName  = String(body.lastName  || body.last_name  || "").trim();
-  const email     = normalizeEmail(body.email);
-  const phone     = String(body.phone || "").replace(/\D/g, "").slice(-10);
-  const password  = String(body.password || "");
-  const otp       = String(body.otp || "").trim();
+  const lastName = String(body.lastName || body.last_name || "").trim();
+  const email = normalizeEmail(body.email);
+  const phone = String(body.phone || "").replace(/\D/g, "").slice(-10);
+  const password = String(body.password || "");
+  const otp = String(body.otp || "").trim();
   if (!firstName || !email || !password)
     return json({ error: "firstName, email, and password are required" }, 400);
   if (password.length < 8)
@@ -371,7 +431,7 @@ async function registerUser(request, env) {
   const result = await env.DB.prepare(
     "INSERT INTO users (first_name, last_name, email, phone, password_hash, role, email_verified, staff_permissions, created_at, updated_at) VALUES (?,?,?,?,?,'customer',1,'[]',?,?)"
   ).bind(firstName, lastName, email, phone, passwordHash, now, now).run();
-  const userId  = result.meta?.last_row_id;
+  const userId = result.meta?.last_row_id;
   const session = await createSession(env, userId, "customer");
   await auditLog(env, userId, "register", "users", userId, { email });
   return json({ ok: true, token: session.token, user: { id: userId, firstName, lastName, email, phone, role: "customer" } }, 201);
@@ -383,14 +443,14 @@ async function registerUser(request, env) {
 async function loginUser(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const email    = normalizeEmail(body.email);
+  const email = normalizeEmail(body.email);
   const password = String(body.password || "");
-  const ip       = request.headers.get("CF-Connecting-IP") || "";
+  const ip = request.headers.get("CF-Connecting-IP") || "";
   if (!email || !password) return json({ error: "Email and password are required" }, 400);
-  const maxAttempts  = parseInt(await getSetting(env, "max_login_attempts", "5")) || 5;
-  const lockoutMins  = parseInt(await getSetting(env, "lockout_duration_minutes", "30")) || 30;
-  const windowStart  = new Date(Date.now() - lockoutMins * 60000).toISOString();
-  const failedRow    = await env.DB.prepare(
+  const maxAttempts = parseInt(await getSetting(env, "max_login_attempts", "5")) || 5;
+  const lockoutMins = parseInt(await getSetting(env, "lockout_duration_minutes", "30")) || 30;
+  const windowStart = new Date(Date.now() - lockoutMins * 60000).toISOString();
+  const failedRow = await env.DB.prepare(
     "SELECT COUNT(*) as c FROM login_attempts WHERE email=? AND success=0 AND created_at>?"
   ).bind(email, windowStart).first();
   if ((failedRow?.c || 0) >= maxAttempts)
@@ -411,7 +471,7 @@ async function loginUser(request, env) {
 async function logoutUser(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const token   = request.headers.get("authorization")?.slice(7).trim() || "";
+  const token = request.headers.get("authorization")?.slice(7).trim() || "";
   const payload = await verifyJwt(token, env.JWT_SECRET || "heelsup-secret-2025");
   if (payload?.sid) await env.DB.prepare("UPDATE sessions SET revoked=1 WHERE id=?").bind(payload.sid).run();
   await auditLog(env, auth.user.id, "logout", "sessions", null, {});
@@ -422,30 +482,29 @@ async function logoutUser(request, env) {
 // FORGOT / RESET PASSWORD
 // ════════════════════════════════════════════════════════════════
 async function forgotPassword(request, env) {
-  const body  = await readJson(request);
+  const body = await readJson(request);
   const email = normalizeEmail(body?.email);
   if (!email) return json({ error: "Email is required" }, 400);
   const user = await env.DB.prepare("SELECT id FROM users WHERE email=?").bind(email).first();
   if (!user) return json({ ok: true, message: "If this email exists, an OTP has been sent." });
   const hourAgo = new Date(Date.now() - 3600000).toISOString();
-  const recent  = await env.DB.prepare(
+  const recent = await env.DB.prepare(
     "SELECT COUNT(*) as c FROM otp_tokens WHERE email=? AND purpose='forgot' AND created_at>?"
   ).bind(email, hourAgo).first();
   if ((recent?.c || 0) >= 3) return json({ ok: true, message: "If this email exists, an OTP has been sent." });
-  const otp       = String(Math.floor(100000 + Math.random() * 900000));
-  const expiresAt = new Date(Date.now() + 10 * 60000).toISOString();
-  const otpHash   = await sha256Hex(otp);
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  const expiresAt = nowIso(parseInt(await getSetting(env, "otp_expiry_minutes", "10")));
   await env.DB.prepare(
     "INSERT INTO otp_tokens (email,otp_hash,purpose,attempts,verified,expires_at,created_at) VALUES (?,?,'forgot',0,0,?,?)"
-  ).bind(email, otpHash, expiresAt, nowIso()).run();
+  ).bind(email, otp, expiresAt, nowIso()).run();
   await sendOtpEmail(env, email, otp, "forgot");
   return json({ ok: true, message: "If this email exists, an OTP has been sent." });
 }
 
 async function resetPassword(request, env) {
-  const body     = await readJson(request);
-  const email    = normalizeEmail(body?.email);
-  const otp      = String(body?.otp || "").trim();
+  const body = await readJson(request);
+  const email = normalizeEmail(body?.email);
+  const otp = String(body?.otp || "").trim();
   const password = String(body?.password || "");
   if (!email || !otp || !password) return json({ error: "email, otp, and password are required" }, 400);
   if (password.length < 8) return json({ error: "Password must be at least 8 characters" }, 400);
@@ -472,10 +531,10 @@ async function getMe(request, env) {
 async function updateMe(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const body      = await readJson(request);
+  const body = await readJson(request);
   const firstName = String(body?.firstName || body?.first_name || auth.user.first_name).trim();
-  const lastName  = String(body?.lastName  || body?.last_name  || auth.user.last_name || "").trim();
-  const phone     = String(body?.phone || auth.user.phone || "").replace(/\D/g, "").slice(-10);
+  const lastName = String(body?.lastName || body?.last_name || auth.user.last_name || "").trim();
+  const phone = String(body?.phone || auth.user.phone || "").replace(/\D/g, "").slice(-10);
   await env.DB.prepare("UPDATE users SET first_name=?, last_name=?, phone=?, updated_at=? WHERE id=?")
     .bind(firstName, lastName, phone, nowIso(), auth.user.id).run();
   return json({ ok: true, message: "Profile updated" });
@@ -483,7 +542,7 @@ async function updateMe(request, env) {
 async function changePassword(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const body    = await readJson(request);
+  const body = await readJson(request);
   const current = String(body?.currentPassword || "");
   const newPass = String(body?.newPassword || "");
   if (!current || !newPass) return json({ error: "currentPassword and newPassword required" }, 400);
@@ -510,13 +569,13 @@ async function listAddresses(request, env) {
 async function addAddress(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const body    = await readJson(request);
-  const name    = String(body?.name         || "").trim();
-  const phone   = String(body?.phone        || "").trim();
-  const line1   = String(body?.addressLine1 || "").trim();
-  const city    = String(body?.city         || "").trim();
-  const state   = String(body?.state        || "").trim();
-  const pincode = String(body?.pincode      || "").trim();
+  const body = await readJson(request);
+  const name = String(body?.name || "").trim();
+  const phone = String(body?.phone || "").trim();
+  const line1 = String(body?.addressLine1 || "").trim();
+  const city = String(body?.city || "").trim();
+  const state = String(body?.state || "").trim();
+  const pincode = String(body?.pincode || "").trim();
   if (!name || !phone || !line1 || !city || !state || !pincode)
     return json({ error: "name, phone, addressLine1, city, state, pincode are required" }, 400);
   const isDefault = body?.isDefault ? 1 : 0;
@@ -529,10 +588,10 @@ async function addAddress(request, env) {
 async function updateAddress(request, path, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const id  = toInt(path.split("/").pop(), 0);
+  const id = toInt(path.split("/").pop(), 0);
   const row = await env.DB.prepare("SELECT * FROM addresses WHERE id=? AND user_id=?").bind(id, auth.user.id).first();
   if (!row) return json({ error: "Address not found" }, 404);
-  const body      = await readJson(request);
+  const body = await readJson(request);
   const isDefault = body?.isDefault ? 1 : 0;
   if (isDefault) await env.DB.prepare("UPDATE addresses SET is_default=0 WHERE user_id=?").bind(auth.user.id).run();
   await env.DB.prepare(
@@ -567,18 +626,18 @@ async function getWishlist(request, env) {
   return json({ wishlist: (results || []).map(r => ({ ...r, images: safeJsonParse(r.images_json, []) })) });
 }
 async function addWishlist(request, env) {
-  const auth      = await requireAuth(request, env);
+  const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  const body      = await readJson(request);
+  const body = await readJson(request);
   const productId = toInt(body?.productId || body?.product_id, 0);
   if (!productId) return json({ error: "productId required" }, 400);
   try {
     await env.DB.prepare("INSERT OR IGNORE INTO wishlist (user_id, product_id, created_at) VALUES (?,?,?)").bind(auth.user.id, productId, nowIso()).run();
-  } catch {}
+  } catch { }
   return json({ ok: true });
 }
 async function removeWishlist(request, path, env) {
-  const auth      = await requireAuth(request, env);
+  const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
   const productId = toInt(path.split("/").pop(), 0);
   await env.DB.prepare("DELETE FROM wishlist WHERE user_id=? AND product_id=?").bind(auth.user.id, productId).run();
@@ -591,19 +650,19 @@ async function removeWishlist(request, path, env) {
 async function listProducts(url, env) {
   const category = url.searchParams.get("category") || "";
   const featured = url.searchParams.get("featured") || "";
-  const isNew    = url.searchParams.get("is_new") || "";
+  const isNew = url.searchParams.get("is_new") || "";
   const trending = url.searchParams.get("trending") || "";
-  const search   = url.searchParams.get("q") || url.searchParams.get("search") || "";
-  const limit    = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
-  const offset   = toInt(url.searchParams.get("offset"), 0);
+  const search = url.searchParams.get("q") || url.searchParams.get("search") || "";
+  const limit = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
+  const offset = toInt(url.searchParams.get("offset"), 0);
 
   let sql = "SELECT * FROM products WHERE active=1";
   const binds = [];
-  if (category)         { sql += " AND LOWER(category)=LOWER(?)"; binds.push(category); }
-  if (featured==="true"){ sql += " AND featured=1"; }
-  if (isNew==="true")   { sql += " AND is_new=1"; }
-  if (trending==="true"){ sql += " AND is_trending=1"; }
-  if (search)           { sql += " AND (LOWER(name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))"; binds.push(`%${search}%`, `%${search}%`); }
+  if (category) { sql += " AND LOWER(category)=LOWER(?)"; binds.push(category); }
+  if (featured === "true") { sql += " AND featured=1"; }
+  if (isNew === "true") { sql += " AND is_new=1"; }
+  if (trending === "true") { sql += " AND is_trending=1"; }
+  if (search) { sql += " AND (LOWER(name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))"; binds.push(`%${search}%`, `%${search}%`); }
   sql += " ORDER BY featured DESC, is_trending DESC, is_new DESC, id DESC LIMIT ? OFFSET ?";
   binds.push(limit, offset);
 
@@ -611,7 +670,7 @@ async function listProducts(url, env) {
   let countSql = "SELECT COUNT(*) as total FROM products WHERE active=1";
   const countBinds = [];
   if (category) { countSql += " AND LOWER(category)=LOWER(?)"; countBinds.push(category); }
-  if (search)   { countSql += " AND (LOWER(name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))"; countBinds.push(`%${search}%`, `%${search}%`); }
+  if (search) { countSql += " AND (LOWER(name) LIKE LOWER(?) OR LOWER(description) LIKE LOWER(?))"; countBinds.push(`%${search}%`, `%${search}%`); }
   const countRow = await env.DB.prepare(countSql).bind(...countBinds).first();
   return json({ products: (results || []).map(mapProduct), total: countRow?.total || 0, limit, offset });
 }
@@ -651,8 +710,8 @@ async function addProductReview(request, path, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
   const productId = toInt(path.split("/")[3], 0);
-  const body      = await readJson(request);
-  const rating    = toInt(body?.rating, 0);
+  const body = await readJson(request);
+  const rating = toInt(body?.rating, 0);
   if (!rating || rating < 1 || rating > 5) return json({ error: "Rating must be 1-5" }, 400);
   const existing = await env.DB.prepare("SELECT id FROM product_reviews WHERE product_id=? AND user_id=?").bind(productId, auth.user.id).first();
   if (existing) return json({ error: "You have already reviewed this product" }, 409);
@@ -666,8 +725,8 @@ async function addProductReview(request, path, env) {
 // COUPONS
 // ════════════════════════════════════════════════════════════════
 async function validateCoupon(request, env) {
-  const body     = await readJson(request);
-  const code     = String(body?.code || "").trim().toUpperCase();
+  const body = await readJson(request);
+  const code = String(body?.code || "").trim().toUpperCase();
   const subtotal = Number(body?.subtotal || 0);
   if (!code) return json({ error: "Coupon code required" }, 400);
   const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND active=1").bind(code).first();
@@ -686,9 +745,9 @@ async function validateCoupon(request, env) {
 async function initiateOrder(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return json({ error: "Please log in to place an order", code: "AUTH_REQUIRED" }, 401);
-  const body       = await readJson(request);
+  const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const rzpKeyId     = await getSetting(env, "razorpay_key_id",     env.RAZORPAY_KEY_ID     || "");
+  const rzpKeyId = await getSetting(env, "razorpay_key_id", env.RAZORPAY_KEY_ID || "");
   const rzpKeySecret = await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "");
   if (!rzpKeyId || !rzpKeySecret) return json({ error: "Payment gateway not configured. Contact admin." }, 503);
   const items = Array.isArray(body.items) ? body.items : [];
@@ -697,7 +756,7 @@ async function initiateOrder(request, env) {
   let couponCode = String(body.couponCode || "").trim().toUpperCase();
   if (couponCode) {
     const subtotal = items.reduce((s, i) => s + (Number(i.price || 0) * Math.max(1, i.qty || 1)), 0);
-    const coupon   = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND active=1").bind(couponCode).first();
+    const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND active=1").bind(couponCode).first();
     if (coupon && subtotal >= coupon.min_order) {
       let disc = coupon.type === "percent" ? Math.round(subtotal * (coupon.value / 100)) : coupon.value;
       if (coupon.max_discount) disc = Math.min(disc, coupon.max_discount);
@@ -707,23 +766,23 @@ async function initiateOrder(request, env) {
   const created = await createOrderRecord(env, {
     userId: auth.user.id,
     customer: body.customer || {
-      name:  `${auth.user.first_name} ${auth.user.last_name || ""}`.trim(),
+      name: `${auth.user.first_name} ${auth.user.last_name || ""}`.trim(),
       email: auth.user.email,
       phone: auth.user.phone || body.phone || ""
     },
     items: body.items,
-    deliveryMethod:  body.deliveryMethod  || "standard",
-    notes:           body.notes           || "",
-    paymentMethod:   "RAZORPAY",
-    paymentStatus:   "initiated",
-    orderStatus:     "payment_pending",
-    couponCode:      couponCode || null,
+    deliveryMethod: body.deliveryMethod || "standard",
+    notes: body.notes || "",
+    paymentMethod: "RAZORPAY",
+    paymentStatus: "initiated",
+    orderStatus: "payment_pending",
+    couponCode: couponCode || null,
     discountAmount
   });
   if (!created.ok) return json({ error: created.error }, 400);
   const amountPaise = Math.round(Number(created.order.total_amount) * 100);
-  const basicAuth   = btoa(`${rzpKeyId}:${rzpKeySecret}`);
-  const rzpRes      = await fetch("https://api.razorpay.com/v1/orders", {
+  const basicAuth = btoa(`${rzpKeyId}:${rzpKeySecret}`);
+  const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
     method: "POST",
     headers: { Authorization: `Basic ${basicAuth}`, "content-type": "application/json" },
     body: JSON.stringify({ amount: amountPaise, currency: "INR", receipt: String(created.order.order_number), notes: { internal_order_id: String(created.order.id) } })
@@ -740,16 +799,16 @@ async function initiateOrder(request, env) {
 }
 
 async function verifyRazorpayPayment(request, env) {
-  const body          = await readJson(request);
+  const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const rzpKeySecret  = await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "");
-  const localOrderId  = toInt(body.orderId, 0);
-  const rzpOrderId    = String(body.razorpay_order_id    || "").trim();
-  const rzpPaymentId  = String(body.razorpay_payment_id  || "").trim();
-  const rzpSignature  = String(body.razorpay_signature   || "").trim();
+  const rzpKeySecret = await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "");
+  const localOrderId = toInt(body.orderId, 0);
+  const rzpOrderId = String(body.razorpay_order_id || "").trim();
+  const rzpPaymentId = String(body.razorpay_payment_id || "").trim();
+  const rzpSignature = String(body.razorpay_signature || "").trim();
   if (!localOrderId || !rzpOrderId || !rzpPaymentId || !rzpSignature)
     return json({ error: "orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature required" }, 400);
-  const order    = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
+  const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
   if (!order) return json({ error: "Order not found" }, 404);
   const expected = await hmacHex(rzpKeySecret, `${rzpOrderId}|${rzpPaymentId}`);
   if (expected !== rzpSignature) {
@@ -784,9 +843,12 @@ async function verifyRazorpayPayment(request, env) {
     }
   }
   // Send order confirmation email (async, don't block response)
-  const user     = order.user_id ? await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(order.user_id).first() : null;
+  const user = order.user_id ? await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(order.user_id).first() : null;
   const siteName = await getSetting(env, "site_name", "HeelsUp");
-  const scriptUrl = await getSetting(env, "otp_script_url", "");
+  let scriptUrl = await getSetting(env, "otp_script_url", "");
+  if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
+    scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+  }
   if (user && scriptUrl) {
     fetch(scriptUrl, {
       method: "POST",
@@ -797,7 +859,7 @@ async function verifyRazorpayPayment(request, env) {
         message: `Your order #${order.order_number} is confirmed!\n\nTotal: ₹${order.total_amount}\n\nThank you for shopping with ${siteName}!`,
         html: buildOrderConfirmHtml(order, siteName)
       })
-    }).catch(() => {});
+    }).catch(() => { });
   }
   await auditLog(env, user?.id || null, "payment_confirmed", "orders", localOrderId, { rzpPaymentId });
   return json({ ok: true, orderId: localOrderId, orderNumber: order.order_number, paymentStatus: "paid" });
@@ -831,22 +893,22 @@ async function listMyOrders(request, env) {
     const ret = await env.DB.prepare("SELECT id, status, created_at FROM return_requests WHERE order_id=? LIMIT 1").bind(order.id).first();
     data.push({
       id: order.id,
-      orderNumber:     order.order_number,
-      orderStatus:     order.order_status,
-      paymentStatus:   order.payment_status,
-      paymentMethod:   order.payment_method,
-      subtotalAmount:  Number(order.subtotal_amount),
-      shippingAmount:  Number(order.shipping_amount),
-      discountAmount:  Number(order.discount_amount),
-      totalAmount:     Number(order.total_amount),
-      couponCode:      order.coupon_code,
-      trackingNumber:  order.tracking_number,
-      trackingUrl:     order.tracking_url,
-      createdAt:       order.created_at,
-      customerName:    order.customer_name,
-      customerEmail:   order.customer_email,
+      orderNumber: order.order_number,
+      orderStatus: order.order_status,
+      paymentStatus: order.payment_status,
+      paymentMethod: order.payment_method,
+      subtotalAmount: Number(order.subtotal_amount),
+      shippingAmount: Number(order.shipping_amount),
+      discountAmount: Number(order.discount_amount),
+      totalAmount: Number(order.total_amount),
+      couponCode: order.coupon_code,
+      trackingNumber: order.tracking_number,
+      trackingUrl: order.tracking_url,
+      createdAt: order.created_at,
+      customerName: order.customer_name,
+      customerEmail: order.customer_email,
       address: { line1: order.address_line1, line2: order.address_line2, city: order.city, state: order.state, pincode: order.pincode },
-      returnRequest:   ret || null,
+      returnRequest: ret || null,
       items: (items || []).map(i => ({ name: i.product_name, sku: i.product_sku, qty: i.quantity, price: Number(i.unit_price), lineTotal: Number(i.line_total), size: i.size_label, image: i.image_url }))
     });
   }
@@ -854,15 +916,15 @@ async function listMyOrders(request, env) {
 }
 
 async function submitReturn(request, path, env) {
-  const auth    = await requireAuth(request, env);
+  const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
   const orderId = toInt(path.split("/")[3], 0);
-  const body    = await readJson(request);
-  const reason  = String(body?.reason || "").trim();
+  const body = await readJson(request);
+  const reason = String(body?.reason || "").trim();
   if (!reason) return json({ error: "Reason for return is required" }, 400);
   const order = await env.DB.prepare("SELECT * FROM orders WHERE id=? AND user_id=?").bind(orderId, auth.user.id).first();
   if (!order) return json({ error: "Order not found" }, 404);
-  if (!["confirmed","shipped","delivered"].includes(order.order_status))
+  if (!["confirmed", "shipped", "delivered"].includes(order.order_status))
     return json({ error: "Return can only be requested for confirmed, shipped, or delivered orders" }, 400);
   const existing = await env.DB.prepare("SELECT id FROM return_requests WHERE order_id=?").bind(orderId).first();
   if (existing) return json({ error: "A return request already exists for this order" }, 409);
@@ -878,7 +940,7 @@ async function submitReturn(request, path, env) {
 // NEWSLETTER & CONTACT
 // ════════════════════════════════════════════════════════════════
 async function createNewsletter(request, env) {
-  const body  = await readJson(request);
+  const body = await readJson(request);
   const email = normalizeEmail(body?.email);
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return json({ error: "Valid email required" }, 400);
   await env.DB.prepare("INSERT INTO newsletter_subscribers (email, created_at) VALUES (?,?) ON CONFLICT(email) DO NOTHING").bind(email, nowIso()).run();
@@ -886,9 +948,9 @@ async function createNewsletter(request, env) {
 }
 
 async function createContact(request, env) {
-  const body    = await readJson(request);
-  const name    = String(body?.name    || "").trim();
-  const email   = normalizeEmail(body?.email);
+  const body = await readJson(request);
+  const name = String(body?.name || "").trim();
+  const email = normalizeEmail(body?.email);
   const message = String(body?.message || "").trim();
   if (!name || !email || !message) return json({ error: "name, email and message required" }, 400);
   await env.DB.prepare(
@@ -908,13 +970,13 @@ async function handleAdmin(request, path, url, env) {
   // Special: allow upload without full admin check? No — always require admin.
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
-  if (!["admin","staff"].includes((auth.user.role || "").toLowerCase()))
+  if (!["admin", "staff"].includes((auth.user.role || "").toLowerCase()))
     return json({ error: "Admin access required" }, 403);
   const isAdmin = auth.user.role === "admin";
 
   // ── DASHBOARD ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/dashboard") return adminDashboard(env);
-  if (method === "GET" && path === "/api/admin/stats")     return adminDashboard(env);
+  if (method === "GET" && path === "/api/admin/stats") return adminDashboard(env);
 
   // ── SETTINGS ──────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/settings") {
@@ -927,9 +989,9 @@ async function handleAdmin(request, path, url, env) {
   }
   if (method === "PUT" && path === "/api/admin/settings") {
     if (!isAdmin) return json({ error: "Only admin can change settings" }, 403);
-    const body    = await readJson(request);
+    const body = await readJson(request);
     const updates = body?.settings && typeof body.settings === "object" ? body.settings : (body || {});
-    const allowed = ["razorpay_key_id","razorpay_key_secret","razorpay_mode","otp_script_url","site_name","site_email","support_phone","shipping_free_above","shipping_standard_charge","require_email_otp","otp_expiry_minutes","max_login_attempts","lockout_duration_minutes","maintenance_mode","announcement_text"];
+    const allowed = ["razorpay_key_id", "razorpay_key_secret", "razorpay_mode", "otp_script_url", "site_name", "site_email", "support_phone", "shipping_free_above", "shipping_standard_charge", "require_email_otp", "otp_expiry_minutes", "max_login_attempts", "lockout_duration_minutes", "maintenance_mode", "announcement_text"];
     const changed = [];
     for (const key of allowed) {
       if (updates[key] !== undefined) {
@@ -945,29 +1007,32 @@ async function handleAdmin(request, path, url, env) {
 
   // ── TEST OTP ──────────────────────────────────────────────────
   if (method === "POST" && path === "/api/admin/test-otp") {
-    const body      = await readJson(request);
-    const email     = String(body?.email || auth.user?.email || "").trim();
+    const body = await readJson(request);
+    const email = String(body?.email || auth.user?.email || "").trim();
     if (!email) return json({ error: "Email required" }, 400);
-    const scriptUrl = await getSetting(env, "otp_script_url", "");
+    let scriptUrl = await getSetting(env, "otp_script_url", "");
+    if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
+      scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+    }
     if (!scriptUrl) return json({ error: "OTP script URL not configured in Settings" }, 400);
-    const testOtp   = Math.floor(100000 + Math.random() * 900000).toString();
+    const testOtp = Math.floor(100000 + Math.random() * 900000).toString();
     try {
-      await fetch(scriptUrl, { method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify({ to: email, subject:`${await getSetting(env,"site_name","HeelsUp")} - Test OTP`, otp: testOtp, name:"Admin" }) });
+      await fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ to: email, subject: `${await getSetting(env, "site_name", "HeelsUp")} - Test OTP`, otp: testOtp, name: "Admin" }) });
       return json({ ok: true, message: `Test OTP ${testOtp} sent to ${email}` });
     } catch (e) { return json({ error: "Failed: " + e.message }, 500); }
   }
 
   // ── PRODUCTS ──────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/products") {
-    const search = url.searchParams.get("q")        || "";
-    const cat    = url.searchParams.get("category") || "";
-    const active = url.searchParams.get("active")   || "";
-    const limit  = Math.min(toInt(url.searchParams.get("limit"), 200), 500);
+    const search = url.searchParams.get("q") || "";
+    const cat = url.searchParams.get("category") || "";
+    const active = url.searchParams.get("active") || "";
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 200), 500);
     const offset = toInt(url.searchParams.get("offset"), 0);
     let sql = "SELECT * FROM products WHERE 1=1";
     const binds = [];
     if (search) { sql += " AND (LOWER(name) LIKE LOWER(?) OR sku LIKE ?)"; binds.push(`%${search}%`, `%${search}%`); }
-    if (cat)    { sql += " AND LOWER(category)=LOWER(?)"; binds.push(cat); }
+    if (cat) { sql += " AND LOWER(category)=LOWER(?)"; binds.push(cat); }
     if (active !== "") { sql += " AND active=?"; binds.push(active === "true" || active === "1" ? 1 : 0); }
     sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
     binds.push(limit, offset);
@@ -977,7 +1042,7 @@ async function handleAdmin(request, path, url, env) {
   }
 
   if (method === "POST" && path === "/api/admin/products") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await insertProduct(env, body);
     if (!result.ok) return json({ error: result.error }, 400);
     await auditLog(env, auth.user.id, "product_created", "products", result.id, { name: body?.name });
@@ -987,23 +1052,23 @@ async function handleAdmin(request, path, url, env) {
 
   // ── PATCH: stock-only update (FIX for price null bug) ─────────
   if (method === "PATCH" && /^\/api\/admin\/products\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     if (!id) return json({ error: "Invalid product id" }, 400);
     const updates = [];
-    const binds  = [];
+    const binds = [];
     if (body?.stock !== undefined) { updates.push("stock=?"); binds.push(Math.max(0, toInt(body.stock, 0))); }
-    if (body?.active !== undefined){ updates.push("active=?"); binds.push(body.active ? 1 : 0); }
-    if (body?.featured !== undefined)   { updates.push("featured=?");    binds.push(body.featured ? 1 : 0); }
-    if (body?.is_new !== undefined)     { updates.push("is_new=?");      binds.push(body.is_new ? 1 : 0); }
-    if (body?.is_trending !== undefined){ updates.push("is_trending=?"); binds.push(body.is_trending ? 1 : 0); }
+    if (body?.active !== undefined) { updates.push("active=?"); binds.push(body.active ? 1 : 0); }
+    if (body?.featured !== undefined) { updates.push("featured=?"); binds.push(body.featured ? 1 : 0); }
+    if (body?.is_new !== undefined) { updates.push("is_new=?"); binds.push(body.is_new ? 1 : 0); }
+    if (body?.is_trending !== undefined) { updates.push("is_trending=?"); binds.push(body.is_trending ? 1 : 0); }
     if (!updates.length) return json({ error: "No valid fields to update" }, 400);
     // Log inventory change if stock changed
     if (body?.stock !== undefined) {
       const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(id).first();
       if (prod) {
         const newStock = Math.max(0, toInt(body.stock, 0));
-        const diff     = newStock - (prod.stock || 0);
+        const diff = newStock - (prod.stock || 0);
         await env.DB.prepare(
           "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, admin_id, created_at) VALUES (?,?,'adjustment',?,?,?,?,?,?)"
         ).bind(prod.id, prod.name, prod.stock || 0, diff, newStock, String(body.reason || "Admin adjustment"), auth.user.id, nowIso()).run();
@@ -1018,7 +1083,7 @@ async function handleAdmin(request, path, url, env) {
   }
 
   if (method === "PUT" && /^\/api\/admin\/products\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     if (!id) return json({ error: "Invalid product id" }, 400);
     // Get existing product for fallback (prevents price null bug)
@@ -1071,9 +1136,9 @@ async function handleAdmin(request, path, url, env) {
   if (method === "DELETE" && /^\/api\/admin\/products\/\d+\/images\/\d+$/.test(path)) {
     const parts = path.split("/");
     const imgId = toInt(parts[6], 0);
-    const img   = await env.DB.prepare("SELECT r2_key FROM product_images WHERE id=?").bind(imgId).first();
+    const img = await env.DB.prepare("SELECT r2_key FROM product_images WHERE id=?").bind(imgId).first();
     if (img?.r2_key) {
-      try { await env.MEDIA.delete(img.r2_key); } catch {}
+      try { await env.MEDIA.delete(img.r2_key); } catch { }
     }
     await env.DB.prepare("DELETE FROM product_images WHERE id=?").bind(imgId).run();
     return json({ ok: true });
@@ -1089,7 +1154,7 @@ async function handleAdmin(request, path, url, env) {
 
   // ── BULK PRODUCT IMPORT ───────────────────────────────────────
   if (method === "POST" && path === "/api/admin/products/bulk") {
-    const body     = await readJson(request);
+    const body = await readJson(request);
     if (!body || !Array.isArray(body.products)) return json({ error: "products array required" }, 400);
     const products = body.products.slice(0, 500);
     let success = 0, failed = 0;
@@ -1102,7 +1167,7 @@ async function handleAdmin(request, path, url, env) {
     try {
       await env.DB.prepare("INSERT INTO import_logs (admin_id, filename, total, success, failed, errors_json, created_at) VALUES (?,?,?,?,?,?,?)")
         .bind(auth.user.id, String(body.filename || "bulk"), products.length, success, failed, JSON.stringify(errors.slice(0, 50)), nowIso()).run();
-    } catch {}
+    } catch { }
     await auditLog(env, auth.user.id, "bulk_import", "products", null, { total: products.length, success, failed });
     return json({ ok: true, total: products.length, success, failed, errors: errors.slice(0, 20) }, 201);
   }
@@ -1113,20 +1178,20 @@ async function handleAdmin(request, path, url, env) {
 
   // ── ORDERS ────────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/orders") {
-    const status   = url.searchParams.get("status")   || "";
-    const search   = url.searchParams.get("q")        || "";
-    const dateFrom = url.searchParams.get("from")     || "";
-    const dateTo   = url.searchParams.get("to")       || "";
-    const payment  = url.searchParams.get("payment")  || "";
-    const limit    = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
-    const offset   = toInt(url.searchParams.get("offset"), 0);
+    const status = url.searchParams.get("status") || "";
+    const search = url.searchParams.get("q") || "";
+    const dateFrom = url.searchParams.get("from") || "";
+    const dateTo = url.searchParams.get("to") || "";
+    const payment = url.searchParams.get("payment") || "";
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
+    const offset = toInt(url.searchParams.get("offset"), 0);
     let sql = "SELECT * FROM orders WHERE 1=1";
     const binds = [];
-    if (status)   { sql += " AND order_status=?";   binds.push(status); }
-    if (payment)  { sql += " AND payment_status=?"; binds.push(payment); }
-    if (search)   { sql += " AND (customer_name LIKE ? OR customer_email LIKE ? OR order_number LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
-    if (dateFrom) { sql += " AND created_at>=?";    binds.push(dateFrom); }
-    if (dateTo)   { sql += " AND created_at<=?";    binds.push(`${dateTo}T23:59:59Z`); }
+    if (status) { sql += " AND order_status=?"; binds.push(status); }
+    if (payment) { sql += " AND payment_status=?"; binds.push(payment); }
+    if (search) { sql += " AND (customer_name LIKE ? OR customer_email LIKE ? OR order_number LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
+    if (dateFrom) { sql += " AND created_at>=?"; binds.push(dateFrom); }
+    if (dateTo) { sql += " AND created_at<=?"; binds.push(`${dateTo}T23:59:59Z`); }
     sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
     binds.push(limit, offset);
     const { results } = await env.DB.prepare(sql).bind(...binds).all();
@@ -1135,7 +1200,7 @@ async function handleAdmin(request, path, url, env) {
   }
 
   if (method === "GET" && /^\/api\/admin\/orders\/(\d+)$/.test(path)) {
-    const id    = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
     if (!order) return json({ error: "Order not found" }, 404);
     const { results: items } = await env.DB.prepare("SELECT * FROM order_items WHERE order_id=? ORDER BY id").bind(id).all();
@@ -1144,21 +1209,28 @@ async function handleAdmin(request, path, url, env) {
   }
 
   if (method === "PUT" && /^\/api\/admin\/orders\/(\d+)(?:\/status)?$/.test(path)) {
-    const id   = toInt(path.match(/^\/api\/admin\/orders\/(\d+)/)[1], 0);
+    const id = toInt(path.match(/^\/api\/admin\/orders\/(\d+)/)[1], 0);
     const body = await readJson(request);
     const status = String(body?.status || "").trim();
-    const validStatuses = ["placed","confirmed","processing","packed","shipped","out_for_delivery","delivered","cancelled","returned"];
+    const validStatuses = ["placed", "confirmed", "processing", "packed", "shipped", "out_for_delivery", "delivered", "cancelled", "returned"];
     if (!validStatuses.includes(status)) return json({ error: "Invalid status" }, 400);
     const fields = ["order_status=?", "updated_at=?"];
-    const binds  = [status, nowIso()];
-    
-    // Fallback to tracking_number if trackingNumber is not passed
+    const binds = [status, nowIso()];
+
     const trackNo = body?.trackingNumber || body?.tracking_number;
     if (trackNo) { fields.push("tracking_number=?"); binds.push(trackNo); }
-    if (body?.trackingUrl)    { fields.push("tracking_url=?");    binds.push(body.trackingUrl); }
-    if (body?.adminNotes)     { fields.push("admin_notes=?");     binds.push(body.adminNotes); }
+    if (body?.trackingUrl) { fields.push("tracking_url=?"); binds.push(body.trackingUrl); }
+    if (body?.adminNotes) { fields.push("admin_notes=?"); binds.push(body.adminNotes); }
+    if (body?.payment_status) {
+      fields.push("payment_status=?");
+      binds.push(body.payment_status);
+      if (body.payment_status === "paid") {
+        fields.push("paid_at=?");
+        binds.push(nowIso());
+      }
+    }
     if (status === "cancelled") { fields.push("cancelled_at=?"); binds.push(nowIso()); }
-    if (status === "shipped")   { fields.push("shipped_at=?");   binds.push(nowIso()); }
+    if (status === "shipped") { fields.push("shipped_at=?"); binds.push(nowIso()); }
     if (status === "delivered") { fields.push("delivered_at=?"); binds.push(nowIso()); }
     binds.push(id);
     await env.DB.prepare(`UPDATE orders SET ${fields.join(",")} WHERE id=?`).bind(...binds).run();
@@ -1166,7 +1238,10 @@ async function handleAdmin(request, path, url, env) {
 
     // Send email notification to customer
     const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
-    const scriptUrl = await getSetting(env, "otp_script_url", "");
+    let scriptUrl = await getSetting(env, "otp_script_url", "");
+    if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
+      scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+    }
     const siteName = await getSetting(env, "site_name", "HeelsUp");
     if (order && scriptUrl && order.customer_email) {
       let emailMessage = `Your order #${order.order_number} has been updated.\nNew Status: ${status.toUpperCase()}\n`;
@@ -1182,7 +1257,7 @@ async function handleAdmin(request, path, url, env) {
           message: emailMessage,
           html: `<div style="font-family:sans-serif;padding:20px;"><h2>Order Status Update</h2><p>Your order <b>#${order.order_number}</b> has been updated to <strong style="color:#c9a96e">${status.toUpperCase()}</strong>.</p>${trackNo ? `<p>Tracking Number: ${trackNo}</p>` : ''}<p>Thank you for shopping with us!</p></div>`
         })
-      }).catch(() => {});
+      }).catch(() => { });
     }
 
     return json({ ok: true });
@@ -1193,17 +1268,25 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     if (!body) return json({ error: "Invalid JSON" }, 400);
     const created = await createOrderRecord(env, {
-      userId:       body.userId || null,
-      customer:     body.customer,
-      items:        body.items,
-      deliveryMethod: body.deliveryMethod || "standard",
-      notes:        body.notes || "",
-      paymentMethod: body.paymentMethod || "Cash",
-      paymentStatus: body.paymentStatus || "paid",
-      orderStatus:   body.orderStatus   || "confirmed",
-      couponCode:    body.couponCode    || null,
-      discountAmount: Number(body.discountAmount || 0),
-      source:        "pos"
+      userId: body.userId || body.customer_id || null,
+      customer: body.customer || {
+        name: body.customer_name,
+        email: body.customer_email,
+        phone: body.customer_phone,
+        addressLine1: body.shipping_address,
+        city: body.city,
+        state: body.state,
+        pincode: body.pincode
+      },
+      items: body.items,
+      deliveryMethod: body.deliveryMethod || "pos",
+      notes: body.notes || "",
+      paymentMethod: body.paymentMethod || body.payment_method || "pos_cash",
+      paymentStatus: body.paymentStatus || body.payment_status || "paid",
+      orderStatus: body.orderStatus || body.order_status || "delivered",
+      couponCode: body.couponCode || null,
+      discountAmount: Number(body.discountAmount || body.discount || 0),
+      source: "pos"
     });
     if (!created.ok) return json({ error: created.error }, 400);
     if (body.paymentStatus === "paid" || body.payment_status === "paid") {
@@ -1215,14 +1298,14 @@ async function handleAdmin(request, path, url, env) {
 
   // ── CUSTOMERS ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/customers") {
-    const search = url.searchParams.get("q")    || "";
-    const role   = url.searchParams.get("role") || "";
-    const limit  = Math.min(toInt(url.searchParams.get("limit"), 200), 500);
+    const search = url.searchParams.get("q") || "";
+    const role = url.searchParams.get("role") || "";
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 200), 500);
     const offset = toInt(url.searchParams.get("offset"), 0);
     let sql = "SELECT id, first_name, last_name, email, phone, role, email_verified, is_blocked, last_login_at, total_orders, total_spent, created_at FROM users WHERE 1=1";
     const binds = [];
     if (search) { sql += " AND (email LIKE ? OR first_name LIKE ? OR phone LIKE ?)"; binds.push(`%${search}%`, `%${search}%`, `%${search}%`); }
-    if (role)   { sql += " AND role=?"; binds.push(role); }
+    if (role) { sql += " AND role=?"; binds.push(role); }
     sql += " ORDER BY id DESC LIMIT ? OFFSET ?";
     binds.push(limit, offset);
     const { results } = await env.DB.prepare(sql).bind(...binds).all();
@@ -1231,7 +1314,7 @@ async function handleAdmin(request, path, url, env) {
   }
 
   if (method === "GET" && /^\/api\/admin\/customers\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const user = await env.DB.prepare("SELECT id, first_name, last_name, email, phone, role, email_verified, is_blocked, last_login_at, total_orders, total_spent, created_at FROM users WHERE id=?").bind(id).first();
     if (!user) return json({ error: "Customer not found" }, 404);
     const { results: orders } = await env.DB.prepare("SELECT id, order_number, order_status, payment_status, total_amount, created_at FROM orders WHERE user_id=? ORDER BY id DESC LIMIT 20").bind(id).all();
@@ -1240,10 +1323,10 @@ async function handleAdmin(request, path, url, env) {
 
   if (method === "PUT" && /^\/api\/admin\/customers\/(\d+)\/role$/.test(path)) {
     if (!isAdmin) return json({ error: "Only admin can change roles" }, 403);
-    const id   = toInt(path.split("/")[4], 0);
+    const id = toInt(path.split("/")[4], 0);
     const body = await readJson(request);
     const role = String(body?.role || "").trim();
-    if (!["customer","admin","staff"].includes(role)) return json({ error: "Invalid role" }, 400);
+    if (!["customer", "admin", "staff"].includes(role)) return json({ error: "Invalid role" }, 400);
     await env.DB.prepare("UPDATE users SET role=?, updated_at=? WHERE id=?").bind(role, nowIso(), id).run();
     await auditLog(env, auth.user.id, "user_role_changed", "users", id, { role });
     return json({ ok: true });
@@ -1251,7 +1334,7 @@ async function handleAdmin(request, path, url, env) {
 
   if (method === "PUT" && /^\/api\/admin\/customers\/(\d+)\/block$/.test(path)) {
     if (!isAdmin) return json({ error: "Only admin can block users" }, 403);
-    const id   = toInt(path.split("/")[4], 0);
+    const id = toInt(path.split("/")[4], 0);
     const body = await readJson(request);
     const block = body?.blocked ? 1 : 0;
     await env.DB.prepare("UPDATE users SET is_blocked=?, updated_at=? WHERE id=?").bind(block, nowIso(), id).run();
@@ -1275,8 +1358,8 @@ async function handleAdmin(request, path, url, env) {
     const existing = await env.DB.prepare("SELECT id FROM users WHERE email=?").bind(email).first();
     if (existing) return json({ ok: true, id: existing.id, existing: true });
     const tempPass = Math.random().toString(36).slice(-8).toUpperCase();
-    const hash     = await hashPassword(tempPass);
-    const result   = await env.DB.prepare(
+    const hash = await hashPassword(tempPass);
+    const result = await env.DB.prepare(
       "INSERT INTO users (first_name, last_name, email, phone, password_hash, role, staff_permissions, email_verified, created_at, updated_at) VALUES (?,?,?,?,?,'customer','[]',1,?,?)"
     ).bind(String(body.first_name), String(body.last_name || ""), email, String(body.phone || ""), hash, nowIso(), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id, temp_password: tempPass }, 201);
@@ -1297,7 +1380,7 @@ async function handleAdmin(request, path, url, env) {
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/coupons\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE coupons SET code=?, type=?, value=?, min_order=?, max_discount=?, max_uses=?, active=?, description=?, expires_at=? WHERE id=?"
@@ -1331,7 +1414,7 @@ async function handleAdmin(request, path, url, env) {
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/categories\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE categories SET name=?, slug=?, description=?, image_url=?, r2_key=?, parent_id=?, active=?, sort_order=?, updated_at=? WHERE id=?"
@@ -1353,14 +1436,14 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     const name = String(body?.name || "").trim();
     if (!name) return json({ error: "Collection name required" }, 400);
-    const slug   = String(body?.slug || slugify(name));
+    const slug = String(body?.slug || slugify(name));
     const result = await env.DB.prepare(
       "INSERT INTO collections (name, slug, description, image_url, r2_key, active, featured, sort_order, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)"
     ).bind(name, slug, String(body?.description || ""), String(body?.image_url || ""), String(body?.r2_key || ""), body?.active !== false ? 1 : 0, body?.featured ? 1 : 0, toInt(body?.sort_order, 0), nowIso(), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/collections\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE collections SET name=?, slug=?, description=?, image_url=?, r2_key=?, active=?, featured=?, sort_order=?, updated_at=? WHERE id=?"
@@ -1379,14 +1462,14 @@ async function handleAdmin(request, path, url, env) {
     return json({ banners: results || [] });
   }
   if (method === "POST" && path === "/api/admin/banners") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await env.DB.prepare(
       "INSERT INTO banners (title, subtitle, image_url, link, active, sort_order, created_at) VALUES (?,?,?,?,?,?,?)"
     ).bind(String(body?.title || ""), String(body?.subtitle || ""), String(body?.image_url || ""), String(body?.link || ""), body?.active !== false ? 1 : 0, toInt(body?.sort_order, 0), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/banners\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE banners SET title=?, subtitle=?, image_url=?, link=?, active=?, sort_order=? WHERE id=?"
@@ -1402,7 +1485,7 @@ async function handleAdmin(request, path, url, env) {
   // ── BLOG POSTS ────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/blogs") {
     const status = url.searchParams.get("status") || "";
-    const search = url.searchParams.get("q")      || "";
+    const search = url.searchParams.get("q") || "";
     let sql = "SELECT * FROM blog_posts WHERE 1=1";
     const binds = [];
     if (status) { sql += " AND status=?"; binds.push(status); }
@@ -1412,10 +1495,10 @@ async function handleAdmin(request, path, url, env) {
     return json({ posts: results || [] });
   }
   if (method === "POST" && path === "/api/admin/blogs") {
-    const body  = await readJson(request);
+    const body = await readJson(request);
     const title = String(body?.title || "").trim();
     if (!title) return json({ error: "Title required" }, 400);
-    const slug   = String(body?.slug || slugify(title));
+    const slug = String(body?.slug || slugify(title));
     const status = String(body?.status || "draft");
     const result = await env.DB.prepare(
       "INSERT INTO blog_posts (title, slug, excerpt, content, image_url, r2_key, category, tags, author_id, status, featured, meta_title, meta_description, published_at, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
@@ -1423,8 +1506,8 @@ async function handleAdmin(request, path, url, env) {
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/blogs\/(\d+)$/.test(path)) {
-    const id    = toInt(path.split("/").pop(), 0);
-    const body  = await readJson(request);
+    const id = toInt(path.split("/").pop(), 0);
+    const body = await readJson(request);
     const status = String(body?.status || "draft");
     const existing = await env.DB.prepare("SELECT published_at FROM blog_posts WHERE id=?").bind(id).first();
     const publishedAt = status === "published" ? (existing?.published_at || nowIso()) : null;
@@ -1445,17 +1528,17 @@ async function handleAdmin(request, path, url, env) {
     return json({ pages: results || [] });
   }
   if (method === "POST" && path === "/api/admin/pages") {
-    const body  = await readJson(request);
+    const body = await readJson(request);
     const title = String(body?.title || "").trim();
     if (!title) return json({ error: "Title required" }, 400);
-    const slug   = String(body?.slug || slugify(title));
+    const slug = String(body?.slug || slugify(title));
     const result = await env.DB.prepare(
       "INSERT INTO cms_pages (title, slug, content, template, active, meta_title, meta_description, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)"
     ).bind(title, slug, String(body?.content || ""), String(body?.template || "default"), body?.active !== false ? 1 : 0, String(body?.meta_title || title), String(body?.meta_description || ""), nowIso(), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/pages\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE cms_pages SET title=?, slug=?, content=?, template=?, active=?, meta_title=?, meta_description=?, updated_at=? WHERE id=?"
@@ -1474,14 +1557,14 @@ async function handleAdmin(request, path, url, env) {
     return json({ taxes: results || [] });
   }
   if (method === "POST" && path === "/api/admin/taxes") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await env.DB.prepare(
       "INSERT INTO tax_rules (name, type, rate, country, state, category, active, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?)"
     ).bind(String(body?.name || ""), String(body?.type || "percentage"), Number(body?.rate || 0), String(body?.country || "IN"), String(body?.state || ""), String(body?.category || ""), body?.active !== false ? 1 : 0, nowIso(), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/taxes\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE tax_rules SET name=?, type=?, rate=?, country=?, state=?, category=?, active=?, updated_at=? WHERE id=?"
@@ -1501,14 +1584,14 @@ async function handleAdmin(request, path, url, env) {
     return json({ zones: zones || [], rates: rates || [] });
   }
   if (method === "POST" && path === "/api/admin/shipping/zones") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await env.DB.prepare(
       "INSERT INTO shipping_zones (name, countries, states, active, sort_order, created_at, updated_at) VALUES (?,?,?,?,?,?,?)"
     ).bind(String(body?.name || ""), String(body?.countries || "IN"), String(body?.states || ""), body?.active !== false ? 1 : 0, toInt(body?.sort_order, 0), nowIso(), nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/shipping\/zones\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE shipping_zones SET name=?, countries=?, states=?, active=?, sort_order=?, updated_at=? WHERE id=?"
@@ -1516,14 +1599,14 @@ async function handleAdmin(request, path, url, env) {
     return json({ ok: true });
   }
   if (method === "POST" && path === "/api/admin/shipping/rates") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await env.DB.prepare(
       "INSERT INTO shipping_rates (zone_id, name, type, rate, min_weight, max_weight, min_order, max_order, free_above, estimated_days, active, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)"
     ).bind(toInt(body?.zone_id, 1), String(body?.name || ""), String(body?.type || "flat"), Number(body?.rate || 0), Number(body?.min_weight || 0), body?.max_weight || null, Number(body?.min_order || 0), body?.max_order || null, body?.free_above || null, String(body?.estimated_days || ""), body?.active !== false ? 1 : 0, nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/shipping\/rates\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE shipping_rates SET zone_id=?, name=?, type=?, rate=?, min_order=?, free_above=?, estimated_days=?, active=? WHERE id=?"
@@ -1533,7 +1616,7 @@ async function handleAdmin(request, path, url, env) {
   if (method === "DELETE" && /^\/api\/admin\/shipping\/(zones|rates)\/(\d+)$/.test(path)) {
     const parts = path.split("/");
     const table = parts[4] === "zones" ? "shipping_zones" : "shipping_rates";
-    const id    = toInt(parts[5], 0);
+    const id = toInt(parts[5], 0);
     await env.DB.prepare(`DELETE FROM ${table} WHERE id=?`).bind(id).run();
     return json({ ok: true });
   }
@@ -1544,14 +1627,14 @@ async function handleAdmin(request, path, url, env) {
     return json({ methods: results || [] });
   }
   if (method === "POST" && path === "/api/admin/shipping/methods") {
-    const body   = await readJson(request);
+    const body = await readJson(request);
     const result = await env.DB.prepare(
       "INSERT INTO shipping_methods (name, courier, tracking_url_format, is_active, created_at) VALUES (?,?,?,?,?)"
     ).bind(String(body?.name || ""), String(body?.courier || ""), String(body?.tracking_url_format || ""), body?.is_active !== false ? 1 : 0, nowIso()).run();
     return json({ ok: true, id: result.meta?.last_row_id }, 201);
   }
   if (method === "PUT" && /^\/api\/admin\/shipping\/methods\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     await env.DB.prepare(
       "UPDATE shipping_methods SET name=?, courier=?, tracking_url_format=?, is_active=? WHERE id=?"
@@ -1583,7 +1666,7 @@ async function handleAdmin(request, path, url, env) {
 
   // ── NOTIFICATIONS ─────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/notifications") {
-    const limit  = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 50), 200);
     const unread = url.searchParams.get("unread") === "true";
     let sql = "SELECT * FROM notifications WHERE 1=1";
     if (unread) sql += " AND read=0";
@@ -1609,23 +1692,23 @@ async function handleAdmin(request, path, url, env) {
 
   // ── INVENTORY ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/inventory") {
-    const search   = url.searchParams.get("q")       || "";
-    const category = url.searchParams.get("category")|| "";
-    const stock    = url.searchParams.get("stock")   || "";
+    const search = url.searchParams.get("q") || "";
+    const category = url.searchParams.get("category") || "";
+    const stock = url.searchParams.get("stock") || "";
     let sql = "SELECT id, name, sku, category, price, stock, active, image_url FROM products WHERE 1=1";
     const binds = [];
-    if (search)   { sql += " AND (LOWER(name) LIKE LOWER(?) OR sku LIKE ?)"; binds.push(`%${search}%`, `%${search}%`); }
+    if (search) { sql += " AND (LOWER(name) LIKE LOWER(?) OR sku LIKE ?)"; binds.push(`%${search}%`, `%${search}%`); }
     if (category) { sql += " AND LOWER(category)=LOWER(?)"; binds.push(category); }
-    if (stock === "low")  { sql += " AND stock>0 AND stock<=10"; }
-    if (stock === "out")  { sql += " AND stock=0"; }
-    if (stock === "in")   { sql += " AND stock>10"; }
+    if (stock === "low") { sql += " AND stock>0 AND stock<=10"; }
+    if (stock === "out") { sql += " AND stock=0"; }
+    if (stock === "in") { sql += " AND stock>10"; }
     sql += " ORDER BY stock ASC, name ASC LIMIT 500";
     const { results } = await env.DB.prepare(sql).bind(...binds).all();
     return json({ products: results || [] });
   }
   if (method === "GET" && path === "/api/admin/inventory/log") {
     const productId = url.searchParams.get("product_id") || "";
-    const limit     = Math.min(toInt(url.searchParams.get("limit"), 100), 500);
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 100), 500);
     let sql = "SELECT * FROM inventory_log WHERE 1=1";
     const binds = [];
     if (productId) { sql += " AND product_id=?"; binds.push(toInt(productId, 0)); }
@@ -1635,11 +1718,11 @@ async function handleAdmin(request, path, url, env) {
     return json({ logs: results || [] });
   }
   if (method === "PUT" && path === "/api/admin/inventory/bulk") {
-    const body    = await readJson(request);
+    const body = await readJson(request);
     if (!Array.isArray(body?.updates)) return json({ error: "updates array required" }, 400);
     let updated = 0;
     for (const u of body.updates) {
-      const id    = toInt(u.id, 0);
+      const id = toInt(u.id, 0);
       const stock = Math.max(0, toInt(u.stock, 0));
       if (!id) continue;
       const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(id).first();
@@ -1666,10 +1749,10 @@ async function handleAdmin(request, path, url, env) {
     return json({ reviews: results || [] });
   }
   if (method === "PUT" && /^\/api\/admin\/reviews\/(\d+)$/.test(path)) {
-    const id     = toInt(path.split("/").pop(), 0);
-    const body   = await readJson(request);
+    const id = toInt(path.split("/").pop(), 0);
+    const body = await readJson(request);
     const status = String(body?.status || "").trim();
-    if (!["approved","rejected","pending"].includes(status)) return json({ error: "status must be approved, rejected or pending" }, 400);
+    if (!["approved", "rejected", "pending"].includes(status)) return json({ error: "status must be approved, rejected or pending" }, 400);
     await env.DB.prepare("UPDATE product_reviews SET status=? WHERE id=?").bind(status, id).run();
     if (status === "approved") {
       const rev = await env.DB.prepare("SELECT product_id FROM product_reviews WHERE id=?").bind(id).first();
@@ -1702,10 +1785,10 @@ async function handleAdmin(request, path, url, env) {
     return json({ returns: results || [] });
   }
   if (method === "PUT" && /^\/api\/admin\/returns\/(\d+)$/.test(path)) {
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     const status = String(body?.status || "").trim();
-    if (!["pending","approved","rejected","completed"].includes(status)) return json({ error: "Invalid status" }, 400);
+    if (!["pending", "approved", "rejected", "completed"].includes(status)) return json({ error: "Invalid status" }, 400);
     await env.DB.prepare(
       "UPDATE return_requests SET status=?, refund_amount=?, admin_notes=?, updated_at=? WHERE id=?"
     ).bind(status, body?.refund_amount || null, String(body?.admin_notes || ""), nowIso(), id).run();
@@ -1722,7 +1805,7 @@ async function handleAdmin(request, path, url, env) {
   }
   if (method === "POST" && path === "/api/admin/staff") {
     if (!isAdmin) return json({ error: "Only admin can add staff" }, 403);
-    const body  = await readJson(request);
+    const body = await readJson(request);
     if (!body?.email || !body?.first_name) return json({ error: "email and first_name required" }, 400);
     const email = normalizeEmail(body.email);
     const existing = await env.DB.prepare("SELECT id FROM users WHERE email=?").bind(email).first();
@@ -1732,8 +1815,8 @@ async function handleAdmin(request, path, url, env) {
       return json({ ok: true, id: existing.id, message: "User upgraded to staff" });
     }
     const tempPass = Math.random().toString(36).slice(-8).toUpperCase();
-    const hash     = await hashPassword(tempPass);
-    const result   = await env.DB.prepare(
+    const hash = await hashPassword(tempPass);
+    const result = await env.DB.prepare(
       "INSERT INTO users (first_name, last_name, email, phone, password_hash, role, staff_permissions, email_verified, created_at, updated_at) VALUES (?,?,?,?,?,'staff',?,1,?,?)"
     ).bind(String(body.first_name), String(body.last_name || ""), email, String(body.phone || ""), hash, JSON.stringify(body.permissions || []), nowIso(), nowIso()).run();
     await auditLog(env, auth.user.id, "staff_created", "users", result.meta?.last_row_id, { email });
@@ -1741,7 +1824,7 @@ async function handleAdmin(request, path, url, env) {
   }
   if (method === "PUT" && /^\/api\/admin\/staff\/(\d+)$/.test(path)) {
     if (!isAdmin) return json({ error: "Only admin can edit staff" }, 403);
-    const id   = toInt(path.split("/").pop(), 0);
+    const id = toInt(path.split("/").pop(), 0);
     const body = await readJson(request);
     if (body?.permissions !== undefined) await env.DB.prepare("UPDATE users SET staff_permissions=?, updated_at=? WHERE id=?").bind(JSON.stringify(body.permissions), nowIso(), id).run();
     if (body?.role) await env.DB.prepare("UPDATE users SET role=?, updated_at=? WHERE id=?").bind(body.role, nowIso(), id).run();
@@ -1762,7 +1845,7 @@ async function handleAdmin(request, path, url, env) {
 
   // ── OFFLINE SALES (POS) ───────────────────────────────────────
   if (method === "GET" && path === "/api/admin/offline-sales") {
-    const from  = url.searchParams.get("from") || "";
+    const from = url.searchParams.get("from") || "";
     let sql = "SELECT * FROM offline_sales WHERE 1=1";
     const binds = [];
     if (from) { sql += " AND created_at>=?"; binds.push(from); }
@@ -1774,9 +1857,9 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     if (!body || !Array.isArray(body.items) || !body.items.length) return json({ error: "items required" }, 400);
     const saleNumber = `OFF-${Date.now()}`;
-    const subtotal   = Number(body.subtotal || body.items.reduce((s, i) => s + (i.price * i.qty), 0));
-    const discount   = Number(body.discount || 0);
-    const total      = subtotal - discount;
+    const subtotal = Number(body.subtotal || body.items.reduce((s, i) => s + (i.price * i.qty), 0));
+    const discount = Number(body.discount || 0);
+    const total = subtotal - discount;
     await env.DB.prepare(
       "INSERT INTO offline_sales (sale_number, customer_name, customer_phone, items_json, subtotal, discount, total, payment_method, notes, created_by, created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)"
     ).bind(saleNumber, String(body.customer_name || "Walk-in"), String(body.customer_phone || ""), JSON.stringify(body.items), subtotal, discount, total, String(body.payment_method || "Cash"), String(body.notes || ""), auth.user.id, nowIso()).run();
@@ -1822,7 +1905,7 @@ async function handleAdmin(request, path, url, env) {
   if (method === "GET" && path === "/api/admin/reports/sales") return reportSales(url, env);
   if (method === "GET" && path === "/api/admin/reports/inventory") return reportInventory(env);
   if (method === "GET" && path === "/api/admin/reports/customers") return reportCustomers(url, env);
-  if (method === "GET" && path === "/api/admin/reports/coupons")   return reportCoupons(env);
+  if (method === "GET" && path === "/api/admin/reports/coupons") return reportCoupons(env);
 
   // ── AUDIT LOG ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/audit-log") {
@@ -1860,11 +1943,11 @@ async function handleR2Upload(request, env, adminId) {
       return json({ error: "multipart/form-data required" }, 400);
 
     const formData = await request.formData();
-    const allowed  = ["jpg","jpeg","png","webp","gif","avif"];
-    const maxSize  = 5 * 1024 * 1024; // 5MB per file
-    const folder   = String(formData.get("folder") || "products");
-    const results  = [];
-    const errors   = [];
+    const allowed = ["jpg", "jpeg", "png", "webp", "gif", "avif"];
+    const maxSize = 5 * 1024 * 1024; // 5MB per file
+    const folder = String(formData.get("folder") || "products");
+    const results = [];
+    const errors = [];
 
     // Support both single 'file' and multiple 'files[]'
     const files = [];
@@ -1899,7 +1982,7 @@ async function handleR2Upload(request, env, adminId) {
       const key = `${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
       await env.MEDIA.put(key, buffer, {
         httpMetadata: {
-          contentType:  file.type || `image/${ext}`,
+          contentType: file.type || `image/${ext}`,
           cacheControl: "public, max-age=31536000"
         },
         customMetadata: { uploadedBy: String(adminId), originalName: file.name }
@@ -1916,15 +1999,15 @@ async function handleR2Upload(request, env, adminId) {
 
 function isValidImageMagicBytes(bytes, ext) {
   // JPEG: FF D8 FF
-  if (["jpg","jpeg"].includes(ext) && bytes[0]===0xFF && bytes[1]===0xD8 && bytes[2]===0xFF) return true;
+  if (["jpg", "jpeg"].includes(ext) && bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) return true;
   // PNG:  89 50 4E 47
-  if (ext==="png" && bytes[0]===0x89 && bytes[1]===0x50 && bytes[2]===0x4E && bytes[3]===0x47) return true;
+  if (ext === "png" && bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) return true;
   // GIF:  47 49 46
-  if (ext==="gif" && bytes[0]===0x47 && bytes[1]===0x49 && bytes[2]===0x46) return true;
+  if (ext === "gif" && bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) return true;
   // WEBP: 52 49 46 46 ... 57 45 42 50
-  if (ext==="webp" && bytes[0]===0x52 && bytes[1]===0x49 && bytes[2]===0x46 && bytes[3]===0x46) return true;
+  if (ext === "webp" && bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) return true;
   // AVIF: flexible — just allow if ext is avif (container-based)
-  if (ext==="avif") return true;
+  if (ext === "avif") return true;
   return false;
 }
 
@@ -1932,67 +2015,67 @@ function isValidImageMagicBytes(bytes, ext) {
 // ADMIN DASHBOARD
 // ════════════════════════════════════════════════════════════════
 async function adminDashboard(env) {
-  const today       = new Date().toISOString().split("T")[0];
-  const monthStart  = `${today.slice(0,7)}-01`;
-  const yesterday   = new Date(Date.now()-86400000).toISOString().split("T")[0];
-  const last30Days  = new Date(Date.now()-30*86400000).toISOString().split("T")[0];
+  const today = new Date().toISOString().split("T")[0];
+  const monthStart = `${today.slice(0, 7)}-01`;
+  const yesterday = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+  const last30Days = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
 
   const [
     totalProducts, totalOrders, totalRevenue, totalCustomers,
     pendingOrders, pendingReturns, todayRev, monthData,
     yesterdayRev, pendingReviews, totalNewsletter
   ] = await Promise.all([
-    env.DB.prepare("SELECT COUNT(*) as c FROM products WHERE active=1").first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM orders").first(),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid'").first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM users WHERE role='customer'").first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_status IN ('placed','confirmed','processing')").first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM return_requests WHERE status='pending'").first(),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(today).first(),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r, COUNT(*) as c FROM orders WHERE payment_status='paid' AND created_at>=?").bind(monthStart).first(),
-    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(yesterday).first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM product_reviews WHERE status='pending'").first(),
-    env.DB.prepare("SELECT COUNT(*) as c FROM newsletter_subscribers").first()
+    env.DB.prepare("SELECT COUNT(*) as c FROM products WHERE active=1").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM orders").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid'").first().catch(() => ({ r: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM users WHERE role='customer'").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_status IN ('placed','confirmed','processing')").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM return_requests WHERE status='pending'").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(today).first().catch(() => ({ r: 0 })),
+    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r, COUNT(*) as c FROM orders WHERE payment_status='paid' AND created_at>=?").bind(monthStart).first().catch(() => ({ r: 0, c: 0 })),
+    env.DB.prepare("SELECT COALESCE(SUM(total_amount),0) as r FROM orders WHERE payment_status='paid' AND date(created_at)=?").bind(yesterday).first().catch(() => ({ r: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM product_reviews WHERE status='pending'").first().catch(() => ({ c: 0 })),
+    env.DB.prepare("SELECT COUNT(*) as c FROM newsletter_subscribers").first().catch(() => ({ c: 0 }))
   ]);
 
   const { results: recentOrders } = await env.DB.prepare(
     "SELECT id, order_number, customer_name, customer_email, order_status, payment_status, total_amount, created_at FROM orders ORDER BY id DESC LIMIT 8"
-  ).all();
+  ).all().catch(() => ({ results: [] }));
   const { results: lowStock } = await env.DB.prepare(
     "SELECT id, name, category, stock, image_url FROM products WHERE active=1 AND stock<=5 ORDER BY stock ASC LIMIT 8"
-  ).all();
+  ).all().catch(() => ({ results: [] }));
   const { results: topProducts } = await env.DB.prepare(
     `SELECT p.id, p.name, p.category, p.image_url, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue
      FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id
      WHERE o.payment_status='paid' AND o.created_at>=?
      GROUP BY p.id ORDER BY total_sold DESC LIMIT 5`
-  ).bind(monthStart).all();
+  ).bind(monthStart).all().catch(() => ({ results: [] }));
   const { results: salesTrend } = await env.DB.prepare(
     `SELECT date(created_at) as date, COUNT(*) as orders, COALESCE(SUM(total_amount),0) as revenue
      FROM orders WHERE payment_status='paid' AND created_at>=?
      GROUP BY date(created_at) ORDER BY date ASC`
-  ).bind(last30Days).all();
+  ).bind(last30Days).all().catch(() => ({ results: [] }));
   const { results: unreadNotifications } = await env.DB.prepare(
     "SELECT * FROM notifications WHERE read=0 ORDER BY id DESC LIMIT 5"
-  ).all();
+  ).all().catch(() => ({ results: [] }));
 
   return json({
-    totalProducts:     totalProducts?.c    || 0,
-    totalOrders:       totalOrders?.c      || 0,
-    totalRevenue:      totalRevenue?.r     || 0,
-    totalCustomers:    totalCustomers?.c   || 0,
-    pendingOrders:     pendingOrders?.c    || 0,
-    pendingReturns:    pendingReturns?.c   || 0,
-    pendingReviews:    pendingReviews?.c   || 0,
-    totalNewsletter:   totalNewsletter?.c  || 0,
-    todayRevenue:      todayRev?.r         || 0,
-    yesterdayRevenue:  yesterdayRev?.r     || 0,
-    monthRevenue:      monthData?.r        || 0,
-    monthOrders:       monthData?.c        || 0,
-    recentOrders:      recentOrders        || [],
-    lowStock:          lowStock            || [],
-    topProducts:       topProducts         || [],
-    salesTrend:        salesTrend          || [],
+    totalProducts: totalProducts?.c || 0,
+    totalOrders: totalOrders?.c || 0,
+    totalRevenue: totalRevenue?.r || 0,
+    totalCustomers: totalCustomers?.c || 0,
+    pendingOrders: pendingOrders?.c || 0,
+    pendingReturns: pendingReturns?.c || 0,
+    pendingReviews: pendingReviews?.c || 0,
+    totalNewsletter: totalNewsletter?.c || 0,
+    todayRevenue: todayRev?.r || 0,
+    yesterdayRevenue: yesterdayRev?.r || 0,
+    monthRevenue: monthData?.r || 0,
+    monthOrders: monthData?.c || 0,
+    recentOrders: recentOrders || [],
+    lowStock: lowStock || [],
+    topProducts: topProducts || [],
+    salesTrend: salesTrend || [],
     unreadNotifications: unreadNotifications || []
   });
 }
@@ -2002,83 +2085,104 @@ async function adminDashboard(env) {
 // ════════════════════════════════════════════════════════════════
 async function adminAnalytics(url, env) {
   const period = url.searchParams.get("period") || "30";
-  const days = Math.min(parseInt(period) || 30, 365);
-  const since = new Date(Date.now() - days * 86400000).toISOString().split("T")[0];
+  const startParam = url.searchParams.get("start");
+  const endParam = url.searchParams.get("end");
 
-  const [
-    { results: revRes },
-    { results: dailyRev },
-    { results: ordStatus },
-    { results: topProd },
-    { results: catSales },
-    { results: funnelRes },
-    { results: payMethods },
-    { results: custStats }
-  ] = await Promise.all([
-    env.DB.prepare(`SELECT COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN order_status='delivered' THEN 1 ELSE 0 END) as delivered_orders, SUM(CASE WHEN order_status='placed' OR order_status='confirmed' THEN 1 ELSE 0 END) as pending_orders FROM orders WHERE created_at>=?`).bind(since).all(),
-    env.DB.prepare(`SELECT date(created_at) as date, SUM(total_amount) as revenue FROM orders WHERE payment_status='paid' AND created_at>=? GROUP BY date(created_at) ORDER BY date ASC`).bind(since).all(),
-    env.DB.prepare(`SELECT order_status, COUNT(*) as c FROM orders WHERE created_at>=? GROUP BY order_status`).bind(since).all(),
-    env.DB.prepare(`SELECT p.name, p.image_url, SUM(oi.line_total) as revenue, SUM(oi.quantity) as quantity FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND o.created_at>=? GROUP BY p.id, p.name, p.image_url ORDER BY revenue DESC LIMIT 10`).bind(since).all(),
-    env.DB.prepare(`SELECT p.category, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND o.created_at>=? GROUP BY p.category ORDER BY revenue DESC`).bind(since).all(),
-    env.DB.prepare(`SELECT event, COUNT(*) as c FROM analytics_events WHERE created_at>=? GROUP BY event`).bind(since).all(),
-    env.DB.prepare(`SELECT payment_method, COUNT(*) as c FROM orders WHERE created_at>=? GROUP BY payment_method`).bind(since).all(),
-    env.DB.prepare(`SELECT (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers, (SELECT COUNT(*) FROM users WHERE role='customer' AND created_at>=?) as new_customers`).bind(since).all()
-  ]);
+  let since, untilStr;
+  let sqlCond = "created_at >= ?";
+  let binds = [];
 
-  const summary = {
-    total_revenue: revRes[0]?.total_revenue || 0,
-    total_orders: revRes[0]?.total_orders || 0,
-    total_customers: custStats[0]?.total_customers || 0,
-    new_customers: custStats[0]?.new_customers || 0,
-    delivered_orders: revRes[0]?.delivered_orders || 0,
-    pending_orders: revRes[0]?.pending_orders || 0
-  };
+  if (period === "custom" && startParam && endParam) {
+    since = startParam;
+    untilStr = endParam + "T23:59:59.999Z";
+    sqlCond = "created_at >= ? AND created_at <= ?";
+    binds = [since, untilStr];
+  } else {
+    const days = Math.min(parseInt(period) || 30, 365);
+    since = new Date(Date.now() - days * 86400000).toISOString().split("T")[0];
+    binds = [since];
+  }
 
-  const order_status_counts = {};
-  ordStatus.forEach(r => order_status_counts[r.order_status || 'placed'] = r.c);
+  try {
+    const [
+      { results: revRes },
+      { results: dailyRev },
+      { results: ordStatus },
+      { results: topProd },
+      { results: catSales },
+      { results: funnelRes },
+      { results: payMethods },
+      { results: custStats }
+    ] = await Promise.all([
+      env.DB.prepare(`SELECT COUNT(*) as total_orders, SUM(total_amount) as total_revenue, SUM(CASE WHEN order_status='delivered' THEN 1 ELSE 0 END) as delivered_orders, SUM(CASE WHEN order_status='placed' OR order_status='confirmed' THEN 1 ELSE 0 END) as pending_orders FROM orders WHERE ${sqlCond}`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT date(created_at) as date, SUM(total_amount) as revenue FROM orders WHERE payment_status='paid' AND ${sqlCond} GROUP BY date(created_at) ORDER BY date ASC`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT order_status, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY order_status`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT p.name, p.image_url, SUM(oi.line_total) as revenue, SUM(oi.quantity) as quantity FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.id, p.name, p.image_url ORDER BY revenue DESC LIMIT 10`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT p.category, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.payment_status='paid' AND ${sqlCond.replace(/created_at/g, 'o.created_at')} GROUP BY p.category ORDER BY revenue DESC`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT event, COUNT(*) as c FROM analytics_events WHERE ${sqlCond} GROUP BY event`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT payment_method, COUNT(*) as c FROM orders WHERE ${sqlCond} GROUP BY payment_method`).bind(...binds).all().catch(e => ({ results: [] })),
+      env.DB.prepare(`SELECT (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers, (SELECT COUNT(*) FROM users WHERE role='customer' AND ${sqlCond}) as new_customers`).bind(...binds).all().catch(e => ({ results: [] }))
+    ]);
 
-  const funnel = {
-    visits: funnelRes.find(r => r.event === 'page_view')?.c || (summary.total_orders * 5) || 10,
-    product_views: funnelRes.find(r => r.event === 'product_view')?.c || (summary.total_orders * 3) || 5,
-    add_to_cart: funnelRes.find(r => r.event === 'add_to_cart')?.c || (summary.total_orders * 2) || 2,
-    checkout: funnelRes.find(r => r.event === 'checkout')?.c || Math.floor(summary.total_orders * 1.5) || 1,
-    orders: summary.total_orders
-  };
+    const summary = {
+      total_revenue: revRes[0]?.total_revenue || 0,
+      total_orders: revRes[0]?.total_orders || 0,
+      total_customers: custStats[0]?.total_customers || 0,
+      new_customers: custStats[0]?.new_customers || 0,
+      delivered_orders: revRes[0]?.delivered_orders || 0,
+      pending_orders: revRes[0]?.pending_orders || 0
+    };
 
-  const payment_methods = {};
-  payMethods.forEach(r => payment_methods[r.payment_method || 'cod'] = r.c);
+    const order_status_counts = {};
+    ordStatus.forEach(r => order_status_counts[r.order_status || 'placed'] = r.c);
 
-  return json({
-    summary,
-    daily_revenue: dailyRev || [],
-    order_status_counts,
-    top_products: topProd || [],
-    category_sales: catSales || [],
-    funnel,
-    payment_methods
-  });
+    const funnel = {
+      visits: funnelRes.find(r => r.event === 'page_view')?.c || 0,
+      product_views: funnelRes.find(r => r.event === 'product_view')?.c || 0,
+      add_to_cart: funnelRes.find(r => r.event === 'add_to_cart')?.c || 0,
+      checkout: funnelRes.find(r => r.event === 'checkout')?.c || 0,
+      orders: summary.total_orders
+    };
+
+    const payment_methods = {};
+    payMethods.forEach(r => payment_methods[r.payment_method || 'cod'] = r.c);
+
+    return json({
+      summary,
+      daily_revenue: dailyRev || [],
+      order_status_counts,
+      top_products: topProd || [],
+      category_sales: catSales || [],
+      funnel,
+      payment_methods
+    });
+  } catch (err) {
+    return json({ error: "Dashboard Error: " + err.message }, 500);
+  }
+
+
 }
 
 // ════════════════════════════════════════════════════════════════
 // REPORTS
 // ════════════════════════════════════════════════════════════════
 async function reportSales(url, env) {
-  const dateFrom = url.searchParams.get("from") || new Date(Date.now()-30*86400000).toISOString().split("T")[0];
-  const dateTo   = url.searchParams.get("to")   || new Date().toISOString().split("T")[0];
-  const groupBy  = url.searchParams.get("group")|| "day";
-  const fmt      = groupBy === "month" ? "strftime('%Y-%m', created_at)" : "strftime('%Y-%m-%d', created_at)";
+  const dateFrom = url.searchParams.get("from") || new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
+  const dateTo = url.searchParams.get("to") || new Date().toISOString().split("T")[0];
+  const groupBy = url.searchParams.get("group") || "day";
+  const fmt = groupBy === "month" ? "strftime('%Y-%m', created_at)" : "strftime('%Y-%m-%d', created_at)";
 
   const [salesByDate, topProducts, topCategories, summary] = await Promise.all([
-    env.DB.prepare(`SELECT ${fmt} as date, COUNT(*) as orders, SUM(total_amount) as revenue, SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END) as paid_revenue FROM orders WHERE created_at>=? AND created_at<=? GROUP BY date ORDER BY date ASC`).bind(dateFrom, `${dateTo}T23:59:59Z`).all(),
-    env.DB.prepare(`SELECT oi.product_name, oi.product_id, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY oi.product_id, oi.product_name ORDER BY total_sold DESC LIMIT 10`).bind(dateFrom).all(),
-    env.DB.prepare(`SELECT p.category, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY p.category ORDER BY revenue DESC`).bind(dateFrom).all(),
-    env.DB.prepare(`SELECT COUNT(*) as total_orders, COALESCE(SUM(total_amount),0) as total_revenue, COALESCE(AVG(total_amount),0) as avg_order_value, SUM(CASE WHEN payment_status='paid' THEN 1 ELSE 0 END) as paid_orders FROM orders WHERE created_at>=? AND created_at<=?`).bind(dateFrom, `${dateTo}T23:59:59Z`).first()
+    env.DB.prepare(`SELECT ${fmt} as date, COUNT(*) as orders, SUM(total_amount) as revenue, SUM(CASE WHEN payment_status='paid' THEN total_amount ELSE 0 END) as paid_revenue FROM orders WHERE created_at>=? AND created_at<=? GROUP BY date ORDER BY date ASC`).bind(dateFrom, `${dateTo}T23:59:59Z`).all().catch(e => ({ results: [] })),
+    env.DB.prepare(`SELECT oi.product_name, oi.product_id, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY oi.product_id, oi.product_name ORDER BY total_sold DESC LIMIT 10`).bind(dateFrom).all().catch(e => ({ results: [] })),
+    env.DB.prepare(`SELECT p.category, SUM(oi.quantity) as total_sold, SUM(oi.line_total) as revenue FROM order_items oi JOIN orders o ON o.id=oi.order_id JOIN products p ON p.id=oi.product_id WHERE o.created_at>=? AND o.payment_status='paid' GROUP BY p.category ORDER BY revenue DESC`).bind(dateFrom).all().catch(e => ({ results: [] })),
+    env.DB.prepare(`SELECT COUNT(*) as total_orders, COALESCE(SUM(total_amount),0) as total_revenue, COALESCE(AVG(total_amount),0) as avg_order_value, SUM(CASE WHEN payment_status='paid' THEN 1 ELSE 0 END) as paid_orders FROM orders WHERE created_at>=? AND created_at<=?`).bind(dateFrom, `${dateTo}T23:59:59Z`).first().catch(e => null)
   ]);
 
   return json({
-    salesByDate:    salesByDate.results    || [],
-    topProducts:    topProducts.results    || [],
-    topCategories:  topCategories.results  || [],
+    salesByDate: salesByDate.results || [],
+    topProducts: topProducts.results || [],
+    topCategories: topCategories.results || [],
     summary
   });
 }
@@ -2091,20 +2195,20 @@ async function reportInventory(env) {
     env.DB.prepare("SELECT SUM(stock*price) as val FROM products WHERE active=1").first()
   ]);
   return json({
-    lowStock:     lowStock.results     || [],
-    outOfStock:   outOfStock.results   || [],
-    highStock:    highStock.results    || [],
+    lowStock: lowStock.results || [],
+    outOfStock: outOfStock.results || [],
+    highStock: highStock.results || [],
     totalInventoryValue: totalValue?.val || 0
   });
 }
 
 async function reportCustomers(url, env) {
-  const days  = parseInt(url.searchParams.get("days") || "30");
+  const days = parseInt(url.searchParams.get("days") || "30");
   const since = new Date(Date.now() - days * 86400000).toISOString().split("T")[0];
   const [newCustomers, returning, topBuyers] = await Promise.all([
-    env.DB.prepare("SELECT COUNT(*) as c FROM users WHERE role='customer' AND date(created_at)>=?").bind(since).first(),
-    env.DB.prepare("SELECT COUNT(DISTINCT user_id) as c FROM orders WHERE user_id IS NOT NULL AND created_at>=? AND payment_status='paid'").bind(since).first(),
-    env.DB.prepare(`SELECT u.first_name, u.last_name, u.email, COUNT(o.id) as orders, COALESCE(SUM(o.total_amount),0) as spent FROM orders o JOIN users u ON u.id=o.user_id WHERE o.payment_status='paid' GROUP BY o.user_id ORDER BY spent DESC LIMIT 10`).all()
+    env.DB.prepare("SELECT COUNT(*) as c FROM users WHERE role='customer' AND date(created_at)>=?").bind(since).first().catch(e => null),
+    env.DB.prepare("SELECT COUNT(DISTINCT user_id) as c FROM orders WHERE user_id IS NOT NULL AND created_at>=? AND payment_status='paid'").bind(since).first().catch(e => null),
+    env.DB.prepare(`SELECT u.first_name, u.last_name, u.email, COUNT(o.id) as orders, COALESCE(SUM(o.total_amount),0) as spent FROM orders o JOIN users u ON u.id=o.user_id WHERE o.payment_status='paid' GROUP BY o.user_id ORDER BY spent DESC LIMIT 10`).all().catch(e => ({ results: [] }))
   ]);
   return json({ newCustomers: newCustomers?.c || 0, returningCustomers: returning?.c || 0, topBuyers: topBuyers.results || [] });
 }
@@ -2122,7 +2226,7 @@ async function reportCoupons(env) {
 // PRODUCT INSERT / UPDATE HELPERS
 // ════════════════════════════════════════════════════════════════
 async function insertProduct(env, body) {
-  const name  = String(body?.name || "").trim();
+  const name = String(body?.name || "").trim();
   const price = Number(body?.price || 0);
   if (!name || price <= 0) return { ok: false, error: "name and valid price are required" };
   const now = nowIso();
@@ -2139,8 +2243,8 @@ async function insertProduct(env, body) {
       body?.mrp != null ? Number(body.mrp) : (body?.original_price != null ? Number(body.original_price) : null),
       Math.max(0, toInt(body?.stock, 0)),
       body?.active === false ? 0 : 1,
-      body?.featured    ? 1 : 0,
-      body?.is_new      ? 1 : 0,
+      body?.featured ? 1 : 0,
+      body?.is_new ? 1 : 0,
       body?.is_trending ? 1 : 0,
       Number(body?.rating || 4.5),
       toInt(body?.review_count, 0),
@@ -2149,7 +2253,7 @@ async function insertProduct(env, body) {
       JSON.stringify(Array.isArray(body?.images) ? body.images : (body?.image_url ? [body.image_url] : [])),
       String(body?.image_url || "").trim(),
       String(body?.brand || "").trim(),
-      String(body?.tags  || "").trim(),
+      String(body?.tags || "").trim(),
       now, now
     ).run();
     return { ok: true, id: result.meta?.last_row_id };
@@ -2163,24 +2267,24 @@ async function updateProduct(env, id, body, existing) {
     `UPDATE products SET name=?, sku=?, category=?, price=?, original_price=?, stock=?, active=?, featured=?, is_new=?, is_trending=?,
      rating=?, review_count=?, description=?, sizes_json=?, images_json=?, image_url=?, brand=?, tags=?, updated_at=? WHERE id=?`
   ).bind(
-    String(body?.name     ?? e.name     ?? "").trim(),
-    String(body?.sku      ?? e.sku      ?? "").trim(),
+    String(body?.name ?? e.name ?? "").trim(),
+    String(body?.sku ?? e.sku ?? "").trim(),
     String(body?.category ?? e.category ?? "Heels").trim(),
-    Number(body?.price    ?? e.price    ?? 0),
-    body?.mrp          != null ? Number(body.mrp)          : (body?.original_price != null ? Number(body.original_price) : (e.original_price ?? null)),
+    Number(body?.price ?? e.price ?? 0),
+    body?.mrp != null ? Number(body.mrp) : (body?.original_price != null ? Number(body.original_price) : (e.original_price ?? null)),
     Math.max(0, toInt(body?.stock ?? e.stock, 0)),
-    (body?.active     !== undefined ? body.active     : e.active)     ? 1 : 0,
-    (body?.featured   !== undefined ? body.featured   : e.featured)   ? 1 : 0,
-    (body?.is_new     !== undefined ? body.is_new     : e.is_new)     ? 1 : 0,
+    (body?.active !== undefined ? body.active : e.active) ? 1 : 0,
+    (body?.featured !== undefined ? body.featured : e.featured) ? 1 : 0,
+    (body?.is_new !== undefined ? body.is_new : e.is_new) ? 1 : 0,
     (body?.is_trending !== undefined ? body.is_trending : e.is_trending) ? 1 : 0,
-    Number(body?.rating       ?? e.rating       ?? 4.5),
-    toInt(body?.review_count  ?? e.review_count, 0),
-    String(body?.description  ?? e.description  ?? "").trim(),
+    Number(body?.rating ?? e.rating ?? 4.5),
+    toInt(body?.review_count ?? e.review_count, 0),
+    String(body?.description ?? e.description ?? "").trim(),
     body?.sizes ? JSON.stringify(Array.isArray(body.sizes) ? body.sizes : []) : (e.sizes_json || "[]"),
     body?.images ? JSON.stringify(Array.isArray(body.images) ? body.images : []) : (e.images_json || "[]"),
     String(body?.image_url ?? e.image_url ?? "").trim(),
-    String(body?.brand     ?? e.brand     ?? "").trim(),
-    String(body?.tags      ?? e.tags      ?? "").trim(),
+    String(body?.brand ?? e.brand ?? "").trim(),
+    String(body?.tags ?? e.tags ?? "").trim(),
     nowIso(), id
   ).run();
 }
@@ -2189,49 +2293,55 @@ async function updateProduct(env, id, body, existing) {
 // CREATE ORDER RECORD
 // ════════════════════════════════════════════════════════════════
 async function createOrderRecord(env, input) {
-  const customer  = input.customer || {};
-  const itemsRaw  = Array.isArray(input.items) ? input.items : [];
+  const customer = input.customer || {};
+  const itemsRaw = Array.isArray(input.items) ? input.items : [];
   if (!itemsRaw.length) return { ok: false, error: "Order items are required" };
 
-  const customerName  = String(customer.name  || "").trim();
+  const customerName = String(customer.name || "").trim();
   const customerEmail = normalizeEmail(customer.email);
   const customerPhone = String(customer.phone || "").trim();
-  const addressLine1  = String(customer.addressLine1 || customer.address_line1 || "").trim();
-  const addressLine2  = String(customer.addressLine2 || customer.address_line2 || "").trim();
-  const city          = String(customer.city    || "").trim();
-  const state         = String(customer.state   || "").trim();
-  const pincode       = String(customer.pincode || "").trim();
-  const country       = String(customer.country || "India").trim();
+  const addressLine1 = String(customer.addressLine1 || customer.address_line1 || "").trim();
+  const addressLine2 = String(customer.addressLine2 || customer.address_line2 || "").trim();
+  const city = String(customer.city || "").trim();
+  const state = String(customer.state || "").trim();
+  const pincode = String(customer.pincode || "").trim();
+  const country = String(customer.country || "India").trim();
 
-  if (!customerName || !customerEmail || !customerPhone || !addressLine1 || !city || !state || !pincode)
+  const isPos = input.deliveryMethod === 'pos' || input.deliveryMethod === 'store';
+  if (!customerName || !customerEmail || !customerPhone || (!isPos && (!addressLine1 || !city || !state || !pincode)))
     return { ok: false, error: "Incomplete customer details. name, email, phone, address, city, state, pincode required." };
+
+  const finalAddressLine1 = isPos ? (addressLine1 || 'In-Store Purchase') : addressLine1;
+  const finalCity = isPos ? (city || 'Store City') : city;
+  const finalState = isPos ? (state || 'Store State') : state;
+  const finalPincode = isPos ? (pincode || '000000') : pincode;
 
   const items = [];
   for (const item of itemsRaw) {
-    const qty       = Math.max(1, toInt(item.qty, 1));
+    const qty = Math.max(1, toInt(item.qty, 1));
     const unitPrice = Number(item.price || 0);
     if (!item.name || unitPrice <= 0) continue;
     items.push({
       productId: item.productId ? toInt(item.productId, 0) : null,
-      name:      String(item.name),
-      sku:       String(item.sku || ""),
+      name: String(item.name),
+      sku: String(item.sku || ""),
       qty, unitPrice,
       lineTotal: Number((unitPrice * qty).toFixed(2)),
-      size:      String(item.size || ""),
-      image:     String(item.image || item.img || "")
+      size: String(item.size || ""),
+      image: String(item.image || item.img || "")
     });
   }
   if (!items.length) return { ok: false, error: "No valid order items" };
 
   const subtotalAmount = Number(items.reduce((s, i) => s + i.lineTotal, 0).toFixed(2));
-  const freeShipAbove  = Number(await getSetting(env, "shipping_free_above", "499")) || 499;
-  const shipCharge     = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
+  const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "499")) || 499;
+  const shipCharge = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
   const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
   const discountAmount = Number(input.discountAmount || 0);
-  const totalAmount    = Number((subtotalAmount + shippingAmount - discountAmount).toFixed(2));
-  const orderNumber    = await generateOrderNumber(env);
-  const createdAt      = nowIso();
-  const source         = String(input.source || "online");
+  const totalAmount = Number((subtotalAmount + shippingAmount - discountAmount).toFixed(2));
+  const orderNumber = await generateOrderNumber(env);
+  const createdAt = nowIso();
+  const source = String(input.source || "online");
 
   const result = await env.DB.prepare(
     `INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone,
@@ -2241,7 +2351,7 @@ async function createOrderRecord(env, input) {
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).bind(
     orderNumber, input.userId, customerName, customerEmail, customerPhone,
-    addressLine1, addressLine2, city, state, pincode, country,
+    finalAddressLine1, addressLine2, finalCity, finalState, finalPincode, country,
     String(input.deliveryMethod || "standard"), input.couponCode || null,
     input.paymentMethod, input.paymentStatus, input.orderStatus,
     subtotalAmount, shippingAmount, discountAmount, totalAmount,
@@ -2264,44 +2374,44 @@ async function createOrderRecord(env, input) {
 function mapProduct(p) {
   if (!p) return null;
   return {
-    id:             p.id,
-    name:           p.name,
-    sku:            p.sku            || "",
-    category:       p.category       || "",
-    price:          Number(p.price),
+    id: p.id,
+    name: p.name,
+    sku: p.sku || "",
+    category: p.category || "",
+    price: Number(p.price),
     original_price: p.original_price ? Number(p.original_price) : null,
-    mrp:            p.original_price ? Number(p.original_price) : null,
-    stock:          Number(p.stock   || 0),
-    active:         !!p.active,
-    featured:       !!p.featured,
-    is_new:         !!p.is_new,
-    is_trending:    !!p.is_trending,
-    rating:         Number(p.rating  || 4.5),
-    review_count:   Number(p.review_count || 0),
-    sold_count:     Number(p.sold_count   || 0),
-    description:    p.description    || "",
-    sizes:          safeJsonParse(p.sizes_json, []),
-    images:         safeJsonParse(p.images_json, p.image_url ? [p.image_url] : []),
-    image_url:      p.image_url      || "",
-    brand:          p.brand          || "",
-    tags:           p.tags           || "",
-    created_at:     p.created_at,
-    updated_at:     p.updated_at
+    mrp: p.original_price ? Number(p.original_price) : null,
+    stock: Number(p.stock || 0),
+    active: !!p.active,
+    featured: !!p.featured,
+    is_new: !!p.is_new,
+    is_trending: !!p.is_trending,
+    rating: Number(p.rating || 4.5),
+    review_count: Number(p.review_count || 0),
+    sold_count: Number(p.sold_count || 0),
+    description: p.description || "",
+    sizes: safeJsonParse(p.sizes_json, []),
+    images: safeJsonParse(p.images_json, p.image_url ? [p.image_url] : []),
+    image_url: p.image_url || "",
+    brand: p.brand || "",
+    tags: p.tags || "",
+    created_at: p.created_at,
+    updated_at: p.updated_at
   };
 }
 
 function mapUser(u) {
   return {
-    id:           u.id,
-    firstName:    u.first_name,
-    lastName:     u.last_name  || "",
-    email:        u.email,
-    phone:        u.phone      || "",
-    role:         u.role,
+    id: u.id,
+    firstName: u.first_name,
+    lastName: u.last_name || "",
+    email: u.email,
+    phone: u.phone || "",
+    role: u.role,
     emailVerified: !!u.email_verified,
-    isBlocked:    !!u.is_blocked,
-    lastLoginAt:  u.last_login_at,
-    createdAt:    u.created_at
+    isBlocked: !!u.is_blocked,
+    lastLoginAt: u.last_login_at,
+    createdAt: u.created_at
   };
 }
 
@@ -2319,13 +2429,13 @@ async function auditLog(env, userId, action, entity, entityId, details) {
     await env.DB.prepare(
       "INSERT INTO audit_log (user_id, action, entity, entity_id, details, created_at) VALUES (?,?,?,?,?,?)"
     ).bind(userId || null, action, entity || null, entityId ? String(entityId) : null, JSON.stringify(details || {}), nowIso()).run();
-  } catch {}
+  } catch { }
 }
 
 async function generateOrderNumber(env) {
-  const today  = new Date();
-  const prefix = `HU-${today.getUTCFullYear()}${String(today.getUTCMonth()+1).padStart(2,"0")}${String(today.getUTCDate()).padStart(2,"0")}`;
-  const row    = await env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_number LIKE ?").bind(`${prefix}-%`).first();
+  const today = new Date();
+  const prefix = `HU-${today.getUTCFullYear()}${String(today.getUTCMonth() + 1).padStart(2, "0")}${String(today.getUTCDate()).padStart(2, "0")}`;
+  const row = await env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_number LIKE ?").bind(`${prefix}-%`).first();
   return `${prefix}-${String((row?.c || 0) + 1).padStart(4, "0")}`;
 }
 
@@ -2337,12 +2447,12 @@ function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
-      "Content-Type":                "application/json",
+      "Content-Type": "application/json",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type,Authorization",
-      "X-Content-Type-Options":       "nosniff",
-      "X-Frame-Options":              "DENY"
+      "X-Content-Type-Options": "nosniff",
+      "X-Frame-Options": "DENY"
     }
   });
 }
@@ -2351,10 +2461,10 @@ function corsResponse() {
   return new Response(null, {
     status: 204,
     headers: {
-      "Access-Control-Allow-Origin":  "*",
+      "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type,Authorization",
-      "Access-Control-Max-Age":       "86400"
+      "Access-Control-Max-Age": "86400"
     }
   });
 }
@@ -2367,7 +2477,7 @@ async function readJson(request) {
 // ── AUTH HELPERS ─────────────────────────────────────────────────
 async function requireAuth(request, env) {
   const header = request.headers.get("authorization") || "";
-  const token  = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  const token = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
   if (!token) return { ok: false, response: json({ error: "Unauthorized. Please log in." }, 401) };
   const payload = await verifyJwt(token, env.JWT_SECRET || "heelsup-secret-2025");
   if (!payload) return { ok: false, response: json({ error: "Invalid or expired token" }, 401) };
@@ -2383,35 +2493,35 @@ async function requireAuth(request, env) {
 }
 
 async function createSession(env, userId, role) {
-  const id        = crypto.randomUUID();
-  const days      = 30;
+  const id = crypto.randomUUID();
+  const days = 30;
   const expiresAt = new Date(Date.now() + days * 864e5).toISOString();
   await env.DB.prepare(
     "INSERT INTO sessions (id, user_id, role, revoked, expires_at, created_at) VALUES (?,?,?,0,?,?)"
   ).bind(id, userId, role, expiresAt, nowIso()).run();
-  const payload = { sub: userId, role, sid: id, iat: Math.floor(Date.now()/1000), exp: Math.floor(new Date(expiresAt).getTime()/1000) };
+  const payload = { sub: userId, role, sid: id, iat: Math.floor(Date.now() / 1000), exp: Math.floor(new Date(expiresAt).getTime() / 1000) };
   return { token: await signJwt(payload, env.JWT_SECRET || "heelsup-secret-2025"), expiresAt };
 }
 
 // ── CRYPTO HELPERS ───────────────────────────────────────────────
 function b64url(bytes) {
-  return btoa(String.fromCharCode(...bytes)).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+  return btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 function b64urlText(text) {
-  return btoa(unescape(encodeURIComponent(text))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/g,"");
+  return btoa(unescape(encodeURIComponent(text))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
 }
 function b64urlDecode(text) {
-  return decodeURIComponent(escape(atob(text.replace(/-/g,"+").replace(/_/g,"/")+("===".slice((text.length+3)%4)))));
+  return decodeURIComponent(escape(atob(text.replace(/-/g, "+").replace(/_/g, "/") + ("===".slice((text.length + 3) % 4)))));
 }
 async function hmacBytes(secret, msg) {
-  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), {name:"HMAC",hash:"SHA-256"}, false, ["sign"]);
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(secret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
   return new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(msg)));
 }
 async function hmacHex(secret, msg) {
-  return [...await hmacBytes(secret, msg)].map(b => b.toString(16).padStart(2,"0")).join("");
+  return [...await hmacBytes(secret, msg)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 async function signJwt(payload, secret) {
-  const h = b64urlText(JSON.stringify({alg:"HS256",typ:"JWT"}));
+  const h = b64urlText(JSON.stringify({ alg: "HS256", typ: "JWT" }));
   const p = b64urlText(JSON.stringify(payload));
   return `${h}.${p}.${b64url(await hmacBytes(secret, `${h}.${p}`))}`;
 }
@@ -2421,24 +2531,24 @@ async function verifyJwt(token, secret) {
   const expected = b64url(await hmacBytes(secret, `${parts[0]}.${parts[1]}`));
   if (expected !== parts[2]) return null;
   const parsed = JSON.parse(b64urlDecode(parts[1]));
-  if (!parsed.exp || parsed.exp < Math.floor(Date.now()/1000)) return null;
+  if (!parsed.exp || parsed.exp < Math.floor(Date.now() / 1000)) return null;
   return parsed;
 }
 async function sha256Hex(text) {
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
-  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2,"0")).join("");
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 function randomSaltHex(len = 16) {
-  return [...crypto.getRandomValues(new Uint8Array(len))].map(b => b.toString(16).padStart(2,"0")).join("");
+  return [...crypto.getRandomValues(new Uint8Array(len))].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 async function pbkdf2(password, salt, iters = 100000) {
-  const key  = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
-  const bits = await crypto.subtle.deriveBits({name:"PBKDF2",hash:"SHA-256",salt:new TextEncoder().encode(salt),iterations:iters}, key, 256);
-  return [...new Uint8Array(bits)].map(b => b.toString(16).padStart(2,"0")).join("");
+  const key = await crypto.subtle.importKey("raw", new TextEncoder().encode(password), "PBKDF2", false, ["deriveBits"]);
+  const bits = await crypto.subtle.deriveBits({ name: "PBKDF2", hash: "SHA-256", salt: new TextEncoder().encode(salt), iterations: iters }, key, 256);
+  return [...new Uint8Array(bits)].map(b => b.toString(16).padStart(2, "0")).join("");
 }
 async function hashPassword(password) {
   const iters = 100000;
-  const salt  = randomSaltHex(16);
+  const salt = randomSaltHex(16);
   return `pbkdf2$${iters}$${salt}$${await pbkdf2(password, salt, iters)}`;
 }
 async function verifyPassword(password, stored) {
