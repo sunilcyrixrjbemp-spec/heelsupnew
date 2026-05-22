@@ -1,259 +1,1047 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Orders — HeelsUp Admin</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--gold:#c9a96e;--gold-dark:#8b6914;--bg:#f1f5f9;--sidebar:#0f172a;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-a{text-decoration:none;color:inherit}
-button{cursor:pointer;border:none;background:none;font-family:inherit}
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Orders — HeelsUp Admin</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* Layout */
-.wrap{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
-@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+        :root {
+            --gold: #c9a96e;
+            --gold-dark: #8b6914;
+            --bg: #f1f5f9;
+            --sidebar: #0f172a;
+            --card: #fff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --muted: #64748b;
+            --success: #22c55e;
+            --success-light: #dcfce7;
+            --warning: #f59e0b;
+            --warning-light: #fef3c7;
+            --danger: #ef4444;
+            --danger-light: #fee2e2;
+            --info: #3b82f6;
+            --info-light: #dbeafe;
+            --admin-card-radius: 12px;
+        }
 
-/* Sidebar */
-.sidebar{background:var(--sidebar);color:#94a3b8;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto;overflow-x:hidden}
-.sidebar-brand{padding:18px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;min-height:62px}
-.sidebar-logo{width:34px;height:34px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));border-radius:9px;display:flex;align-items:center;justify-content:center;color:#fff;font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;flex-shrink:0}
-.sidebar-nav{flex:1;padding:10px 0}
-.nav-label{font-size:.6rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:#475569;padding:13px 18px 4px}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 18px;color:#94a3b8;font-size:.83rem;font-weight:500;border-left:3px solid transparent;transition:all .2s;text-decoration:none;cursor:pointer}
-.nav-item:hover{background:#1e293b;color:#e2e8f0}
-.nav-item.active{background:#1e293b;color:var(--gold);border-left-color:var(--gold)}
-.nav-item i{width:16px;text-align:center;font-size:.83rem;flex-shrink:0}
-.nav-badge{margin-left:auto;background:var(--gold);color:#0f172a;font-size:.6rem;font-weight:800;padding:2px 7px;border-radius:20px;min-width:18px;text-align:center}
-.sidebar-footer{padding:14px;border-top:1px solid rgba(255,255,255,.06)}
-.sidebar-user{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.s-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-dark));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:.8rem;flex-shrink:0}
-.s-name{font-size:.8rem;font-weight:600;color:#e2e8f0}
-.s-role{font-size:.65rem;color:#64748b}
-.btn-logout{width:100%;padding:7px;border-radius:8px;background:rgba(255,255,255,.05);color:#94a3b8;font-size:.78rem;display:flex;align-items:center;gap:8px;justify-content:center;transition:all .2s}
-.btn-logout:hover{background:rgba(239,68,68,.15);color:#f87171}
-@media(max-width:900px){.sidebar{position:fixed;left:-240px;top:0;bottom:0;z-index:999;transition:left .3s;width:240px}.sidebar.open{left:0}}
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
 
-/* Topbar */
-.topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:14px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.topbar-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
-.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
-.btn-menu{padding:8px;border-radius:8px;color:#64748b;display:none}
-.btn-menu:hover{background:#f1f5f9}
-@media(max-width:900px){.btn-menu{display:flex}}
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
 
-/* Main */
-.main{min-height:100vh;display:flex;flex-direction:column}
-.content{padding:24px;flex:1}
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
 
-/* Sections */
-.sec{display:none}
-.sec.active{display:block}
+        .wrap {
+            display: grid;
+            grid-template-columns: 240px 1fr;
+            min-height: 100vh;
+        }
 
-/* Stats grid */
-.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
-@media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:600px){.stats-grid{grid-template-columns:1fr}}
-.stat-card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:flex-start;gap:14px;transition:transform .2s,box-shadow .2s}
-.stat-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.1)}
-.stat-icon{width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
-.gold-icon{background:rgba(201,169,110,.12);color:var(--gold)}
-.blue-icon{background:rgba(59,130,246,.1);color:#3b82f6}
-.green-icon{background:rgba(34,197,94,.1);color:#22c55e}
-.rose-icon{background:rgba(212,69,107,.1);color:#d4456b}
-.stat-label{font-size:.72rem;color:#94a3b8;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:4px}
-.stat-value{font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;color:var(--text);line-height:1}
-.stat-sub{font-size:.7rem;color:#94a3b8;margin-top:4px}
+        @media(max-width:900px) {
+            .wrap {
+                grid-template-columns: 1fr;
+            }
+        }
 
-/* Cards & Tables */
-.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 1px 3px rgba(0,0,0,.06);margin-bottom:20px}
-.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:12px}
-.card-title{font-family:'Playfair Display',serif;font-size:.95rem;font-weight:700;color:var(--text)}
-.two-col{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-@media(max-width:900px){.two-col{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse;font-size:.83rem}
-thead th{text-align:left;padding:9px 12px;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#94a3b8;border-bottom:2px solid #f1f5f9}
-tbody tr{border-bottom:1px solid #f8fafc;transition:background .15s}
-tbody tr:hover{background:#f8fafc}
-tbody td{padding:11px 12px;vertical-align:middle}
-.tbl-img{width:38px;height:38px;object-fit:cover;border-radius:8px;background:#f1f5f9}
-.tbl-name{font-weight:600;color:var(--text)}
-.tbl-sub{font-size:.72rem;color:#94a3b8;margin-top:2px}
+        /* Sidebar */
+        .sidebar {
+            background: var(--sidebar);
+            color: #94a3b8;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
 
-/* Badges */
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:.68rem;font-weight:700;letter-spacing:.03em;text-transform:uppercase;white-space:nowrap}
-.badge-placed{background:#dbeafe;color:#1d4ed8}
-.badge-confirmed{background:#dcfce7;color:#15803d}
-.badge-shipped{background:#f3e8ff;color:#7e22ce}
-.badge-delivered{background:#d1fae5;color:#065f46}
-.badge-cancelled{background:#fee2e2;color:#b91c1c}
-.badge-returned{background:#fef3c7;color:#92400e}
-.badge-active{background:#dcfce7;color:#15803d}
-.badge-inactive{background:#f1f5f9;color:#64748b}
-.badge-paid{background:#dcfce7;color:#15803d}
-.badge-pending{background:#fef3c7;color:#b45309}
-.badge-approved{background:#dcfce7;color:#15803d}
-.badge-rejected{background:#fee2e2;color:#b91c1c}
-.badge-admin{background:rgba(201,169,110,.15);color:var(--gold-dark)}
-.badge-customer{background:#f1f5f9;color:#64748b}
+        .sidebar-brand {
+            padding: 18px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, .06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-height: 62px;
+        }
 
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:8px;font-size:.82rem;font-weight:600;transition:all .2s;font-family:'Inter',sans-serif;cursor:pointer;border:none}
-.btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#fff}
-.btn-primary:hover{opacity:.9;transform:translateY(-1px)}
-.btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.btn-outline{border:1.5px solid var(--border);color:var(--muted);background:#fff}
-.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-.btn-sm{padding:5px 12px;font-size:.76rem;border-radius:7px}
-.btn-danger{background:#fef2f2;color:#b91c1c;border:1.5px solid #fecaca}
-.btn-danger:hover{background:#fecaca}
-.btn-icon{width:32px;height:32px;border-radius:7px;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;transition:all .2s}
-.btn-edit{background:#f0f9ff;color:#0284c7}
-.btn-edit:hover{background:#0284c7;color:#fff}
-.btn-del{background:#fef2f2;color:#dc2626}
-.btn-del:hover{background:#dc2626;color:#fff}
-.act-cell{display:flex;align-items:center;gap:5px}
+        .sidebar-logo {
+            width: 34px;
+            height: 34px;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-family: 'Playfair Display', serif;
+            font-size: .95rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
 
-/* Search & Filter */
-.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
-.search-wrap{position:relative;flex:1;min-width:180px}
-.search-wrap i{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:#94a3b8;font-size:.8rem}
-.search-input{width:100%;padding:8px 10px 8px 32px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;transition:all .2s;background:#f8fafc;font-family:'Inter',sans-serif}
-.search-input:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
-.filter-select{padding:8px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:.83rem;background:#f8fafc;transition:all .2s;font-family:'Inter',sans-serif}
-.filter-select:focus{outline:none;border-color:var(--gold)}
+        .sidebar-nav {
+            flex: 1;
+            padding: 10px 0;
+        }
 
-/* Modal */
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(4px);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.show{display:flex}
-.modal{background:#fff;border-radius:18px;padding:24px;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 25px 60px rgba(0,0,0,.25);animation:modalIn .3s ease}
-@keyframes modalIn{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
-.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
-.modal-title{font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:var(--text)}
-.modal-close{width:34px;height:34px;border-radius:8px;background:#f1f5f9;color:#64748b;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.modal-close:hover{background:#fee2e2;color:#dc2626}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-@media(max-width:500px){.form-grid{grid-template-columns:1fr}}
-.form-field{display:flex;flex-direction:column;gap:5px}
-.form-field.full{grid-column:1/-1}
-.form-label{font-size:.72rem;font-weight:700;color:#64748b;letter-spacing:.04em;text-transform:uppercase}
-.form-input,.form-select,.form-textarea{padding:9px 12px;border:1.5px solid var(--border);border-radius:9px;font-size:.87rem;transition:all .2s;background:#f8fafc;width:100%;font-family:'Inter',sans-serif;color:var(--text)}
-.form-input:focus,.form-select:focus,.form-textarea:focus{outline:none;border-color:var(--gold);background:#fff;box-shadow:0 0 0 3px rgba(201,169,110,.1)}
-.form-textarea{resize:vertical;min-height:80px}
-.form-check{display:flex;align-items:center;gap:8px;padding:3px 0}
-.form-check input{width:16px;height:16px;accent-color:var(--gold)}
-.form-check label{font-size:.87rem;color:#475569}
-.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
+        .nav-label {
+            font-size: .6rem;
+            font-weight: 700;
+            letter-spacing: .15em;
+            text-transform: uppercase;
+            color: #475569;
+            padding: 13px 18px 4px;
+        }
 
-/* Pagination */
-.pagination{display:flex;align-items:center;gap:7px;margin-top:16px;justify-content:center}
-.pg-btn{padding:6px 13px;border-radius:7px;border:1.5px solid var(--border);font-size:.79rem;color:#64748b;background:#fff;transition:all .2s;font-family:'Inter',sans-serif}
-.pg-btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold)}
-.pg-btn:disabled{opacity:.4;cursor:not-allowed}
-.pg-info{font-size:.79rem;color:#94a3b8}
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            color: #94a3b8;
+            font-size: .83rem;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            transition: all .2s;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-/* Toast */
-.toast-wrap{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px}
-.toast{background:#1e293b;color:#fff;padding:12px 18px;border-radius:10px;font-size:.83rem;font-weight:500;display:flex;align-items:center;gap:9px;box-shadow:0 8px 24px rgba(0,0,0,.2);animation:toastIn .3s ease;min-width:240px}
-.toast.success{border-left:4px solid #22c55e}
-.toast.error{border-left:4px solid #ef4444}
-.toast.warning{border-left:4px solid #f59e0b}
-@keyframes toastIn{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:translateX(0)}}
+        .nav-item:hover {
+            background: #1e293b;
+            color: #e2e8f0;
+        }
 
-/* Welcome banner */
-.welcome{background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);border-radius:14px;padding:24px;margin-bottom:24px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:space-between}
-.welcome::after{content:'';position:absolute;top:-50px;right:-50px;width:180px;height:180px;background:rgba(201,169,110,.07);border-radius:50%}
-.welcome-text h2{font-family:'Playfair Display',serif;font-size:1.3rem;color:#fff;margin-bottom:4px}
-.welcome-text p{font-size:.82rem;color:#94a3b8}
-.welcome-actions{display:flex;gap:10px;z-index:1}
+        .nav-item.active {
+            background: #1e293b;
+            color: var(--gold);
+            border-left-color: var(--gold);
+        }
 
-/* Loading */
-.loading-spinner{text-align:center;padding:40px;color:#94a3b8;font-size:.87rem}
-.loading-spinner i{font-size:1.8rem;color:var(--gold);display:block;margin-bottom:10px;animation:spin 1s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
+        .nav-item i {
+            width: 16px;
+            text-align: center;
+            font-size: .83rem;
+            flex-shrink: 0;
+        }
 
-/* Mobile overlay */
-.mob-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:998}
-</style>
+        .sidebar-footer {
+            padding: 14px;
+            border-top: 1px solid rgba(255, 255, 255, .06);
+        }
+
+        .sidebar-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+        }
+
+        .s-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            font-size: .8rem;
+            flex-shrink: 0;
+        }
+
+        .s-name {
+            font-size: .8rem;
+            font-weight: 600;
+            color: #e2e8f0;
+        }
+
+        .s-role {
+            font-size: .65rem;
+            color: #64748b;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 7px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, .05);
+            color: #94a3b8;
+            font-size: .78rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            transition: all .2s;
+        }
+
+        .btn-logout:hover {
+            background: rgba(239, 68, 68, .15);
+            color: #f87171;
+        }
+
+        @media(max-width:900px) {
+            .sidebar {
+                position: fixed;
+                left: -240px;
+                top: 0;
+                bottom: 0;
+                z-index: 999;
+                transition: left .3s;
+                width: 240px;
+            }
+
+            .sidebar.open {
+                left: 0;
+            }
+        }
+
+        /* Topbar */
+        .topbar {
+            background: #fff;
+            border-bottom: 1px solid var(--border);
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+        }
+
+        .topbar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .topbar-right {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-menu {
+            padding: 8px;
+            border-radius: 8px;
+            color: #64748b;
+            display: none;
+        }
+
+        .btn-menu:hover {
+            background: #f1f5f9;
+        }
+
+        @media(max-width:900px) {
+            .btn-menu {
+                display: flex;
+            }
+        }
+
+        /* Main */
+        .main {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .content {
+            padding: 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Page Header */
+        .admin-page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .admin-page-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .admin-page-header p {
+            font-size: .85rem;
+            color: var(--muted);
+        }
+
+        /* Stats grid */
+        .order-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media(max-width:1100px) {
+            .order-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media(max-width:600px) {
+            .order-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 14px;
+            transition: transform .2s, box-shadow .2s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, .1);
+        }
+
+        .stat-card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .stat-icon-blue {
+            background: rgba(59, 130, 246, .1);
+            color: var(--info);
+        }
+
+        .stat-icon-orange {
+            background: rgba(245, 158, 11, .1);
+            color: var(--warning);
+        }
+
+        .stat-icon-red {
+            background: rgba(239, 68, 68, .1);
+            color: var(--danger);
+        }
+
+        .stat-label {
+            font-size: .72rem;
+            color: #94a3b8;
+            font-weight: 600;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .stat-value {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text);
+            line-height: 1;
+        }
+
+        .text-warning {
+            color: var(--warning);
+        }
+
+        .text-error {
+            color: var(--danger);
+        }
+
+        .text-muted {
+            color: var(--muted);
+        }
+
+        /* Order Tabs */
+        .order-tabs-wrapper {
+            display: flex;
+            gap: 12px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0px;
+            margin-bottom: 16px;
+            overflow-x: auto;
+        }
+
+        .order-tab-btn {
+            padding: 10px 16px;
+            font-size: .85rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all .2s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .order-tab-btn:hover {
+            color: var(--text);
+        }
+
+        .order-tab-btn.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+        }
+
+        .order-tab-badge {
+            background: #f1f5f9;
+            color: var(--muted);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: .68rem;
+        }
+
+        .order-tab-btn.active .order-tab-badge {
+            background: rgba(201, 169, 110, .15);
+            color: var(--gold-dark);
+        }
+
+        /* Cards & Tables */
+        .admin-table-wrap {
+            background: #fff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+            border-radius: var(--admin-card-radius);
+            overflow: hidden;
+        }
+
+        .adv-filter-bar {
+            background: #fff;
+            padding: 16px 20px;
+            border-radius: var(--admin-card-radius) var(--admin-card-radius) 0 0;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .06);
+            margin-bottom: -20px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .filter-select {
+            padding: 8px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: .83rem;
+            background: #f8fafc;
+            transition: all .2s;
+            font-family: inherit;
+            color: var(--text);
+            outline: none;
+        }
+
+        .filter-select:focus {
+            border-color: var(--gold);
+            background: #fff;
+        }
+
+        .search-wrap {
+            position: relative;
+            flex: 1;
+            min-width: 200px;
+            max-width: 300px;
+        }
+
+        .search-wrap i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: .8rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px 8px 34px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: .83rem;
+            transition: all .2s;
+            background: #f8fafc;
+            font-family: inherit;
+            color: var(--text);
+            outline: none;
+        }
+
+        .search-input:focus {
+            border-color: var(--gold);
+            background: #fff;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .83rem;
+            min-width: 800px;
+        }
+
+        thead th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: .68rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: #94a3b8;
+            border-bottom: 2px solid #f1f5f9;
+            background: #fff;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f8fafc;
+            transition: background .15s;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+
+        tbody td {
+            padding: 14px 16px;
+            vertical-align: middle;
+        }
+
+        .admin-table-name {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .admin-table-sub {
+            font-size: .72rem;
+            color: #94a3b8;
+            margin-top: 2px;
+        }
+
+        /* Badges */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: .68rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .status-placed {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .status-confirmed {
+            background: var(--info-light);
+            color: var(--info);
+        }
+
+        .status-processing {
+            background: var(--warning-light);
+            color: var(--warning);
+        }
+
+        .status-shipped {
+            background: #e0e7ff;
+            color: #2563eb;
+        }
+
+        .status-delivered {
+            background: var(--success-light);
+            color: var(--success);
+        }
+
+        .status-cancelled {
+            background: var(--danger-light);
+            color: var(--danger);
+        }
+
+        .status-returned {
+            background: #f3f4f6;
+            color: #475569;
+        }
+
+        .payment-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: .78rem;
+            font-weight: 600;
+        }
+
+        .payment-status.paid {
+            color: var(--success);
+        }
+
+        .payment-status.unpaid {
+            color: var(--warning);
+        }
+
+        .payment-status.failed {
+            color: var(--danger);
+        }
+
+        .payment-status.refunded {
+            color: #64748b;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: .82rem;
+            font-weight: 600;
+            transition: all .2s;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), var(--gold-dark));
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            opacity: .9;
+            transform: translateY(-1px);
+        }
+
+        .btn-outline {
+            border: 1.5px solid var(--border);
+            color: var(--muted);
+            background: #fff;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .btn-white {
+            border: 1px solid var(--border);
+            color: var(--text);
+            background: #fff;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-white:hover {
+            background: #f8fafc;
+        }
+
+        .btn-sm {
+            padding: 5px 12px;
+            font-size: .76rem;
+            border-radius: 7px;
+        }
+
+        .admin-table-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .table-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: .85rem;
+            transition: all .2s;
+            background: #f8fafc;
+            color: #64748b;
+            border: 1px solid var(--border);
+        }
+
+        .table-action-btn:hover {
+            background: var(--info-light);
+            color: var(--info);
+            border-color: #bae6fd;
+        }
+
+        .admin-table-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+        }
+
+        .table-page-info {
+            font-size: .8rem;
+            color: var(--muted);
+        }
+
+        .pagination {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-btn {
+            padding: 4px 10px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            font-size: .8rem;
+            color: var(--muted);
+            background: #fff;
+            cursor: pointer;
+            transition: all .2s;
+        }
+
+        .page-btn.active {
+            background: var(--gold);
+            color: #fff;
+            border-color: var(--gold);
+        }
+
+        .page-btn:hover:not(.active):not(:disabled) {
+            background: #f1f5f9;
+        }
+
+        .page-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Modal */
+        .modal-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .55);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            background: #fff;
+            border-radius: 18px;
+            padding: 24px;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, .25);
+            animation: modalIn .3s ease;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: scale(.95) translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .modal-close {
+            width: 34px;
+            height: 34px;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all .2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .modal-close:hover {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .form-field {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-label {
+            font-size: .75rem;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .03em;
+        }
+
+        .form-input,
+        .form-select {
+            padding: 10px 12px;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-size: .87rem;
+            background: #f8fafc;
+            color: var(--text);
+            font-family: inherit;
+            outline: none;
+            transition: all .2s;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            border-color: var(--gold);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, .1);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Toast */
+        .toast-wrap {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: #1e293b;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: .83rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+            animation: toastIn .3s ease;
+            min-width: 240px;
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--info);
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 40px;
+            color: #94a3b8;
+            font-size: .87rem;
+        }
+
+        .loading-spinner i {
+            font-size: 1.8rem;
+            color: var(--gold);
+            display: block;
+            margin-bottom: 10px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .mob-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .5);
+            z-index: 998;
+        }
+    </style>
 </head>
+
 <body>
 
-<div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></a>
-<div class="toast-wrap" id="toastWrap"></a>
+    <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
+    <div class="toast-wrap" id="toastWrap"></div>
 
-<div class="wrap">
-  <!-- Sidebar -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-      <div class="sidebar-logo">H</a>
-      <div>
-        <div style="font-size:.87rem;font-weight:700;color:#f1f5f9">HeelsUp</a>
-        <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel</a>
-      </a>
-    </a>
-    <nav class="sidebar-nav">
-      <div class="nav-label">Main</a>
-      <a class="nav-item" href="admin.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
-      <div class="nav-label">Catalogue</a>
-      <a class="nav-item" href="admin-products.html"><i class="fa-solid fa-box"></i> Products</a>
-      <div class="nav-label">Sales</a>
-      <a class="nav-item" href="admin-orders.html">
-        <i class="fa-solid fa-bag-shopping"></i> Orders
-        <span class="nav-badge" id="ordersBadge" style="display:none">0</span>
-      </a>
-      <a class="nav-item" href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
-      <a class="nav-item" href="admin-coupons.html"><i class="fa-solid fa-ticket"></i> Coupons</a>
-      <a class="nav-item" href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
-      <a class="nav-item" href="admin-returns.html"><i class="fa-solid fa-rotate-left"></i> Returns</a>
-      <div class="nav-label">More</a>
-      <a href="admin-pos.html" class="nav-item"><i class="fa-solid fa-cash-register"></i> POS / Offline Sales</a>
-      <a href="admin-reports.html" class="nav-item"><i class="fa-solid fa-chart-bar"></i> Reports</a>
-      <a href="admin-analytics.html" class="nav-item"><i class="fa-solid fa-chart-line"></i> Analytics</a>
-      <a href="admin-banners.html" class="nav-item"><i class="fa-solid fa-image"></i> Banners</a>
+    <div class="wrap">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <div class="sidebar-logo">H</div>
+                <div>
+                    <div style="font-size:.87rem;font-weight:700;color:#f1f5f9">HeelsUp</div>
+                    <div style="font-size:.62rem;color:#64748b;text-transform:uppercase;letter-spacing:.1em">Admin Panel
+                    </div>
+                </div>
+            </div>
 
-      <div class="nav-label">System</a>
-      <a href="admin-settings.html" class="nav-item"><i class="fa-solid fa-gear"></i> Settings</a>
-    </nav>
-    <div class="sidebar-footer">
-      <div class="sidebar-user">
-        <div class="s-avatar" id="s-avatar">A</a>
-        <div>
-          <div class="s-name" id="s-name">Admin</a>
-          <div class="s-role">Super Admin</a>
-        </a>
-      </a>
-      <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
-    </a>
-  </aside>
+            <nav class="sidebar-nav">
+                <div class="nav-label">Main</div>
+                <a class="nav-item" href="admin.html"><i class="fa-solid fa-gauge"></i> Dashboard</a>
 
-  <!-- Main -->
-  <div class="main">
-    <div class="topbar">
-      <button class="btn-menu" id="menuBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-      <div class="topbar-title" id="topbarTitle">Dashboard</a>
-      <div class="topbar-right">
-        <button class="btn btn-sm btn-outline" onclick="window.open('index.html','_blank')"><i class="fa-solid fa-store"></i> View Store</button>
-      </a>
-    </a>
+                <div class="nav-label">Catalogue</div>
+                <a class="nav-item" href="admin-products.html"><i class="fa-solid fa-box"></i> Products</a>
+                <a class="nav-item" href="admin-categories.html"><i class="fa-solid fa-layer-group"></i> Categories</a>
+                <a class="nav-item" href="admin-collections.html"><i class="fa-solid fa-swatchbook"></i> Collections</a>
+                <a class="nav-item" href="admin-inventory.html"><i class="fa-solid fa-warehouse"></i> Inventory</a>
 
-    <div class="content">
+                <div class="nav-label">Sales & Customers</div>
+                <a class="nav-item active" href="admin-orders.html">
+                    <i class="fa-solid fa-bag-shopping"></i> Orders
+                </a>
+                <a class="nav-item" href="admin-customers.html"><i class="fa-solid fa-users"></i> Customers</a>
+                <a class="nav-item" href="admin-coupons.html"><i class="fa-solid fa-ticket"></i> Coupons</a>
+                <a class="nav-item" href="admin-reviews.html"><i class="fa-solid fa-star"></i> Reviews</a>
+                <a class="nav-item" href="admin-returns.html"><i class="fa-solid fa-rotate-left"></i> Returns</a>
+                <a class="nav-item" href="admin-pos.html"><i class="fa-solid fa-cash-register"></i> POS / Offline
+                    Sales</a>
 
+                <div class="nav-label">Marketing & Content</div>
+                <a class="nav-item" href="admin-banners.html"><i class="fa-solid fa-image"></i> Banners</a>
+                <a class="nav-item" href="admin-blog.html"><i class="fa-solid fa-newspaper"></i> Blog</a>
+                <a class="nav-item" href="admin-pages.html"><i class="fa-solid fa-file-lines"></i> Pages</a>
+                <a class="nav-item" href="admin-notifications.html"><i class="fa-solid fa-bell"></i> Notifications</a>
 
+                <div class="nav-label">Reports</div>
+                <a class="nav-item" href="admin-reports.html"><i class="fa-solid fa-chart-bar"></i> Reports</a>
+                <a class="nav-item" href="admin-analytics.html"><i class="fa-solid fa-chart-line"></i> Analytics</a>
+
+                <div class="nav-label">System</div>
+                <a class="nav-item" href="admin-shipping.html"><i class="fa-solid fa-truck-fast"></i> Shipping</a>
+                <a class="nav-item" href="admin-taxes.html"><i class="fa-solid fa-file-invoice-dollar"></i> Taxes</a>
+                <a class="nav-item" href="admin-staff.html"><i class="fa-solid fa-users-gear"></i> Staff</a>
+                <a class="nav-item" href="admin-settings.html"><i class="fa-solid fa-gear"></i> Settings</a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="s-avatar" id="s-avatar">A</div>
+                    <div>
+                        <div class="s-name" id="s-name">Admin</div>
+                        <div class="s-role">Super Admin</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="doLogout()"><i class="fa-solid fa-arrow-right-from-bracket"></i>
+                    Logout</button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <header class="topbar">
+                <button class="btn-menu" id="menuBtn" onclick="toggleSidebar()"><i
+                        class="fa-solid fa-bars"></i></button>
+                <div class="topbar-title">Orders</div>
+                <div class="topbar-right">
+                    <button class="btn btn-sm btn-outline" onclick="window.open('index.html','_blank')"><i
+                            class="fa-solid fa-store"></i> View Store</button>
+                </div>
+            </header>
+
+            <section class="content">
                 <!-- Page Header -->
                 <div class="admin-page-header">
-                    <div class="admin-page-header-left">
+                    <div>
                         <h2>Order Management</h2>
                         <p>Process orders, manage fulfillment, and track payments.</p>
                     </div>
-                    <div style="display:flex;gap:var(--space-3); flex-wrap:wrap;">
-                        <button class="btn btn-white"><i class="fa-solid fa-download"></i> Export CSV</button>
-                        <button class="btn btn-primary"
-                            onclick="showToast('info', 'Create Order', 'Draft order functionality opening soon.')">
-                            <i class="fa-solid fa-plus"></i> Create Order
-                        </button>
+                    <div style="display:flex;gap:12px; flex-wrap:wrap;">
+                        <button class="btn btn-white" onclick="exportOrders()"><i class="fa-solid fa-download"></i>
+                            Export CSV</button>
+                        <button class="btn btn-primary" onclick="loadOrders()"><i class="fa-solid fa-rotate-right"></i>
+                            Refresh</button>
                     </div>
                 </div>
 
@@ -261,329 +1049,508 @@ tbody td{padding:11px 12px;vertical-align:middle}
                 <div class="order-stats">
                     <div class="stat-card">
                         <div>
-                            <div class="stat-label">Total Orders (30D)</div>
-                            <div class="stat-value">1,284</div>
+                            <div class="stat-label">Total Orders (All)</div>
+                            <div class="stat-value" id="statTotalOrders"><i class="fa-solid fa-spinner fa-spin"
+                                    style="font-size:1rem;"></i></div>
                         </div>
                         <div class="stat-card-icon stat-icon-blue"><i class="fa-solid fa-bag-shopping"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Unfulfilled</div>
-                            <div class="stat-value text-warning">48</div>
+                            <div class="stat-value text-warning" id="statUnfulfilled"><i
+                                    class="fa-solid fa-spinner fa-spin" style="font-size:1rem;"></i></div>
                         </div>
                         <div class="stat-card-icon stat-icon-orange"><i class="fa-solid fa-box-open"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Unpaid</div>
-                            <div class="stat-value text-error">12</div>
+                            <div class="stat-value text-error" id="statUnpaid"><i class="fa-solid fa-spinner fa-spin"
+                                    style="font-size:1rem;"></i></div>
                         </div>
                         <div class="stat-card-icon stat-icon-red"><i class="fa-solid fa-file-invoice-dollar"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
-                            <div class="stat-label">Returns / Refunds</div>
-                            <div class="stat-value text-muted">34</div>
+                            <div class="stat-label">Returns / Cancelled</div>
+                            <div class="stat-value text-muted" id="statReturns"><i class="fa-solid fa-spinner fa-spin"
+                                    style="font-size:1rem;"></i></div>
                         </div>
-                        <div class="stat-card-icon"
-                            style="background:var(--color-light-3); color:var(--text-secondary);"><i
+                        <div class="stat-card-icon" style="background:#f1f5f9; color:var(--muted);"><i
                                 class="fa-solid fa-rotate-left"></i></div>
                     </div>
                 </div>
 
                 <!-- Tabs & Filters -->
-                <div class="order-tabs-wrapper">
-                    <div class="order-tab-btn active">All Orders</div>
-                    <div class="order-tab-btn">Unfulfilled <span class="order-tab-badge">48</span></div>
-                    <div class="order-tab-btn">Unpaid <span class="order-tab-badge">12</span></div>
-                    <div class="order-tab-btn">Completed</div>
-                    <div class="order-tab-btn">Returns</div>
+                <div class="order-tabs-wrapper" id="orderTabs">
+                    <div class="order-tab-btn active" data-tab="all" onclick="setTabFilter('all', this)">All Orders
+                    </div>
+                    <div class="order-tab-btn" data-tab="unfulfilled" onclick="setTabFilter('unfulfilled', this)">
+                        Unfulfilled <span class="order-tab-badge" id="badgeUnfulfilled">0</span></div>
+                    <div class="order-tab-btn" data-tab="unpaid" onclick="setTabFilter('unpaid', this)">Unpaid <span
+                            class="order-tab-badge" id="badgeUnpaid">0</span></div>
+                    <div class="order-tab-btn" data-tab="completed" onclick="setTabFilter('completed', this)">Completed
+                    </div>
+                    <div class="order-tab-btn" data-tab="returns" onclick="setTabFilter('returns', this)">
+                        Returns/Cancelled</div>
                 </div>
+
                 <div class="adv-filter-bar">
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <select class="filter-select">
-                            <option>Payment Status</option>
-                            <option>Paid</option>
-                            <option>Pending</option>
-                            <option>Refunded</option>
+                    <div style="display:flex; gap:10px; align-items:center; flex:1;">
+                        <div class="search-wrap">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" class="search-input" id="orderSearch"
+                                placeholder="Search Order # or Customer..." oninput="filterOrders()">
+                        </div>
+                        <select class="filter-select" id="paymentFilter" onchange="filterOrders()">
+                            <option value="">All Payments</option>
+                            <option value="paid">Paid</option>
+                            <option value="pending">Pending / Unpaid</option>
+                            <option value="failed">Failed / Refunded</option>
                         </select>
-                        <select class="filter-select">
-                            <option>Fulfillment</option>
-                            <option>Unfulfilled</option>
-                            <option>Processing</option>
-                            <option>Shipped</option>
-                            <option>Delivered</option>
-                        </select>
-                        <select class="filter-select">
-                            <option>Channel</option>
-                            <option>Online Store</option>
-                            <option>Offline POS</option>
-                            <option>Instagram / Social</option>
+                        <select class="filter-select" id="statusFilter" onchange="filterOrders()">
+                            <option value="">All Statuses</option>
+                            <option value="placed">Placed</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
                         </select>
                     </div>
                     <div style="display:flex; gap:10px;">
-                        <button class="btn btn-white btn-sm"><i class="fa-solid fa-filter-circle-xmark"></i>
-                            Clear</button>
+                        <button class="btn btn-white btn-sm" onclick="clearFilters()"><i
+                                class="fa-solid fa-filter-circle-xmark"></i> Clear</button>
                     </div>
                 </div>
 
                 <!-- Table -->
-                <div class="admin-table-wrap"
-                    style="border-top: none; border-radius: 0 0 var(--admin-card-radius) var(--admin-card-radius);">
+                <div class="admin-table-wrap">
                     <div style="overflow-x:auto">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" class="table-checkbox" id="selectAllOrders" /></th>
-                                    <th class="sortable sorted">Order <i class="fa-solid fa-arrow-down sort-icon"></i>
-                                    </th>
+                                    <th>Order</th>
                                     <th>Date</th>
                                     <th>Customer</th>
-                                    <th>Channel</th>
-                                    <th class="sortable">Total</th>
+                                    <th>Amount</th>
                                     <th>Payment</th>
-                                    <th>Fulfillment</th>
-                                    <th>Items</th>
+                                    <th>Status</th>
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <!-- Order 1 -->
+                            <tbody id="ordersTableBody">
                                 <tr>
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span style="font-weight:700; color:var(--color-primary); cursor:pointer;"
-                                            onclick="openOrderModal('#ORD-1042')">#ORD-1042</span></td>
-                                    <td>
-                                        <div class="admin-table-name">07 May 2026</div>
-                                        <div class="admin-table-sub">10:24 AM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Priya Sharma</div>
-                                        <div class="admin-table-sub">Jodhpur, RJ</div>
-                                    </td>
-                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">₹1,798</div>
-                                    </td>
-                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
-                                            Paid</span></td>
-                                    <td><span class="status-badge status-pending">Unfulfilled</span></td>
-                                    <td>2 items</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"
-                                                onclick="openOrderModal('#ORD-1042')"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                            <button class="btn btn-primary btn-xs"
-                                                style="padding:4px 8px; border-radius:4px;">Fulfill</button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Order 2 -->
-                                <tr>
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span
-                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1041</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">07 May 2026</div>
-                                        <div class="admin-table-sub">09:55 AM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Sneha Patel</div>
-                                        <div class="admin-table-sub">Jaipur, RJ</div>
-                                    </td>
-                                    <td><span class="badge-channel offline"><i class="fa-solid fa-store"></i> POS</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">₹1,299</div>
-                                    </td>
-                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
-                                            Paid</span></td>
-                                    <td><span class="status-badge status-delivered">Fulfilled</span></td>
-                                    <td>1 item</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                            <button class="table-action-btn" title="Print Invoice"><i
-                                                    class="fa-solid fa-print"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Order 3 -->
-                                <tr>
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span
-                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1040</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">07 May 2026</div>
-                                        <div class="admin-table-sub">08:10 AM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Ritu Agarwal</div>
-                                        <div class="admin-table-sub">Delhi, DL</div>
-                                    </td>
-                                    <td><span class="badge-channel social"><i class="fa-brands fa-instagram"></i>
-                                            IG</span></td>
-                                    <td>
-                                        <div class="admin-table-name">₹2,496</div>
-                                    </td>
-                                    <td><span class="payment-status unpaid"><i class="fa-regular fa-clock"></i> Pending
-                                            (COD)</span></td>
-                                    <td><span class="status-badge status-shipped">Shipped</span></td>
-                                    <td>3 items</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                            <button class="table-action-btn" title="Mark Paid"><i
-                                                    class="fa-solid fa-indian-rupee-sign"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Order 4 -->
-                                <tr style="background:var(--color-error-light); opacity:0.9;">
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span
-                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1039</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">06 May 2026</div>
-                                        <div class="admin-table-sub">11:30 PM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Anita Mehra</div>
-                                        <div class="admin-table-sub">Udaipur, RJ</div>
-                                    </td>
-                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">₹799</div>
-                                    </td>
-                                    <td><span class="payment-status refunded"><i
-                                                class="fa-solid fa-arrow-rotate-left"></i> Refunded</span></td>
-                                    <td><span class="status-badge status-cancelled">Cancelled</span></td>
-                                    <td>1 item</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Order 5 -->
-                                <tr>
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span
-                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1038</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">06 May 2026</div>
-                                        <div class="admin-table-sub">06:20 PM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Kavya Singh</div>
-                                        <div class="admin-table-sub">Mumbai, MH</div>
-                                    </td>
-                                    <td><span class="badge-channel online"><i class="fa-solid fa-globe"></i> Web</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">₹1,698</div>
-                                    </td>
-                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
-                                            Paid</span></td>
-                                    <td><span class="status-badge status-delivered">Delivered</span></td>
-                                    <td>2 items</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                            <button class="table-action-btn" title="Print Invoice"><i
-                                                    class="fa-solid fa-print"></i></button>
-                                        </div>
-                                    </td>
-                                </tr>
-
-                                <!-- Order 6 -->
-                                <tr>
-                                    <td><input type="checkbox" class="table-checkbox" /></td>
-                                    <td><span
-                                            style="font-weight:700; color:var(--color-primary); cursor:pointer;">#ORD-1037</span>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">06 May 2026</div>
-                                        <div class="admin-table-sub">02:15 PM</div>
-                                    </td>
-                                    <td>
-                                        <div class="admin-table-name">Meera Gupta</div>
-                                        <div class="admin-table-sub">Ahmedabad, GJ</div>
-                                    </td>
-                                    <td><span class="badge-channel social"><i class="fa-brands fa-whatsapp"></i>
-                                            WA</span></td>
-                                    <td>
-                                        <div class="admin-table-name">₹649</div>
-                                    </td>
-                                    <td><span class="payment-status paid"><i class="fa-solid fa-circle-check"></i>
-                                            Paid</span></td>
-                                    <td><span class="status-badge status-processing">Processing</span></td>
-                                    <td>1 item</td>
-                                    <td>
-                                        <div class="admin-table-actions">
-                                            <button class="table-action-btn" title="View Details"><i
-                                                    class="fa-regular fa-eye"></i></button>
-                                            <button class="table-action-btn" title="Print Label"><i
-                                                    class="fa-solid fa-tag"></i></button>
-                                        </div>
+                                    <td colspan="7">
+                                        <div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Fetching live
+                                            orders...</div>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <div class="admin-table-footer">
-                        <div class="table-page-info">Showing <strong>1–6</strong> of <strong>1,284</strong> orders</div>
-                        <div class="pagination" style="margin:0">
-                            <button class="page-btn" disabled><i class="fa-solid fa-chevron-left"
-                                    style="font-size:10px"></i></button>
-                            <button class="page-btn active">1</button>
-                            <button class="page-btn">2</button>
-                            <button class="page-btn">3</button>
-                            <span class="page-ellipsis">…</span>
-                            <button class="page-btn">214</button>
-                            <button class="page-btn"><i class="fa-solid fa-chevron-right"
-                                    style="font-size:10px"></i></button>
-                        </div>
+                        <div class="table-page-info" id="paginationInfo">Showing 0 orders</div>
+                        <div class="pagination" id="ordersPagination"></div>
                     </div>
                 </div>
 
-            </div>
-        
-    </div><!-- /content -->
-  
-    </div><!-- /content -->
-  </div><!-- /main -->
-</div>
+            </section>
+        </main>
+    </div>
 
-<script src="app-config.js"></script>
-<script src="app-auth.js"></script>
-<script>
-function toggleSidebar(){
-  const s=document.getElementById('sidebar');
-  const o=document.getElementById('mobOverlay');
-  s.classList.toggle('open');
-  o.style.display = s.classList.contains('open')?'block':'none';
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('mobOverlay').style.display='none';
-}
-function doLogout(){ HeelsUpAuth.clearSession(); window.location='login.html'; }
-</script>
+    <!-- Order Update Modal -->
+    <div class="modal-backdrop" id="orderModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="orderModalTitle">Update Order</div>
+                <button class="modal-close" onclick="closeOrderModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="orderModalBody">
+                <div
+                    style="background:#f8fafc;border-radius:10px;padding:16px;margin-bottom:20px;font-size:.85rem; border: 1px solid var(--border);">
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Customer</b> <span
+                                id="modCustName">--</span></div>
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Contact</b> <span
+                                id="modCustPhone">--</span></div>
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Email</b> <span
+                                id="modCustEmail">--</span></div>
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Total Amount</b> <span
+                                id="modTotal" style="font-weight:700;color:var(--success);">--</span></div>
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Payment</b> <span
+                                id="modPayStatus">--</span></div>
+                        <div><b style="color:var(--text);display:block;margin-bottom:2px;">Method</b> <span
+                                id="modPayMethod">--</span></div>
+                    </div>
+                    <div style="margin-top:12px; padding-top:12px; border-top:1px solid var(--border);">
+                        <b style="color:var(--text);display:block;margin-bottom:2px;">Shipping Address</b>
+                        <span id="modAddress" style="color:var(--muted);line-height:1.4;">--</span>
+                    </div>
+                </div>
+
+                <form id="orderUpdateForm" onsubmit="updateOrder(event)">
+                    <input type="hidden" id="updateOrderId">
+                    <div class="form-field">
+                        <label class="form-label">Order Status</label>
+                        <select class="form-select" id="updateOrderStatus" required>
+                            <option value="placed">Placed (Unfulfilled)</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="shipped">Shipped</option>
+                            <option value="delivered">Delivered</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Tracking Number (optional)</label>
+                        <input type="text" class="form-input" id="updateTracking" placeholder="e.g. AWB / Tracking ID">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-outline" onclick="closeOrderModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary" id="btnUpdateOrder"><i
+                                class="fa-solid fa-check"></i> Update Status</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app-config.js"></script>
+    <script src="app-auth.js"></script>
+    <script>
+        // State
+        let allOrders = [];
+        let filteredOrders = [];
+        const PAGE = 15;
+        let currentPg = 1;
+        let activeTab = 'all';
+
+        // Auth
+        try {
+            const user = HeelsUpAuth.getUser();
+            if (!user || user.role !== 'admin') {
+                window.location = 'login.html?redirect=admin-orders.html';
+            }
+            const uname = (user?.firstName || user?.first_name || 'Admin');
+            document.getElementById('s-avatar').textContent = uname.charAt(0).toUpperCase();
+            document.getElementById('s-name').textContent = uname;
+        } catch (e) {
+            console.error("Auth initialization failed", e);
+        }
+
+        // Sidebar logic
+        function toggleSidebar() {
+            const s = document.getElementById('sidebar');
+            s.classList.toggle('open');
+            document.getElementById('mobOverlay').style.display = s.classList.contains('open') ? 'block' : 'none';
+        }
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('open');
+            document.getElementById('mobOverlay').style.display = 'none';
+        }
+        function doLogout() {
+            try { HeelsUpAuth.clearSession(); } catch (e) { }
+            window.location = 'login.html';
+        }
+
+        function showToast(msg, type = 'success', title = '') {
+            const c = document.getElementById('toastWrap');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            const icon = type === 'error' ? 'fa-circle-xmark' : (type === 'warning' ? 'fa-triangle-exclamation' : (type === 'info' ? 'fa-circle-info' : 'fa-circle-check'));
+            t.innerHTML = `<i class="fa-solid ${icon}"></i><div>${title ? `<strong>${title}</strong><br>` : ''}<span>${msg}</span></div>`;
+            c.appendChild(t);
+            setTimeout(() => {
+                t.style.opacity = '0'; t.style.transition = 'opacity .3s';
+                setTimeout(() => t.remove(), 300);
+            }, 4000);
+        }
+
+        function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+        function fmtRs(v) { return '₹' + Number(v || 0).toLocaleString('en-IN'); }
+        function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—'; }
+
+        function getStatusHtml(s) {
+            s = (s || 'placed').toLowerCase();
+            const map = {
+                'placed': { cls: 'status-placed', txt: 'Placed' },
+                'confirmed': { cls: 'status-confirmed', txt: 'Confirmed' },
+                'shipped': { cls: 'status-shipped', txt: 'Shipped' },
+                'delivered': { cls: 'status-delivered', txt: 'Delivered' },
+                'cancelled': { cls: 'status-cancelled', txt: 'Cancelled' },
+                'returned': { cls: 'status-returned', txt: 'Returned' },
+            };
+            const def = map[s] || { cls: 'status-placed', txt: s };
+            return `<span class="status-badge ${def.cls}">${def.txt}</span>`;
+        }
+
+        function getPaymentHtml(status, method) {
+            status = (status || 'pending').toLowerCase();
+            if (status === 'paid' || status === 'success') {
+                return `<span class="payment-status paid"><i class="fa-solid fa-circle-check"></i> Paid</span>`;
+            } else if (status === 'failed' || status === 'refunded') {
+                return `<span class="payment-status failed"><i class="fa-solid fa-circle-xmark"></i> ${status === 'refunded' ? 'Refunded' : 'Failed'}</span>`;
+            } else {
+                return `<span class="payment-status unpaid"><i class="fa-regular fa-clock"></i> Pending${method === 'cod' ? ' (COD)' : ''}</span>`;
+            }
+        }
+
+        // Live API Fetching
+        async function loadOrders() {
+            document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Fetching live orders...</div></td></tr>';
+            try {
+                const data = await HeelsUpAuth.api('/api/admin/orders');
+                allOrders = Array.isArray(data) ? data : (data.orders || []);
+
+                // Sort descending by date
+                allOrders.sort((a, b) => new Date(b.created_at || Date.now()) - new Date(a.created_at || Date.now()));
+
+                calculateStats();
+                filterOrders();
+            } catch (e) {
+                console.error('API Error:', e);
+                showToast(e.message || 'Failed to load orders', 'error');
+                document.getElementById('ordersTableBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--danger)">Failed to connect to the database.</td></tr>';
+            }
+        }
+
+        function calculateStats() {
+            let unfulfilled = 0;
+            let unpaid = 0;
+            let returns = 0;
+
+            allOrders.forEach(o => {
+                const os = (o.order_status || '').toLowerCase();
+                const ps = (o.payment_status || '').toLowerCase();
+
+                if (os !== 'delivered' && os !== 'shipped' && os !== 'cancelled' && os !== 'returned') unfulfilled++;
+                if (ps !== 'paid' && ps !== 'success' && os !== 'cancelled') unpaid++;
+                if (os === 'cancelled' || os === 'returned') returns++;
+            });
+
+            document.getElementById('statTotalOrders').textContent = allOrders.length.toLocaleString('en-IN');
+            document.getElementById('statUnfulfilled').textContent = unfulfilled.toLocaleString('en-IN');
+            document.getElementById('statUnpaid').textContent = unpaid.toLocaleString('en-IN');
+            document.getElementById('statReturns').textContent = returns.toLocaleString('en-IN');
+
+            document.getElementById('badgeUnfulfilled').textContent = unfulfilled;
+            document.getElementById('badgeUnpaid').textContent = unpaid;
+        }
+
+        function setTabFilter(tab, btnElement) {
+            activeTab = tab;
+            document.querySelectorAll('.order-tab-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            currentPg = 1;
+            filterOrders();
+        }
+
+        function clearFilters() {
+            document.getElementById('orderSearch').value = '';
+            document.getElementById('paymentFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            setTabFilter('all', document.querySelector('.order-tab-btn[data-tab="all"]'));
+        }
+
+        function filterOrders() {
+            const q = document.getElementById('orderSearch').value.toLowerCase();
+            const payF = document.getElementById('paymentFilter').value;
+            const statF = document.getElementById('statusFilter').value;
+
+            filteredOrders = allOrders.filter(o => {
+                const num = (o.order_number || '').toLowerCase();
+                const cName = (o.customer_name || '').toLowerCase();
+                const cEmail = (o.customer_email || '').toLowerCase();
+                const cPhone = (o.customer_phone || '').toLowerCase();
+                const os = (o.order_status || '').toLowerCase();
+                const ps = (o.payment_status || '').toLowerCase();
+
+                // Search Match
+                const matchesSearch = !q || num.includes(q) || cName.includes(q) || cEmail.includes(q) || cPhone.includes(q);
+
+                // Dropdown Match
+                const matchesPay = !payF ||
+                    (payF === 'paid' && (ps === 'paid' || ps === 'success')) ||
+                    (payF === 'pending' && (ps !== 'paid' && ps !== 'success' && ps !== 'refunded' && ps !== 'failed')) ||
+                    (payF === 'failed' && (ps === 'failed' || ps === 'refunded'));
+                const matchesStat = !statF || os === statF;
+
+                // Tab Match
+                let matchesTab = true;
+                if (activeTab === 'unfulfilled') {
+                    matchesTab = (os !== 'delivered' && os !== 'shipped' && os !== 'cancelled' && os !== 'returned');
+                } else if (activeTab === 'unpaid') {
+                    matchesTab = (ps !== 'paid' && ps !== 'success' && os !== 'cancelled');
+                } else if (activeTab === 'completed') {
+                    matchesTab = (os === 'delivered');
+                } else if (activeTab === 'returns') {
+                    matchesTab = (os === 'returned' || os === 'cancelled');
+                }
+
+                return matchesSearch && matchesPay && matchesStat && matchesTab;
+            });
+
+            currentPg = 1;
+            renderOrders();
+        }
+
+        function renderOrders() {
+            const start = (currentPg - 1) * PAGE;
+            const page = filteredOrders.slice(start, start + PAGE);
+            const tbody = document.getElementById('ordersTableBody');
+            const info = document.getElementById('paginationInfo');
+
+            if (!page.length) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted)">No orders found matching criteria.</td></tr>';
+                info.textContent = `Showing 0 orders`;
+                document.getElementById('ordersPagination').innerHTML = '';
+                return;
+            }
+
+            info.innerHTML = `Showing <strong>${start + 1}–${Math.min(start + PAGE, filteredOrders.length)}</strong> of <strong>${filteredOrders.length}</strong> orders`;
+
+            tbody.innerHTML = page.map(o => {
+                const dateHtml = fmtDate(o.created_at).split(', ');
+                return `<tr>
+                    <td>
+                        <div class="admin-table-name" style="color:var(--info); cursor:pointer;" onclick="openOrderModal(${o.id})">${esc(o.order_number || '#' + o.id)}</div>
+                    </td>
+                    <td>
+                        <div class="admin-table-name">${dateHtml[0] || '—'}</div>
+                        <div class="admin-table-sub">${dateHtml[1] || ''}</div>
+                    </td>
+                    <td>
+                        <div class="admin-table-name">${esc(o.customer_name || 'Guest')}</div>
+                        <div class="admin-table-sub">${esc(o.customer_email || o.customer_phone || '')}</div>
+                    </td>
+                    <td><div class="admin-table-name">${fmtRs(o.total_amount)}</div></td>
+                    <td>${getPaymentHtml(o.payment_status, o.payment_method)}</td>
+                    <td>${getStatusHtml(o.order_status)}</td>
+                    <td>
+                        <div class="admin-table-actions">
+                            <button class="table-action-btn" title="View / Update" onclick="openOrderModal(${o.id})"><i class="fa-regular fa-pen-to-square"></i></button>
+                        </div>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            renderPagination('ordersPagination', filteredOrders.length, currentPg, p => { currentPg = p; renderOrders(); });
+        }
+
+        // Modal Logic
+        function openOrderModal(id) {
+            const o = allOrders.find(x => x.id === id);
+            if (!o) return;
+
+            document.getElementById('orderModalTitle').textContent = `Order: ${o.order_number || '#' + o.id}`;
+            document.getElementById('modCustName').textContent = o.customer_name || 'Guest';
+            document.getElementById('modCustPhone').textContent = o.customer_phone || '—';
+            document.getElementById('modCustEmail').textContent = o.customer_email || '—';
+            document.getElementById('modTotal').textContent = fmtRs(o.total_amount);
+            document.getElementById('modPayStatus').innerHTML = getPaymentHtml(o.payment_status, o.payment_method);
+            document.getElementById('modPayMethod').textContent = (o.payment_method || 'Online').toUpperCase();
+
+            const addr = `${o.address_line1 || ''} ${o.city ? ', ' + o.city : ''} ${o.state ? ', ' + o.state : ''} ${o.pincode ? '- ' + o.pincode : ''}`;
+            document.getElementById('modAddress').textContent = addr.trim() || 'No address provided';
+
+            document.getElementById('updateOrderId').value = o.id;
+            document.getElementById('updateOrderStatus').value = o.order_status || 'placed';
+            document.getElementById('updateTracking').value = o.tracking_number || '';
+
+            document.getElementById('orderModal').classList.add('show');
+        }
+
+        function closeOrderModal() {
+            document.getElementById('orderModal').classList.remove('show');
+        }
+
+        async function updateOrder(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnUpdateOrder');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+            const id = parseInt(document.getElementById('updateOrderId').value);
+            const status = document.getElementById('updateOrderStatus').value;
+            const tracking = document.getElementById('updateTracking').value.trim();
+
+            try {
+                await HeelsUpAuth.api(`/api/admin/orders/${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ status: status, tracking_number: tracking || null })
+                });
+
+                showToast('Order status updated successfully');
+
+                // Update local array
+                const idx = allOrders.findIndex(x => x.id === id);
+                if (idx > -1) {
+                    allOrders[idx].order_status = status;
+                    if (tracking) allOrders[idx].tracking_number = tracking;
+                }
+
+                closeOrderModal();
+                calculateStats();
+                filterOrders();
+            } catch (err) {
+                showToast(err.message || 'Failed to update order', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Update Status';
+            }
+        }
+
+        function exportOrders() {
+            if (!filteredOrders.length) {
+                showToast('No orders to export', 'warning');
+                return;
+            }
+            const csv = ['Order Number,Customer Name,Email,Phone,Date,Total Amount,Payment Status,Order Status,Tracking']
+                .concat(filteredOrders.map(o =>
+                    `"${o.order_number || ''}","${o.customer_name || ''}","${o.customer_email || ''}","${o.customer_phone || ''}","${o.created_at || ''}","${o.total_amount || 0}","${o.payment_status || ''}","${o.order_status || ''}","${o.tracking_number || ''}"`
+                )).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `orders_export_${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+        }
+
+        function renderPagination(elId, total, page, onPageCallback) {
+            const pages = Math.ceil(total / PAGE);
+            const el = document.getElementById(elId);
+
+            if (pages <= 1) { el.innerHTML = ''; return; }
+
+            let html = `<button class="page-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left" style="font-size:10px"></i></button>`;
+
+            // Simplified pagination display for space
+            let startP = Math.max(1, page - 2);
+            let endP = Math.min(pages, page + 2);
+
+            if (startP > 1) {
+                html += `<button class="page-btn" onclick="(${onPageCallback.toString()})(1)">1</button>`;
+                if (startP > 2) html += `<span class="page-ellipsis" style="color:var(--muted); font-size:10px; padding: 0 4px;">...</span>`;
+            }
+
+            for (let i = startP; i <= endP; i++) {
+                html += `<button class="page-btn ${i === page ? 'active' : ''}" onclick="(${onPageCallback.toString()})(${i})">${i}</button>`;
+            }
+
+            if (endP < pages) {
+                if (endP < pages - 1) html += `<span class="page-ellipsis" style="color:var(--muted); font-size:10px; padding: 0 4px;">...</span>`;
+                html += `<button class="page-btn" onclick="(${onPageCallback.toString()})(${pages})">${pages}</button>`;
+            }
+
+            html += `<button class="page-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right" style="font-size:10px"></i></button>`;
+            el.innerHTML = html;
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', loadOrders);
+    </script>
 </body>
+
 </html>
