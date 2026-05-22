@@ -1496,6 +1496,49 @@ async function handleAdmin(request, path, url, env) {
     return json({ ok: true });
   }
 
+  // ── SHIPPING EXTENDED (METHODS & PINCODES) ────────────────────
+  if (method === "GET" && path === "/api/admin/shipping/methods") {
+    const { results } = await env.DB.prepare("SELECT * FROM shipping_methods ORDER BY id ASC").all();
+    return json({ methods: results || [] });
+  }
+  if (method === "POST" && path === "/api/admin/shipping/methods") {
+    const body   = await readJson(request);
+    const result = await env.DB.prepare(
+      "INSERT INTO shipping_methods (name, courier, tracking_url_format, is_active, created_at) VALUES (?,?,?,?,?)"
+    ).bind(String(body?.name || ""), String(body?.courier || ""), String(body?.tracking_url_format || ""), body?.is_active !== false ? 1 : 0, nowIso()).run();
+    return json({ ok: true, id: result.meta?.last_row_id }, 201);
+  }
+  if (method === "PUT" && /^\/api\/admin\/shipping\/methods\/(\d+)$/.test(path)) {
+    const id   = toInt(path.split("/").pop(), 0);
+    const body = await readJson(request);
+    await env.DB.prepare(
+      "UPDATE shipping_methods SET name=?, courier=?, tracking_url_format=?, is_active=? WHERE id=?"
+    ).bind(String(body?.name || ""), String(body?.courier || ""), String(body?.tracking_url_format || ""), body?.is_active !== false ? 1 : 0, id).run();
+    return json({ ok: true });
+  }
+  if (method === "DELETE" && /^\/api\/admin\/shipping\/methods\/(\d+)$/.test(path)) {
+    const id = toInt(path.split("/").pop(), 0);
+    await env.DB.prepare("DELETE FROM shipping_methods WHERE id=?").bind(id).run();
+    return json({ ok: true });
+  }
+
+  if (method === "GET" && path === "/api/admin/shipping/pincodes") {
+    const { results } = await env.DB.prepare("SELECT * FROM shipping_pincodes ORDER BY pincode ASC").all();
+    return json({ pincodes: results || [] });
+  }
+  if (method === "POST" && path === "/api/admin/shipping/pincodes") {
+    const body = await readJson(request);
+    await env.DB.prepare(
+      "INSERT OR REPLACE INTO shipping_pincodes (pincode, city, state, country, is_cod_available, is_active, delivery_days) VALUES (?,?,?,?,?,?,?)"
+    ).bind(String(body?.pincode || ""), String(body?.city || ""), String(body?.state || ""), String(body?.country || "IN"), body?.is_cod_available !== false ? 1 : 0, body?.is_active !== false ? 1 : 0, toInt(body?.delivery_days, 5)).run();
+    return json({ ok: true });
+  }
+  if (method === "DELETE" && /^\/api\/admin\/shipping\/pincodes\/([^/]+)$/.test(path)) {
+    const pincode = path.split("/").pop();
+    await env.DB.prepare("DELETE FROM shipping_pincodes WHERE pincode=?").bind(pincode).run();
+    return json({ ok: true });
+  }
+
   // ── NOTIFICATIONS ─────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/notifications") {
     const limit  = Math.min(toInt(url.searchParams.get("limit"), 50), 200);

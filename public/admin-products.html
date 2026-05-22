@@ -1290,9 +1290,13 @@
                             placeholder="Write a short product description..."></textarea>
                     </div>
                     <div class="form-field full">
-                        <label class="form-label">Image URL</label>
-                        <input type="url" class="form-input" name="image_url"
-                            placeholder="https://example.com/image.jpg">
+                        <label class="form-label">Images (Up to 5 - R2 Upload)</label>
+                        <input type="file" class="form-input" name="product_images" multiple accept="image/*" id="productImagesInput">
+                        <small class="text-muted" style="display:block;margin-top:4px;">Upload max 5 images. These will be stored in R2 automatically.</small>
+                        <div style="margin-top:12px;">
+                            <label class="form-label">Or Image URL (Fallback)</label>
+                            <input type="url" class="form-input" name="image_url" placeholder="https://example.com/image.jpg">
+                        </div>
                     </div>
                     <div class="form-field full">
                         <div class="form-check">
@@ -1685,6 +1689,44 @@
             btn.disabled = true;
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
 
+            // Handle image uploads via R2 endpoint if files selected
+            const fileInput = document.getElementById('productImagesInput');
+            let uploadedUrls = [];
+            
+            if (fileInput && fileInput.files && fileInput.files.length > 0) {
+                if (fileInput.files.length > 5) {
+                    showToast("Maximum 5 images allowed.", "warning");
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+                    return;
+                }
+                
+                const formData = new FormData();
+                formData.append('folder', 'products');
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    formData.append('files[]', fileInput.files[i]);
+                }
+                
+                try {
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading Images...';
+                    const token = HeelsUpAuth.getToken();
+                    const upRes = await fetch(`${HeelsUpAuth.API_BASE}/api/admin/upload`, {
+                        method: 'POST',
+                        headers: { 'Authorization': `Bearer ${token}` },
+                        body: formData
+                    });
+                    const upData = await upRes.json();
+                    if (!upRes.ok) throw new Error(upData.error || "Upload failed");
+                    
+                    uploadedUrls = upData.uploaded.map(u => u.url);
+                } catch (err) {
+                    showToast(err.message, "error");
+                    btn.disabled = false;
+                    btn.innerHTML = originalBtnHtml;
+                    return;
+                }
+            }
+
             const payload = {
                 name: form.name.value.trim(),
                 sku: form.sku.value.trim(),
@@ -1694,7 +1736,8 @@
                 stock: Number(form.stock.value) || 0,
                 variants: Number(form.variants.value) || 0,
                 description: form.description.value.trim(),
-                image_url: form.image_url.value.trim(),
+                image_url: uploadedUrls.length > 0 ? uploadedUrls[0] : form.image_url.value.trim(),
+                images: uploadedUrls.length > 0 ? uploadedUrls : (form.image_url.value.trim() ? [form.image_url.value.trim()] : []),
                 active: form.active.checked ? 1 : 0
             };
 
