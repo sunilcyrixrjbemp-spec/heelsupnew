@@ -45,7 +45,8 @@ export async function dashboardRouter(request, env) {
         
         const ordersByStatus = {};
         for (const row of results[4].results) {
-            ordersByStatus[row.status] = row.count;
+            const statusKey = (row.status || 'placed').toLowerCase();
+            ordersByStatus[statusKey] = (ordersByStatus[statusKey] || 0) + row.count;
         }
 
         const recentOrders = results[5].results;
