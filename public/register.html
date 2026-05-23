@@ -1727,15 +1727,25 @@
     async function initGoogle() {
       try {
         const config = await HeelsUpAuth.api('/api/config');
-        if (config.googleClientId && window.google) {
-          google.accounts.id.initialize({
-            client_id: config.googleClientId,
-            callback: handleGoogleCallback
-          });
-          google.accounts.id.renderButton(
-            document.getElementById("googleBtnWrapper"),
-            { theme: "outline", size: "large", type: "standard", width: document.getElementById('btnSendOtp').offsetWidth }
-          );
+        if (config.googleClientId) {
+          const tryRender = () => {
+            if (window.google) {
+              const refBtn = document.getElementById('btnSendOtp');
+              const btnWidth = refBtn ? refBtn.offsetWidth : 300;
+              
+              google.accounts.id.initialize({
+                client_id: config.googleClientId,
+                callback: handleGoogleCallback
+              });
+              google.accounts.id.renderButton(
+                document.getElementById("googleBtnWrapper"),
+                { theme: "outline", size: "large", type: "standard", width: btnWidth }
+              );
+            } else {
+              setTimeout(tryRender, 100);
+            }
+          };
+          tryRender();
         }
       } catch (e) {
         console.error("Could not load Google Config", e);
