@@ -479,6 +479,7 @@
           ondismiss: function() {
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-lock"></i> Pay ₹' + (HeelsUpCart.getSubtotal() - couponDiscount + (HeelsUpCart.getSubtotal() >= FREE_SHIP ? 0 : SHIP_CHARGE)).toLocaleString('en-IN');
+            HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id }) }).catch(()=>{});
           }
         }
       };
@@ -488,6 +489,7 @@
         showToast('Payment failed: ' + (resp.error?.description || 'Try again'), 'error');
         btn.disabled = false;
         btn.innerHTML = '<i class="fa-solid fa-lock"></i> Retry Payment';
+        HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id }) }).catch(()=>{});
       });
       rzp.open();
 

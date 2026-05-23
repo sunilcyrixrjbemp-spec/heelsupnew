@@ -199,6 +199,7 @@ async function router(request, env) {
 
   // ── Payments ───────────────────────────────────────────────────
   if (path === "/api/payments/razorpay/verify" && method === "POST") return verifyRazorpayPayment(request, env);
+  if (path === "/api/payments/razorpay/fail" && method === "POST") return failRazorpayPayment(request, env);
 
   // ── Admin Routes ───────────────────────────────────────────────
   if (path.startsWith("/api/admin")) return handleAdmin(request, path, url, env);
@@ -789,6 +790,21 @@ async function validateCoupon(request, env) {
 // ════════════════════════════════════════════════════════════════
 // ORDERS
 // ════════════════════════════════════════════════════════════════
+async function failRazorpayPayment(request, env) {
+  const body = await readJson(request);
+  if (!body) return json({ error: "Invalid JSON" }, 400);
+  const localOrderId = toInt(body.orderId, 0);
+  if (!localOrderId) return json({ error: "orderId required" }, 400);
+  const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
+  if (!order) return json({ error: "Order not found" }, 404);
+  if (order.payment_status === 'paid') return json({ error: "Already paid" }, 400);
+  
+  await env.DB.prepare(
+    "UPDATE orders SET payment_status='failed', order_status='failed', updated_at=? WHERE id=?"
+  ).bind(nowIso(), localOrderId).run();
+  return json({ ok: true });
+}
+
 async function initiateOrder(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return json({ error: "Please log in to place an order", code: "AUTH_REQUIRED" }, 401);
@@ -878,14 +894,8 @@ async function verifyRazorpayPayment(request, env) {
         const newStock = Math.max(0, (prod.stock || 0) - (item.quantity || 1));
         await env.DB.prepare("UPDATE products SET stock=?, sold_count=sold_count+?, updated_at=? WHERE id=?").bind(newStock, item.quantity || 1, nowIso(), prod.id).run();
         await env.DB.prepare(
-          "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, order_id, created_at) VALUES (?,?,'sale',?,?,?,?,?,?)"
-        ).bind(prod.id, prod.name, prod.stock || 0, -(item.quantity || 1), newStock, `Order #${order.order_number}`, localOrderId, nowIso()).run();
-        // Low stock notification
-        if (newStock <= 5) {
-          await env.DB.prepare(
-            "INSERT INTO notifications (type, title, message, entity, entity_id, created_at) VALUES ('warning', 'Low Stock Alert', ?, 'products', ?, ?)"
-          ).bind(`${prod.name} has only ${newStock} units left`, String(prod.id), nowIso()).run();
-        }
+          "INSERT INTO inventory_logs (product_id, type, quantity, user_id, notes, created_at) VALUES (?, 'sale', ?, ?, 'Razorpay payment captured', ?)"
+        ).bind(prod.id, -(item.quantity || 1), null, nowIso()).run();
       }
     }
   }
@@ -909,7 +919,7 @@ async function verifyRazorpayPayment(request, env) {
     }).catch(() => { });
   }
   await auditLog(env, user?.id || null, "payment_confirmed", "orders", localOrderId, { rzpPaymentId });
-  return json({ ok: true, orderId: localOrderId, orderNumber: order.order_number, paymentStatus: "paid" });
+  return json({ ok: true, message: "Payment verified successfully" });
 }
 
 function buildOrderConfirmHtml(order, siteName, orderItems = []) {
@@ -1311,7 +1321,7 @@ async function handleAdmin(request, path, url, env) {
     for (const key of allowed) {
       if (updates[key] !== undefined) {
         const val = String(updates[key]);
-        if (key === "razorpay_key_secret" && /^[•]+$/.test(val)) continue;
+        if (key === "razorpay_key_secret" && val.includes("•")) continue;
         await setSetting(env, key, val);
         changed.push(key);
       }
