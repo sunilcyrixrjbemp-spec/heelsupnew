@@ -3048,99 +3048,90 @@
   <script src="app-auth.js"></script>
   <script src="dashboard.js"></script>
   <script>
+    /* ==========================================================
+       ADMIN.HTML WIRING — runs IMMEDIATELY after dashboard.js
+       All patches applied synchronously before DOMContentLoaded
+       so dashboard.js's own DOMContentLoaded sees our overrides.
+       ========================================================== */
     'use strict';
 
-    /* ─── LIVE CLOCK ────────────────────────────────── */
-    (function startClock() {
+    /* ─── 1. LIVE CLOCK ─────────────────────────────────────── */
+    function _startClock() {
       const el = document.getElementById('liveClock');
       if (!el) return;
       const tick = () => {
-        el.textContent = new Date().toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        el.textContent = new Date().toLocaleTimeString('en-IN',
+          { hour: '2-digit', minute: '2-digit', second: '2-digit' });
       };
       tick(); setInterval(tick, 1000);
-    })();
+    }
 
-    /* ─── WELCOME HEADING — NAME PATCH ─────────────── */
-    (function patchWelcomeHeading() {
-      function trySetName() {
-        let user = null;
-        try { user = (typeof HeelsUpAuth !== 'undefined') ? HeelsUpAuth.getUser() : null; } catch (e) { }
-        if (!user || user.role !== 'admin') {
-          document.getElementById('authGuard').classList.add('show');
-          document.querySelector('.layout').style.visibility = 'hidden';
-          return;
-        }
-        const name = user.firstName || user.first_name || user.name || 'Admin';
-        const heading = document.getElementById('welcomeHeading');
-        if (heading) {
-          heading.innerHTML = `Welcome Back, ${name}! <span style="font-size:1.35rem">👋</span>`;
-        }
-        const avatar = document.getElementById('sAvatar');
-        const sName = document.getElementById('sName');
-        if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
-        if (sName) sName.textContent = name;
-      }
-      if (typeof HeelsUpAuth !== 'undefined') trySetName();
-      else document.addEventListener('DOMContentLoaded', trySetName);
-    })();
-
-    /* ─── PRODUCT IMAGE PREVIEW ─────────────────────── */
+    /* ─── 2. PRODUCT IMAGE PREVIEW ──────────────────────────── */
     function updateProductImgPreview(url) {
       const wrap = document.getElementById('imgPreviewWrap');
       const img = document.getElementById('imgPreview');
-      if (url && url.startsWith('http')) {
-        wrap.style.display = '';
-        img.src = url;
+      if (!wrap || !img) return;
+      if (url && url.startsWith('http')) { wrap.style.display = ''; img.src = url; }
+      else wrap.style.display = 'none';
+    }
+
+    /* ─── 3. LOW STOCK CHECKER ──────────────────────────────── */
+    function _checkLowStock() {
+      const prods = window.allProducts || [];
+      const low = prods.filter(p => (p.stock || 0) <= 5 && p.active !== false);
+      const alertEl = document.getElementById('lowStockAlert');
+      const msgEl = document.getElementById('lowStockMsg');
+      if (!alertEl || !msgEl) return;
+      if (low.length > 0) {
+        const outOf = low.filter(p => (p.stock || 0) === 0);
+        msgEl.innerHTML = `<strong>${low.length} product${low.length > 1 ? 's' : ''}</strong> `
+          + `${low.length > 1 ? 'are' : 'is'} low on stock`
+          + (outOf.length ? ` (${outOf.length} out of stock)` : '') + '.';
+        alertEl.style.display = '';
       } else {
-        wrap.style.display = 'none';
+        alertEl.style.display = 'none';
       }
     }
 
-    /* ─── ENHANCED PRODUCTS TABLE (Featured column) ── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const origRenderProducts = window.renderProducts;
-      if (typeof origRenderProducts === 'function') {
-        window.renderProducts = function () { _renderProductsEnhanced(); };
-      }
-
-      /* Date pickers init */
-      const today = new Date().toISOString().split('T')[0];
-      if (document.getElementById('dfTo')) document.getElementById('dfTo').value = today;
-      if (document.getElementById('dfFrom')) {
-        const d = new Date(); d.setDate(d.getDate() - 30);
-        document.getElementById('dfFrom').value = d.toISOString().split('T')[0];
-      }
-    });
-
+    /* ─── 4. ENHANCED PRODUCTS TABLE (Featured + Stock Filter) ─ */
     function _renderProductsEnhanced() {
       const PAGE_S = 20;
-      const start = (window.pPg - 1) * PAGE_S;
-      const page = (window.filteredProducts || []).slice(start, start + PAGE_S);
+      const pPg = window.pPg || 1;
+      const all = window.filteredProducts || [];
+      const page = all.slice((pPg - 1) * PAGE_S, pPg * PAGE_S);
       const tbody = document.getElementById('productsTableBody');
-      const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      if (!tbody) return;
+
+      const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
       const rs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
 
       if (!page.length) {
         tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-search"></i><p>No products found.</p></div></td></tr>';
-        window.renderPagGen('productsPagination', 'productsPgInfo', (window.filteredProducts || []).length, window.pPg, p => { window.pPg = p; window.renderProducts(); });
+        if (typeof window.renderPagGen === 'function')
+          window.renderPagGen('productsPagination', 'productsPgInfo', all.length, pPg, p => { window.pPg = p; window.renderProducts(); });
         return;
       }
+
       tbody.innerHTML = page.map(p => `
     <tr>
       <td>
         <div style="display:flex;align-items:center;gap:10px">
           ${p.image_url
-          ? `<img src="${e(p.image_url)}" class="tbl-img" onerror="this.style.display='none'">`
+          ? `<img src="${esc(p.image_url)}" class="tbl-img" onerror="this.style.display='none'">`
           : `<div class="tbl-img" style="display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-image" style="font-size:.7rem"></i></div>`}
-          <div><div class="td-name">${e(p.name)}</div><div class="td-sub">SKU: ${e(p.sku || '—')}</div></div>
+          <div>
+            <div class="td-name">${esc(p.name)}</div>
+            <div class="td-sub">SKU: ${esc(p.sku || '—')}</div>
+          </div>
         </div>
       </td>
-      <td>${e(p.category || '—')}</td>
+      <td>${esc(p.category || '—')}</td>
       <td><strong>${rs(p.price || 0)}</strong></td>
       <td>${p.original_price ? `<span style="text-decoration:line-through;color:var(--muted);font-size:.73rem">${rs(p.original_price)}</span>` : '—'}</td>
       <td>
         <span style="font-weight:700;color:${(p.stock || 0) === 0 ? 'var(--danger)' : (p.stock || 0) <= 5 ? '#d97706' : 'var(--teal)'}">${p.stock || 0}</span>
-        ${(p.stock || 0) === 0 ? '<span class="badge badge-failed" style="margin-left:4px;font-size:.55rem">Out</span>' : ((p.stock || 0) <= 5 ? '<span class="badge badge-pending" style="margin-left:4px;font-size:.55rem">Low</span>' : '')}
+        ${(p.stock || 0) === 0 ? '<span class="badge badge-failed" style="margin-left:4px;font-size:.55rem">Out</span>'
+          : (p.stock || 0) <= 5 ? '<span class="badge badge-pending" style="margin-left:4px;font-size:.55rem">Low</span>' : ''}
       </td>
       <td>${p.featured ? '<span class="badge badge-paid">Yes</span>' : '<span style="color:var(--muted);font-size:.73rem">—</span>'}</td>
       <td>${p.active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
@@ -3152,129 +3143,158 @@
       </td>
     </tr>`).join('');
 
-      window.renderPagGen('productsPagination', 'productsPgInfo', (window.filteredProducts || []).length, window.pPg, p => { window.pPg = p; window.renderProducts(); });
+      if (typeof window.renderPagGen === 'function')
+        window.renderPagGen('productsPagination', 'productsPgInfo', all.length, pPg, p => { window.pPg = p; window.renderProducts(); });
     }
 
-    /* ─── STOCK FILTER PATCH ────────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const origFilter = window.filterProducts;
-      if (typeof origFilter === 'function') {
-        window.filterProducts = function () {
-          const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
-          const cat = document.getElementById('catFilter')?.value || '';
-          const st = document.getElementById('statusFilter2')?.value || '';
-          const stk = document.getElementById('stockFilter')?.value || '';
-          window.filteredProducts = (window.allProducts || []).filter(p => {
-            const mq = !q || p.name.toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q);
-            const mc = !cat || (p.category || '').toLowerCase() === cat.toLowerCase();
-            const ms = st === '' || String(p.active ? 1 : 0) === st;
-            const msk = stk === '' || (stk === 'low' && (p.stock || 0) <= 5 && (p.stock || 0) > 0) || (stk === 'out' && (p.stock || 0) === 0);
-            return mq && mc && ms && msk;
-          });
-          window.pPg = 1;
-          window.renderProducts();
-        };
+    /* ─── 5. COUPONS ENHANCED TABLE ─────────────────────────── */
+    function _renderCouponsEnhanced() {
+      const tbody = document.getElementById('couponsTableBody');
+      if (!tbody) return;
+      const all = window.allCoupons || [];
+      if (!all.length) {
+        tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><i class="fa-solid fa-ticket"></i><p>No coupons yet.</p></div></td></tr>';
+        return;
       }
-    });
-
-    /* ─── CUSTOMER COUNT BADGE ──────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const origLC = window.loadCustomers;
-      if (typeof origLC === 'function') {
-        window.loadCustomers = async function () {
-          await origLC();
-          const badge = document.getElementById('customerCountBadge');
-          if (badge && window.allCustomers) {
-            badge.textContent = `${window.allCustomers.length} customers`;
-            badge.style.display = '';
-          }
-        };
-      }
-    });
-
-    /* ─── LOW STOCK ALERT ───────────────────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const origLP = window.loadProducts;
-      if (typeof origLP === 'function') {
-        window.loadProducts = async function () {
-          await origLP();
-          _checkLowStock();
-        };
-      }
-      const origLD = window.loadDashboard;
-      if (typeof origLD === 'function') {
-        window.loadDashboard = async function () {
-          await origLD();
-          _checkLowStock();
-        };
-      }
-    });
-
-    function _checkLowStock() {
-      const products = window.allProducts || [];
-      const low = products.filter(p => (p.stock || 0) <= 5 && p.active !== false);
-      const alert = document.getElementById('lowStockAlert');
-      const msg = document.getElementById('lowStockMsg');
-      if (!alert || !msg) return;
-      if (low.length > 0) {
-        const outOf = low.filter(p => (p.stock || 0) === 0);
-        msg.innerHTML = `<strong>${low.length} product${low.length > 1 ? 's' : ''}</strong> ${low.length > 1 ? 'are' : 'is'} low on stock${outOf.length ? ` (${outOf.length} out of stock)` : ''}.`;
-        alert.style.display = '';
-      } else {
-        alert.style.display = 'none';
-      }
+      const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+      const rs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
+      const fmt = d => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
+      tbody.innerHTML = all.map(c => `
+    <tr>
+      <td><span style="font-family:monospace;font-size:.8rem;background:#f4f5f9;padding:3px 9px;border-radius:5px;font-weight:700">${esc(c.code)}</span></td>
+      <td>${c.type === 'percent' ? 'Percentage' : 'Flat'}</td>
+      <td><strong>${c.type === 'percent' ? c.value + '%' : '₹' + c.value}</strong></td>
+      <td>${c.min_order ? rs(c.min_order) : '—'}</td>
+      <td>${c.max_discount ? rs(c.max_discount) : '—'}</td>
+      <td><strong>${c.used_count || 0}</strong>${c.max_uses ? `/<span style="color:var(--muted)">${c.max_uses}</span>` : ''}</td>
+      <td class="td-sub">${fmt(c.expires_at)}</td>
+      <td>${c.active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
+      <td>
+        <div style="display:flex;gap:4px">
+          <button class="icon-btn" onclick='editCoupon(${JSON.stringify(c).replace(/'/g, "&#39;")})' title="Edit"><i class="fa-solid fa-pen"></i></button>
+          <button class="icon-btn del" onclick="deleteCoupon(${c.id})" title="Delete"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      </td>
+    </tr>`).join('');
     }
 
-    /* ─── COUPONS: Enhanced table (Max Discount col) ── */
-    document.addEventListener('DOMContentLoaded', () => {
-      const origRC = window.renderCoupons;
-      if (typeof origRC === 'function') {
-        window.renderCoupons = function () {
-          const tbody = document.getElementById('couponsTableBody');
-          if (!(window.allCoupons || []).length) {
-            tbody.innerHTML = '<tr><td colspan="9"><div class="empty-state"><i class="fa-solid fa-ticket"></i><p>No coupons yet.</p></div></td></tr>';
-            return;
-          }
-          const e = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-          const rs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
-          const fmt = d => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
-          tbody.innerHTML = window.allCoupons.map(c => `
-        <tr>
-          <td><span style="font-family:monospace;font-size:.8rem;background:#f4f5f9;padding:3px 9px;border-radius:5px;font-weight:700">${e(c.code)}</span></td>
-          <td>${c.type === 'percent' ? 'Percentage' : 'Flat'}</td>
-          <td><strong>${c.type === 'percent' ? c.value + '%' : '₹' + c.value}</strong></td>
-          <td>${c.min_order ? rs(c.min_order) : '—'}</td>
-          <td>${c.max_discount ? rs(c.max_discount) : '—'}</td>
-          <td><strong>${c.used_count || 0}</strong>${c.max_uses ? `/<span style="color:var(--muted)">${c.max_uses}</span>` : ''}</td>
-          <td class="td-sub">${fmt(c.expires_at)}</td>
-          <td>${c.active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
-          <td>
-            <div style="display:flex;gap:4px">
-              <button class="icon-btn" onclick='editCoupon(${JSON.stringify(c).replace(/'/g, "&#39;")})' title="Edit"><i class="fa-solid fa-pen"></i></button>
-              <button class="icon-btn del" onclick="deleteCoupon(${c.id})" title="Delete"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          </td>
-        </tr>`).join('');
-        };
-      }
-    });
+    /* ─── 6. PATCH ALL dashboard.js FUNCTIONS ───────────────────
+       Done SYNCHRONOUSLY here — before dashboard.js DOMContentLoaded
+       fires — so our versions are in place when data loads.
+       ─────────────────────────────────────────────────────────── */
 
-    /* ─── MODAL: Backdrop Click + ESC ───────────────── */
-    document.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('orderDetailModal').addEventListener('click', function (e) { if (e.target === this) closeOrderModal(); });
-      document.getElementById('productModalBd').addEventListener('click', function (e) { if (e.target === this) closeProductModal(); });
-      document.getElementById('couponModalBd').addEventListener('click', function (e) { if (e.target === this) closeCouponModal(); });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { closeOrderModal(); closeProductModal(); closeCouponModal(); }
+    // Override renderProducts to use enhanced version (Featured col)
+    window.renderProducts = function () { _renderProductsEnhanced(); };
+
+    // Override filterProducts to include stock filter
+    window.filterProducts = function () {
+      const q = (document.getElementById('productSearch')?.value || '').toLowerCase();
+      const cat = document.getElementById('catFilter')?.value || '';
+      const st = document.getElementById('statusFilter2')?.value || '';
+      const stk = document.getElementById('stockFilter')?.value || '';
+      window.filteredProducts = (window.allProducts || []).filter(p => {
+        const mq = !q || p.name.toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q);
+        const mc = !cat || (p.category || '').toLowerCase() === cat.toLowerCase();
+        const ms = st === '' || String(p.active ? 1 : 0) === st;
+        const msk = stk === '' || (stk === 'low' && (p.stock || 0) <= 5 && (p.stock || 0) > 0) || (stk === 'out' && (p.stock || 0) === 0);
+        return mq && mc && ms && msk;
       });
+      window.pPg = 1;
+      _renderProductsEnhanced();
+    };
+
+    // Override renderCoupons to add Max Discount column
+    window.renderCoupons = function () { _renderCouponsEnhanced(); };
+
+    // Wrap loadProducts to trigger low stock check after load
+    const _origLoadProducts = window.loadProducts;
+    if (typeof _origLoadProducts === 'function') {
+      window.loadProducts = async function () {
+        await _origLoadProducts();
+        _checkLowStock();
+      };
+    }
+
+    // Wrap loadCustomers to update badge count
+    const _origLoadCustomers = window.loadCustomers;
+    if (typeof _origLoadCustomers === 'function') {
+      window.loadCustomers = async function () {
+        await _origLoadCustomers();
+        const badge = document.getElementById('customerCountBadge');
+        if (badge && window.allCustomers) {
+          badge.textContent = `${window.allCustomers.length} customers`;
+          badge.style.display = '';
+        }
+      };
+    }
+
+    // Wrap loadDashboard to check low stock after dashboard loads
+    const _origLoadDashboard = window.loadDashboard;
+    if (typeof _origLoadDashboard === 'function') {
+      window.loadDashboard = async function () {
+        await _origLoadDashboard();
+        _checkLowStock();
+        // Update welcome heading with user name
+        _patchWelcomeName();
+      };
+    }
+
+    /* ─── 7. WELCOME HEADING NAME ───────────────────────────── */
+    function _patchWelcomeName() {
+      let user = null;
+      try { user = (typeof HeelsUpAuth !== 'undefined') ? HeelsUpAuth.getUser() : null; } catch (e) { }
+      if (!user) return;
+      const name = user.firstName || user.first_name || user.name || 'Admin';
+      const heading = document.getElementById('welcomeHeading');
+      if (heading) heading.innerHTML = `Welcome Back, ${name}! <span style="font-size:1.35rem">👋</span>`;
+      const avatar = document.getElementById('sAvatar');
+      const sName = document.getElementById('sName');
+      if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
+      if (sName) sName.textContent = name;
+    }
+
+    /* ─── 8. DOM READY — final wiring ───────────────────────── */
+    document.addEventListener('DOMContentLoaded', () => {
+
+      /* Start clock */
+      _startClock();
+
+      /* Welcome name (backup — in case loadDashboard didn't fire yet) */
+      _patchWelcomeName();
+
+      /* Modal backdrop click */
+      const om = document.getElementById('orderDetailModal');
+      const pm = document.getElementById('productModalBd');
+      const cm = document.getElementById('couponModalBd');
+      if (om) om.addEventListener('click', e => { if (e.target === om) closeOrderModal(); });
+      if (pm) pm.addEventListener('click', e => { if (e.target === pm) closeProductModal(); });
+      if (cm) cm.addEventListener('click', e => { if (e.target === cm) closeCouponModal(); });
+
+      /* ESC key closes any open modal */
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+          closeOrderModal(); closeProductModal(); closeCouponModal();
+        }
+      });
+
+      /* Date filter inputs — dashboard.js sets these too, but ensure they're set */
+      const today = new Date().toISOString().split('T')[0];
+      const dfTo = document.getElementById('dfTo');
+      const dfFrom = document.getElementById('dfFrom');
+      if (dfTo && !dfTo.value) dfTo.value = today;
+      if (dfFrom && !dfFrom.value) {
+        const d = new Date(); d.setDate(d.getDate() - 30);
+        dfFrom.value = d.toISOString().split('T')[0];
+      }
     });
 
-    /* ─── GLOBAL 401 HANDLER ────────────────────────── */
+    /* ─── 9. GLOBAL 401 HANDLER ─────────────────────────────── */
     window.addEventListener('unhandledrejection', e => {
       const msg = e.reason?.message || '';
       if (e.reason?.status === 401 || msg.includes('401') || msg.includes('Unauthorized')) {
-        document.getElementById('authGuard').classList.add('show');
+        const guard = document.getElementById('authGuard');
         const layout = document.querySelector('.layout');
+        if (guard) guard.classList.add('show');
         if (layout) { layout.style.visibility = 'hidden'; layout.style.display = 'none'; }
       }
     });
