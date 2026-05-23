@@ -329,30 +329,44 @@ async function trackEvent(request, env) {
 // OTP
 // ════════════════════════════════════════════════════════════════
 async function sendOtpEmail(env, email, otp, purpose) {
-  let scriptUrl = await getSetting(env, "otp_script_url", "");
-  if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
-    scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
+  let resendApiKey = await getSetting(env, "resend_api_key", "");
+  if (!resendApiKey && env.RESEND_API_KEY) {
+    resendApiKey = env.RESEND_API_KEY;
   }
+  
+  if (!resendApiKey) return { ok: false, error: "Resend API key not configured. Add 'resend_api_key' to settings." };
+  
   const siteName = await getSetting(env, "site_name", "HeelsUp");
-  if (!scriptUrl) return { ok: false, error: "OTP script URL not configured" };
+  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev"); // Defaults to resend.dev for testing
+
   const subjects = {
     register: `Verify your ${siteName} account`,
     forgot: `Reset your ${siteName} password`,
     login: `Your ${siteName} login OTP`
   };
+  
   try {
-    const res = await fetch(scriptUrl, {
+    const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${resendApiKey}`
+      },
       body: JSON.stringify({
-        to: email,
+        from: `${siteName} <${fromAddress}>`,
+        to: [email],
         subject: subjects[purpose] || `Your ${siteName} OTP`,
-        message: `Your OTP for ${siteName} is: ${otp}. It is valid for 10 minutes. Please do not share this with anyone.`,
-        otp: otp,
-        name: email.split('@')[0]
+        html: buildOtpHtml(siteName, otp, purpose)
       })
     });
-    return { ok: res.ok };
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({}));
+      console.error("Resend API Error:", errorData);
+      return { ok: false, error: errorData.message || "Failed to send email via Resend" };
+    }
+    
+    return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
@@ -872,18 +886,18 @@ async function verifyRazorpayPayment(request, env) {
   // Send order confirmation email (async, don't block response)
   const user = order.user_id ? await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(order.user_id).first() : null;
   const siteName = await getSetting(env, "site_name", "HeelsUp");
-  let scriptUrl = await getSetting(env, "otp_script_url", "");
-  if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
-    scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
-  }
-  if (user && scriptUrl) {
-    await fetch(scriptUrl, {
+  let resendApiKey = await getSetting(env, "resend_api_key", "");
+  if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
+  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+
+  if (user && resendApiKey) {
+    await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${resendApiKey}` },
       body: JSON.stringify({
-        to: user.email,
+        from: `${siteName} <${fromAddress}>`,
+        to: [user.email],
         subject: `Order Confirmed! #${order.order_number} — ${siteName}`,
-        message: `Your order #${order.order_number} is confirmed!\n\nTotal: ₹${order.total_amount}\n\nThank you for shopping with ${siteName}!`,
         html: buildOrderConfirmHtml(order, siteName)
       })
     }).catch(() => { });
@@ -1159,14 +1173,26 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     const email = String(body?.email || auth.user?.email || "").trim();
     if (!email) return json({ error: "Email required" }, 400);
-    let scriptUrl = await getSetting(env, "otp_script_url", "");
-    if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
-      scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
-    }
-    if (!scriptUrl) return json({ error: "OTP script URL not configured in Settings" }, 400);
+    let resendApiKey = await getSetting(env, "resend_api_key", "");
+    if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
+    if (!resendApiKey) return json({ error: "Resend API key not configured in Settings" }, 400);
+    
     const testOtp = Math.floor(100000 + Math.random() * 900000).toString();
+    const siteName = await getSetting(env, "site_name", "HeelsUp");
+    const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+    
     try {
-      await fetch(scriptUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ to: email, subject: `${await getSetting(env, "site_name", "HeelsUp")} - Test OTP`, otp: testOtp, name: "Admin" }) });
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${resendApiKey}` },
+        body: JSON.stringify({
+          from: `${siteName} <${fromAddress}>`,
+          to: [email],
+          subject: `${siteName} - Test OTP`,
+          html: buildOtpHtml(siteName, testOtp, "login")
+        })
+      });
+      if (!res.ok) throw new Error("Failed to send via Resend");
       return json({ ok: true, message: `Test OTP ${testOtp} sent to ${email}` });
     } catch (e) { return json({ error: "Failed: " + e.message }, 500); }
   }
@@ -1427,23 +1453,19 @@ async function handleAdmin(request, path, url, env) {
     // Send email notification to customer
     try {
       const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(id).first();
-      let scriptUrl = await getSetting(env, "otp_script_url", "");
-      if (!scriptUrl && env.GOOGLE_APPSCRIPT_ENDPOINT) {
-        scriptUrl = env.GOOGLE_APPSCRIPT_ENDPOINT;
-      }
+      let resendApiKey = await getSetting(env, "resend_api_key", "");
+      if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
       const siteName = await getSetting(env, "site_name", "HeelsUp");
-      if (order && scriptUrl && order.customer_email && scriptUrl.startsWith("http")) {
-        let emailMessage = `Your order #${order.order_number} has been updated.\nNew Status: ${status.toUpperCase()}\n`;
-        if (trackNo) emailMessage += `Tracking Number: ${trackNo}\n`;
-        emailMessage += `\nThank you for shopping with ${siteName}!`;
+      const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
 
-        await fetch(scriptUrl, {
+      if (order && resendApiKey && order.customer_email) {
+        await fetch("https://api.resend.com/emails", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${resendApiKey}` },
           body: JSON.stringify({
-            to: order.customer_email,
+            from: `${siteName} <${fromAddress}>`,
+            to: [order.customer_email],
             subject: `Order Update: #${order.order_number} is now ${status.toUpperCase()} — ${siteName}`,
-            message: emailMessage,
             html: `<div style="font-family:sans-serif;padding:20px;"><h2>Order Status Update</h2><p>Your order <b>#${order.order_number}</b> has been updated to <strong style="color:#c9a96e">${status.toUpperCase()}</strong>.</p>${trackNo ? `<p>Tracking Number: ${trackNo}</p>` : ''}<p>Thank you for shopping with us!</p></div>`
           })
         }).catch(() => { });
