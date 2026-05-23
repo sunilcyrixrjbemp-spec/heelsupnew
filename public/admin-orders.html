@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Orders â€” HeelsUp Admin</title>
+    <title>Orders — HeelsUp Admin</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -1696,7 +1696,7 @@
                         <div class="kpi-icon c-blue"><i class="fa-solid fa-bag-shopping"></i></div>
                         <div>
                             <div class="kpi-label">Total Orders</div>
-                            <div class="kpi-val" id="kpiTotal">â€”</div>
+                            <div class="kpi-val" id="kpiTotal">—</div>
                             <div class="kpi-sub">All time</div>
                         </div>
                     </div>
@@ -1704,7 +1704,7 @@
                         <div class="kpi-icon c-gold"><i class="fa-solid fa-clock"></i></div>
                         <div>
                             <div class="kpi-label">Unfulfilled</div>
-                            <div class="kpi-val" id="kpiUnfulfilled">â€”</div>
+                            <div class="kpi-val" id="kpiUnfulfilled">—</div>
                             <div class="kpi-sub">Need action</div>
                         </div>
                     </div>
@@ -1712,7 +1712,7 @@
                         <div class="kpi-icon c-teal"><i class="fa-solid fa-circle-check"></i></div>
                         <div>
                             <div class="kpi-label">Delivered</div>
-                            <div class="kpi-val" id="kpiDelivered">â€”</div>
+                            <div class="kpi-val" id="kpiDelivered">—</div>
                             <div class="kpi-sub">Completed</div>
                         </div>
                     </div>
@@ -1720,7 +1720,7 @@
                         <div class="kpi-icon c-orange"><i class="fa-solid fa-indian-rupee-sign"></i></div>
                         <div>
                             <div class="kpi-label">Total Revenue</div>
-                            <div class="kpi-val" id="kpiRevenue">â€”</div>
+                            <div class="kpi-val" id="kpiRevenue">—</div>
                             <div class="kpi-sub">Paid orders</div>
                         </div>
                     </div>
@@ -1728,7 +1728,7 @@
                         <div class="kpi-icon c-red"><i class="fa-solid fa-ban"></i></div>
                         <div>
                             <div class="kpi-label">Cancelled</div>
-                            <div class="kpi-val" id="kpiCancelled">â€”</div>
+                            <div class="kpi-val" id="kpiCancelled">—</div>
                             <div class="kpi-sub">Total cancels</div>
                         </div>
                     </div>
@@ -1763,7 +1763,7 @@
                     <div class="search-wrap">
                         <i class="fa-solid fa-magnifying-glass"></i>
                         <input type="text" class="search-input" id="searchInput"
-                            placeholder="Order#, Customer, Phone, Emailâ€¦" oninput="applyFilters()">
+                            placeholder="Order#, Customer, Phone, Email…" oninput="applyFilters()">
                     </div>
                     <select class="filter-select" id="payFilter" onchange="applyFilters()">
                         <option value="">All Payments</option>
@@ -1808,7 +1808,7 @@
                             <tbody id="ordersTbody">
                                 <tr>
                                     <td colspan="8">
-                                        <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading ordersâ€¦
+                                        <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading orders…
                                         </div>
                                     </td>
                                 </tr>
@@ -1852,9 +1852,8 @@
     <div id="invoiceTemplate" style="display:none"></div>
 
     <script src="app-auth.js"></script>
-  <script src="admin-enterprise.js"></script>
     <script>
-        // â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── AUTH ─────────────────────────────────────────────────────────────────────
         (function () {
             let user = null;
             try { user = (typeof HeelsUpAuth !== 'undefined') ? HeelsUpAuth.getUser() : null; } catch (e) { }
@@ -1873,19 +1872,19 @@
             document.getElementById('sName').textContent = name;
         })();
 
-        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── STATE ─────────────────────────────────────────────────────────────────────
         let allOrders = [], filteredOrders = [], activeTab = 'all', currentPg = 1;
         let currentOrderData = null;
         const PAGE_SIZE = 20;
         const cache = {};
 
-        // â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── HELPERS ───────────────────────────────────────────────────────────────────
         const $ = id => document.getElementById(id);
         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const fmtRs = v => 'â‚¹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
+        const fmtRs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
         const fmtNum = v => (Number(v) || 0).toLocaleString('en-IN');
         const fmtDate = (d, short = false) => {
-            if (!d) return 'â€”';
+            if (!d) return '—';
             const opts = short ? { day: '2-digit', month: 'short', year: 'numeric' } : { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
             return new Date(d).toLocaleDateString('en-IN', opts);
         };
@@ -1916,19 +1915,19 @@
         }
 
         function methodBadge(m) {
-            if (!m) return 'â€”';
+            if (!m) return '—';
             m = m.toLowerCase();
             if (m === 'razorpay' || m === 'upi' || m === 'card') return `<span class="badge badge-razorpay"><i class="fa-solid fa-lock" style="font-size:.6rem"></i> Razorpay</span>`;
             if (m === 'cod') return `<span class="badge badge-cod">COD</span>`;
             return `<span class="badge badge-locked">${esc(m)}</span>`;
         }
 
-        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── SIDEBAR ───────────────────────────────────────────────────────────────────
         function toggleSidebar() { const s = $('sidebar'), o = $('mobOverlay'); s.classList.toggle('open'); o.style.display = s.classList.contains('open') ? 'block' : 'none'; }
         function closeSidebar() { $('sidebar').classList.remove('open'); $('mobOverlay').style.display = 'none'; }
         function doLogout() { try { HeelsUpAuth.clearSession(); } catch (e) { } window.location = 'login.html'; }
 
-        // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── TOAST ─────────────────────────────────────────────────────────────────────
         function toast(msg, type = 'success') {
             const wrap = $('toastWrap'), t = document.createElement('div');
             t.className = `toast ${type}`;
@@ -1938,7 +1937,7 @@
             setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 4500);
         }
 
-        // â”€â”€ API â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── API ───────────────────────────────────────────────────────────────────────
         async function apiFetch(url, opts = {}) {
             const cacheKey = url + JSON.stringify(opts);
             if (!opts.method && cache[cacheKey] && Date.now() - cache[cacheKey].ts < 30000) return cache[cacheKey].data;
@@ -1950,11 +1949,11 @@
             return data;
         }
 
-        // â”€â”€ LOAD ORDERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── LOAD ORDERS ───────────────────────────────────────────────────────────────
         async function loadOrders() {
             const btn = $('refreshBtn');
             if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true; }
-            $('heroSub').textContent = 'Fetching ordersâ€¦';
+            $('heroSub').textContent = 'Fetching orders…';
 
             try {
                 const t0 = performance.now();
@@ -1975,7 +1974,7 @@
                 }).length;
                 if (unfulfilled > 0) { $('ordersBadge').textContent = unfulfilled; $('ordersBadge').style.display = ''; }
 
-                $('heroSub').textContent = `${fmtNum(allOrders.length)} total orders Â· loaded in ${ms}ms`;
+                $('heroSub').textContent = `${fmtNum(allOrders.length)} total orders · loaded in ${ms}ms`;
                 toast(`${allOrders.length} orders loaded in ${ms}ms`, 'success');
             } catch (e) {
                 toast('Failed to load orders: ' + (e.message || 'Network error'), 'error');
@@ -2013,7 +2012,7 @@
             Object.entries(map).forEach(([k, id]) => { const el = $(id); if (el) el.textContent = fmtNum(counts[k] || 0); });
         }
 
-        // â”€â”€ TABS & FILTERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── TABS & FILTERS ────────────────────────────────────────────────────────────
         function setTab(tab, btn) {
             activeTab = tab;
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -2076,7 +2075,7 @@
             setTab('all', document.querySelector('.tab-btn'));
         }
 
-        // â”€â”€ RENDER TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── RENDER TABLE ──────────────────────────────────────────────────────────────
         function renderTable() {
             const tbody = $('ordersTbody'), pgInfo = $('pgInfo'), pgEl = $('pagination');
             const start = (currentPg - 1) * PAGE_SIZE;
@@ -2087,7 +2086,7 @@
                 pgInfo.textContent = 'Showing 0 orders'; pgEl.innerHTML = ''; return;
             }
 
-            pgInfo.innerHTML = `Showing <strong>${start + 1}â€“${Math.min(start + PAGE_SIZE, filteredOrders.length)}</strong> of <strong>${fmtNum(filteredOrders.length)}</strong> orders`;
+            pgInfo.innerHTML = `Showing <strong>${start + 1}–${Math.min(start + PAGE_SIZE, filteredOrders.length)}</strong> of <strong>${fmtNum(filteredOrders.length)}</strong> orders`;
 
             tbody.innerHTML = page.map(o => {
                 const src = (o.source || 'online').toLowerCase();
@@ -2131,22 +2130,22 @@
             if (pages <= 1) { el.innerHTML = ''; return; }
             let html = `<button class="pg-btn" onclick="goPage(${currentPg - 1})" ${currentPg <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left" style="font-size:.7rem"></i></button>`;
             const start = Math.max(1, currentPg - 2), end = Math.min(pages, currentPg + 2);
-            if (start > 1) { html += `<button class="pg-btn" onclick="goPage(1)">1</button>`; if (start > 2) html += `<span style="padding:0 4px;color:var(--muted)">â€¦</span>`; }
+            if (start > 1) { html += `<button class="pg-btn" onclick="goPage(1)">1</button>`; if (start > 2) html += `<span style="padding:0 4px;color:var(--muted)">…</span>`; }
             for (let i = start; i <= end; i++) html += `<button class="pg-btn ${i === currentPg ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
-            if (end < pages) { if (end < pages - 1) html += `<span style="padding:0 4px;color:var(--muted)">â€¦</span>`; html += `<button class="pg-btn" onclick="goPage(${pages})">${pages}</button>`; }
+            if (end < pages) { if (end < pages - 1) html += `<span style="padding:0 4px;color:var(--muted)">…</span>`; html += `<button class="pg-btn" onclick="goPage(${pages})">${pages}</button>`; }
             html += `<button class="pg-btn" onclick="goPage(${currentPg + 1})" ${currentPg >= pages ? 'disabled' : ''}><i class="fa-solid fa-chevron-right" style="font-size:.7rem"></i></button>`;
             el.innerHTML = html;
         }
         function goPage(p) { currentPg = p; renderTable(); window.scrollTo(0, 0); }
 
-        // â”€â”€ ORDER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── ORDER MODAL ───────────────────────────────────────────────────────────────
         function openOrderModal(id) {
             const o = allOrders.find(x => x.id === id);
             if (!o) return;
             currentOrderData = o;
 
             $('modalTitle').textContent = `Order: ${o.order_number || '#' + o.id}`;
-            $('modalSubtitle').innerHTML = `${fmtDate(o.created_at)} &nbsp;Â·&nbsp; ${o.customer_name || 'Guest'} &nbsp;Â·&nbsp; ${fmtRs(o.total_amount || 0)}`;
+            $('modalSubtitle').innerHTML = `${fmtDate(o.created_at)} &nbsp;·&nbsp; ${o.customer_name || 'Guest'} &nbsp;·&nbsp; ${fmtRs(o.total_amount || 0)}`;
 
             const isRazorpay = isRazorpayOrder(o);
             const razorpayLocked = isRazorpay;
@@ -2184,8 +2183,8 @@
         <div class="detail-section-title"><i class="fa-solid fa-user"></i> Customer</div>
         <div class="detail-grid">
           <div class="detail-item"><div class="detail-item-label">Name</div><div class="detail-item-val">${esc(o.customer_name || 'Guest')}</div></div>
-          <div class="detail-item"><div class="detail-item-label">Phone</div><div class="detail-item-val">${esc(o.customer_phone || 'â€”')}</div></div>
-          <div class="detail-item" style="grid-column:1/-1"><div class="detail-item-label">Email</div><div class="detail-item-val">${esc(o.customer_email || 'â€”')}</div></div>
+          <div class="detail-item"><div class="detail-item-label">Phone</div><div class="detail-item-val">${esc(o.customer_phone || '—')}</div></div>
+          <div class="detail-item" style="grid-column:1/-1"><div class="detail-item-label">Email</div><div class="detail-item-val">${esc(o.customer_email || '—')}</div></div>
         </div>
       </div>
       <!-- ADDRESS -->
@@ -2203,14 +2202,14 @@
 
   <!-- PAYMENT INFO -->
   <div class="detail-section">
-    <div class="detail-section-title"><i class="fa-solid fa-credit-card"></i> Payment Details ${razorpayLocked ? '<span class="razorpay-locked-notice"><i class="fa-solid fa-lock"></i> Razorpay Verified â€” Cannot Edit</span>' : ''}</div>
+    <div class="detail-section-title"><i class="fa-solid fa-credit-card"></i> Payment Details ${razorpayLocked ? '<span class="razorpay-locked-notice"><i class="fa-solid fa-lock"></i> Razorpay Verified — Cannot Edit</span>' : ''}</div>
     <div class="detail-grid three">
       <div class="detail-item"><div class="detail-item-label">Method</div><div class="detail-item-val">${methodBadge(o.payment_method)}</div></div>
       <div class="detail-item"><div class="detail-item-label">Status</div><div class="detail-item-val">${payBadge(o.payment_status)}</div></div>
       <div class="detail-item"><div class="detail-item-label">Paid At</div><div class="detail-item-val">${fmtDate(o.paid_at, true)}</div></div>
       ${o.razorpay_order_id ? `<div class="detail-item"><div class="detail-item-label">Razorpay Order ID</div><div class="detail-item-val razorpay">${esc(o.razorpay_order_id)}</div></div>` : ''}
       ${o.razorpay_payment_id ? `<div class="detail-item"><div class="detail-item-label">Razorpay Payment ID</div><div class="detail-item-val razorpay">${esc(o.razorpay_payment_id)}</div></div>` : ''}
-      ${o.razorpay_signature ? `<div class="detail-item"><div class="detail-item-label">Signature</div><div class="detail-item-val razorpay">${esc(o.razorpay_signature).substring(0, 20)}â€¦</div></div>` : ''}
+      ${o.razorpay_signature ? `<div class="detail-item"><div class="detail-item-label">Signature</div><div class="detail-item-val razorpay">${esc(o.razorpay_signature).substring(0, 20)}…</div></div>` : ''}
     </div>
   </div>
 
@@ -2223,7 +2222,7 @@
       <tbody>
         ${items.map(it => `<tr>
           <td><div style="font-weight:600">${esc(it.product_name || it.name || 'Product')}</div>${it.sku ? `<div style="font-size:.7rem;color:var(--muted)">${esc(it.sku)}</div>` : ''}</td>
-          <td>${esc(it.size || it.variant || 'â€”')}</td>
+          <td>${esc(it.size || it.variant || '—')}</td>
           <td>${esc(it.quantity || 1)}</td>
           <td>${fmtRs(it.price || it.unit_price || 0)}</td>
           <td style="font-weight:700">${fmtRs((it.quantity || 1) * (it.price || it.unit_price || 0))}</td>
@@ -2272,25 +2271,25 @@
     </div>
     <div class="form-field">
       <label class="form-label">Tracking URL</label>
-      <input type="text" class="form-input" id="updateTrackingUrl" value="${esc(o.tracking_url || '')}" placeholder="https://track.shiprocket.in/â€¦">
+      <input type="text" class="form-input" id="updateTrackingUrl" value="${esc(o.tracking_url || '')}" placeholder="https://track.shiprocket.in/…">
     </div>
   </div>
 
   <div class="form-row single">
     <div class="form-field">
       <label class="form-label">Admin Note (internal)</label>
-      <input type="text" class="form-input" id="updateNote" placeholder="e.g. called customer, package delayedâ€¦">
+      <input type="text" class="form-input" id="updateNote" placeholder="e.g. called customer, package delayed…">
     </div>
   </div>
-  ` : `<div class="detail-section" style="background:#F0FDF4;border-color:#BBF7D0"><div style="font-size:.82rem;color:#065F46;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-circle-check"></i> This order is in <strong>${s}</strong> state â€” no further status updates possible.</div></div>`}
+  ` : `<div class="detail-section" style="background:#F0FDF4;border-color:#BBF7D0"><div style="font-size:.82rem;color:#065F46;display:flex;align-items:center;gap:8px"><i class="fa-solid fa-circle-check"></i> This order is in <strong>${s}</strong> state — no further status updates possible.</div></div>`}
 
   <!-- EXCHANGE SECTION -->
   ${s === 'exchange_requested' ? `
   <div class="exchange-section">
     <div class="exchange-section-title"><i class="fa-solid fa-arrows-rotate"></i> Exchange Request</div>
     <div class="detail-grid" style="margin-bottom:12px">
-      <div class="detail-item"><div class="detail-item-label">Requested Reason</div><div class="detail-item-val">${esc(o.exchange_reason || 'â€”')}</div></div>
-      <div class="detail-item"><div class="detail-item-label">Exchange For</div><div class="detail-item-val">${esc(o.exchange_product || 'â€”')}</div></div>
+      <div class="detail-item"><div class="detail-item-label">Requested Reason</div><div class="detail-item-val">${esc(o.exchange_reason || '—')}</div></div>
+      <div class="detail-item"><div class="detail-item-label">Exchange For</div><div class="detail-item-val">${esc(o.exchange_product || '—')}</div></div>
     </div>
     <div style="display:flex;gap:8px">
       <button class="btn btn-sm btn-teal" onclick="updateExchange(${o.id},'exchange_approved')"><i class="fa-solid fa-check"></i> Approve Exchange</button>
@@ -2322,7 +2321,7 @@
       <div class="tl-dot ${dotClass}"><i class="fa-solid ${st.icon}"></i></div>
       <div class="tl-content">
         <div class="tl-title" style="${!st.done ? 'color:var(--muted)' : ''}">${st.label}</div>
-        ${st.time ? `<div class="tl-time">${fmtDate(st.time)}</div>` : st.done ? '<div class="tl-time" style="color:var(--teal)">âœ“</div>' : ''}
+        ${st.time ? `<div class="tl-time">${fmtDate(st.time)}</div>` : st.done ? '<div class="tl-time" style="color:var(--teal)">✓</div>' : ''}
       </div>
     </div>`;
             }).join('');
@@ -2336,7 +2335,7 @@
         // Close modal on backdrop click
         $('orderModal').addEventListener('click', function (e) { if (e.target === this) closeModal(); });
 
-        // â”€â”€ SAVE ORDER UPDATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── SAVE ORDER UPDATE ─────────────────────────────────────────────────────────
         async function saveOrderUpdate() {
             if (!currentOrderData) return;
             const id = currentOrderData.id;
@@ -2346,7 +2345,7 @@
             const isRazorpay = isRazorpayOrder(currentOrderData);
             const btn = $('btnSaveOrder');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Savingâ€¦';
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
 
             try {
                 const payload = {
@@ -2386,7 +2385,7 @@
             }
         }
 
-        // â”€â”€ EXCHANGE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── EXCHANGE ──────────────────────────────────────────────────────────────────
         async function updateExchange(id, newStatus) {
             try {
                 await apiFetch(`/api/admin/orders/${id}/status`, { method: 'PUT', body: JSON.stringify({ status: newStatus }) });
@@ -2400,7 +2399,7 @@
             }
         }
 
-        // â”€â”€ PRINT INVOICE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── PRINT INVOICE ─────────────────────────────────────────────────────────────
         function openOrderModal_then_print(id) { openOrderModal(id); setTimeout(printInvoice, 300); }
         function printOrderInvoice(id) {
             const o = allOrders.find(x => x.id === id);
@@ -2416,7 +2415,7 @@
 
             const win = window.open('', '_blank', 'width=800,height=700');
             win.document.write(`<!DOCTYPE html><html><head>
-    <meta charset="UTF-8"><title>Invoice â€” ${esc(o.order_number || '#' + o.id)}</title>
+    <meta charset="UTF-8"><title>Invoice — ${esc(o.order_number || '#' + o.id)}</title>
     <style>
       * { margin:0;padding:0;box-sizing:border-box; }
       body { font-family:'Open Sans',Arial,sans-serif; font-size:13px; color:#1E1E2C; padding:32px; background:#fff; }
@@ -2447,7 +2446,7 @@
   </head><body>
     <div class="inv-header">
       <div>
-        <div class="brand">HeelsUp<small>Ladies Footwear & Bags Â· Jodhpur, Rajasthan</small></div>
+        <div class="brand">HeelsUp<small>Ladies Footwear & Bags · Jodhpur, Rajasthan</small></div>
         <div style="font-size:.75rem;color:#64748B;margin-top:8px">GSTIN: 08XXXXX0000X1Z5</div>
       </div>
       <div class="inv-meta">
@@ -2491,24 +2490,24 @@
         ${items.length ? items.map((it, i) => `<tr>
           <td>${i + 1}</td>
           <td>${esc(it.product_name || it.name || 'Product')}${it.sku ? `<br><small style="color:#94A3B8">${esc(it.sku)}</small>` : ''}</td>
-          <td>${esc(it.size || it.variant || 'â€”')}</td>
+          <td>${esc(it.size || it.variant || '—')}</td>
           <td>${it.quantity || 1}</td>
-          <td>â‚¹${Number(it.price || it.unit_price || 0).toLocaleString('en-IN')}</td>
-          <td><strong>â‚¹${((it.quantity || 1) * (it.price || it.unit_price || 0)).toLocaleString('en-IN')}</strong></td>
+          <td>₹${Number(it.price || it.unit_price || 0).toLocaleString('en-IN')}</td>
+          <td><strong>₹${((it.quantity || 1) * (it.price || it.unit_price || 0)).toLocaleString('en-IN')}</strong></td>
         </tr>`).join('') : `<tr><td colspan="6" style="text-align:center;color:#94A3B8;padding:20px">No item details available</td></tr>`}
       </tbody>
     </table>
 
     <div class="totals">
-      <div class="total-row"><span>Subtotal</span><span>â‚¹${Number(o.subtotal_amount || 0).toLocaleString('en-IN')}</span></div>
-      <div class="total-row"><span>Shipping</span><span>â‚¹${Number(o.shipping_amount || 0).toLocaleString('en-IN')}</span></div>
-      ${o.tax_amount ? `<div class="total-row"><span>GST</span><span>â‚¹${Number(o.tax_amount).toLocaleString('en-IN')}</span></div>` : ''}
-      ${o.discount_amount > 0 ? `<div class="total-row" style="color:#34B1AA"><span>Discount ${o.coupon_code ? '(' + esc(o.coupon_code) + ')' : ''}</span><span>-â‚¹${Number(o.discount_amount).toLocaleString('en-IN')}</span></div>` : ''}
-      <div class="total-row grand"><span>TOTAL</span><span>â‚¹${Number(o.total_amount || 0).toLocaleString('en-IN')}</span></div>
+      <div class="total-row"><span>Subtotal</span><span>₹${Number(o.subtotal_amount || 0).toLocaleString('en-IN')}</span></div>
+      <div class="total-row"><span>Shipping</span><span>₹${Number(o.shipping_amount || 0).toLocaleString('en-IN')}</span></div>
+      ${o.tax_amount ? `<div class="total-row"><span>GST</span><span>₹${Number(o.tax_amount).toLocaleString('en-IN')}</span></div>` : ''}
+      ${o.discount_amount > 0 ? `<div class="total-row" style="color:#34B1AA"><span>Discount ${o.coupon_code ? '(' + esc(o.coupon_code) + ')' : ''}</span><span>-₹${Number(o.discount_amount).toLocaleString('en-IN')}</span></div>` : ''}
+      <div class="total-row grand"><span>TOTAL</span><span>₹${Number(o.total_amount || 0).toLocaleString('en-IN')}</span></div>
     </div>
 
     <div class="footer">
-      Thank you for shopping with HeelsUp Â· heelsup.in Â· Jodhpur, Rajasthan, India<br>
+      Thank you for shopping with HeelsUp · heelsup.in · Jodhpur, Rajasthan, India<br>
       For queries: support@heelsup.in | This is a computer-generated invoice.
     </div>
     <script>window.onload=function(){window.print();}<\/script>
@@ -2516,7 +2515,7 @@
             win.document.close();
         }
 
-        // â”€â”€ EXPORT CSV â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── EXPORT CSV ────────────────────────────────────────────────────────────────
         function exportCSV() {
             if (!filteredOrders.length) { toast('No orders to export', 'info'); return; }
             const headers = ['Order#', 'Date', 'Customer', 'Email', 'Phone', 'City', 'State', 'Pincode', 'Subtotal', 'Shipping', 'Discount', 'Tax', 'Total', 'Payment Method', 'Payment Status', 'Order Status', 'Razorpay Order ID', 'Razorpay Payment ID', 'Tracking#', 'Source', 'Coupon'];
@@ -2538,7 +2537,7 @@
             toast(`Exported ${filteredOrders.length} orders`, 'success');
         }
 
-        // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── INIT ──────────────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const orderId = params.get('id');

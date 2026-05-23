@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HeelsUp Admin â€” Banners</title>
+    <title>HeelsUp Admin — Banners</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -73,7 +73,7 @@
             font-family: var(--font);
         }
 
-        /* â”€â”€ LAYOUT â”€â”€ */
+        /* ── LAYOUT ── */
         .layout {
             display: grid;
             grid-template-columns: 256px 1fr;
@@ -86,7 +86,7 @@
             }
         }
 
-        /* â”€â”€ SIDEBAR â”€â”€ */
+        /* ── SIDEBAR ── */
         .sidebar {
             background: var(--sidebar-bg);
             color: #94A3B8;
@@ -294,7 +294,7 @@
             }
         }
 
-        /* â”€â”€ TOPBAR â”€â”€ */
+        /* ── TOPBAR ── */
         .topbar {
             background: #fff;
             border-bottom: 1px solid var(--border);
@@ -337,7 +337,7 @@
             }
         }
 
-        /* â”€â”€ MAIN â”€â”€ */
+        /* ── MAIN ── */
         .main {
             min-height: 100vh;
             display: flex;
@@ -349,7 +349,7 @@
             flex: 1;
         }
 
-        /* â”€â”€ BUTTONS â”€â”€ */
+        /* ── BUTTONS ── */
         .btn {
             display: inline-flex;
             align-items: center;
@@ -403,7 +403,7 @@
             border-radius: 7px;
         }
 
-        /* â”€â”€ HERO BANNER â”€â”€ */
+        /* ── HERO BANNER ── */
         .hero-banner {
             background: var(--dark);
             border-radius: 16px;
@@ -452,7 +452,7 @@
             position: relative;
         }
 
-        /* â”€â”€ KPI GRID â”€â”€ */
+        /* ── KPI GRID ── */
         .kpi-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -556,7 +556,7 @@
             margin-top: 4px;
         }
 
-        /* â”€â”€ CARD â”€â”€ */
+        /* ── CARD ── */
         .card {
             background: var(--card-bg);
             border-radius: var(--radius);
@@ -582,7 +582,7 @@
             color: var(--text);
         }
 
-        /* â”€â”€ FILTER BAR â”€â”€ */
+        /* ── FILTER BAR ── */
         .filter-bar {
             padding: 14px 20px;
             display: flex;
@@ -610,7 +610,7 @@
             box-shadow: 0 0 0 3px rgba(242, 159, 103, .1);
         }
 
-        /* â”€â”€ TABLE â”€â”€ */
+        /* ── TABLE ── */
         .tbl-scroll {
             overflow-x: auto;
         }
@@ -659,7 +659,7 @@
             margin-top: 2px;
         }
 
-        /* â”€â”€ BANNER PREVIEW â”€â”€ */
+        /* ── BANNER PREVIEW ── */
         .banner-preview {
             width: 130px;
             height: 54px;
@@ -686,7 +686,7 @@
             padding: 6px;
         }
 
-        /* â”€â”€ BADGES â”€â”€ */
+        /* ── BADGES ── */
         .badge {
             display: inline-flex;
             align-items: center;
@@ -713,7 +713,7 @@
             color: #1D4ED8;
         }
 
-        /* â”€â”€ ACTION BTNS â”€â”€ */
+        /* ── ACTION BTNS ── */
         .action-btn {
             width: 32px;
             height: 32px;
@@ -741,7 +741,7 @@
             border-color: #FECACA;
         }
 
-        /* â”€â”€ MODAL â”€â”€ */
+        /* ── MODAL ── */
         .modal-backdrop {
             position: fixed;
             inset: 0;
@@ -885,7 +885,7 @@
             border-top: 1px solid var(--border);
         }
 
-        /* â”€â”€ TOAST â”€â”€ */
+        /* ── TOAST ── */
         .toast-wrap {
             position: fixed;
             bottom: 24px;
@@ -931,7 +931,7 @@
             }
         }
 
-        /* â”€â”€ STATES â”€â”€ */
+        /* ── STATES ── */
         .spinner-wrap {
             text-align: center;
             padding: 48px;
@@ -976,7 +976,7 @@
             font-size: .83rem;
         }
 
-        /* â”€â”€ MOB OVERLAY â”€â”€ */
+        /* ── MOB OVERLAY ── */
         .mob-overlay {
             display: none;
             position: fixed;
@@ -985,7 +985,7 @@
             z-index: 998;
         }
 
-        /* â”€â”€ AUTH ERROR â”€â”€ */
+        /* ── AUTH ERROR ── */
         .auth-error {
             position: fixed;
             inset: 0;
@@ -1025,7 +1025,7 @@
     <div class="toast-wrap" id="toastWrap"></div>
 
     <div class="layout">
-        <!-- â”€â”€ SIDEBAR â”€â”€ -->
+        <!-- ── SIDEBAR ── -->
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">
                 <div class="brand-logo">
@@ -1092,7 +1092,7 @@
             </div>
         </aside>
 
-        <!-- â”€â”€ MAIN â”€â”€ -->
+        <!-- ── MAIN ── -->
         <div class="main">
             <div class="topbar">
                 <button class="btn-menu" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
@@ -1133,7 +1133,7 @@
                         <div class="kpi-icon c-blue"><i class="fa-solid fa-image"></i></div>
                         <div>
                             <div class="kpi-label">Active Banners</div>
-                            <div class="kpi-val" id="kpiActive">â€”</div>
+                            <div class="kpi-val" id="kpiActive">—</div>
                             <div class="kpi-sub" id="kpiActiveSub">Loading...</div>
                         </div>
                     </div>
@@ -1141,7 +1141,7 @@
                         <div class="kpi-icon c-orange"><i class="fa-solid fa-hand-pointer"></i></div>
                         <div>
                             <div class="kpi-label">Total Clicks (Est.)</div>
-                            <div class="kpi-val" id="kpiClicks">â€”</div>
+                            <div class="kpi-val" id="kpiClicks">—</div>
                             <div class="kpi-sub">All placements</div>
                         </div>
                     </div>
@@ -1149,7 +1149,7 @@
                         <div class="kpi-icon c-teal"><i class="fa-solid fa-chart-line"></i></div>
                         <div>
                             <div class="kpi-label">Avg. Click-Through Rate</div>
-                            <div class="kpi-val" id="kpiCTR">â€”</div>
+                            <div class="kpi-val" id="kpiCTR">—</div>
                             <div class="kpi-sub">Across active banners</div>
                         </div>
                     </div>
@@ -1199,7 +1199,7 @@
         </div>
     </div>
 
-    <!-- â”€â”€ MODAL â”€â”€ -->
+    <!-- ── MODAL ── -->
     <div class="modal-backdrop" id="bannerModal">
         <div class="modal">
             <div class="modal-hd">
@@ -1257,9 +1257,8 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
-  <script src="admin-enterprise.js"></script>
     <script>
-        // â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── AUTH ──────────────────────────────────────────────────────────────────
         (function () {
             let user = null;
             try { user = (typeof HeelsUpAuth !== 'undefined') ? HeelsUpAuth.getUser() : null; } catch (e) { }
@@ -1275,17 +1274,17 @@
             document.getElementById('sName').textContent = name;
         })();
 
-        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── STATE ─────────────────────────────────────────────────────────────────
         let allBanners = [], editingId = null;
         const $ = id => document.getElementById(id);
         const esc = s => String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── SIDEBAR ───────────────────────────────────────────────────────────────
         function toggleSidebar() { const s = $('sidebar'), o = $('mobOverlay'); s.classList.toggle('open'); o.style.display = s.classList.contains('open') ? 'block' : 'none'; }
         function closeSidebar() { $('sidebar').classList.remove('open'); $('mobOverlay').style.display = 'none'; }
         function doLogout() { try { HeelsUpAuth.clearSession(); } catch (e) { } window.location = 'login.html'; }
 
-        // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── TOAST ─────────────────────────────────────────────────────────────────
         function toast(msg, type = 'success') {
             const wrap = $('toastWrap'), t = document.createElement('div');
             t.className = `toast ${type}`;
@@ -1294,7 +1293,7 @@
             setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(() => t.remove(), 300); }, 4500);
         }
 
-        // â”€â”€ LOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── LOAD ──────────────────────────────────────────────────────────────────
         async function loadBanners() {
             $('bannersBody').innerHTML = '<tr><td colspan="7"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading banners...</div></td></tr>';
             try {
@@ -1317,7 +1316,7 @@
             }
         }
 
-        // â”€â”€ KPIs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── KPIs ──────────────────────────────────────────────────────────────────
         function updateKPIs() {
             const active = allBanners.filter(b => b.active).length;
             const total = allBanners.length;
@@ -1329,7 +1328,7 @@
             $('kpiCTR').textContent = ctr + '%';
         }
 
-        // â”€â”€ FILTER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── FILTER ────────────────────────────────────────────────────────────────
         function filterBanners() {
             const placement = $('placementFilter').value;
             let list = placement ? allBanners.filter(b => b.placement === placement) : [...allBanners];
@@ -1337,7 +1336,7 @@
             renderTable(list);
         }
 
-        // â”€â”€ RENDER TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── RENDER TABLE ──────────────────────────────────────────────────────────
         function renderTable(list) {
             const tbody = $('bannersBody');
             if (!list.length) {
@@ -1352,16 +1351,16 @@
                     : `<div class="banner-preview-placeholder">${esc(b.title || '').substring(0, 14)}</div>`}
       </td>
       <td>
-        <div class="td-name">${esc(b.title || 'â€”')}</div>
+        <div class="td-name">${esc(b.title || '—')}</div>
         <div class="td-sub">${esc(b.subtitle || 'No subtitle')}</div>
       </td>
-      <td><span class="badge badge-placement">${esc(b.placement || 'â€”')}</span></td>
+      <td><span class="badge badge-placement">${esc(b.placement || '—')}</span></td>
       <td>
         ${b.link_url
                     ? `<a href="${esc(b.link_url)}" target="_blank" style="color:var(--blue);font-size:.8rem;text-decoration:underline">${esc(b.link_url)}</a>`
-                    : '<span style="color:var(--muted);font-size:.8rem">â€”</span>'}
+                    : '<span style="color:var(--muted);font-size:.8rem">—</span>'}
       </td>
-      <td style="text-align:center;font-weight:600">${b.sort_order || 'â€”'}</td>
+      <td style="text-align:center;font-weight:600">${b.sort_order || '—'}</td>
       <td><span class="badge ${b.active ? 'badge-active' : 'badge-inactive'}">${b.active ? 'Active' : 'Inactive'}</span></td>
       <td>
         <div style="display:flex;gap:6px">
@@ -1376,7 +1375,7 @@
     </tr>`).join('');
         }
 
-        // â”€â”€ MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── MODAL ─────────────────────────────────────────────────────────────────
         function openModal() {
             editingId = null;
             $('modalTitle').textContent = 'Upload New Banner';
@@ -1401,7 +1400,7 @@
 
         function closeModal() { $('bannerModal').classList.remove('show'); editingId = null; }
 
-        // â”€â”€ SAVE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── SAVE ──────────────────────────────────────────────────────────────────
         async function saveBanner() {
             const title = $('fTitle').value.trim();
             const imageUrl = $('fImageUrl').value.trim();
@@ -1438,7 +1437,7 @@
             }
         }
 
-        // â”€â”€ DELETE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── DELETE ────────────────────────────────────────────────────────────────
         async function deleteBanner(id) {
             if (!confirm('Delete this banner? This cannot be undone.')) return;
             try {
@@ -1450,7 +1449,7 @@
             }
         }
 
-        // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // ── INIT ──────────────────────────────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', loadBanners);
     </script>
 </body>
