@@ -22,6 +22,7 @@ import { settingsRouter } from './settings.js';
 import { inventoryRouter } from './misc.js';
 
 // ── New admin-only routers ───────────────────────────────────
+import { dashboardRouter } from './dashboard.js';      // ADDED: Handles /api/admin/dashboard stats
 import { blogsAdminRouter } from './blogs.js';
 import { collectionsAdminRouter } from './collections.js';
 import { pagesAdminRouter } from './pages.js';
@@ -49,6 +50,12 @@ function rewritePath(request, newPathname) {
 export async function adminRouter(request, env) {
     const url = new URL(request.url);
     const path = url.pathname; // e.g. /api/admin/reviews
+
+    // ── /api/admin/dashboard ─────────────────────────────────── (NEWLY ADDED)
+    // Feeds the main dashboard stats, kpis, and recent metrics shown in the admin HTML
+    if (path.startsWith('/api/admin/dashboard')) {
+        return dashboardRouter(request, env);
+    }
 
     // ── /api/admin/reviews/* → /api/reviews/* ─────────────────
     if (path.startsWith('/api/admin/reviews')) {
