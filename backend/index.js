@@ -867,7 +867,7 @@ async function failRazorpayPayment(request, env) {
   if (order.payment_status === 'paid') return json({ error: "Already paid" }, 400);
   
   await env.DB.prepare(
-    "UPDATE orders SET payment_status='failed', order_status='failed', updated_at=? WHERE id=?"
+    "UPDATE orders SET payment_status='failed', order_status='cancelled', updated_at=? WHERE id=?"
   ).bind(nowIso(), localOrderId).run();
   return json({ ok: true });
 }
@@ -877,8 +877,8 @@ async function initiateOrder(request, env) {
   if (!auth.ok) return json({ error: "Please log in to place an order", code: "AUTH_REQUIRED" }, 401);
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const rzpKeyId = await getSetting(env, "razorpay_key_id", env.RAZORPAY_KEY_ID || "");
-  const rzpKeySecret = await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "");
+  const rzpKeyId = String(await getSetting(env, "razorpay_key_id", env.RAZORPAY_KEY_ID || "")).trim();
+  const rzpKeySecret = String(await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "")).trim();
   if (!rzpKeyId || !rzpKeySecret) return json({ error: "Payment gateway not configured. Contact admin." }, 503);
   const items = Array.isArray(body.items) ? body.items : [];
   if (!items.length) return json({ error: "Order items required" }, 400);
@@ -904,8 +904,8 @@ async function initiateOrder(request, env) {
     deliveryMethod: body.deliveryMethod || "standard",
     notes: body.notes || "",
     paymentMethod: "RAZORPAY",
-    paymentStatus: "initiated",
-    orderStatus: "payment_pending",
+    paymentStatus: "pending",
+    orderStatus: "placed",
     couponCode: couponCode || null,
     discountAmount
   });
