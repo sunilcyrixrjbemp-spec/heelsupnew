@@ -450,7 +450,7 @@
         amount: orderData.razorpayOrder.amount,
         currency: 'INR',
         name: 'HeelsUp',
-        description: `Order ${orderData.order.orderNumber}`,
+        description: `Order ${orderData.order.order_number}`,
         image: 'logo.png',
         order_id: orderData.razorpayOrder.id,
         handler: async function(response) {
@@ -466,9 +466,9 @@
               })
             });
             HeelsUpCart.clearCart();
-            window.location = `order-confirmation.html?id=${orderData.order.id}&num=${orderData.order.orderNumber}`;
+            window.location = `order-confirmation.html?id=${orderData.order.id}&num=${orderData.order.order_number}`;
           } catch(e) {
-            showToast('Payment verification failed. Contact support with order #' + orderData.order.orderNumber, 'error');
+            showToast('Payment verification failed. Contact support with order #' + orderData.order.order_number, 'error');
             btn.disabled = false;
             btn.innerHTML = '<i class="fa-solid fa-lock"></i> Retry Payment';
           }
