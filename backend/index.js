@@ -35,11 +35,11 @@ function checkRateLimit(ip, limit = 100, windowMs = 60000) {
 // ════════════════════════════════════════════════════════════════
 export default {
   async fetch(request, env, ctx) {
-      // Auto-migrate schema gracefully
-      await env.DB.prepare("ALTER TABLE orders ADD COLUMN tax_amount REAL DEFAULT 0").run().catch(() => {});
-      await env.DB.prepare("ALTER TABLE products ADD COLUMN gst_percent REAL DEFAULT 0").run().catch(() => {});
-      
-      const url = new URL(request.url);
+    // Auto-migrate schema gracefully
+    await env.DB.prepare("ALTER TABLE orders ADD COLUMN tax_amount REAL DEFAULT 0").run().catch(() => { });
+    await env.DB.prepare("ALTER TABLE products ADD COLUMN gst_percent REAL DEFAULT 0").run().catch(() => { });
+
+    const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
     const clientIp = request.headers.get("CF-Connecting-IP") || request.headers.get("x-real-ip") || "unknown";
@@ -49,14 +49,14 @@ export default {
     // Rate Limiting (Enterprise Security)
     if (path.startsWith("/api/auth/")) {
       if (!checkRateLimit(clientIp, 20, 60000)) { // 20 reqs / min for auth routes
-        return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), { 
-          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } 
+        return new Response(JSON.stringify({ error: "Too many requests. Please try again later." }), {
+          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
         });
       }
     } else {
       if (!checkRateLimit(clientIp, 500, 60000)) { // 500 reqs / min global
-        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), { 
-          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" } 
+        return new Response(JSON.stringify({ error: "Rate limit exceeded" }), {
+          status: 429, headers: { "Content-Type": "application/json", "Access-Control-Allow-Origin": "*" }
         });
       }
     }
@@ -98,7 +98,7 @@ export default {
         "ALTER TABLE shipping_zones ADD COLUMN free_above REAL"
       ];
       for (const sql of upgrades) {
-        try { await env.DB.prepare(sql).run(); } catch(e) {}
+        try { await env.DB.prepare(sql).run(); } catch (e) { }
       }
     } catch (err) {
       if (err.message && err.message.includes("no such table")) {
@@ -110,7 +110,7 @@ export default {
 
     try {
       const response = await router(request, env);
-      
+
       // Store in cache if cacheable
       if (isCacheable && response && response.status === 200) {
         const cacheableRes = new Response(response.clone().body, response);
@@ -118,7 +118,7 @@ export default {
         if (ctx && ctx.waitUntil) ctx.waitUntil(cache.put(cacheKey, cacheableRes));
         else await cache.put(cacheKey, cacheableRes);
       }
-      
+
       return response;
     } catch (err) {
       console.error("Unhandled error:", err?.stack || err);
@@ -333,22 +333,22 @@ async function sendOtpEmail(env, email, otp, purpose) {
   if (!resendApiKey && env.RESEND_API_KEY) {
     resendApiKey = env.RESEND_API_KEY;
   }
-  
+
   if (!resendApiKey) return { ok: false, error: "Resend API key not configured. Add 'resend_api_key' to settings." };
-  
+
   const siteName = await getSetting(env, "site_name", "HeelsUp");
-  const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
+  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev"); // Defaults to resend.dev for testing
 
   const subjects = {
     register: `Verify your ${siteName} account`,
     forgot: `Reset your ${siteName} password`,
     login: `Your ${siteName} login OTP`
   };
-  
+
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { 
+      headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${resendApiKey}`
       },
@@ -359,13 +359,13 @@ async function sendOtpEmail(env, email, otp, purpose) {
         html: buildOtpHtml(siteName, otp, purpose)
       })
     });
-    
+
     if (!res.ok) {
       const errorData = await res.json().catch(() => ({}));
       console.error("Resend API Error:", errorData);
       return { ok: false, error: errorData.message || "Failed to send email via Resend" };
     }
-    
+
     return { ok: true };
   } catch (e) { return { ok: false, error: e.message }; }
 }
@@ -888,7 +888,7 @@ async function verifyRazorpayPayment(request, env) {
   const siteName = await getSetting(env, "site_name", "HeelsUp");
   let resendApiKey = await getSetting(env, "resend_api_key", "");
   if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
-  const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
+  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
 
   if (user && resendApiKey) {
     await fetch("https://api.resend.com/emails", {
@@ -1029,7 +1029,7 @@ async function handleAdmin(request, path, url, env) {
     const period = url.searchParams.get("period") || "30";
     let start, end;
     const now = new Date();
-    
+
     if (period === 'custom') {
       start = url.searchParams.get("start");
       end = url.searchParams.get("end");
@@ -1039,7 +1039,7 @@ async function handleAdmin(request, path, url, env) {
       start = past.toISOString().split("T")[0];
       end = now.toISOString().split("T")[0];
     }
-    
+
     const startDate = start + "T00:00:00.000Z";
     const endDate = end + "T23:59:59.999Z";
 
@@ -1063,7 +1063,7 @@ async function handleAdmin(request, path, url, env) {
         WHERE created_at >= ? AND created_at <= ? 
         GROUP BY d ORDER BY d ASC
       `).bind(startDate, endDate).all();
-      
+
       const daily_revenue = (dailyRaw || []).map(r => ({ date: r.d, revenue: r.rev || 0, orders: r.ords || 0 }));
 
       const { results: statusRaw } = await env.DB.prepare(`
@@ -1072,7 +1072,7 @@ async function handleAdmin(request, path, url, env) {
         WHERE created_at >= ? AND created_at <= ? 
         GROUP BY order_status
       `).bind(startDate, endDate).all();
-      
+
       const order_status_counts = {};
       (statusRaw || []).forEach(r => { order_status_counts[r.order_status] = r.c; });
 
@@ -1084,7 +1084,7 @@ async function handleAdmin(request, path, url, env) {
         GROUP BY product_id, product_name, image_url
         ORDER BY revenue DESC LIMIT 10
       `).bind(startDate, endDate).all();
-      
+
       const top_products = topProdRaw || [];
 
       const { results: catRaw } = await env.DB.prepare(`
@@ -1105,7 +1105,7 @@ async function handleAdmin(request, path, url, env) {
         WHERE created_at >= ? AND created_at <= ? 
         GROUP BY payment_method
       `).bind(startDate, endDate).all();
-      
+
       const payment_methods = {};
       (payRaw || []).forEach(r => { payment_methods[r.payment_method] = r.c; });
 
@@ -1130,7 +1130,7 @@ async function handleAdmin(request, path, url, env) {
     }
   }
 
-// ── DEV SQL EXECUTION ───────────────────────────────────────────
+  // ── DEV SQL EXECUTION ───────────────────────────────────────────
   if (method === "POST" && path === "/api/admin/dev-sql") {
     const body = await readJson(request);
     try {
@@ -1176,11 +1176,11 @@ async function handleAdmin(request, path, url, env) {
     let resendApiKey = await getSetting(env, "resend_api_key", "");
     if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
     if (!resendApiKey) return json({ error: "Resend API key not configured in Settings" }, 400);
-    
+
     const testOtp = Math.floor(100000 + Math.random() * 900000).toString();
     const siteName = await getSetting(env, "site_name", "HeelsUp");
-    const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
-    
+    const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+
     try {
       const res = await fetch("https://api.resend.com/emails", {
         method: "POST",
@@ -1388,7 +1388,7 @@ async function handleAdmin(request, path, url, env) {
     const body = await readJson(request);
     const status = String(body?.status || "").trim();
     const validStatuses = ["placed", "confirmed", "processing", "packed", "shipped", "out_for_delivery", "delivered", "cancelled", "returned"];
-    
+
     const fields = ["updated_at=?"];
     const binds = [nowIso()];
 
@@ -1402,14 +1402,14 @@ async function handleAdmin(request, path, url, env) {
       const orderRank = { "placed": 1, "confirmed": 2, "processing": 3, "packed": 4, "shipped": 5, "out_for_delivery": 6, "delivered": 7, "cancelled": 99, "returned": 100 };
       const currentRank = orderRank[existingOrder.order_status] || 0;
       const newRank = orderRank[status];
-      
+
       // Allow moving to cancelled/returned, but otherwise must be strictly greater (or same, handled gracefully)
       if (newRank < currentRank && status !== "cancelled" && status !== "returned") {
-          return json({ error: `Cannot move status backwards from ${existingOrder.order_status} to ${status}` }, 400);
+        return json({ error: `Cannot move status backwards from ${existingOrder.order_status} to ${status}` }, 400);
       }
       // If already cancelled or returned, typically can't change back
       if ((existingOrder.order_status === "cancelled" || existingOrder.order_status === "returned") && status !== existingOrder.order_status) {
-          return json({ error: `Cannot change status of a ${existingOrder.order_status} order` }, 400);
+        return json({ error: `Cannot change status of a ${existingOrder.order_status} order` }, 400);
       }
 
       fields.push("order_status=?");
@@ -1423,17 +1423,17 @@ async function handleAdmin(request, path, url, env) {
     if (trackNo) { fields.push("tracking_number=?"); binds.push(trackNo); }
     if (body?.trackingUrl) { fields.push("tracking_url=?"); binds.push(body.trackingUrl); }
     if (body?.adminNotes) { fields.push("admin_notes=?"); binds.push(body.adminNotes); }
-    
+
     if (body?.payment_status) {
       // Prevent changing Razorpay transactions
       const transactionId = existingOrder.transaction_id || "";
       if (transactionId.startsWith("pay_")) {
-          return json({ error: "Cannot manually change payment status of an automated Razorpay transaction." }, 400);
+        return json({ error: "Cannot manually change payment status of an automated Razorpay transaction." }, 400);
       }
-      
+
       // Prevent reverting from paid to unpaid/pending
       if (existingOrder.payment_status === "paid" && (body.payment_status === "unpaid" || body.payment_status === "pending")) {
-          return json({ error: "Cannot revert a paid order to unpaid/pending." }, 400);
+        return json({ error: "Cannot revert a paid order to unpaid/pending." }, 400);
       }
 
       fields.push("payment_status=?");
@@ -1768,7 +1768,7 @@ async function handleAdmin(request, path, url, env) {
 
   // ── TAX SETTINGS & RULES ────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/taxes/settings") {
-    const keys = ["gst_registered","gst_inclusive","auto_footwear_slab","gstin_number","business_name","gst_state","default_tax_rate","invoice_prefix","fy_start","invoice_note","show_gst_breakup","show_hsn_code","auto_invoice_pdf"];
+    const keys = ["gst_registered", "gst_inclusive", "auto_footwear_slab", "gstin_number", "business_name", "gst_state", "default_tax_rate", "invoice_prefix", "fy_start", "invoice_note", "show_gst_breakup", "show_hsn_code", "auto_invoice_pdf"];
     const settings = {};
     for (const k of keys) settings[k] = await getSetting(env, k, "");
     settings.gst_registered = settings.gst_registered !== "false";

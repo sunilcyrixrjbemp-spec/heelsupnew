@@ -703,7 +703,10 @@
                         <h2>Customer Directory</h2>
                         <p>Manage and view your registered store customers and administrators.</p>
                     </div>
-                    <div>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-outline" onclick="openOfferModal()">
+                            <i class="fa-solid fa-paper-plane"></i> Send Offer
+                        </button>
                         <button class="btn btn-primary" onclick="loadCustomers()">
                             <i class="fa-solid fa-arrows-rotate"></i> Refresh
                         </button>
@@ -749,6 +752,30 @@
                 </div>
             </section>
         </main>
+    </div>
+
+    <!-- Offer Modal -->
+    <div id="offerModal" class="modal" style="display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5);">
+        <div class="modal-content" style="background-color:#fff; margin:10% auto; padding:20px; border-radius:8px; width:400px; max-width:90%;">
+            <h3 style="margin-top:0;">Send Broadcast Offer</h3>
+            <p style="font-size:13px; color:#666; margin-bottom:20px;">This will send a promotional email to all registered customers.</p>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Offer Title</label>
+                <input type="text" id="offerTitle" class="form-control" placeholder="e.g. Summer Sale is Here!" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Message</label>
+                <textarea id="offerMessage" class="form-control" rows="4" placeholder="e.g. Get 20% off all heels this weekend." style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;"></textarea>
+            </div>
+            <div style="margin-bottom:20px;">
+                <label style="display:block; font-size:12px; margin-bottom:5px;">Discount Code (Optional)</label>
+                <input type="text" id="offerCode" class="form-control" placeholder="e.g. SUMMER20" style="width:100%; padding:8px; border:1px solid #ccc; border-radius:4px;">
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn btn-outline" onclick="closeOfferModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="submitOffer()" id="submitOfferBtn">Send Offer</button>
+            </div>
+        </div>
     </div>
 
     <script src="app-config.js"></script>
@@ -970,6 +997,54 @@
                 <span class="pg-info">Page <strong>${page}</strong> of <strong>${pages}</strong></span>
                 <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next ›</button>
             `;
+        }
+
+        // ── OFFER MODAL ───────────────────────────────────────────────────
+        function openOfferModal() {
+            document.getElementById('offerTitle').value = '';
+            document.getElementById('offerMessage').value = '';
+            document.getElementById('offerCode').value = '';
+            document.getElementById('offerModal').style.display = 'block';
+        }
+
+        function closeOfferModal() {
+            document.getElementById('offerModal').style.display = 'none';
+        }
+
+        async function submitOffer() {
+            const title = document.getElementById('offerTitle').value.trim();
+            const message = document.getElementById('offerMessage').value.trim();
+            const code = document.getElementById('offerCode').value.trim();
+
+            if (!title || !message) {
+                showToast('Please enter an offer title and message', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('submitOfferBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/admin/send-offer', {
+                    method: 'POST',
+                    headers: HeelsUpAuth.headers(),
+                    body: JSON.stringify({ title, message, discount_code: code || null })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    showToast(data.message || 'Offer broadcast initiated!', 'success');
+                    closeOfferModal();
+                } else {
+                    throw new Error(data.error || 'Failed to send offer');
+                }
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
         }
 
         // ── INITIALIZATION ────────────────────────────────────────────────
