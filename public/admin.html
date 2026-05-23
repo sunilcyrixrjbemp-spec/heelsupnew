@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@600;700;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap"
     rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
@@ -19,39 +19,39 @@
     :root {
       --primary: #F29F67;
       --primary-dark: #d4784a;
-      --primary-light: rgba(242, 159, 103, 0.10);
+      --primary-light: rgba(242, 159, 103, 0.12);
       --primary-glow: rgba(242, 159, 103, 0.25);
-      --dark: #0f0f17;
-      --dark-2: #161622;
-      --dark-3: #1e1e2e;
-      --dark-4: #252538;
-      --sidebar-bg: #0f0f17;
-      --card-bg: #ffffff;
-      --bg: #f4f5f9;
-      --blue: #3b8ff3;
+      --dark: #1E1E2C;
+      --dark-2: #1E1E2C;
+      --dark-3: #1E1E2C;
+      --dark-4: #2d2d3f;
+      --sidebar-bg: #1E1E2C;
+      --card-bg: #FFFFFF;
+      --bg: #F0F2F7;
+      --blue: #3B8FF3;
       --teal: #34B1AA;
       --gold: #E0B50F;
       --purple: #7C3AED;
       --violet: #6366f1;
-      --border: #e8eaf2;
+      --border: #E4E8F0;
       --border-dark: rgba(255, 255, 255, 0.06);
-      --text: #0f0f17;
+      --text: #1E1E2C;
       --text-2: #3d3d52;
-      --muted: #7c7c99;
+      --muted: #6B7280;
       --success: #34B1AA;
       --warning: #E0B50F;
       --danger: #EF4444;
       --green: #22c55e;
       --rose: #f43f5e;
-      --font: 'Plus Jakarta Sans', system-ui, sans-serif;
-      --font-display: 'Syne', sans-serif;
-      --radius: 14px;
+      --font: 'Open Sans', Arial, Helvetica, sans-serif;
+      --font-display: 'Open Sans', Arial, Helvetica, sans-serif;
+      --radius: 12px;
       --radius-sm: 8px;
       --radius-xs: 6px;
-      --shadow: 0 1px 8px rgba(15, 15, 23, 0.06), 0 4px 16px rgba(15, 15, 23, 0.04);
-      --shadow-md: 0 4px 20px rgba(15, 15, 23, 0.10), 0 8px 32px rgba(15, 15, 23, 0.06);
-      --shadow-lg: 0 12px 48px rgba(15, 15, 23, 0.16);
-      --transition: 180ms cubic-bezier(0.4, 0, 0.2, 1);
+      --shadow: 0 2px 12px rgba(30, 30, 44, 0.07);
+      --shadow-md: 0 6px 24px rgba(30, 30, 44, 0.10);
+      --shadow-lg: 0 12px 48px rgba(30, 30, 44, 0.16);
+      --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     *,
@@ -192,35 +192,50 @@
     }
 
     .brand-logo {
-      width: 42px;
-      height: 42px;
-      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-      color: #fff;
+      background: transparent;
+      position: relative;
+    }
+    .brand-logo img {
+      width: 44px;
+      height: 44px;
+      object-fit: contain;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+    .brand-logo-fallback {
       font-weight: 800;
-      font-size: 1.15rem;
-      font-family: var(--font-display);
-      box-shadow: 0 4px 12px rgba(242, 159, 103, 0.35);
+      color: #fff;
+      font-size: 1rem;
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--primary);
+      border-radius: 10px;
     }
 
     .brand-text strong {
       display: block;
-      font-size: .9rem;
-      font-weight: 800;
-      color: #f1f5f9;
+      font-size: .88rem;
+      font-weight: 700;
+      color: #F1F5F9;
       letter-spacing: .02em;
-      font-family: var(--font-display)
     }
 
     .brand-text span {
-      font-size: .6rem;
+      font-size: .62rem;
       text-transform: uppercase;
-      letter-spacing: .16em;
-      color: #3d3d52
+      letter-spacing: .12em;
+      color: #475569;
     }
 
     .nav-section {
@@ -801,6 +816,86 @@
     .badge-payment_pending {
       background: #fef3c7;
       color: #b45309
+    }
+
+    /* ─── ORDER PIPELINE ─── */
+    .order-pipeline {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    .pipeline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .pipeline-title {
+      font-size: .9rem;
+      font-weight: 700;
+    }
+    .pipeline-strip {
+      display: flex;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      background: #e4e8f0;
+    }
+    .ps-seg {
+      height: 100%;
+      transition: width 0.3s ease;
+    }
+    .ps-seg.seg-placed { background: #3b82f6; }
+    .ps-seg.seg-confirmed { background: #8b5cf6; }
+    .ps-seg.seg-shipped { background: #06b6d4; }
+    .ps-seg.seg-delivered { background: #22c55e; }
+    .ps-seg.seg-cancelled { background: #f43f5e; }
+    .ps-seg.seg-exchange_requested { background: #f59e0b; }
+
+    .pipeline-items {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+    }
+    @media(max-width: 900px) {
+      .pipeline-items { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media(max-width: 500px) {
+      .pipeline-items { grid-template-columns: repeat(2, 1fr); }
+    }
+    .pi-item {
+      background: #f8f9fc;
+      border-radius: 8px;
+      padding: 10px;
+      text-align: center;
+      position: relative;
+    }
+    .pi-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin: 0 auto 5px;
+    }
+    .pi-val {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .pi-lbl {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin: 2px 0;
+    }
+    .pi-pct {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--text-2);
     }
 
     /* ─── TABLE ─── */
@@ -2327,10 +2422,8 @@
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo">
-          <span id="logoFallback">H</span>
-          <img src="logo.png" alt="HeelsUp" style="width:44px;height:44px;object-fit:contain;display:none"
-            onload="this.style.display='block';document.getElementById('logoFallback').style.display='none'"
-            onerror="this.style.display='none'">
+          <div class="brand-logo-fallback">HU</div>
+          <img src="/logo.png" alt="HeelsUp" onerror="this.style.display='none'">
         </div>
         <div class="brand-text">
           <strong>HeelsUp</strong>
@@ -2438,7 +2531,7 @@
             </div>
             <div class="welcome-actions">
               <button class="btn btn-sm btn-primary"
-                onclick="navTo(document.querySelector('[data-sec=products]'));setTimeout(openProductModal,120)">
+                onclick="window.location.href='admin-products.html'">
                 <i class="fa-solid fa-plus"></i>Add Product
               </button>
               <button class="btn btn-sm"
@@ -2456,7 +2549,7 @@
           <!-- Quick Actions -->
           <div class="quick-actions">
             <div class="qa-card"
-              onclick="navTo(document.querySelector('[data-sec=products]'));setTimeout(openProductModal,120)">
+              onclick="window.location.href='admin-products.html'">
               <div class="qa-icon" style="background:rgba(242,159,103,0.1);color:var(--primary)"><i
                   class="fa-solid fa-plus"></i></div>
               <div>
@@ -2465,7 +2558,7 @@
               </div>
             </div>
             <div class="qa-card"
-              onclick="navTo(document.querySelector('[data-sec=coupons]'));setTimeout(openCouponModal,120)">
+              onclick="window.location.href='admin-coupons.html'">
               <div class="qa-icon" style="background:rgba(52,177,170,0.1);color:var(--teal)"><i
                   class="fa-solid fa-ticket"></i></div>
               <div>
@@ -2565,8 +2658,8 @@
               <div style="display:flex;gap:8px">
                 <a href="admin-inventory.html" class="btn btn-sm btn-outline"><i
                     class="fa-solid fa-warehouse"></i>Inventory</a>
-                <button class="btn btn-sm btn-primary" onclick="openProductModal()"><i class="fa-solid fa-plus"></i>Add
-                  Product</button>
+                <button class="btn btn-outline" onclick="window.location.href='admin-products.html'">
+                <i class="fa-solid fa-plus"></i>Add Product</button>
               </div>
             </div>
             <div class="filter-bar"
@@ -2829,7 +2922,7 @@
             <div class="card-hd">
               <div class="card-title"><i class="fa-solid fa-ticket"
                   style="color:var(--primary);margin-right:6px"></i>Coupons &amp; Offers</div>
-              <button class="btn btn-sm btn-primary" onclick="openCouponModal()"><i class="fa-solid fa-plus"></i>Add
+              <button class="btn btn-sm btn-primary" onclick="window.location.href='admin-coupons.html'"><i class="fa-solid fa-plus"></i>Add
                 Coupon</button>
             </div>
             <div class="tbl-scroll">
