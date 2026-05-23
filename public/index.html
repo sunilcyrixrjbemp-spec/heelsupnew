@@ -4,83 +4,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-
-  <!-- ══ SEO ══ -->
-  <title>HeelsUp – Premium Ladies Footwear &amp; Bags | India's #1 Women's Shoe Store</title>
+  <title>HeelsUp – Premium Ladies Footwear & Bags | India's #1 Women's Shoe Store</title>
   <meta name="description"
-    content="HeelsUp – India's most stylish women's footwear store. Shop heels, sandals, flats, wedges &amp; bags. Free shipping ₹499+. Authentic quality. Fast delivery." />
+    content="HeelsUp – India's most stylish women's footwear store. Shop heels, sandals, flats, wedges & bags. Free shipping ₹499+. Authentic quality. Fast delivery." />
   <meta name="keywords"
     content="ladies heels online india, women sandals, wedge heels, block heels, ladies bags, women footwear online shopping" />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://heelsup.in/" />
-
-  <!-- ══ OG ══ -->
   <meta property="og:type" content="website" />
-  <meta property="og:title" content="HeelsUp – Premium Ladies Footwear &amp; Bags" />
+  <meta property="og:title" content="HeelsUp – Premium Ladies Footwear & Bags" />
   <meta property="og:description"
-    content="Shop premium ladies footwear &amp; bags. Free shipping above ₹499. Pan-India delivery." />
+    content="Shop premium ladies footwear & bags. Free shipping above ₹499. Pan-India delivery." />
   <meta property="og:image" content="/logo.png" />
   <meta property="og:url" content="https://heelsup.in/" />
   <meta property="og:site_name" content="HeelsUp" />
   <meta name="twitter:card" content="summary_large_image" />
 
-  <!-- ══ STRUCTURED DATA ══ -->
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"ClothingStore","name":"HeelsUp","description":"Ladies footwear and bags – Heels, Sandals, Flats, Bags","url":"https://heelsup.in","logo":"https://heelsup.in/logo.png","priceRange":"₹₹","currenciesAccepted":"INR","paymentAccepted":"Cash, Credit Card, Debit Card, UPI","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"},"sameAs":["https://instagram.com/heelsup.in","https://facebook.com/heelsup.in"]}
+  {"@context":"https://schema.org","@type":"ClothingStore","name":"HeelsUp","description":"Ladies footwear and bags – Heels, Sandals, Flats, Bags","url":"https://heelsup.in","logo":"https://heelsup.in/logo.png","priceRange":"₹₹","currenciesAccepted":"INR","paymentAccepted":"Cash, Credit Card, Debit Card, UPI","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"}}
   </script>
 
-  <!-- ══ FONTS ══ -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,300;1,9..144,400;1,9..144,500&family=Cabinet+Grotesk:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    /* ══════════════════════════════════════════════════
-       DESIGN TOKENS — Luxury Warm Dark + Gold
-    ══════════════════════════════════════════════════ */
+    /* ═══════════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════════ */
     :root {
       --ink: #0d0a08;
       --ink2: #1a1510;
-      --ink3: #231d17;
-      --gold: #c8a96e;
+      --gold: #c9a96e;
       --gold-lt: #e8c98a;
-      --gold-dk: #a07840;
-      --gold-glow: rgba(200, 169, 110, .12);
+      --gold-dk: #8c6033;
+      --gold-glow: rgba(201, 169, 110, .12);
       --cream: #f9f4ed;
       --cream2: #f2ebe0;
       --sand: #e8dece;
-      --rose: #d4556a;
-      --teal: #2a9d8f;
+      --rose: #d4456b;
+      --teal: #22c55e;
       --white: #ffffff;
-      --border: rgba(200, 169, 110, .18);
-      --border-light: rgba(200, 169, 110, .08);
-      --text-primary: #1a1510;
-      --text-sec: #4a3f35;
-      --text-muted: #8a7a6a;
-      --text-pale: #b5a898;
-      --radius-sm: 6px;
-      --radius: 12px;
-      --radius-lg: 20px;
-      --radius-xl: 32px;
-      --shadow-sm: 0 1px 4px rgba(0, 0, 0, .06);
-      --shadow: 0 4px 20px rgba(0, 0, 0, .09);
-      --shadow-md: 0 8px 40px rgba(0, 0, 0, .13);
-      --shadow-lg: 0 20px 60px rgba(0, 0, 0, .18);
-      --shadow-gold: 0 8px 32px rgba(200, 169, 110, .25);
-      --font-display: 'Fraunces', Georgia, serif;
-      --font-head: 'Instrument Serif', serif;
-      --font-body: 'Cabinet Grotesk', sans-serif;
+      --border: rgba(201, 169, 110, .18);
+      --border-lt: rgba(201, 169, 110, .08);
+      --text-1: #0d0a08;
+      --text-2: #4a3f35;
+      --text-3: #8c8580;
+      --text-4: #b4a899;
+      --r-sm: 6px;
+      --r: 12px;
+      --r-lg: 20px;
+      --r-xl: 32px;
+      --sh-sm: 0 1px 4px rgba(0, 0, 0, .06);
+      --sh: 0 4px 20px rgba(0, 0, 0, .09);
+      --sh-md: 0 8px 40px rgba(0, 0, 0, .13);
+      --sh-lg: 0 20px 60px rgba(0, 0, 0, .18);
+      --sh-gold: 0 8px 32px rgba(201, 169, 110, .25);
+      --fd: 'Cormorant Garamond', Georgia, serif;
+      --fh: 'Playfair Display', Georgia, serif;
+      --fb: 'DM Sans', 'Helvetica Neue', sans-serif;
       --t: .25s cubic-bezier(.4, 0, .2, 1);
-      --t-slow: .55s cubic-bezier(.4, 0, .2, 1);
+      --ts: .55s cubic-bezier(.4, 0, .2, 1);
       --z-nav: 100;
       --z-modal: 200;
       --z-toast: 300;
     }
 
-    /* ══ RESET ══ */
     *,
     *::before,
     *::after {
@@ -91,16 +82,14 @@
 
     html {
       scroll-behavior: smooth;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale
+      -webkit-font-smoothing: antialiased
     }
 
     body {
-      font-family: var(--font-body);
+      font-family: var(--fb);
       background: var(--cream);
-      color: var(--text-primary);
-      overflow-x: hidden;
-      cursor: none
+      color: var(--text-1);
+      overflow-x: hidden
     }
 
     a {
@@ -109,10 +98,10 @@
     }
 
     button {
-      cursor: none;
+      cursor: pointer;
       border: none;
       background: none;
-      font-family: var(--font-body)
+      font-family: var(--fb)
     }
 
     img {
@@ -124,7 +113,7 @@
     input,
     select,
     textarea {
-      font-family: var(--font-body);
+      font-family: var(--fb);
       outline: none
     }
 
@@ -132,88 +121,29 @@
       list-style: none
     }
 
-    /* ══ CUSTOM CURSOR ══ */
-    .cursor {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 10px;
-      height: 10px;
-      background: var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9999;
-      transform: translate(-50%, -50%);
-      transition: width .2s, height .2s, opacity .2s;
-      mix-blend-mode: multiply
-    }
-
-    .cursor-ring {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 36px;
-      height: 36px;
-      border: 1.5px solid var(--gold);
-      border-radius: 50%;
-      pointer-events: none;
-      z-index: 9998;
-      transform: translate(-50%, -50%);
-      transition: transform .08s linear, width .2s, height .2s;
-      opacity: .6
-    }
-
-    .cursor.grow {
-      width: 28px;
-      height: 28px;
-      opacity: .3
-    }
-
-    .cursor-ring.grow {
-      width: 56px;
-      height: 56px;
-      opacity: .3
-    }
-
-    @media(hover:none) {
-
-      .cursor,
-      .cursor-ring {
-        display: none
-      }
-
-      body {
-        cursor: auto
-      }
-
-      button {
-        cursor: pointer
-      }
-    }
-
-    /* ══ CONTAINER ══ */
-    .container {
+    /* ── CONTAINER ── */
+    .ctn {
       max-width: 1320px;
       margin: 0 auto;
       padding: 0 24px
     }
 
     @media(max-width:768px) {
-      .container {
+      .ctn {
         padding: 0 16px
       }
     }
 
-    /* ══ ANNOUNCEMENT BAR ══ */
-    .ann-bar {
+    /* ── ANNOUNCEMENT BAR ── */
+    .ann {
       background: var(--ink);
       padding: 10px 0;
       text-align: center;
       position: relative;
-      z-index: calc(var(--z-nav) + 1)
+      z-index: calc(var(--z-nav)+1)
     }
 
-    .ann-bar-inner {
+    .ann-inner {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -226,10 +156,10 @@
       font-weight: 600;
       letter-spacing: .12em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, .75);
+      color: rgba(255, 255, 255, .7);
       display: flex;
       align-items: center;
-      gap: 8px
+      gap: 7px
     }
 
     .ann-item strong,
@@ -237,7 +167,7 @@
       color: var(--gold-lt)
     }
 
-    .ann-sep {
+    .ann-dot {
       width: 4px;
       height: 4px;
       background: var(--gold);
@@ -253,14 +183,15 @@
       color: rgba(255, 255, 255, .35);
       font-size: 13px;
       padding: 4px 8px;
-      transition: color var(--t)
+      transition: color var(--t);
+      cursor: pointer
     }
 
     .ann-close:hover {
       color: rgba(255, 255, 255, .8)
     }
 
-    /* ══ NAVBAR ══ */
+    /* ── NAVBAR ── */
     .navbar {
       position: sticky;
       top: 0;
@@ -275,14 +206,14 @@
       box-shadow: 0 4px 30px rgba(0, 0, 0, .08)
     }
 
-    .navbar-inner {
+    .nb-inner {
       height: 68px;
       display: flex;
       align-items: center;
-      gap: 32px
+      gap: 28px
     }
 
-    .nav-logo {
+    .nb-logo {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -290,41 +221,45 @@
       z-index: 2
     }
 
-    .nav-logo img {
-      height: 38px;
+    .nb-logo img {
+      height: 40px;
       width: auto;
       object-fit: contain
     }
 
-    .nav-logo-text {
-      font-family: var(--font-display);
-      font-size: 1.5rem;
+    .nb-logo-txt {
+      font-family: var(--fd);
+      font-size: 1.6rem;
       font-weight: 600;
       letter-spacing: -.02em;
-      color: var(--ink)
+      color: var(--ink);
+      display: none
     }
 
-    .nav-logo-text span {
+    .nb-logo img.err+.nb-logo-txt {
+      display: block
+    }
+
+    .nb-logo-txt span {
       color: var(--gold)
     }
 
-    .nav-menu {
+    .nb-menu {
       display: flex;
       align-items: center;
       gap: 2px;
       margin: 0 auto
     }
 
-    .nav-menu li {
+    .nb-menu li {
       position: relative
     }
 
-    .nav-link {
+    .nb-link {
       padding: 8px 14px;
       font-size: 13.5px;
       font-weight: 600;
-      letter-spacing: .01em;
-      color: var(--text-sec);
+      color: var(--text-2);
       transition: color var(--t);
       display: flex;
       align-items: center;
@@ -332,65 +267,66 @@
       border-radius: 8px
     }
 
-    .nav-link:hover,
-    .nav-link.active {
+    .nb-link:hover,
+    .nb-link.active {
       color: var(--gold-dk)
     }
 
-    .nav-link i {
-      font-size: 9px;
-      opacity: .55;
+    /* chevron icon inline SVG */
+    .nb-chevron {
+      width: 10px;
+      height: 10px;
+      opacity: .5;
       transition: transform var(--t)
     }
 
-    .nav-menu li:hover>.nav-link i {
+    .nb-menu li:hover .nb-chevron {
       transform: rotate(180deg)
     }
 
-    /* Mega Dropdown */
-    .nav-drop {
+    /* Dropdown */
+    .nb-drop {
       position: absolute;
       top: calc(100% + 12px);
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) translateY(-8px);
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-lg);
+      border-radius: var(--r-lg);
+      box-shadow: var(--sh-lg);
       min-width: 240px;
       padding: 8px;
       opacity: 0;
       visibility: hidden;
-      transform: translateX(-50%) translateY(-8px);
       transition: all var(--t);
       pointer-events: none
     }
 
-    .nav-menu li:hover .nav-drop {
+    .nb-menu li:hover .nb-drop {
       opacity: 1;
       visibility: visible;
       transform: translateX(-50%) translateY(0);
       pointer-events: all
     }
 
-    .nav-drop a {
+    .nb-drop a {
       display: flex;
       align-items: center;
       gap: 12px;
       padding: 10px 14px;
-      border-radius: var(--radius);
+      border-radius: var(--r);
       font-size: 13.5px;
       font-weight: 500;
-      color: var(--text-sec);
+      color: var(--text-2);
       transition: all var(--t)
     }
 
-    .nav-drop a:hover {
+    .nb-drop a:hover {
       background: var(--cream2);
       color: var(--gold-dk)
     }
 
-    .nav-drop-icon {
+    .nb-drop-ico {
       width: 32px;
       height: 32px;
       border-radius: 8px;
@@ -398,48 +334,61 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
       flex-shrink: 0
     }
 
-    .nav-drop-text strong {
+    .nb-drop-ico svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--gold-dk)
+    }
+
+    .nb-drop-txt strong {
       display: block;
       font-size: 13px;
       font-weight: 700
     }
 
-    .nav-drop-text span {
+    .nb-drop-txt span {
       font-size: 11px;
-      color: var(--text-muted)
+      color: var(--text-3)
     }
 
-    /* Navbar Actions */
-    .nav-actions {
+    /* Actions */
+    .nb-actions {
       display: flex;
       align-items: center;
       gap: 4px;
       flex-shrink: 0
     }
 
-    .nav-btn {
+    .nb-btn {
       width: 40px;
       height: 40px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
-      color: var(--text-sec);
+      color: var(--text-2);
       transition: all var(--t);
-      position: relative
+      position: relative;
+      cursor: pointer
     }
 
-    .nav-btn:hover {
+    .nb-btn svg {
+      width: 18px;
+      height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8
+    }
+
+    .nb-btn:hover {
       background: var(--cream2);
       color: var(--gold-dk)
     }
 
-    .nav-badge {
+    .nb-badge {
       position: absolute;
       top: 4px;
       right: 4px;
@@ -450,11 +399,59 @@
       font-size: 9.5px;
       font-weight: 800;
       border-radius: 9px;
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       padding: 0 4px;
       animation: scalePop .3s ease
+    }
+
+    .nb-ham {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      transition: background var(--t);
+      cursor: pointer
+    }
+
+    .nb-ham:hover {
+      background: var(--cream2)
+    }
+
+    .ham-ln {
+      width: 22px;
+      height: 1.5px;
+      background: var(--text-1);
+      border-radius: 2px;
+      transition: all var(--t)
+    }
+
+    .nb-ham.open .ham-ln:nth-child(1) {
+      transform: translateY(6.5px) rotate(45deg)
+    }
+
+    .nb-ham.open .ham-ln:nth-child(2) {
+      opacity: 0;
+      transform: scaleX(0)
+    }
+
+    .nb-ham.open .ham-ln:nth-child(3) {
+      transform: translateY(-6.5px) rotate(-45deg)
+    }
+
+    @media(max-width:1024px) {
+      .nb-menu {
+        display: none
+      }
+
+      .nb-ham {
+        display: flex
+      }
     }
 
     @keyframes scalePop {
@@ -471,66 +468,19 @@
       }
     }
 
-    .nav-hamburger {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      transition: background var(--t)
-    }
-
-    .nav-hamburger:hover {
-      background: var(--cream2)
-    }
-
-    .ham-line {
-      width: 22px;
-      height: 1.5px;
-      background: var(--text-primary);
-      border-radius: 2px;
-      transition: all var(--t)
-    }
-
-    .nav-hamburger.open .ham-line:nth-child(1) {
-      transform: translateY(6.5px) rotate(45deg)
-    }
-
-    .nav-hamburger.open .ham-line:nth-child(2) {
-      opacity: 0;
-      transform: scaleX(0)
-    }
-
-    .nav-hamburger.open .ham-line:nth-child(3) {
-      transform: translateY(-6.5px) rotate(-45deg)
-    }
-
-    @media(max-width:1024px) {
-      .nav-menu {
-        display: none
-      }
-
-      .nav-hamburger {
-        display: flex
-      }
-    }
-
-    /* ══ MOBILE MENU ══ */
-    .mob-menu {
+    /* ── MOBILE MENU ── */
+    .mob {
       position: fixed;
       inset: 0;
       z-index: calc(var(--z-modal) - 10);
       pointer-events: none
     }
 
-    .mob-backdrop {
+    .mob-bd {
       position: absolute;
       inset: 0;
       background: rgba(0, 0, 0, 0);
-      transition: background var(--t-slow)
+      transition: background var(--ts)
     }
 
     .mob-panel {
@@ -541,22 +491,22 @@
       width: min(340px, 100vw);
       background: var(--white);
       transform: translateX(100%);
-      transition: transform var(--t-slow);
-      box-shadow: var(--shadow-lg);
+      transition: transform var(--ts);
+      box-shadow: var(--sh-lg);
       display: flex;
       flex-direction: column;
       overflow: hidden
     }
 
-    .mob-menu.open {
+    .mob.open {
       pointer-events: all
     }
 
-    .mob-menu.open .mob-backdrop {
+    .mob.open .mob-bd {
       background: rgba(0, 0, 0, .5)
     }
 
-    .mob-menu.open .mob-panel {
+    .mob.open .mob-panel {
       transform: translateX(0)
     }
 
@@ -568,10 +518,6 @@
       justify-content: space-between
     }
 
-    .mob-head .nav-logo-text {
-      font-size: 1.3rem
-    }
-
     .mob-close {
       width: 36px;
       height: 36px;
@@ -580,8 +526,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-sec);
-      font-size: 16px
+      color: var(--text-2);
+      cursor: pointer
+    }
+
+    .mob-close svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
     }
 
     .mob-body {
@@ -590,7 +544,7 @@
       padding: 12px
     }
 
-    .mob-nav-link {
+    .mob-lnk {
       display: flex;
       align-items: center;
       gap: 12px;
@@ -598,17 +552,17 @@
       border-radius: 10px;
       font-size: 14.5px;
       font-weight: 600;
-      color: var(--text-sec);
+      color: var(--text-2);
       transition: all var(--t)
     }
 
-    .mob-nav-link:hover,
-    .mob-nav-link.active {
+    .mob-lnk:hover,
+    .mob-lnk.active {
       background: var(--cream2);
       color: var(--gold-dk)
     }
 
-    .mob-nav-link .icon {
+    .mob-ico {
       width: 32px;
       height: 32px;
       background: var(--cream2);
@@ -616,13 +570,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
       flex-shrink: 0;
       transition: background var(--t)
     }
 
-    .mob-nav-link:hover .icon,
-    .mob-nav-link.active .icon {
+    .mob-ico svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--gold-dk);
+      fill: none;
+      stroke-width: 1.8
+    }
+
+    .mob-lnk:hover .mob-ico {
       background: var(--gold-glow)
     }
 
@@ -637,7 +597,7 @@
       border-top: 1px solid var(--border)
     }
 
-    .mob-auth-btn {
+    .mob-auth {
       width: 100%;
       padding: 12px;
       border-radius: 10px;
@@ -645,20 +605,21 @@
       font-weight: 700;
       letter-spacing: .04em;
       text-align: center;
-      transition: all var(--t)
+      transition: all var(--t);
+      display: block
     }
 
-    .mob-auth-btn.primary {
+    .mob-auth.primary {
       background: var(--ink);
       color: #fff
     }
 
-    .mob-auth-btn.primary:hover {
+    .mob-auth.primary:hover {
       background: var(--ink2)
     }
 
-    /* ══ SEARCH OVERLAY ══ */
-    .search-overlay {
+    /* ── SEARCH OVERLAY ── */
+    .srch {
       position: fixed;
       inset: 0;
       z-index: var(--z-modal);
@@ -670,19 +631,19 @@
       padding-top: 120px;
       opacity: 0;
       visibility: hidden;
-      transition: all var(--t-slow)
+      transition: all var(--ts)
     }
 
-    .search-overlay.open {
+    .srch.open {
       opacity: 1;
       visibility: visible
     }
 
-    .search-box-wrap {
+    .srch-wrap {
       width: min(680px, 90vw)
     }
 
-    .search-label {
+    .srch-lbl {
       font-size: 11px;
       font-weight: 700;
       letter-spacing: .2em;
@@ -692,7 +653,7 @@
       display: block
     }
 
-    .search-field {
+    .srch-field {
       display: flex;
       align-items: center;
       border-bottom: 2px solid var(--gold);
@@ -700,26 +661,30 @@
       gap: 12px
     }
 
-    .search-field i {
-      font-size: 1.2rem;
-      color: var(--gold)
+    .srch-field svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.8;
+      flex-shrink: 0
     }
 
-    .search-field input {
+    .srch-inp {
       flex: 1;
       background: transparent;
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: clamp(1.4rem, 4vw, 2.2rem);
       font-weight: 300;
       color: #fff;
       border: none
     }
 
-    .search-field input::placeholder {
+    .srch-inp::placeholder {
       color: rgba(255, 255, 255, .25)
     }
 
-    .search-close-btn {
+    .srch-x {
       width: 36px;
       height: 36px;
       border-radius: 50%;
@@ -728,23 +693,31 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
       transition: all var(--t);
-      flex-shrink: 0
+      flex-shrink: 0;
+      cursor: pointer
     }
 
-    .search-close-btn:hover {
+    .srch-x svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
+    }
+
+    .srch-x:hover {
       background: rgba(255, 255, 255, .08);
       color: #fff
     }
 
-    .search-results {
+    .srch-res {
       margin-top: 24px;
       max-height: 50vh;
       overflow-y: auto
     }
 
-    .search-hint {
+    .srch-hint {
       font-size: 12.5px;
       color: rgba(255, 255, 255, .3);
       text-align: center;
@@ -752,8 +725,8 @@
       letter-spacing: .05em
     }
 
-    /* ══ SECTION COMMONS ══ */
-    .sec-header {
+    /* ── SECTION COMMONS ── */
+    .sec-hd {
       text-align: center;
       margin-bottom: 52px
     }
@@ -769,7 +742,7 @@
       color: var(--gold-dk);
       margin-bottom: 14px;
       background: var(--gold-glow);
-      border: 1px solid rgba(200, 169, 110, .25);
+      border: 1px solid rgba(201, 169, 110, .25);
       padding: 6px 18px;
       border-radius: 100px
     }
@@ -783,7 +756,7 @@
     }
 
     .sec-title {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: clamp(2rem, 4.5vw, 3.4rem);
       font-weight: 300;
       line-height: 1.1;
@@ -798,7 +771,7 @@
 
     .sec-sub {
       font-size: 15px;
-      color: var(--text-muted);
+      color: var(--text-3);
       margin-top: 12px;
       max-width: 520px;
       margin-left: auto;
@@ -806,7 +779,7 @@
       line-height: 1.75
     }
 
-    /* ══ BUTTONS ══ */
+    /* ── BUTTONS ── */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -819,7 +792,16 @@
       text-transform: uppercase;
       transition: all var(--t);
       border: none;
-      font-family: var(--font-body)
+      font-family: var(--fb);
+      cursor: pointer
+    }
+
+    .btn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
     }
 
     .btn-primary {
@@ -841,7 +823,7 @@
     .btn-gold:hover {
       background: var(--gold-lt);
       transform: translateY(-2px);
-      box-shadow: var(--shadow-gold)
+      box-shadow: var(--sh-gold)
     }
 
     .btn-outline {
@@ -856,13 +838,13 @@
       background: var(--gold-glow)
     }
 
-    .btn-outline-white {
+    .btn-outline-wh {
       background: transparent;
       color: #fff;
       border: 1.5px solid rgba(255, 255, 255, .35)
     }
 
-    .btn-outline-white:hover {
+    .btn-outline-wh:hover {
       border-color: #fff;
       background: rgba(255, 255, 255, .1)
     }
@@ -877,12 +859,7 @@
       font-size: 12px
     }
 
-    .btn-xs {
-      padding: 6px 14px;
-      font-size: 11px
-    }
-
-    /* ══ HERO ══ */
+    /* ── HERO ── */
     .hero {
       position: relative;
       min-height: 100vh;
@@ -897,18 +874,18 @@
       z-index: 0
     }
 
-    .hero-slide {
+    .h-slide {
       position: absolute;
       inset: 0;
       opacity: 0;
       transition: opacity 1.2s ease
     }
 
-    .hero-slide.active {
+    .h-slide.active {
       opacity: 1
     }
 
-    .hero-slide img {
+    .h-slide img {
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -928,7 +905,7 @@
       max-width: 680px
     }
 
-    .hero-eyebrow {
+    .h-eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 8px;
@@ -938,16 +915,23 @@
       text-transform: uppercase;
       color: var(--gold-lt);
       padding: 7px 20px;
-      border: 1px solid rgba(200, 169, 110, .45);
+      border: 1px solid rgba(201, 169, 110, .45);
       border-radius: 100px;
-      background: rgba(200, 169, 110, .1);
+      background: rgba(201, 169, 110, .1);
       backdrop-filter: blur(8px);
       margin-bottom: 24px;
       animation: heroIn .9s .3s both
     }
 
-    .hero-title {
-      font-family: var(--font-display);
+    .h-eyebrow svg {
+      width: 11px;
+      height: 11px;
+      stroke: var(--gold-lt);
+      fill: var(--gold-lt)
+    }
+
+    .h-title {
+      font-family: var(--fd);
       font-size: clamp(3.2rem, 8vw, 7rem);
       font-weight: 300;
       line-height: .98;
@@ -957,13 +941,13 @@
       animation: heroIn .9s .5s both
     }
 
-    .hero-title em {
+    .h-title em {
       font-style: italic;
       color: var(--gold-lt);
       display: block
     }
 
-    .hero-sub {
+    .h-sub {
       font-size: 1.05rem;
       color: rgba(255, 255, 255, .68);
       line-height: 1.75;
@@ -972,7 +956,7 @@
       animation: heroIn .9s .7s both
     }
 
-    .hero-actions {
+    .h-actions {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
@@ -995,19 +979,15 @@
       }
     }
 
-    .hero-stat-box {
-      text-align: right
-    }
-
-    .hero-stat-num {
-      font-family: var(--font-display);
+    .h-stat-num {
+      font-family: var(--fd);
       font-size: 2.4rem;
       font-weight: 300;
       color: #fff;
       line-height: 1
     }
 
-    .hero-stat-lbl {
+    .h-stat-lbl {
       font-size: 10px;
       font-weight: 700;
       letter-spacing: .18em;
@@ -1016,7 +996,6 @@
       margin-top: 2px
     }
 
-    /* Hero Dots */
     .hero-dots {
       position: absolute;
       bottom: 40px;
@@ -1027,21 +1006,20 @@
       gap: 8px
     }
 
-    .hero-dot {
+    .h-dot {
       width: 6px;
       height: 6px;
       border-radius: 3px;
       background: rgba(255, 255, 255, .3);
-      transition: all var(--t-slow);
-      cursor: none
+      transition: all var(--ts);
+      cursor: pointer
     }
 
-    .hero-dot.active {
+    .h-dot.active {
       width: 28px;
       background: var(--gold)
     }
 
-    /* Scroll indicator */
     .hero-scroll {
       position: absolute;
       bottom: 40px;
@@ -1061,7 +1039,7 @@
     .scroll-line {
       width: 1px;
       height: 48px;
-      background: linear-gradient(to bottom, rgba(200, 169, 110, .7), transparent)
+      background: linear-gradient(to bottom, rgba(201, 169, 110, .7), transparent)
     }
 
     @keyframes heroIn {
@@ -1088,21 +1066,21 @@
       }
     }
 
-    /* ══ MARQUEE ══ */
-    .marquee-strip {
+    /* ── MARQUEE ── */
+    .mq-strip {
       background: var(--gold);
       overflow: hidden;
       display: flex;
       user-select: none
     }
 
-    .marquee-track {
+    .mq-track {
       display: flex;
       animation: marquee 22s linear infinite;
       will-change: transform
     }
 
-    .marquee-item {
+    .mq-item {
       display: inline-flex;
       align-items: center;
       gap: 14px;
@@ -1115,7 +1093,7 @@
       white-space: nowrap
     }
 
-    .marquee-sep {
+    .mq-sep {
       width: 5px;
       height: 5px;
       border-radius: 50%;
@@ -1133,8 +1111,8 @@
       }
     }
 
-    /* ══ CATEGORIES ══ */
-    .categories-sec {
+    /* ── CATEGORIES ── */
+    .cat-sec {
       padding: 100px 0 80px;
       background: var(--cream)
     }
@@ -1142,49 +1120,48 @@
     .cat-grid {
       display: grid;
       grid-template-columns: 1.5fr 1fr 1fr 1fr;
-      grid-template-rows: auto;
       gap: 16px
     }
 
     .cat-card {
       display: block;
-      border-radius: var(--radius-lg);
+      border-radius: var(--r-lg);
       overflow: hidden;
       position: relative;
-      cursor: none
+      cursor: pointer
     }
 
-    .cat-card-img {
+    .cat-img-wrap {
       overflow: hidden
     }
 
-    .cat-card-img img {
+    .cat-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform .8s cubic-bezier(.4, 0, .2, 1)
     }
 
-    .cat-card-img {
+    .cat-img-wrap {
       aspect-ratio: 3/4
     }
 
-    .cat-card.large .cat-card-img {
+    .cat-card.large .cat-img-wrap {
       aspect-ratio: 2/3
     }
 
-    .cat-card:hover .cat-card-img img {
+    .cat-card:hover .cat-img-wrap img {
       transform: scale(1.06)
     }
 
-    .cat-overlay {
+    .cat-ov {
       position: absolute;
       inset: 0;
       background: linear-gradient(to top, rgba(10, 7, 4, .85) 0%, rgba(10, 7, 4, .1) 55%, transparent 100%);
-      transition: all var(--t-slow)
+      transition: all var(--ts)
     }
 
-    .cat-card:hover .cat-overlay {
+    .cat-card:hover .cat-ov {
       background: linear-gradient(to top, rgba(10, 7, 4, .92) 0%, rgba(10, 7, 4, .3) 60%, rgba(10, 7, 4, .05) 100%)
     }
 
@@ -1206,7 +1183,7 @@
     }
 
     .cat-name {
-      font-family: var(--font-head);
+      font-family: var(--fh);
       font-size: 1.65rem;
       font-weight: 400;
       color: #fff;
@@ -1231,10 +1208,15 @@
       color: var(--gold-lt);
       opacity: 0;
       transform: translateY(8px);
-      transition: all var(--t-slow)
+      transition: all var(--ts)
     }
 
-    .cat-cta i {
+    .cat-cta svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
       transition: transform var(--t)
     }
 
@@ -1243,7 +1225,7 @@
       transform: translateY(0)
     }
 
-    .cat-card:hover .cat-cta i {
+    .cat-card:hover .cat-cta svg {
       transform: translateX(4px)
     }
 
@@ -1259,27 +1241,27 @@
         gap: 10px
       }
 
-      .cat-card-img,
-      .cat-card.large .cat-card-img {
+      .cat-img-wrap,
+      .cat-card.large .cat-img-wrap {
         aspect-ratio: 3/4
       }
     }
 
-    /* ══ PRODUCT CARD ══ */
-    .products-grid {
+    /* ── PRODUCT CARD ── */
+    .prod-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 20px
     }
 
     @media(max-width:1024px) {
-      .products-grid {
+      .prod-grid {
         grid-template-columns: repeat(3, 1fr)
       }
     }
 
     @media(max-width:768px) {
-      .products-grid {
+      .prod-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px
       }
@@ -1287,32 +1269,32 @@
 
     .prod-card {
       background: var(--white);
-      border-radius: var(--radius-lg);
+      border-radius: var(--r-lg);
       overflow: hidden;
       border: 1px solid var(--border);
       transition: box-shadow var(--t), transform var(--t)
     }
 
     .prod-card:hover {
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--sh-md);
       transform: translateY(-4px)
     }
 
-    .prod-card-img-wrap {
+    .prod-img-wrap {
       position: relative;
       aspect-ratio: 4/5;
       overflow: hidden;
       background: var(--cream2)
     }
 
-    .prod-card-img-wrap img {
+    .prod-img-wrap img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       transition: transform .7s ease
     }
 
-    .prod-card:hover .prod-card-img-wrap img {
+    .prod-card:hover .prod-img-wrap img {
       transform: scale(1.05)
     }
 
@@ -1325,7 +1307,7 @@
       gap: 5px
     }
 
-    .prod-badge {
+    .pbadge {
       display: inline-flex;
       align-items: center;
       gap: 4px;
@@ -1337,17 +1319,17 @@
       border-radius: 100px
     }
 
-    .badge-new {
+    .pbadge-new {
       background: var(--ink);
       color: #fff
     }
 
-    .badge-sale {
+    .pbadge-sale {
       background: var(--rose);
       color: #fff
     }
 
-    .badge-hot {
+    .pbadge-hot {
       background: var(--gold);
       color: var(--ink)
     }
@@ -1364,17 +1346,30 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-      color: var(--text-muted);
+      color: var(--text-3);
       transition: all var(--t);
-      border: 1px solid rgba(0, 0, 0, .06)
+      border: 1px solid rgba(0, 0, 0, .06);
+      cursor: pointer
+    }
+
+    .prod-wish svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      transition: fill var(--t)
     }
 
     .prod-wish:hover,
     .prod-wish.active {
       background: #fff;
       color: var(--rose);
-      border-color: rgba(212, 85, 106, .3)
+      border-color: rgba(212, 69, 107, .3)
+    }
+
+    .prod-wish.active svg {
+      fill: var(--rose)
     }
 
     .prod-actions {
@@ -1387,17 +1382,17 @@
       padding: 12px;
       background: linear-gradient(to top, rgba(255, 255, 255, .98), transparent);
       transform: translateY(100%);
-      transition: transform var(--t-slow)
+      transition: transform var(--ts)
     }
 
     .prod-card:hover .prod-actions {
       transform: translateY(0)
     }
 
-    .prod-act-btn {
+    .prod-act {
       flex: 1;
       padding: 9px;
-      border-radius: var(--radius);
+      border-radius: var(--r);
       font-size: 11.5px;
       font-weight: 700;
       letter-spacing: .05em;
@@ -1405,30 +1400,39 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all var(--t)
+      transition: all var(--t);
+      cursor: pointer
     }
 
-    .prod-act-btn.primary {
+    .prod-act svg {
+      width: 13px;
+      height: 13px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
+    }
+
+    .prod-act.primary {
       background: var(--ink);
       color: #fff
     }
 
-    .prod-act-btn.primary:hover {
+    .prod-act.primary:hover {
       background: var(--ink2)
     }
 
-    .prod-act-btn.outline {
+    .prod-act.outline {
       background: var(--cream2);
-      color: var(--text-primary);
+      color: var(--text-1);
       border: 1px solid var(--border)
     }
 
-    .prod-act-btn.outline:hover {
+    .prod-act.outline:hover {
       border-color: var(--gold);
       color: var(--gold-dk)
     }
 
-    .prod-card-body {
+    .prod-body {
       padding: 16px 14px
     }
 
@@ -1444,7 +1448,7 @@
     .prod-name {
       font-size: 14.5px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: var(--text-1);
       line-height: 1.3;
       margin-bottom: 7px
     }
@@ -1473,7 +1477,7 @@
 
     .prod-rc {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-3);
       font-weight: 500
     }
 
@@ -1484,7 +1488,7 @@
     }
 
     .price-now {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: 1.3rem;
       font-weight: 400;
       color: var(--ink);
@@ -1493,7 +1497,7 @@
 
     .price-was {
       font-size: 12.5px;
-      color: var(--text-muted);
+      color: var(--text-3);
       text-decoration: line-through
     }
 
@@ -1504,16 +1508,15 @@
       letter-spacing: .05em
     }
 
-    /* Skeleton */
+    /* ── SKELETON ── */
     .skel {
-      border-radius: var(--radius-lg);
+      border-radius: var(--r-lg);
       overflow: hidden;
       border: 1px solid var(--border);
       background: var(--white)
     }
 
     .skel-img {
-      aspect-ratio: 4/5;
       background: var(--cream2)
     }
 
@@ -1521,7 +1524,7 @@
       padding: 16px 14px
     }
 
-    .skel-line {
+    .skel-ln {
       height: 12px;
       border-radius: 6px;
       background: var(--sand);
@@ -1529,21 +1532,16 @@
       animation: shimmer 1.4s infinite
     }
 
-    .skel-line.w80 {
+    .skel-ln.w80 {
       width: 80%
     }
 
-    .skel-line.w60 {
+    .skel-ln.w60 {
       width: 60%
     }
 
-    .skel-line.w40 {
+    .skel-ln.w40 {
       width: 40%
-    }
-
-    .skel-img,
-    .skel-body .skel-line {
-      animation: shimmer 1.4s infinite
     }
 
     @keyframes shimmer {
@@ -1560,21 +1558,21 @@
       }
     }
 
-    /* ══ FEATURED SECTION ══ */
+    /* ── FEATURED SECTION ── */
     .featured-sec {
       padding: 90px 0;
       background: var(--white)
     }
 
-    /* ══ PROMO STRIP ══ */
-    .promo-strip {
+    /* ── PROMO STRIP ── */
+    .promo {
       background: var(--ink);
       padding: 64px 0;
       position: relative;
       overflow: hidden
     }
 
-    .promo-strip::before {
+    .promo::before {
       content: '';
       position: absolute;
       right: -100px;
@@ -1582,10 +1580,10 @@
       width: 400px;
       height: 400px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(200, 169, 110, .12) 0%, transparent 70%)
+      background: radial-gradient(circle, rgba(201, 169, 110, .12) 0%, transparent 70%)
     }
 
-    .promo-strip::after {
+    .promo::after {
       content: '';
       position: absolute;
       left: -80px;
@@ -1593,7 +1591,7 @@
       width: 300px;
       height: 300px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(200, 169, 110, .08) 0%, transparent 70%)
+      background: radial-gradient(circle, rgba(201, 169, 110, .08) 0%, transparent 70%)
     }
 
     .promo-inner {
@@ -1616,8 +1614,8 @@
       display: inline-flex;
       align-items: center;
       gap: 7px;
-      background: rgba(200, 169, 110, .15);
-      border: 1px solid rgba(200, 169, 110, .3);
+      background: rgba(201, 169, 110, .15);
+      border: 1px solid rgba(201, 169, 110, .3);
       color: var(--gold-lt);
       font-size: 10px;
       font-weight: 800;
@@ -1628,8 +1626,16 @@
       margin-bottom: 14px
     }
 
+    .promo-tag svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--gold-lt);
+      fill: none;
+      stroke-width: 2
+    }
+
     .promo-title {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: clamp(2rem, 4.5vw, 3.5rem);
       font-weight: 300;
       color: #fff;
@@ -1669,7 +1675,34 @@
       }
     }
 
-    /* ══ TRENDING ══ */
+    .timer-box {
+      background: rgba(255, 255, 255, .07);
+      border: 1px solid rgba(255, 255, 255, .1);
+      border-radius: 12px;
+      padding: 14px 18px;
+      min-width: 68px;
+      text-align: center
+    }
+
+    .timer-num {
+      font-family: var(--fd);
+      font-size: 2.2rem;
+      font-weight: 300;
+      color: var(--gold-lt);
+      display: block;
+      line-height: 1
+    }
+
+    .timer-lbl {
+      font-size: 9px;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, .35);
+      margin-top: 4px;
+      display: block
+    }
+
+    /* ── TRENDING ── */
     .trending-sec {
       padding: 90px 0;
       background: var(--cream)
@@ -1689,11 +1722,12 @@
       font-weight: 700;
       letter-spacing: .06em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--text-3);
       border-bottom: 2px solid transparent;
       margin-bottom: -1.5px;
       transition: all var(--t);
-      background: none
+      background: none;
+      cursor: pointer
     }
 
     .trend-tab:hover {
@@ -1728,13 +1762,13 @@
       }
     }
 
-    /* ══ BRAND STORY ══ */
-    .brand-story-sec {
+    /* ── BRAND STORY ── */
+    .brand-sec {
       padding: 100px 0;
       background: var(--white)
     }
 
-    .brand-story-grid {
+    .brand-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 80px;
@@ -1742,19 +1776,19 @@
     }
 
     @media(max-width:900px) {
-      .brand-story-grid {
+      .brand-grid {
         grid-template-columns: 1fr;
         gap: 48px
       }
     }
 
-    .brand-story-imgs {
+    .brand-imgs {
       position: relative;
       height: 500px
     }
 
     @media(max-width:900px) {
-      .brand-story-imgs {
+      .brand-imgs {
         height: 380px
       }
     }
@@ -1762,7 +1796,7 @@
     .bsi-main,
     .bsi-accent {
       position: absolute;
-      border-radius: var(--radius-lg);
+      border-radius: var(--r-lg);
       overflow: hidden
     }
 
@@ -1771,7 +1805,7 @@
       left: 0;
       width: 75%;
       height: 85%;
-      box-shadow: var(--shadow-md)
+      box-shadow: var(--sh-md)
     }
 
     .bsi-main img {
@@ -1785,7 +1819,7 @@
       right: 0;
       width: 50%;
       height: 55%;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--sh-lg);
       border: 4px solid var(--white)
     }
 
@@ -1810,12 +1844,8 @@
       z-index: 2
     }
 
-    .brand-story-content .sec-label {
-      margin-bottom: 10px
-    }
-
     .bs-title {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 300;
       letter-spacing: -.02em;
@@ -1831,7 +1861,7 @@
 
     .bs-text {
       font-size: 14.5px;
-      color: var(--text-sec);
+      color: var(--text-2);
       line-height: 1.85;
       margin-bottom: 32px
     }
@@ -1844,7 +1874,7 @@
     }
 
     .bs-stat-num {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: 2.2rem;
       font-weight: 300;
       color: var(--gold-dk);
@@ -1856,11 +1886,11 @@
       font-weight: 700;
       letter-spacing: .1em;
       text-transform: uppercase;
-      color: var(--text-muted);
+      color: var(--text-3);
       margin-top: 4px
     }
 
-    /* ══ USP ══ */
+    /* ── USP ── */
     .usp-sec {
       background: var(--ink);
       padding: 80px 0
@@ -1874,12 +1904,6 @@
     @media(max-width:900px) {
       .usp-grid {
         grid-template-columns: repeat(2, 1fr)
-      }
-    }
-
-    @media(max-width:480px) {
-      .usp-grid {
-        grid-template-columns: 1fr 1fr
       }
     }
 
@@ -1898,30 +1922,40 @@
       background: var(--ink2)
     }
 
-    .usp-icon {
+    .usp-ico {
       width: 60px;
       height: 60px;
       border-radius: 50%;
-      border: 1px solid rgba(200, 169, 110, .25);
-      background: rgba(200, 169, 110, .08);
+      border: 1px solid rgba(201, 169, 110, .25);
+      background: rgba(201, 169, 110, .08);
       display: flex;
       align-items: center;
       justify-content: center;
       margin: 0 auto 20px;
-      font-size: 1.4rem;
-      color: var(--gold);
-      transition: all var(--t-slow)
+      transition: all var(--ts)
     }
 
-    .usp-item:hover .usp-icon {
+    .usp-ico svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 1.6;
+      transition: stroke var(--ts)
+    }
+
+    .usp-item:hover .usp-ico {
       background: var(--gold);
-      color: var(--ink);
       border-color: var(--gold);
       transform: scale(1.1) rotate(5deg)
     }
 
+    .usp-item:hover .usp-ico svg {
+      stroke: var(--ink)
+    }
+
     .usp-title {
-      font-family: var(--font-head);
+      font-family: var(--fh);
       font-size: 1.1rem;
       font-weight: 400;
       color: #fff;
@@ -1941,7 +1975,7 @@
       }
     }
 
-    /* ══ TESTIMONIALS ══ */
+    /* ── TESTIMONIALS ── */
     .testi-sec {
       padding: 100px 0;
       background: var(--cream2)
@@ -1962,14 +1996,14 @@
     .t-card {
       background: var(--white);
       border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
+      border-radius: var(--r-lg);
       padding: 36px;
-      box-shadow: var(--shadow-sm);
-      transition: all var(--t-slow)
+      box-shadow: var(--sh-sm);
+      transition: all var(--ts)
     }
 
     .t-card:hover {
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--sh-md);
       transform: translateY(-4px)
     }
 
@@ -1981,11 +2015,11 @@
     }
 
     .t-text {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: 1.05rem;
       font-style: italic;
       font-weight: 300;
-      color: var(--text-sec);
+      color: var(--text-2);
       line-height: 1.8;
       margin-bottom: 24px
     }
@@ -2014,12 +2048,12 @@
     .t-name {
       font-size: 13.5px;
       font-weight: 700;
-      color: var(--text-primary)
+      color: var(--text-1)
     }
 
     .t-loc {
       font-size: 11px;
-      color: var(--text-muted);
+      color: var(--text-3);
       margin-top: 1px
     }
 
@@ -2033,7 +2067,15 @@
       gap: 4px
     }
 
-    /* ══ NEWSLETTER ══ */
+    .t-verified svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--teal);
+      fill: none;
+      stroke-width: 2.5
+    }
+
+    /* ── NEWSLETTER ── */
     .nl-sec {
       padding: 100px 0;
       background: var(--ink);
@@ -2044,10 +2086,10 @@
     .nl-ring {
       position: absolute;
       border-radius: 50%;
-      border: 1px solid rgba(200, 169, 110, .06)
+      border: 1px solid rgba(201, 169, 110, .06)
     }
 
-    .nl-ring-1 {
+    .nl-r1 {
       width: 700px;
       height: 700px;
       top: 50%;
@@ -2055,7 +2097,7 @@
       transform: translate(-50%, -50%)
     }
 
-    .nl-ring-2 {
+    .nl-r2 {
       width: 1000px;
       height: 1000px;
       top: 50%;
@@ -2071,14 +2113,8 @@
       margin: 0 auto
     }
 
-    .nl-icon {
-      font-size: 2.2rem;
-      margin-bottom: 14px;
-      display: block
-    }
-
     .nl-title {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: clamp(2rem, 4vw, 3rem);
       font-weight: 300;
       color: #fff;
@@ -2110,15 +2146,17 @@
       margin: 0 auto 16px
     }
 
-    .nl-input {
+    .nl-inp {
       flex: 1;
       background: transparent;
       color: #fff;
       font-size: 14px;
-      font-family: var(--font-body)
+      font-family: var(--fb);
+      border: none;
+      outline: none
     }
 
-    .nl-input::placeholder {
+    .nl-inp::placeholder {
       color: rgba(255, 255, 255, .3)
     }
 
@@ -2133,7 +2171,8 @@
       text-transform: uppercase;
       border-radius: 100px;
       border: none;
-      transition: all var(--t)
+      transition: all var(--t);
+      cursor: pointer
     }
 
     .nl-btn:hover {
@@ -2146,7 +2185,7 @@
       letter-spacing: .04em
     }
 
-    /* ══ FOOTER ══ */
+    /* ── FOOTER ── */
     .footer {
       background: var(--ink);
       border-top: 1px solid rgba(255, 255, 255, .04)
@@ -2176,16 +2215,25 @@
       }
     }
 
-    .footer-brand-name {
-      font-family: var(--font-display);
+    .footer-brand {
+      font-family: var(--fd);
       font-size: 1.6rem;
       font-weight: 300;
       color: #fff;
       margin-bottom: 14px;
-      letter-spacing: -.01em
+      letter-spacing: -.01em;
+      display: flex;
+      align-items: center;
+      gap: 10px
     }
 
-    .footer-brand-name span {
+    .footer-brand img {
+      height: 36px;
+      width: auto;
+      object-fit: contain
+    }
+
+    .footer-brand span {
       color: var(--gold)
     }
 
@@ -2211,8 +2259,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
       transition: all var(--t)
+    }
+
+    .footer-soc svg {
+      width: 15px;
+      height: 15px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8
     }
 
     .footer-soc:hover {
@@ -2293,8 +2348,8 @@
       letter-spacing: .04em
     }
 
-    /* ══ FLOATING ELEMENTS ══ */
-    .whatsapp-fab {
+    /* ── FLOATING ── */
+    .wa-fab {
       position: fixed;
       bottom: 28px;
       right: 28px;
@@ -2307,12 +2362,17 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
       box-shadow: 0 8px 24px rgba(37, 211, 102, .4);
       transition: all var(--t)
     }
 
-    .whatsapp-fab:hover {
+    .wa-fab svg {
+      width: 26px;
+      height: 26px;
+      fill: #fff
+    }
+
+    .wa-fab:hover {
       transform: scale(1.1) rotate(-8deg);
       box-shadow: 0 12px 32px rgba(37, 211, 102, .5)
     }
@@ -2326,17 +2386,25 @@
       height: 42px;
       border-radius: 50%;
       background: var(--white);
-      color: var(--text-primary);
+      color: var(--text-1);
       border: 1.5px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 14px;
-      box-shadow: var(--shadow);
+      box-shadow: var(--sh);
       opacity: 0;
       transform: translateY(12px);
       transition: all var(--t);
-      pointer-events: none
+      pointer-events: none;
+      cursor: pointer
+    }
+
+    .scroll-top svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
     }
 
     .scroll-top.show {
@@ -2351,7 +2419,7 @@
       color: var(--ink)
     }
 
-    /* ══ TOAST ══ */
+    /* ── TOAST ── */
     .toast-wrap {
       position: fixed;
       bottom: 28px;
@@ -2375,11 +2443,20 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--sh-lg);
       pointer-events: all;
       transform: translateY(20px);
       opacity: 0;
-      transition: all var(--t-slow)
+      transition: all var(--ts)
+    }
+
+    .toast svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5;
+      flex-shrink: 0
     }
 
     .toast.show {
@@ -2395,7 +2472,7 @@
       border-left: 3px solid var(--rose)
     }
 
-    /* ══ CART DRAWER ══ */
+    /* ── CART DRAWER ── */
     .cart-drawer {
       position: fixed;
       top: 0;
@@ -2404,9 +2481,9 @@
       width: min(400px, 100vw);
       background: var(--white);
       z-index: var(--z-modal);
-      box-shadow: var(--shadow-lg);
+      box-shadow: var(--sh-lg);
       transform: translateX(100%);
-      transition: transform var(--t-slow);
+      transition: transform var(--ts);
       display: flex;
       flex-direction: column
     }
@@ -2415,18 +2492,18 @@
       transform: translateX(0)
     }
 
-    .cart-backdrop {
+    .cart-bd {
       position: fixed;
       inset: 0;
-      z-index: calc(var(--z-modal) - 1);
+      z-index: calc(var(--z-modal)-1);
       background: rgba(0, 0, 0, .55);
       backdrop-filter: blur(4px);
       opacity: 0;
       visibility: hidden;
-      transition: all var(--t-slow)
+      transition: all var(--ts)
     }
 
-    .cart-backdrop.open {
+    .cart-bd.open {
       opacity: 1;
       visibility: visible
     }
@@ -2440,12 +2517,12 @@
     }
 
     .cart-head-title {
-      font-family: var(--font-head);
+      font-family: var(--fh);
       font-size: 1.3rem;
       font-weight: 400
     }
 
-    .cart-close-btn {
+    .cart-xbtn {
       width: 34px;
       height: 34px;
       border-radius: 8px;
@@ -2453,14 +2530,22 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
-      font-size: 15px;
-      transition: all var(--t)
+      color: var(--text-3);
+      transition: all var(--t);
+      cursor: pointer
     }
 
-    .cart-close-btn:hover {
+    .cart-xbtn svg {
+      width: 16px;
+      height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2
+    }
+
+    .cart-xbtn:hover {
       background: var(--cream);
-      color: var(--text-primary)
+      color: var(--text-1)
     }
 
     .cart-body {
@@ -2472,14 +2557,17 @@
     .cart-empty {
       text-align: center;
       padding: 60px 20px;
-      color: var(--text-muted)
+      color: var(--text-3)
     }
 
-    .cart-empty i {
-      font-size: 2.5rem;
-      display: block;
-      margin-bottom: 14px;
-      opacity: .3
+    .cart-empty svg {
+      width: 48px;
+      height: 48px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.2;
+      opacity: .3;
+      margin: 0 auto 14px
     }
 
     .cart-empty p {
@@ -2507,18 +2595,18 @@
     .cart-item-name {
       font-size: 13.5px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: var(--text-1);
       margin-bottom: 4px;
       line-height: 1.3
     }
 
     .cart-item-meta {
       font-size: 11.5px;
-      color: var(--text-muted);
+      color: var(--text-3);
       margin-bottom: 8px
     }
 
-    .cart-qty-row {
+    .qty-row {
       display: flex;
       align-items: center;
       gap: 8px
@@ -2529,12 +2617,20 @@
       height: 26px;
       border-radius: 6px;
       background: var(--cream2);
-      color: var(--text-primary);
+      color: var(--text-1);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 13px;
-      transition: background var(--t)
+      transition: background var(--t);
+      cursor: pointer
+    }
+
+    .qty-btn svg {
+      width: 11px;
+      height: 11px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2.5
     }
 
     .qty-btn:hover {
@@ -2549,7 +2645,7 @@
     }
 
     .cart-item-price {
-      font-family: var(--font-display);
+      font-family: var(--fd);
       font-size: 1.15rem;
       font-weight: 400;
       color: var(--ink);
@@ -2562,26 +2658,26 @@
       background: var(--cream)
     }
 
-    .cart-subtotal-row {
+    .cart-sub-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 8px
     }
 
-    .cart-subtotal-lbl {
+    .cart-sub-lbl {
       font-size: 13px;
-      color: var(--text-muted)
+      color: var(--text-3)
     }
 
-    .cart-subtotal-val {
-      font-family: var(--font-display);
+    .cart-sub-val {
+      font-family: var(--fd);
       font-size: 1.5rem;
       font-weight: 400;
       color: var(--ink)
     }
 
-    .cart-free-ship {
+    .cart-ship-msg {
       font-size: 11.5px;
       color: var(--teal);
       font-weight: 700;
@@ -2600,7 +2696,8 @@
       text-align: center;
       transition: all var(--t);
       display: block;
-      margin-bottom: 8px
+      margin-bottom: 8px;
+      cursor: pointer
     }
 
     .cart-cta:hover {
@@ -2612,12 +2709,12 @@
       padding: 11px;
       border-radius: 12px;
       background: transparent;
-      color: var(--text-sec);
+      color: var(--text-2);
       font-size: 13px;
       font-weight: 600;
-      text-align: center;
       border: 1.5px solid var(--border);
-      transition: all var(--t)
+      transition: all var(--t);
+      cursor: pointer
     }
 
     .cart-continue:hover {
@@ -2625,221 +2722,330 @@
       color: var(--gold-dk)
     }
 
-    /* ══ PRINT HIDE ══ */
-    @media print {
+    /* ── ERROR STATE ── */
+    .err-state {
+      grid-column: 1/-1;
+      text-align: center;
+      padding: 48px;
+      color: var(--text-3)
+    }
 
-      .ann-bar,
-      .navbar,
-      .marquee-strip,
-      .hero,
-      .whatsapp-fab,
-      .scroll-top,
-      .toast-wrap,
-      .cart-drawer,
-      .cart-backdrop,
-      .mob-menu,
-      .search-overlay {
-        display: none !important
-      }
+    .err-state svg {
+      width: 40px;
+      height: 40px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.2;
+      margin: 0 auto 14px;
+      opacity: .4;
+      display: block
+    }
+
+    .err-state p {
+      font-size: 14px;
+      margin-bottom: 12px
+    }
+
+    .retry-btn {
+      color: var(--gold-dk);
+      font-weight: 700;
+      background: none;
+      border: none;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 14px
     }
   </style>
 </head>
 
 <body>
 
-  <!-- ══ CUSTOM CURSOR ══ -->
-  <div class="cursor" id="cursor"></div>
-  <div class="cursor-ring" id="cursor-ring"></div>
-
-  <!-- ══ TOAST ══ -->
+  <!-- ── TOAST ── -->
   <div class="toast-wrap" id="toast-wrap"></div>
 
-  <!-- ══ ANNOUNCEMENT BAR ══ -->
-  <div class="ann-bar" id="ann-bar">
-    <div class="container">
-      <div class="ann-bar-inner">
-        <span class="ann-item">🚚 Free shipping on orders above <strong>₹499</strong></span>
-        <span class="ann-sep"></span>
+  <!-- ── ANNOUNCEMENT BAR ── -->
+  <div class="ann" id="ann-bar">
+    <div class="ctn">
+      <div class="ann-inner">
+        <span class="ann-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="stroke:var(--gold-lt)">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+          Free shipping on orders above <strong>₹499</strong>
+        </span>
+        <span class="ann-dot"></span>
         <span class="ann-item">Use code <strong>HEELS10</strong> for 10% off</span>
-        <span class="ann-sep"></span>
-        <span class="ann-item">Pan-India delivery — <a href="/">Order now →</a></span>
+        <span class="ann-dot"></span>
+        <span class="ann-item">Pan-India delivery — <a href="/shop">Order now →</a></span>
       </div>
-      <button class="ann-close" onclick="this.parentElement.parentElement.style.display='none'"
+      <button class="ann-close" onclick="document.getElementById('ann-bar').style.display='none'"
         aria-label="Close">✕</button>
     </div>
   </div>
 
-  <!-- ══ NAVBAR ══ -->
+  <!-- ── NAVBAR ── -->
   <nav class="navbar" id="navbar">
-    <div class="container">
-      <div class="navbar-inner">
-
+    <div class="ctn">
+      <div class="nb-inner">
         <!-- Logo -->
-        <a href="/" class="nav-logo">
-          <img src="logo.png" alt="HeelsUp" id="logo-img" onerror="this.style.display='none'" />
-          <span class="nav-logo-text" id="logo-text">Heels<span>Up</span></span>
+        <a href="/" class="nb-logo">
+          <img src="logo.png" alt="HeelsUp" id="logo-img"
+            onerror="this.classList.add('err');this.style.display='none'" />
+          <span class="nb-logo-txt">Heels<span>Up</span></span>
         </a>
 
         <!-- Desktop Menu -->
-        <ul class="nav-menu" id="nav-menu">
-          <li><a href="/" class="nav-link active">Home</a></li>
+        <ul class="nb-menu">
+          <li><a href="/" class="nb-link active">Home</a></li>
           <li>
-            <a href="/shop" class="nav-link">Shop <i class="fa-solid fa-chevron-down"></i></a>
-            <div class="nav-drop">
-              <a href="/shop/heels">
-                <div class="nav-drop-icon">👠</div>
-                <div class="nav-drop-text"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
+            <a href="/shop.html" class="nb-link">
+              Shop
+              <svg class="nb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </a>
+            <div class="nb-drop">
+              <a href="/category.html?cat=heels">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M20 18H4l2-8h12l2 8zM4 18l-2 2M20 18l2 2M8 10V6a4 4 0 018 0v4" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
               </a>
-              <a href="/shop/sandals">
-                <div class="nav-drop-icon">👡</div>
-                <div class="nav-drop-text"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
+              <a href="/category.html?cat=sandals">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M3 20h18M5 20V10l7-7 7 7v10M9 20v-6h6v6" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
               </a>
-              <a href="/shop/flats">
-                <div class="nav-drop-icon">🥿</div>
-                <div class="nav-drop-text"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
+              <a href="/category.html?cat=flats">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="17" rx="9" ry="3" />
+                    <path d="M3 17V7l9-4 9 4v10" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
               </a>
-              <a href="/shop/wedges">
-                <div class="nav-drop-icon">👢</div>
-                <div class="nav-drop-text"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
+              <a href="/category.html?cat=wedges">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M4 20h16M4 20l4-12h8l4 12" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
               </a>
-              <a href="/shop/bags">
-                <div class="nav-drop-icon">👜</div>
-                <div class="nav-drop-text"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
+              <a href="/category.html?cat=bags">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
               </a>
-              <a href="/shop/accessories">
-                <div class="nav-drop-icon">✨</div>
-                <div class="nav-drop-text"><strong>Accessories</strong><span>Jewellery, Belts & more</span></div>
+              <a href="/category.html?cat=clutches">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <rect x="3" y="8" width="18" height="13" rx="2" />
+                    <path d="M8 8V5a4 4 0 018 0v3" />
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Clutches</strong><span>Evening, Party</span></div>
               </a>
             </div>
           </li>
-          <li><a href="/shop/heels" class="nav-link">Heels</a></li>
-          <li><a href="/shop/sandals" class="nav-link">Sandals</a></li>
-          <li><a href="/shop/bags" class="nav-link">Bags</a></li>
-          <li><a href="/about" class="nav-link">About</a></li>
-          <li><a href="/contact" class="nav-link">Contact</a></li>
+          <li><a href="/category.html?cat=heels" class="nb-link">Heels</a></li>
+          <li><a href="/category.html?cat=sandals" class="nb-link">Sandals</a></li>
+          <li><a href="/category.html?cat=bags" class="nb-link">Bags</a></li>
+          <li><a href="/about.html" class="nb-link">About</a></li>
+          <li><a href="/contact.html" class="nb-link">Contact</a></li>
         </ul>
 
         <!-- Actions -->
-        <div class="nav-actions">
-          <button class="nav-btn" id="search-btn" aria-label="Search"><i
-              class="fa-solid fa-magnifying-glass"></i></button>
-          <a href="/wishlist" class="nav-btn" aria-label="Wishlist"><i class="fa-regular fa-heart"></i></a>
-          <a href="/account" class="nav-btn" id="nav-account" aria-label="Account"><i
-              class="fa-regular fa-user"></i></a>
-          <button class="nav-btn" id="cart-btn" aria-label="Cart">
-            <i class="fa-solid fa-bag-shopping"></i>
-            <span class="nav-badge" id="cart-cnt" style="display:none">0</span>
+        <div class="nb-actions">
+          <button class="nb-btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8" />
+              <path d="M21 21l-4.35-4.35" />
+            </svg>
           </button>
-          <button class="nav-hamburger" id="hamburger" aria-label="Menu">
-            <span class="ham-line"></span>
-            <span class="ham-line"></span>
-            <span class="ham-line"></span>
+          <a href="/wishlist.html" class="nb-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg>
+          </a>
+          <a href="/profile.html" class="nb-btn" id="nav-account" aria-label="Account">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </a>
+          <button class="nb-btn" id="cart-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0" />
+            </svg>
+            <span class="nb-badge" id="cart-cnt">0</span>
+          </button>
+          <button class="nb-ham" id="hamburger" aria-label="Menu">
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
           </button>
         </div>
-
       </div>
     </div>
   </nav>
 
-  <!-- ══ MOBILE MENU ══ -->
-  <div class="mob-menu" id="mob-menu">
-    <div class="mob-backdrop" id="mob-backdrop"></div>
+  <!-- ── MOBILE MENU ── -->
+  <div class="mob" id="mob-menu">
+    <div class="mob-bd" id="mob-bd"></div>
     <div class="mob-panel">
       <div class="mob-head">
-        <span class="nav-logo-text">Heels<span style="color:var(--gold)">Up</span></span>
-        <button class="mob-close" id="mob-close"><i class="fa-solid fa-xmark"></i></button>
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="logo.png" alt="" style="height:32px;width:auto;object-fit:contain"
+            onerror="this.style.display='none'">
+          <span style="font-family:var(--fd);font-size:1.3rem;font-weight:600;color:var(--ink)">Heels<span
+              style="color:var(--gold)">Up</span></span>
+        </div>
+        <button class="mob-close" id="mob-close">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 6L6 18M6 6l12 12" />
+          </svg>
+        </button>
       </div>
       <div class="mob-body">
-        <a href="/" class="mob-nav-link active"><span class="icon">🏠</span> Home</a>
-        <a href="/shop" class="mob-nav-link"><span class="icon">🛍️</span> Shop All</a>
-        <a href="/shop/heels" class="mob-nav-link"><span class="icon">👠</span> Heels</a>
-        <a href="/shop/sandals" class="mob-nav-link"><span class="icon">👡</span> Sandals</a>
-        <a href="/shop/flats" class="mob-nav-link"><span class="icon">🥿</span> Flats</a>
-        <a href="/shop/bags" class="mob-nav-link"><span class="icon">👜</span> Bags</a>
-        <a href="/shop/accessories" class="mob-nav-link"><span class="icon">✨</span> Accessories</a>
+        <a href="/" class="mob-lnk active"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg></span>Home</a>
+        <a href="/shop.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1" />
+              <circle cx="20" cy="21" r="1" />
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.57l1.65-7.43H6" />
+            </svg></span>Shop All</a>
+        <a href="/category.html?cat=heels" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M20 18H4l2-8h12l2 8z" />
+            </svg></span>Heels</a>
+        <a href="/category.html?cat=sandals" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M3 20h18M5 20V10l7-7 7 7v10" />
+            </svg></span>Sandals</a>
+        <a href="/category.html?cat=flats" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <ellipse cx="12" cy="17" rx="9" ry="3" />
+            </svg></span>Flats</a>
+        <a href="/category.html?cat=bags" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+            </svg></span>Bags</a>
         <div class="mob-sep"></div>
-        <a href="/about" class="mob-nav-link"><span class="icon">📖</span> About Us</a>
-        <a href="/contact" class="mob-nav-link"><span class="icon">📞</span> Contact</a>
+        <a href="/about.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg></span>About Us</a>
+        <a href="/contact.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path
+                d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.95 12 19.79 19.79 0 011.9 3.38 2 2 0 013.89 1.22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 8.91a16 16 0 006 6l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
+            </svg></span>Contact</a>
         <div class="mob-sep"></div>
-        <a href="/account" class="mob-nav-link" id="mob-account"><span class="icon">👤</span> My Account</a>
-        <a href="/track" class="mob-nav-link"><span class="icon">📦</span> Track Order</a>
-        <a href="/wishlist" class="mob-nav-link"><span class="icon">❤️</span> Wishlist</a>
+        <a href="/profile.html" class="mob-lnk" id="mob-account"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg></span>My Account</a>
+        <a href="/orders.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg></span>Track Order</a>
+        <a href="/wishlist.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path
+                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+            </svg></span>Wishlist</a>
       </div>
       <div class="mob-foot">
-        <a href="/login" class="mob-auth-btn primary" id="mob-login-btn">Login / Sign Up</a>
+        <a href="/login.html" class="mob-auth primary" id="mob-login-btn">Login / Sign Up</a>
       </div>
     </div>
   </div>
 
-  <!-- ══ SEARCH OVERLAY ══ -->
-  <div class="search-overlay" id="search-overlay">
-    <div class="container">
-      <div class="search-box-wrap">
-        <span class="search-label">What are you looking for?</span>
-        <div class="search-field">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="search-inp" placeholder="heels, sandals, bags…" autocomplete="off" />
-          <button class="search-close-btn" id="search-close"><i class="fa-solid fa-xmark"></i></button>
+  <!-- ── SEARCH OVERLAY ── -->
+  <div class="srch" id="srch">
+    <div class="ctn">
+      <div class="srch-wrap">
+        <span class="srch-lbl">What are you looking for?</span>
+        <div class="srch-field">
+          <svg viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" />
+          </svg>
+          <input type="text" class="srch-inp" id="srch-inp" placeholder="heels, sandals, bags…" autocomplete="off" />
+          <button class="srch-x" id="srch-close">
+            <svg viewBox="0 0 24 24">
+              <path d="M18 6L6 18M6 6l12 12" />
+            </svg>
+          </button>
         </div>
-        <div class="search-results" id="search-results"></div>
-        <p class="search-hint">Press Enter to search · Esc to close</p>
+        <div class="srch-res" id="srch-res"></div>
+        <p class="srch-hint">Press Enter to search · Esc to close</p>
       </div>
     </div>
   </div>
 
   <!-- ══════════════════════════════
-       HERO SECTION
-  ═══════════════════════════════ -->
+     HERO
+══════════════════════════════ -->
   <section class="hero" id="hero">
-    <!-- Slides (populated by JS from API, fallback below) -->
     <div class="hero-slides" id="hero-slides">
-      <div class="hero-slide active">
+      <div class="h-slide active">
         <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=85&auto=format&fit=crop"
           alt="Premium ladies heels" loading="eager" fetchpriority="high" />
       </div>
-      <div class="hero-slide">
+      <div class="h-slide">
         <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=1920&q=85&auto=format&fit=crop"
           alt="Ladies sandals collection" loading="lazy" />
       </div>
-      <div class="hero-slide">
+      <div class="h-slide">
         <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=85&auto=format&fit=crop"
           alt="Women bags collection" loading="lazy" />
       </div>
     </div>
     <div class="hero-overlay"></div>
 
-    <div class="container" style="position:relative;z-index:2;width:100%">
+    <div class="ctn" style="position:relative;z-index:2;width:100%">
       <div class="hero-content">
-        <span class="hero-eyebrow" id="hero-eyebrow"><i class="fa-solid fa-sparkles" style="font-size:.65rem"></i> New
-          Season Collection</span>
-        <h1 class="hero-title" id="hero-title">Step Into<em>Elegance</em></h1>
-        <p class="hero-sub" id="hero-sub">Premium ladies footwear crafted for the modern Indian woman. Free shipping
-          above ₹499. Pan-India delivery.</p>
-        <div class="hero-actions">
-          <a href="/shop" class="btn btn-gold btn-lg"><i class="fa-solid fa-bag-shopping"></i> Shop Now</a>
-          <a href="/shop/new-arrivals" class="btn btn-outline-white btn-lg">New Arrivals</a>
+        <span class="h-eyebrow">
+          <svg viewBox="0 0 24 24" width="11" height="11">
+            <polygon
+              points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+          </svg>
+          New Season Collection
+        </span>
+        <h1 class="h-title" id="hero-title">Step Into<em>Elegance</em></h1>
+        <p class="h-sub" id="hero-sub">Premium ladies footwear crafted for the modern Indian woman. Free shipping above
+          ₹499. Pan-India delivery.</p>
+        <div class="h-actions">
+          <a href="/shop.html" class="btn btn-gold btn-lg">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <path d="M16 10a4 4 0 01-8 0" />
+            </svg>
+            Shop Now
+          </a>
+          <a href="/category.html?cat=new" class="btn btn-outline-wh btn-lg">New Arrivals</a>
         </div>
       </div>
       <div class="hero-stats">
-        <div class="hero-stat-box">
-          <div class="hero-stat-num" id="hstat-orders">10K+</div>
-          <div class="hero-stat-lbl">Happy Customers</div>
+        <div style="text-align:right">
+          <div class="h-stat-num" id="hstat-orders">10K+</div>
+          <div class="h-stat-lbl">Happy Customers</div>
         </div>
-        <div class="hero-stat-box">
-          <div class="hero-stat-num" id="hstat-products">500+</div>
-          <div class="hero-stat-lbl">Products</div>
+        <div style="text-align:right">
+          <div class="h-stat-num" id="hstat-products">500+</div>
+          <div class="h-stat-lbl">Products</div>
         </div>
-        <div class="hero-stat-box">
-          <div class="hero-stat-num">4.9★</div>
-          <div class="hero-stat-lbl">Avg Rating</div>
+        <div style="text-align:right">
+          <div class="h-stat-num">4.9★</div>
+          <div class="h-stat-lbl">Avg Rating</div>
         </div>
       </div>
     </div>
 
     <div class="hero-dots" id="hero-dots">
-      <div class="hero-dot active" data-slide="0" onclick="goSlide(0)"></div>
-      <div class="hero-dot" data-slide="1" onclick="goSlide(1)"></div>
-      <div class="hero-dot" data-slide="2" onclick="goSlide(2)"></div>
+      <div class="h-dot active" onclick="goSlide(0)"></div>
+      <div class="h-dot" onclick="goSlide(1)"></div>
+      <div class="h-dot" onclick="goSlide(2)"></div>
     </div>
     <div class="hero-scroll" aria-hidden="true">
       <div class="scroll-line"></div>
@@ -2847,39 +3053,38 @@
     </div>
   </section>
 
-  <!-- ══ MARQUEE ══ -->
-  <div class="marquee-strip" aria-hidden="true">
-    <div class="marquee-track">
-      <span class="marquee-item">Free Shipping ₹499+</span><span class="marquee-sep"></span>
-      <span class="marquee-item">New Arrivals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Heels</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Sandals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Bags</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Use HEELS10 for 10% Off</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Pan-India Delivery</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Easy Returns</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Free Shipping ₹499+</span><span class="marquee-sep"></span>
-      <span class="marquee-item">New Arrivals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Heels</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Sandals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Bags</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Use HEELS10 for 10% Off</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Pan-India Delivery</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Easy Returns</span><span class="marquee-sep"></span>
+  <!-- ── MARQUEE ── -->
+  <div class="mq-strip" aria-hidden="true">
+    <div class="mq-track">
+      <span class="mq-item">Free Shipping ₹499+</span><span class="mq-sep"></span>
+      <span class="mq-item">New Arrivals</span><span class="mq-sep"></span>
+      <span class="mq-item">Heels</span><span class="mq-sep"></span>
+      <span class="mq-item">Sandals</span><span class="mq-sep"></span>
+      <span class="mq-item">Bags</span><span class="mq-sep"></span>
+      <span class="mq-item">Use HEELS10 for 10% Off</span><span class="mq-sep"></span>
+      <span class="mq-item">Pan-India Delivery</span><span class="mq-sep"></span>
+      <span class="mq-item">Easy Returns</span><span class="mq-sep"></span>
+      <span class="mq-item">Free Shipping ₹499+</span><span class="mq-sep"></span>
+      <span class="mq-item">New Arrivals</span><span class="mq-sep"></span>
+      <span class="mq-item">Heels</span><span class="mq-sep"></span>
+      <span class="mq-item">Sandals</span><span class="mq-sep"></span>
+      <span class="mq-item">Bags</span><span class="mq-sep"></span>
+      <span class="mq-item">Use HEELS10 for 10% Off</span><span class="mq-sep"></span>
+      <span class="mq-item">Pan-India Delivery</span><span class="mq-sep"></span>
+      <span class="mq-item">Easy Returns</span><span class="mq-sep"></span>
     </div>
   </div>
 
   <!-- ══════════════════════════════
-       CATEGORIES
-  ═══════════════════════════════ -->
-  <section class="categories-sec">
-    <div class="container">
-      <div class="sec-header">
+     CATEGORIES
+══════════════════════════════ -->
+  <section class="cat-sec">
+    <div class="ctn">
+      <div class="sec-hd">
         <span class="sec-label">Shop By Category</span>
         <h2 class="sec-title">Find Your <em>Perfect</em> Style</h2>
       </div>
       <div class="cat-grid" id="cat-grid">
-        <!-- Skeletons -->
         <div class="skel">
           <div class="skel-img" style="aspect-ratio:2/3"></div>
         </div>
@@ -2897,93 +3102,100 @@
   </section>
 
   <!-- ══════════════════════════════
-       FEATURED PRODUCTS
-  ═══════════════════════════════ -->
+     FEATURED PRODUCTS
+══════════════════════════════ -->
   <section class="featured-sec">
-    <div class="container">
-      <div class="sec-header">
+    <div class="ctn">
+      <div class="sec-hd">
         <span class="sec-label">Bestsellers</span>
         <h2 class="sec-title">Featured <em>Products</em></h2>
         <p class="sec-sub">Our most-loved pieces, handpicked for you</p>
       </div>
-      <div class="products-grid" id="featured-grid">
+      <div class="prod-grid" id="featured-grid">
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
-            <div class="skel-line w40"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
+            <div class="skel-ln w40"></div>
           </div>
         </div>
       </div>
       <div style="text-align:center;margin-top:52px">
-        <a href="/shop" class="btn btn-outline btn-lg">View All Products <i class="fa-solid fa-arrow-right"></i></a>
+        <a href="/shop.html" class="btn btn-outline btn-lg">View All Products <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg></a>
       </div>
     </div>
   </section>
 
-  <!-- ══ PROMO STRIP ══ -->
-  <section class="promo-strip">
-    <div class="container">
+  <!-- ── PROMO STRIP ── -->
+  <section class="promo">
+    <div class="ctn">
       <div class="promo-inner">
         <div>
-          <div class="promo-tag"><i class="fa-solid fa-bolt"></i> Limited Time Offer</div>
+          <div class="promo-tag">
+            <svg viewBox="0 0 24 24">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+            </svg>
+            Limited Time Offer
+          </div>
           <h2 class="promo-title">Get Flat <em>10% Off</em><br>Your First Order</h2>
           <p class="promo-desc">Use code <strong style="color:var(--gold-lt)">HEELS10</strong> at checkout. Valid on all
             orders above ₹499. New arrivals included. Don't miss out!</p>
@@ -2991,26 +3203,16 @@
         <div class="promo-actions">
           <div style="text-align:center">
             <div style="display:flex;gap:16px;margin-bottom:24px">
-              <div
-                style="text-align:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 18px;min-width:68px">
-                <span id="t-h"
-                  style="font-family:var(--font-display);font-size:2.2rem;font-weight:300;color:var(--gold-lt);display:block;line-height:1">00</span><span
-                  style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px;display:block">Hrs</span>
-              </div>
-              <div
-                style="text-align:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 18px;min-width:68px">
-                <span id="t-m"
-                  style="font-family:var(--font-display);font-size:2.2rem;font-weight:300;color:var(--gold-lt);display:block;line-height:1">00</span><span
-                  style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px;display:block">Min</span>
-              </div>
-              <div
-                style="text-align:center;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:14px 18px;min-width:68px">
-                <span id="t-s"
-                  style="font-family:var(--font-display);font-size:2.2rem;font-weight:300;color:var(--gold-lt);display:block;line-height:1">00</span><span
-                  style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-top:4px;display:block">Sec</span>
-              </div>
+              <div class="timer-box"><span class="timer-num" id="t-h">00</span><span class="timer-lbl">Hrs</span></div>
+              <div class="timer-box"><span class="timer-num" id="t-m">00</span><span class="timer-lbl">Min</span></div>
+              <div class="timer-box"><span class="timer-num" id="t-s">00</span><span class="timer-lbl">Sec</span></div>
             </div>
-            <a href="/shop" class="btn btn-gold btn-lg"><i class="fa-solid fa-bolt"></i> Shop Now</a>
+            <a href="/shop.html" class="btn btn-gold btn-lg">
+              <svg viewBox="0 0 24 24">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+              </svg>
+              Shop Now
+            </a>
           </div>
         </div>
       </div>
@@ -3018,84 +3220,86 @@
   </section>
 
   <!-- ══════════════════════════════
-       TRENDING NOW
-  ═══════════════════════════════ -->
+     TRENDING NOW
+══════════════════════════════ -->
   <section class="trending-sec">
-    <div class="container">
-      <div class="sec-header">
+    <div class="ctn">
+      <div class="sec-hd">
         <span class="sec-label">What's Hot</span>
         <h2 class="sec-title">Trending <em>Now</em></h2>
       </div>
       <div class="trend-tabs">
         <button class="trend-tab active" data-tab="all">All</button>
-        <button class="trend-tab" data-tab="Heels">Heels</button>
-        <button class="trend-tab" data-tab="Sandals">Sandals</button>
-        <button class="trend-tab" data-tab="Bags">Bags</button>
+        <button class="trend-tab" data-tab="heels">Heels</button>
+        <button class="trend-tab" data-tab="sandals">Sandals</button>
+        <button class="trend-tab" data-tab="bags">Bags</button>
       </div>
       <div class="trend-pane active" id="tp-all">
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
           </div>
         </div>
         <div class="skel">
-          <div class="skel-img"></div>
+          <div class="skel-img" style="aspect-ratio:4/5"></div>
           <div class="skel-body">
-            <div class="skel-line w60"></div>
-            <div class="skel-line w80"></div>
+            <div class="skel-ln w60"></div>
+            <div class="skel-ln w80"></div>
           </div>
         </div>
       </div>
-      <div class="trend-pane" id="tp-Heels"></div>
-      <div class="trend-pane" id="tp-Sandals"></div>
-      <div class="trend-pane" id="tp-Bags"></div>
+      <div class="trend-pane" id="tp-heels"></div>
+      <div class="trend-pane" id="tp-sandals"></div>
+      <div class="trend-pane" id="tp-bags"></div>
     </div>
   </section>
 
   <!-- ══════════════════════════════
-       BRAND STORY
-  ═══════════════════════════════ -->
-  <section class="brand-story-sec">
-    <div class="container">
-      <div class="brand-story-grid">
-        <div class="brand-story-imgs">
-          <div class="bsi-main"><img
-              src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=85&auto=format&fit=crop"
-              alt="HeelsUp store" loading="lazy" /></div>
-          <div class="bsi-accent"><img
-              src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=85&auto=format&fit=crop"
-              alt="Premium footwear" loading="lazy" /></div>
+     BRAND STORY
+══════════════════════════════ -->
+  <section class="brand-sec">
+    <div class="ctn">
+      <div class="brand-grid">
+        <div class="brand-imgs">
+          <div class="bsi-main">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=85&auto=format&fit=crop"
+              alt="HeelsUp store" loading="lazy" />
+          </div>
+          <div class="bsi-accent">
+            <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=85&auto=format&fit=crop"
+              alt="Premium footwear" loading="lazy" />
+          </div>
           <div class="bsi-tag">Est. 2019 · Jodhpur, Rajasthan</div>
         </div>
-        <div class="brand-story-content">
-          <span class="sec-label">Our Story</span>
+        <div>
+          <span class="sec-label" style="margin-bottom:10px">Our Story</span>
           <h2 class="bs-title">Crafted with <em>Passion</em> for Indian Women</h2>
           <p class="bs-text">HeelsUp was born in the heart of Jodhpur with a simple belief — every woman deserves
             beautiful, comfortable, and affordable footwear. We curate each pair with care, sourcing only the finest
             materials to make you feel confident in every step.</p>
           <div class="bs-stats">
             <div>
-              <div class="bs-stat-num">10K+</div>
+              <div class="bs-stat-num" id="bs-customers">10K+</div>
               <div class="bs-stat-lbl">Happy Customers</div>
             </div>
             <div>
-              <div class="bs-stat-num">500+</div>
+              <div class="bs-stat-num" id="bs-products">500+</div>
               <div class="bs-stat-lbl">Products</div>
             </div>
             <div>
@@ -3103,49 +3307,73 @@
               <div class="bs-stat-lbl">Avg Rating</div>
             </div>
           </div>
-          <a href="/about" class="btn btn-primary">Our Story <i class="fa-solid fa-arrow-right"></i></a>
+          <a href="/about.html" class="btn btn-primary">
+            Our Story
+            <svg viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══ USP ══ -->
+  <!-- ── USP ── -->
   <section class="usp-sec">
-    <div class="container">
+    <div class="ctn">
       <div class="usp-grid">
         <div class="usp-item">
-          <div class="usp-icon"><i class="fa-solid fa-truck-fast"></i></div>
+          <div class="usp-ico">
+            <svg viewBox="0 0 24 24">
+              <path d="M5 17H3a2 2 0 01-2-2V5a2 2 0 012-2h11a2 2 0 012 2v3M16 21l5-5-5-5M21 16H9a2 2 0 00-2 2v2" />
+            </svg>
+          </div>
           <div class="usp-title">Free Shipping</div>
           <div class="usp-desc">On all orders above ₹499. Fast Pan-India delivery at your doorstep.</div>
         </div>
         <div class="usp-item">
-          <div class="usp-icon"><i class="fa-solid fa-rotate-left"></i></div>
+          <div class="usp-ico">
+            <svg viewBox="0 0 24 24">
+              <polyline points="1 4 1 10 7 10" />
+              <path d="M3.51 15a9 9 0 102.13-9.36L1 10" />
+            </svg>
+          </div>
           <div class="usp-title">7-Day Returns</div>
           <div class="usp-desc">Hassle-free exchange and returns. No questions asked.</div>
         </div>
         <div class="usp-item">
-          <div class="usp-icon"><i class="fa-solid fa-gem"></i></div>
+          <div class="usp-ico">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
           <div class="usp-title">100% Authentic</div>
           <div class="usp-desc">Quality-checked before dispatch. Genuine products only.</div>
         </div>
         <div class="usp-item">
-          <div class="usp-icon"><i class="fa-solid fa-lock"></i></div>
+          <div class="usp-ico">
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="11" width="18" height="11" rx="2" />
+              <path d="M7 11V7a5 5 0 0110 0v4" />
+            </svg>
+          </div>
           <div class="usp-title">Secure Payment</div>
-          <div class="usp-desc">UPI, Cards, Net Banking &amp; COD. Always safe &amp; encrypted.</div>
+          <div class="usp-desc">UPI, Cards, Net Banking & COD. Always safe & encrypted.</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- ══ TESTIMONIALS ══ -->
+  <!-- ── TESTIMONIALS ── -->
   <section class="testi-sec">
-    <div class="container">
-      <div class="sec-header">
+    <div class="ctn">
+      <div class="sec-hd">
         <span class="sec-label">Customer Reviews</span>
         <h2 class="sec-title">Loved by <em>10,000+</em> Women</h2>
         <p class="sec-sub">Real reviews from happy customers across India</p>
       </div>
       <div class="testi-grid" id="testi-grid">
+        <!-- loaded from API, fallback below -->
         <div class="t-card">
           <div class="t-stars">★★★★★</div>
           <p class="t-text">"The block heels I ordered are absolutely stunning! Perfect for office and evenings. Quality
@@ -3155,7 +3383,10 @@
             <div>
               <div class="t-name">Priya Sharma</div>
               <div class="t-loc">Mumbai, Maharashtra</div>
-              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+              <div class="t-verified"><svg viewBox="0 0 24 24">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg> Verified Purchase</div>
             </div>
           </div>
         </div>
@@ -3168,7 +3399,10 @@
             <div>
               <div class="t-name">Ananya Reddy</div>
               <div class="t-loc">Hyderabad, Telangana</div>
-              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+              <div class="t-verified"><svg viewBox="0 0 24 24">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg> Verified Purchase</div>
             </div>
           </div>
         </div>
@@ -3181,7 +3415,10 @@
             <div>
               <div class="t-name">Rekha Joshi</div>
               <div class="t-loc">Jaipur, Rajasthan</div>
-              <div class="t-verified"><i class="fa-solid fa-circle-check"></i> Verified Purchase</div>
+              <div class="t-verified"><svg viewBox="0 0 24 24">
+                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg> Verified Purchase</div>
             </div>
           </div>
         </div>
@@ -3189,18 +3426,18 @@
     </div>
   </section>
 
-  <!-- ══ NEWSLETTER ══ -->
+  <!-- ── NEWSLETTER ── -->
   <section class="nl-sec">
-    <div class="nl-ring nl-ring-1"></div>
-    <div class="nl-ring nl-ring-2"></div>
-    <div class="container">
+    <div class="nl-ring nl-r1"></div>
+    <div class="nl-ring nl-r2"></div>
+    <div class="ctn">
       <div class="nl-inner">
-        <span class="nl-icon">💌</span>
+        <span style="font-size:2.2rem;display:block;margin-bottom:14px">💌</span>
         <h2 class="nl-title">Get <em>Exclusive</em> Offers</h2>
         <p class="nl-sub">Subscribe and be the first to know about new arrivals, flash sales, and exclusive discounts.
         </p>
         <form class="nl-form" id="nl-form" onsubmit="handleNewsletter(event)">
-          <input type="email" class="nl-input" id="nl-email" placeholder="Enter your email address…" required
+          <input type="email" class="nl-inp" id="nl-email" placeholder="Enter your email address…" required
             autocomplete="email" />
           <button type="submit" class="nl-btn" id="nl-btn">Subscribe</button>
         </form>
@@ -3209,56 +3446,79 @@
     </div>
   </section>
 
-  <!-- ══ FOOTER ══ -->
+  <!-- ── FOOTER ── -->
   <footer class="footer">
-    <div class="container">
+    <div class="ctn">
       <div class="footer-top">
         <div class="footer-grid">
           <div>
-            <div class="footer-brand-name">Heels<span>Up</span></div>
-            <p class="footer-tagline">Premium ladies footwear &amp; bags for the modern Indian woman. Quality, style,
-              and comfort — all in one place.</p>
+            <div class="footer-brand">
+              <img src="logo.png" alt="HeelsUp" onerror="this.style.display='none'">
+              <span>Heels<span>Up</span></span>
+            </div>
+            <p class="footer-tagline">Premium ladies footwear & bags for the modern Indian woman. Quality, style, and
+              comfort — all in one place.</p>
             <div class="footer-socials">
-              <a href="https://instagram.com/heelsup.in" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-              <a href="https://facebook.com/heelsup.in" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-              <a href="https://twitter.com/heelsup_in" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="Twitter X"><i class="fa-brands fa-x-twitter"></i></a>
+              <a href="https://instagram.com/heelsup.in" target="_blank" rel="noopener" class="footer-soc"
+                aria-label="Instagram">
+                <svg viewBox="0 0 24 24">
+                  <rect x="2" y="2" width="20" height="20" rx="5" />
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
+                </svg>
+              </a>
+              <a href="https://facebook.com/heelsup.in" target="_blank" rel="noopener" class="footer-soc"
+                aria-label="Facebook">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                </svg>
+              </a>
+              <a href="https://wa.me/919000000000" target="_blank" rel="noopener" class="footer-soc"
+                aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path
+                    d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </a>
+              <a href="https://pinterest.com/heelsup" target="_blank" rel="noopener" class="footer-soc"
+                aria-label="Pinterest">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path
+                    d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.14 1.22-5.14s-.31-.62-.31-1.54c0-1.44.84-2.52 1.88-2.52.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.53 1.88 1.84 0 3.08-2.37 3.08-5.18 0-2.14-1.44-3.74-4.05-3.74-2.95 0-4.78 2.2-4.78 4.64 0 .84.24 1.44.62 1.9.17.2.19.28.13.51-.04.17-.14.56-.18.72-.06.23-.24.31-.44.22-1.24-.51-1.82-1.88-1.82-3.42 0-2.54 2.14-5.6 6.39-5.6 3.42 0 5.67 2.48 5.67 5.15 0 3.54-1.96 6.18-4.84 6.18-.97 0-1.88-.52-2.19-1.11l-.62 2.37c-.2.76-.62 1.52-1 2.08.74.23 1.52.35 2.33.35 5.52 0 10-4.48 10-10S17.52 2 12 2z" />
+                </svg>
+              </a>
             </div>
           </div>
           <div>
             <div class="footer-col-title">Shop</div>
             <nav class="footer-links">
-              <a href="/shop">All Products</a>
-              <a href="/shop/heels">Heels</a>
-              <a href="/shop/sandals">Sandals</a>
-              <a href="/shop/flats">Flats</a>
-              <a href="/shop/bags">Bags</a>
-              <a href="/shop/new-arrivals">New Arrivals</a>
+              <a href="/shop.html">All Products</a>
+              <a href="/category.html?cat=heels">Heels</a>
+              <a href="/category.html?cat=sandals">Sandals</a>
+              <a href="/category.html?cat=flats">Flats</a>
+              <a href="/category.html?cat=bags">Bags</a>
+              <a href="/category.html?cat=new">New Arrivals</a>
+              <a href="/category.html?cat=sale">Sale</a>
             </nav>
           </div>
           <div>
             <div class="footer-col-title">Company</div>
             <nav class="footer-links">
-              <a href="/about">About Us</a>
-              <a href="/contact">Contact</a>
-              <a href="/blog">Blog</a>
-              <a href="/careers">Careers</a>
-              <a href="/store">Our Store</a>
+              <a href="/about.html">About Us</a>
+              <a href="/contact.html">Contact</a>
+              <a href="/blog.html">Blog</a>
+              <a href="/faq.html">FAQ</a>
             </nav>
           </div>
           <div>
             <div class="footer-col-title">Help</div>
             <nav class="footer-links">
-              <a href="/faq">FAQ</a>
-              <a href="/shipping">Shipping Info</a>
-              <a href="/returns">Returns &amp; Exchange</a>
-              <a href="/size-guide">Size Guide</a>
-              <a href="/track">Track Order</a>
-              <a href="/contact">Customer Support</a>
+              <a href="/shipping.html">Shipping Info</a>
+              <a href="/returns.html">Returns & Exchange</a>
+              <a href="/faq.html#size">Size Guide</a>
+              <a href="/orders.html">Track Order</a>
+              <a href="/contact.html">Customer Support</a>
+              <a href="/policy/privacy.html">Privacy Policy</a>
             </nav>
           </div>
         </div>
@@ -3272,120 +3532,124 @@
           <span class="pay-badge">COD</span>
         </div>
         <div class="footer-legal">
-          <a href="/policy/privacy">Privacy Policy</a>
-          <a href="/policy/terms">Terms of Service</a>
-          <a href="/policy/shipping">Shipping Policy</a>
+          <a href="/policy/privacy.html">Privacy Policy</a>
+          <a href="/policy/terms.html">Terms of Service</a>
+          <a href="/policy/returns.html">Returns</a>
         </div>
       </div>
     </div>
   </footer>
 
-  <!-- ══ CART DRAWER ══ -->
-  <div class="cart-backdrop" id="cart-backdrop" onclick="closeCart()"></div>
+  <!-- ── CART DRAWER ── -->
+  <div class="cart-bd" id="cart-bd" onclick="closeCart()"></div>
   <div class="cart-drawer" id="cart-drawer">
     <div class="cart-head">
       <div class="cart-head-title">Your Bag <span id="cart-drawer-cnt"
-          style="font-size:.85rem;color:var(--text-muted);font-family:var(--font-body);font-weight:500"></span></div>
-      <button class="cart-close-btn" onclick="closeCart()"><i class="fa-solid fa-xmark"></i></button>
+          style="font-size:.85rem;color:var(--text-3);font-weight:500"></span></div>
+      <button class="cart-xbtn" onclick="closeCart()">
+        <svg viewBox="0 0 24 24">
+          <path d="M18 6L6 18M6 6l12 12" />
+        </svg>
+      </button>
     </div>
     <div class="cart-body" id="cart-body">
-      <div class="cart-empty"><i class="fa-solid fa-bag-shopping"></i>
-        <p>Your bag is empty</p><a href="/shop" class="btn btn-primary btn-sm" style="margin-top:16px">Start
+      <div class="cart-empty">
+        <svg viewBox="0 0 24 24">
+          <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+          <line x1="3" y1="6" x2="21" y2="6" />
+          <path d="M16 10a4 4 0 01-8 0" />
+        </svg>
+        <p>Your bag is empty</p>
+        <a href="/shop.html" class="btn btn-primary btn-sm" style="margin-top:16px" onclick="closeCart()">Start
           Shopping</a>
       </div>
     </div>
     <div class="cart-foot" id="cart-foot" style="display:none">
-      <div class="cart-subtotal-row"><span class="cart-subtotal-lbl">Subtotal</span><span class="cart-subtotal-val"
+      <div class="cart-sub-row"><span class="cart-sub-lbl">Subtotal</span><span class="cart-sub-val"
           id="cart-subtotal">₹0</span></div>
-      <div class="cart-free-ship" id="cart-ship-msg"></div>
-      <a href="/cart" class="cart-cta">View Bag &amp; Checkout</a>
+      <div class="cart-ship-msg" id="cart-ship-msg"></div>
+      <a href="/cart.html" class="cart-cta">View Bag & Checkout</a>
       <button class="cart-continue" onclick="closeCart()">Continue Shopping</button>
     </div>
   </div>
 
-  <!-- ══ FLOATING ══ -->
-  <a href="https://wa.me/919876543210?text=Hi%20HeelsUp%2C%20I%20need%20help" target="_blank" rel="noopener noreferrer"
-    class="whatsapp-fab" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+  <!-- ── FLOATING ── -->
+  <a href="https://wa.me/919000000000?text=Hi%20HeelsUp%2C%20I%20need%20help" target="_blank" rel="noopener"
+    class="wa-fab" aria-label="Chat on WhatsApp">
+    <svg viewBox="0 0 24 24">
+      <path
+        d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+    </svg>
+  </a>
   <button class="scroll-top" id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})"
-    aria-label="Scroll to top"><i class="fa-solid fa-chevron-up"></i></button>
+    aria-label="Scroll to top">
+    <svg viewBox="0 0 24 24">
+      <path d="M12 19V5M5 12l7-7 7 7" />
+    </svg>
+  </button>
 
-  <!-- ══════════════════════════════════════════════
-       SCRIPTS — app-config.js & app-auth.js first
-  ══════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════
+     SCRIPTS
+══════════════════════════════ -->
   <script src="app-config.js"></script>
   <script src="app-auth.js"></script>
   <script src="js/cart.js"></script>
 
   <script>
-    /* ================================================================
-       HeelsUp Homepage Engine — Production v4.0
-       - Custom cursor
-       - Hero slideshow (auto + API banners)
-       - Live API: Featured, Categories, Trending
-       - Cart drawer (via HeelsUpCart)
-       - Search overlay with live results
-       - Countdown timer
-       - Newsletter
-       - Clean URL routing (no .html extensions)
-    ================================================================ */
     'use strict';
 
-    // ── SECURE ROUTING (hides .html, prevents directory traversal) ──
-    // All links in this file use clean paths (/shop, /account, etc.)
-    // Server must handle rewriting — this prevents info leakage via URL.
-    // No dynamic location.href construction from untrusted user input.
-
-    // ── HELPERS ──
+    /* ── HELPERS ── */
     const $ = id => document.getElementById(id);
     const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-    const fmt = n => '₹' + (Number(n) || 0).toLocaleString('en-IN');
+    const fmt = n => {
+      const v = Number(n) || 0;
+      // backend stores in paise, convert to rupees
+      const rupees = v > 1000 ? v / 100 : v; // detect paise vs rupees
+      return '₹' + Math.round(rupees).toLocaleString('en-IN');
+    };
+    const fmtPrice = n => {
+      // backend: paise. display: rupees
+      const v = Number(n) || 0;
+      return '₹' + (v / 100).toLocaleString('en-IN');
+    };
     const pad = n => String(n).padStart(2, '0');
 
-    // ── CUSTOM CURSOR ──
-    const cur = $('cursor'), ring = $('cursor-ring');
-    let mx = 0, my = 0, rx = 0, ry = 0;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cur.style.left = mx + 'px'; cur.style.top = my + 'px' }, { passive: true });
-    (function animRing() { rx += (mx - rx) * .12; ry += (my - ry) * .12; ring.style.left = rx + 'px'; ring.style.top = ry + 'px'; requestAnimationFrame(animRing) })();
-    document.querySelectorAll('a,button,[data-cursor]').forEach(el => {
-      el.addEventListener('mouseenter', () => { cur.classList.add('grow'); ring.classList.add('grow') });
-      el.addEventListener('mouseleave', () => { cur.classList.remove('grow'); ring.classList.remove('grow') });
-    });
-
-    // ── TOAST ──
+    /* ── TOAST ── */
     function toast(msg, type = 's', dur = 4000) {
       const wrap = $('toast-wrap'), t = document.createElement('div');
       t.className = 'toast ' + type;
-      t.innerHTML = `<i class="fa-solid ${type === 's' ? 'fa-circle-check' : 'fa-circle-xmark'}" style="font-size:1rem"></i>${esc(msg)}`;
+      const icon = type === 's'
+        ? '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        : '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>';
+      t.innerHTML = icon + esc(msg);
       wrap.appendChild(t);
       requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
       setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400) }, dur);
     }
     window.showToast = toast;
 
-    // ── NAVBAR ──
-    const navbar = $('navbar');
+    /* ── NAVBAR SCROLL ── */
     window.addEventListener('scroll', () => {
-      navbar.classList.toggle('scrolled', window.scrollY > 60);
+      $('navbar').classList.toggle('scrolled', window.scrollY > 60);
       $('scroll-top').classList.toggle('show', window.scrollY > 400);
     }, { passive: true });
 
-    // ── MOBILE MENU ──
+    /* ── MOBILE MENU ── */
     const mobMenu = $('mob-menu');
     function openMob() { mobMenu.classList.add('open'); document.body.style.overflow = 'hidden' }
     function closeMob() { mobMenu.classList.remove('open'); document.body.style.overflow = '' }
     $('hamburger').addEventListener('click', () => { $('hamburger').classList.toggle('open'); openMob() });
     $('mob-close').addEventListener('click', closeMob);
-    $('mob-backdrop').addEventListener('click', closeMob);
+    $('mob-bd').addEventListener('click', closeMob);
 
-    // ── SEARCH ──
-    const srchOverlay = $('search-overlay'), srchInp = $('search-inp'), srchRes = $('search-results');
-    $('search-btn').addEventListener('click', () => { srchOverlay.classList.add('open'); setTimeout(() => srchInp.focus(), 50) });
-    $('search-close').addEventListener('click', () => srchOverlay.classList.remove('open'));
+    /* ── SEARCH ── */
+    const srchEl = $('srch'), srchInp = $('srch-inp'), srchRes = $('srch-res');
+    $('search-btn').addEventListener('click', () => { srchEl.classList.add('open'); setTimeout(() => srchInp.focus(), 50) });
+    $('srch-close').addEventListener('click', () => srchEl.classList.remove('open'));
     document.addEventListener('keydown', e => {
-      if (e.key === 'Escape') srchOverlay.classList.remove('open');
-      if (e.key === '/' && !srchOverlay.classList.contains('open') && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('search-btn').click() }
+      if (e.key === 'Escape') srchEl.classList.remove('open');
+      if (e.key === '/' && !srchEl.classList.contains('open') && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); $('search-btn').click() }
     });
-
     let srchTimer = null;
     srchInp.addEventListener('input', () => {
       clearTimeout(srchTimer);
@@ -3394,9 +3658,8 @@
       srchTimer = setTimeout(() => doSearch(q), 320);
     });
     srchInp.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && srchInp.value.trim()) {
-        window.location.href = '/search?q=' + encodeURIComponent(srchInp.value.trim());
-      }
+      if (e.key === 'Enter' && srchInp.value.trim())
+        window.location.href = '/search.html?q=' + encodeURIComponent(srchInp.value.trim());
     });
 
     async function doSearch(q) {
@@ -3404,20 +3667,23 @@
       try {
         const data = await HeelsUpAuth.api('/api/products?q=' + encodeURIComponent(q) + '&limit=5');
         const prods = data.products || data.data || [];
-        if (!prods.length) { srchRes.innerHTML = '<p style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px">No results found for "' + esc(q) + '"</p>'; return }
+        if (!prods.length) { srchRes.innerHTML = '<p style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px">No results for "' + esc(q) + '"</p>'; return }
         srchRes.innerHTML = prods.map(p => {
-          const img = (p.images && p.images[0]) || p.image_url || '';
-          return `<a href="/product/${p.slug || p.id}" style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;transition:background .2s;color:rgba(255,255,255,.8)" onmouseenter="this.style.background='rgba(255,255,255,.06)'" onmouseleave="this.style.background=''">
-          ${img ? `<img src="${esc(img)}" style="width:44px;height:52px;object-fit:cover;border-radius:8px;background:rgba(255,255,255,.05)" onerror="this.style.display='none'">` : ''}
-          <div style="flex:1"><div style="font-size:13.5px;font-weight:600">${esc(p.name)}</div><div style="font-size:12px;color:rgba(255,255,255,.4)">${esc(p.category || '')}</div></div>
-          <div style="font-family:var(--font-display);font-size:1.1rem;color:var(--gold-lt)">${fmt(p.price)}</div>
-        </a>`;
+          const img = getImg(p);
+          const price = p.price ? fmtPrice(p.price) : '';
+          return `<a href="/product.html?id=${p.id}" style="display:flex;align-items:center;gap:14px;padding:12px 16px;border-radius:10px;transition:background .2s;color:rgba(255,255,255,.8)" onmouseenter="this.style.background='rgba(255,255,255,.06)'" onmouseleave="this.style.background=''">
+        ${img ? `<img src="${esc(img)}" style="width:44px;height:52px;object-fit:cover;border-radius:8px;background:rgba(255,255,255,.05)" onerror="this.style.display='none'">` : ''}
+        <div style="flex:1"><div style="font-size:13.5px;font-weight:600">${esc(p.name)}</div><div style="font-size:12px;color:rgba(255,255,255,.4)">${esc(p.category || '')}</div></div>
+        ${price ? `<div style="font-family:var(--fd);font-size:1.1rem;color:var(--gold-lt)">${price}</div>` : ''}
+      </a>`;
         }).join('');
-      } catch (e) { srchRes.innerHTML = '<p style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px">Search unavailable. Please try again.</p>' }
+      } catch (e) {
+        srchRes.innerHTML = '<p style="color:rgba(255,255,255,.3);font-size:13px;text-align:center;padding:20px">Search unavailable. Please try again.</p>';
+      }
     }
 
-    // ── HERO SLIDESHOW ──
-    const slides = document.querySelectorAll('.hero-slide'), dots = document.querySelectorAll('.hero-dot');
+    /* ── HERO SLIDESHOW ── */
+    const slides = document.querySelectorAll('.h-slide'), dots = document.querySelectorAll('.h-dot');
     let slideIdx = 0, slideTimer = null;
     function goSlide(n) {
       slides[slideIdx].classList.remove('active'); dots[slideIdx].classList.remove('active');
@@ -3430,30 +3696,30 @@
     document.querySelector('.hero').addEventListener('mouseenter', () => clearInterval(slideTimer));
     document.querySelector('.hero').addEventListener('mouseleave', startSlider);
 
-    // ── COUNTDOWN ──
+    /* ── COUNTDOWN ── */
     function tick() {
       const now = new Date(), mid = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
       const d = mid - now, h = Math.floor(d / 3.6e6), m = Math.floor((d % 3.6e6) / 6e4), s = Math.floor((d % 6e4) / 1e3);
-      const elH = $('t-h'), elM = $('t-m'), elS = $('t-s');
-      if (elH) elH.textContent = pad(h); if (elM) elM.textContent = pad(m); if (elS) elS.textContent = pad(s);
+      const eH = $('t-h'), eM = $('t-m'), eS = $('t-s');
+      if (eH) eH.textContent = pad(h); if (eM) eM.textContent = pad(m); if (eS) eS.textContent = pad(s);
     }
     tick(); setInterval(tick, 1000);
 
-    // ── AUTH STATE ──
+    /* ── AUTH ── */
     (function initAuth() {
       let user = null;
       try { user = HeelsUpAuth.getUser() } catch (e) { }
-      const accBtn = $('nav-account'), mobAcc = $('mob-account'), mobLoginBtn = $('mob-login-btn');
+      const acc = $('nav-account'), mobAcc = $('mob-account'), mobLogin = $('mob-login-btn');
       if (user) {
-        if (accBtn) { accBtn.title = 'Hello, ' + (user.firstName || user.name || 'User') }
-        if (mobLoginBtn) { mobLoginBtn.textContent = 'My Account'; mobLoginBtn.href = '/account' }
+        if (acc) acc.title = 'Hello, ' + (user.name || 'User');
+        if (mobLogin) { mobLogin.textContent = 'My Account'; mobLogin.href = '/profile.html' }
       } else {
-        if (accBtn) { accBtn.href = '/login'; accBtn.title = 'Login / Sign Up' }
+        if (acc) { acc.href = '/login.html'; acc.title = 'Login / Sign Up' }
       }
       updateCartBadge();
     })();
 
-    // ── CART BADGE ──
+    /* ── CART BADGE ── */
     function updateCartBadge() {
       try {
         const cnt = typeof HeelsUpCart !== 'undefined' ? HeelsUpCart.getCount() : 0;
@@ -3462,17 +3728,17 @@
       } catch (e) { }
     }
 
-    // ── CART DRAWER ──
-    $('cart-btn').addEventListener('click', () => { openCart() });
+    /* ── CART DRAWER ── */
+    $('cart-btn').addEventListener('click', openCart);
     function openCart() {
       $('cart-drawer').classList.add('open');
-      $('cart-backdrop').classList.add('open');
+      $('cart-bd').classList.add('open');
       document.body.style.overflow = 'hidden';
       renderCartDrawer();
     }
     window.closeCart = function () {
       $('cart-drawer').classList.remove('open');
-      $('cart-backdrop').classList.remove('open');
+      $('cart-bd').classList.remove('open');
       document.body.style.overflow = '';
     };
     document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCart() });
@@ -3482,29 +3748,30 @@
       let items = [], total = 0;
       try { items = HeelsUpCart.getItems(); total = HeelsUpCart.getTotal() } catch (e) { }
       if (!items.length) {
-        bodyEl.innerHTML = '<div class="cart-empty"><i class="fa-solid fa-bag-shopping"></i><p>Your bag is empty</p><a href="/shop" class="btn btn-primary btn-sm" style="margin-top:16px" onclick="closeCart()">Start Shopping</a></div>';
+        bodyEl.innerHTML = `<div class="cart-empty"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><p>Your bag is empty</p><a href="/shop.html" class="btn btn-primary btn-sm" style="margin-top:16px" onclick="closeCart()">Start Shopping</a></div>`;
         footEl.style.display = 'none'; cntEl.textContent = ''; return;
       }
       cntEl.textContent = '(' + items.length + ')';
       bodyEl.innerHTML = items.map((it, i) => `
-      <div class="cart-item">
-        ${it.image ? `<img class="cart-item-img" src="${esc(it.image)}" alt="${esc(it.name)}" onerror="this.src=''">` :
-          '<div class="cart-item-img" style="background:var(--cream2)"></div>'}
-        <div>
-          <div class="cart-item-name">${esc(it.name)}</div>
-          <div class="cart-item-meta">${it.size ? 'Size: ' + esc(it.size) + ' · ' : ''} ${fmt(it.price)} each</div>
-          <div class="cart-qty-row">
-            <button class="qty-btn" onclick="changeQty(${i},-1)" aria-label="Decrease"><i class="fa-solid fa-minus" style="font-size:.7rem"></i></button>
-            <span class="qty-val">${it.quantity || 1}</span>
-            <button class="qty-btn" onclick="changeQty(${i},1)" aria-label="Increase"><i class="fa-solid fa-plus" style="font-size:.7rem"></i></button>
-            <button style="margin-left:auto;color:var(--text-muted);font-size:12px;padding:4px 8px;border-radius:6px;transition:all .2s" onclick="removeItem(${i})" onmouseenter="this.style.color='var(--rose)'" onmouseleave="this.style.color='var(--text-muted)'"><i class="fa-solid fa-trash"></i></button>
-          </div>
+    <div class="cart-item">
+      ${it.image ? `<img class="cart-item-img" src="${esc(it.image)}" alt="${esc(it.name)}" onerror="this.src=''">` : '<div class="cart-item-img"></div>'}
+      <div>
+        <div class="cart-item-name">${esc(it.name)}</div>
+        <div class="cart-item-meta">${it.size ? 'Size: ' + esc(it.size) + ' · ' : ''}${fmtPrice(it.price)} each</div>
+        <div class="qty-row">
+          <button class="qty-btn" onclick="changeQty(${i},-1)" aria-label="Decrease"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <span class="qty-val">${it.quantity || 1}</span>
+          <button class="qty-btn" onclick="changeQty(${i},1)" aria-label="Increase"><svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button>
+          <button style="margin-left:auto;color:var(--text-3);font-size:12px;padding:4px 8px;border-radius:6px;transition:color .2s;cursor:pointer" onclick="removeItem(${i})" onmouseenter="this.style.color='var(--rose)'" onmouseleave="this.style.color='var(--text-3)'">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
+          </button>
         </div>
-        <div class="cart-item-price">${fmt(it.price * (it.quantity || 1))}</div>
-      </div>`).join('');
+      </div>
+      <div class="cart-item-price">${fmtPrice(it.price * (it.quantity || 1))}</div>
+    </div>`).join('');
       const freeAt = 49900, left = freeAt - total;
-      $('cart-subtotal').textContent = fmt(total);
-      $('cart-ship-msg').innerHTML = left > 0 ? `Add ${fmt(left)} more for <strong>FREE shipping</strong> 🚚` : '<i class="fa-solid fa-circle-check"></i> You qualify for FREE shipping!';
+      $('cart-subtotal').textContent = fmtPrice(total);
+      $('cart-ship-msg').innerHTML = left > 0 ? `Add ${fmtPrice(left)} more for FREE shipping 🚚` : '✓ You qualify for FREE shipping!';
       footEl.style.display = 'block';
     }
 
@@ -3515,150 +3782,189 @@
       try { HeelsUpCart.removeItem(idx); renderCartDrawer(); updateCartBadge(); toast('Item removed') } catch (e) { }
     };
 
+    /* ── PRODUCT IMAGE HELPER ── */
+    function getImg(p) {
+      if (p.images) {
+        try {
+          const imgs = typeof p.images === 'string' ? JSON.parse(p.images) : p.images;
+          if (Array.isArray(imgs) && imgs.length) return imgs[0];
+        } catch (e) { }
+      }
+      return p.image_url || p.image || '';
+    }
+
+    /* ── ADD TO CART ── */
     window.addToCartQuick = async function (productId) {
       try {
         const data = await HeelsUpAuth.api('/api/products/' + encodeURIComponent(productId));
-        const p = data.product || data;
+        const p = data.product || data.data || data;
         if (typeof HeelsUpCart !== 'undefined') HeelsUpCart.addItem(p, 1, '');
         updateCartBadge();
-        toast('✓ "' + esc(p.name) + '" added to bag!');
+        toast('"' + esc(p.name) + '" added to bag!');
         openCart();
       } catch (e) { toast('Could not add to bag. Please try again.', 'e') }
     };
 
-    // ── PRODUCT CARD RENDERER ──
+    /* ── PRODUCT CARD ── */
     function prodCard(p) {
-      const img = (p.images && p.images[0]) || p.image_url || 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=70';
-      const disc = p.original_price && p.price < p.original_price ? Math.round(100 - (p.price / p.original_price) * 100) : 0;
-      const stars = '★'.repeat(Math.round(p.rating || 4.5)) + '☆'.repeat(5 - Math.round(p.rating || 4.5));
+      const img = getImg(p);
+      const fallback = 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=70';
+      const price = Number(p.price) || 0;
+      const mrp = Number(p.mrp || p.original_price) || 0;
+      const disc = mrp && price < mrp ? Math.round(100 - (price / mrp) * 100) : 0;
+      // rating from API, fallback to 4.5
+      const rating = Math.round(Number(p.rating || p.avg_rating || 4.5));
+      const stars = '★'.repeat(Math.min(rating, 5)) + '☆'.repeat(Math.max(0, 5 - rating));
+      const reviewCount = p.review_count || p.reviews_count || 0;
       const slug = p.slug || p.id;
+      const isNew = p.is_new || (p.tags && p.tags.includes && p.tags.includes('new'));
+      const isFeat = p.is_featured || p.featured;
+
       return `<div class="prod-card" data-id="${p.id}">
-      <div class="prod-card-img-wrap">
-        <a href="/product/${esc(slug)}">
-          <img src="${esc(img)}" alt="${esc(p.name)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=400&q=70'"/>
+    <div class="prod-img-wrap">
+      <a href="/product.html?id=${p.id}">
+        <img src="${esc(img || fallback)}" alt="${esc(p.name)}" loading="lazy" onerror="this.src='${fallback}'"/>
+      </a>
+      <div class="prod-badges">
+        ${isNew ? '<span class="pbadge pbadge-new">New</span>' : ''}
+        ${disc > 0 ? `<span class="pbadge pbadge-sale">-${disc}%</span>` : ''}
+        ${isFeat ? '<span class="pbadge pbadge-hot">Hot</span>' : ''}
+      </div>
+      <button class="prod-wish" onclick="toggleWishlist(${p.id},this)" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      </button>
+      <div class="prod-actions">
+        <button class="prod-act primary" onclick="addToCartQuick(${p.id})">
+          <svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Add to Bag
+        </button>
+        <a href="/product.html?id=${p.id}" class="prod-act outline">
+          <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          View
         </a>
-        <div class="prod-badges">
-          ${p.is_new ? '<span class="prod-badge badge-new">New</span>' : ''}
-          ${disc > 0 ? `<span class="prod-badge badge-sale">-${disc}%</span>` : ''}
-          ${p.featured ? '<span class="prod-badge badge-hot">Hot</span>' : ''}
-        </div>
-        <button class="prod-wish" onclick="toggleWishlist(${p.id},this)" aria-label="Wishlist"><i class="fa-regular fa-heart"></i></button>
-        <div class="prod-actions">
-          <button class="prod-act-btn primary" onclick="addToCartQuick(${p.id})"><i class="fa-solid fa-bag-shopping"></i> Add to Bag</button>
-          <a href="/product/${esc(slug)}" class="prod-act-btn outline"><i class="fa-regular fa-eye"></i> View</a>
-        </div>
       </div>
-      <div class="prod-card-body">
-        <div class="prod-cat">${esc(p.category || '')}</div>
-        <div class="prod-name"><a href="/product/${esc(slug)}">${esc(p.name)}</a></div>
-        <div class="prod-rating">
-          <span class="prod-stars">${stars}</span>
-          <span class="prod-rc">(${p.review_count || p.reviews || Math.floor(Math.random() * 80) + 12})</span>
-        </div>
-        <div class="prod-price">
-          <span class="price-now">${fmt(p.price)}</span>
-          ${p.original_price ? `<span class="price-was">${fmt(p.original_price)}</span><span class="price-off">-${disc}%</span>` : ''}
-        </div>
+    </div>
+    <div class="prod-body">
+      <div class="prod-cat">${esc(p.category_name || p.category || '')}</div>
+      <div class="prod-name"><a href="/product.html?id=${p.id}">${esc(p.name)}</a></div>
+      <div class="prod-rating">
+        <span class="prod-stars">${stars}</span>
+        <span class="prod-rc">${reviewCount ? '(' + reviewCount + ')' : ''}</span>
       </div>
-    </div>`;
+      <div class="prod-price">
+        <span class="price-now">${fmtPrice(price)}</span>
+        ${mrp && disc > 0 ? `<span class="price-was">${fmtPrice(mrp)}</span><span class="price-off">-${disc}%</span>` : ''}
+      </div>
+    </div>
+  </div>`;
     }
 
-    // ── WISHLIST ──
+    /* ── WISHLIST ── */
     window.toggleWishlist = function (id, btn) {
       btn.classList.toggle('active');
-      if (btn.classList.contains('active')) {
-        btn.innerHTML = '<i class="fa-solid fa-heart"></i>';
-        toast('Added to wishlist ❤️');
-      } else {
-        btn.innerHTML = '<i class="fa-regular fa-heart"></i>';
-        toast('Removed from wishlist');
-      }
+      toast(btn.classList.contains('active') ? 'Added to wishlist ❤️' : 'Removed from wishlist');
     };
 
-    // ── LIVE API: BANNERS / HERO ──
+    /* ── ERROR STATE HTML ── */
+    function errHtml(retryFn) {
+      return `<div class="err-state">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+    <p>Unable to load. <button class="retry-btn" onclick="${retryFn}()">Retry</button></p>
+  </div>`;
+    }
+
+    /* ── LOAD BANNERS ── */
     async function loadBanners() {
       try {
         const data = await HeelsUpAuth.api('/api/banners');
-        const banners = data.banners || [];
+        const banners = (data.banners || data.data || []).filter(b => b.is_active !== 0);
         if (!banners.length) return;
         const slidesEl = $('hero-slides'), dotsEl = $('hero-dots');
         slidesEl.innerHTML = ''; dotsEl.innerHTML = '';
         banners.slice(0, 3).forEach((b, i) => {
           const slide = document.createElement('div');
-          slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
-          slide.innerHTML = `<img src="${esc(b.image_url || b.image)}" alt="${esc(b.title || 'HeelsUp Banner')}" loading="${i === 0 ? 'eager' : 'lazy'}" fetchpriority="${i === 0 ? 'high' : 'auto'}"/>`;
+          slide.className = 'h-slide' + (i === 0 ? ' active' : '');
+          const imgSrc = b.image_url || b.image || '';
+          slide.innerHTML = `<img src="${esc(imgSrc)}" alt="${esc(b.title || 'HeelsUp Banner')}" loading="${i === 0 ? 'eager' : 'lazy'}" fetchpriority="${i === 0 ? 'high' : 'auto'}" onerror="this.parentElement.style.display='none'"/>`;
           slidesEl.appendChild(slide);
           const dot = document.createElement('div');
-          dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
-          dot.setAttribute('data-slide', i);
+          dot.className = 'h-dot' + (i === 0 ? ' active' : '');
           dot.onclick = () => goSlide(i);
           dotsEl.appendChild(dot);
         });
+        // Update hero text from first banner
         if (banners[0]) {
-          if (banners[0].title) $('hero-title').innerHTML = banners[0].title;
-          if (banners[0].subtitle) $('hero-sub').textContent = banners[0].subtitle;
+          if (banners[0].title && $('hero-title')) {
+            const parts = banners[0].title.split('|');
+            $('hero-title').innerHTML = parts.length > 1 ? esc(parts[0]) + '<em>' + esc(parts[1]) + '</em>' : esc(banners[0].title);
+          }
+          if (banners[0].subtitle && $('hero-sub')) $('hero-sub').textContent = banners[0].subtitle;
+          if (banners[0].eyebrow && $('h-eyebrow')) document.querySelector('.h-eyebrow').lastChild.textContent = ' ' + banners[0].eyebrow;
         }
-      } catch (e) {/* fallback static hero already shown */ }
+      } catch (e) { /* static fallback shown */ }
     }
 
-    // ── LIVE API: CATEGORIES ──
+    /* ── LOAD CATEGORIES ── */
     async function loadCategories() {
       const grid = $('cat-grid');
       try {
         const data = await HeelsUpAuth.api('/api/categories');
-        const cats = (data.categories || []).slice(0, 4);
-        if (!cats.length) { grid.innerHTML = '<p style="color:var(--text-muted);text-align:center;padding:40px;grid-column:1/-1">No categories available.</p>'; return }
-        grid.innerHTML = cats.map((c, i) => `
-        <a href="/shop/${esc(c.slug || c.name.toLowerCase())}" class="cat-card ${i === 0 ? 'large' : ''}">
-          <div class="cat-card-img">
-            <img src="${esc(c.image_url || 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80&auto=format&fit=crop')}" alt="${esc(c.name)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80'"/>
-          </div>
-          <div class="cat-overlay"></div>
-          <div class="cat-body">
-            <div class="cat-sub">Category</div>
-            <div class="cat-name">${esc(c.name)}</div>
-            <div class="cat-count">${c.product_count ? c.product_count + ' Products' : 'Explore Collection'}</div>
-            <span class="cat-cta">Shop Now <i class="fa-solid fa-arrow-right"></i></span>
-          </div>
-        </a>`).join('');
+        const cats = (data.categories || data.data || []).filter(c => c.is_active !== 0).slice(0, 4);
+        if (!cats.length) { grid.innerHTML = '<p style="color:var(--text-3);text-align:center;padding:40px;grid-column:1/-1">No categories available.</p>'; return }
+        grid.innerHTML = cats.map((c, i) => {
+          const imgSrc = c.image_url || c.image || 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80';
+          const slug = c.slug || c.name.toLowerCase();
+          const count = c.product_count ? c.product_count + ' Products' : 'Explore Collection';
+          return `<a href="/category.html?cat=${esc(slug)}" class="cat-card ${i === 0 ? 'large' : ''}">
+        <div class="cat-img-wrap">
+          <img src="${esc(imgSrc)}" alt="${esc(c.name)}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80'"/>
+        </div>
+        <div class="cat-ov"></div>
+        <div class="cat-body">
+          <div class="cat-sub">Category</div>
+          <div class="cat-name">${esc(c.name)}</div>
+          <div class="cat-count">${esc(count)}</div>
+          <span class="cat-cta">Shop Now <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+        </div>
+      </a>`;
+        }).join('');
       } catch (e) {
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-muted)">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;margin-bottom:14px;display:block;opacity:.4"></i>
-        <p>Unable to load categories. <button onclick="loadCategories()" style="color:var(--gold-dk);font-weight:700;background:none;border:none;text-decoration:underline;cursor:pointer">Retry</button></p>
-      </div>`;
+        grid.innerHTML = errHtml('loadCategories');
       }
     }
+    window.loadCategories = loadCategories;
 
-    // ── LIVE API: FEATURED PRODUCTS ──
+    /* ── LOAD FEATURED ── */
     async function loadFeatured() {
       const grid = $('featured-grid');
       try {
         const data = await HeelsUpAuth.api('/api/products?featured=true&limit=8');
         const prods = data.products || data.data || [];
-        if (!prods.length) { grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-muted)">No featured products yet.</p>'; return }
+        if (!prods.length) { grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-3)">No featured products yet.</p>'; return }
         grid.innerHTML = prods.map(prodCard).join('');
       } catch (e) {
-        grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-muted)">
-        <i class="fa-solid fa-triangle-exclamation" style="font-size:2rem;margin-bottom:14px;display:block;opacity:.4"></i>
-        <p>Unable to load products. <button onclick="loadFeatured()" style="color:var(--gold-dk);font-weight:700;background:none;border:none;text-decoration:underline;cursor:pointer">Retry</button></p>
-      </div>`;
+        grid.innerHTML = errHtml('loadFeatured');
       }
     }
+    window.loadFeatured = loadFeatured;
 
-    // ── LIVE API: TRENDING ──
+    /* ── LOAD TRENDING ── */
     const trendCache = {};
     async function loadTrending(tab) {
-      const pane = $('tp-' + (tab === 'all' ? 'all' : tab));
+      const key = tab === 'all' ? 'all' : tab;
+      const pane = $('tp-' + key);
       if (!pane) return;
-      if (trendCache[tab]) { pane.innerHTML = trendCache[tab]; return }
-      pane.innerHTML = '<div class="skel"><div class="skel-img"></div></div>'.repeat(4);
+      if (trendCache[key]) { pane.innerHTML = trendCache[key]; return }
+      pane.innerHTML = '<div class="skel"><div class="skel-img" style="aspect-ratio:4/5"></div></div>'.repeat(4);
       try {
         const url = tab === 'all' ? '/api/products?limit=8' : `/api/products?category=${encodeURIComponent(tab)}&limit=8`;
         const data = await HeelsUpAuth.api(url);
         const prods = data.products || data.data || [];
-        const html = prods.length ? prods.map(prodCard).join('') : '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-muted)">No products in this category yet.</p>';
-        trendCache[tab] = html; pane.innerHTML = html;
-      } catch (e) { pane.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-muted)">Unable to load products.</p>' }
+        const html = prods.length ? prods.map(prodCard).join('') : '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-3)">No products in this category yet.</p>';
+        trendCache[key] = html; pane.innerHTML = html;
+      } catch (e) {
+        pane.innerHTML = errHtml(`loadTrending.bind(null,'${tab}')`);
+      }
     }
 
     document.querySelectorAll('.trend-tab').forEach(btn => {
@@ -3673,7 +3979,53 @@
       });
     });
 
-    // ── NEWSLETTER ──
+    /* ── LOAD REVIEWS ── */
+    async function loadReviews() {
+      try {
+        const data = await HeelsUpAuth.api('/api/reviews?featured=true&limit=6');
+        const reviews = data.reviews || data.data || [];
+        if (!reviews.length) return; // keep static fallback
+        const grid = $('testi-grid');
+        grid.innerHTML = reviews.slice(0, 3).map(r => {
+          const stars = '★'.repeat(Math.min(r.rating || 5, 5)) + '☆'.repeat(Math.max(0, 5 - (r.rating || 5)));
+          const initial = (r.user_name || r.name || 'C').charAt(0).toUpperCase();
+          return `<div class="t-card">
+        <div class="t-stars">${stars}</div>
+        <p class="t-text">"${esc(r.review || r.text || r.comment)}"</p>
+        <div class="t-author">
+          <div class="t-av">${initial}</div>
+          <div>
+            <div class="t-name">${esc(r.user_name || r.name || 'Customer')}</div>
+            <div class="t-loc">${esc(r.location || r.city || 'India')}</div>
+            <div class="t-verified">
+              <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+              Verified Purchase
+            </div>
+          </div>
+        </div>
+      </div>`;
+        }).join('');
+      } catch (e) { /* static fallback stays */ }
+    }
+
+    /* ── LOAD STATS ── */
+    async function loadStats() {
+      try {
+        const data = await HeelsUpAuth.api('/api/stats');
+        if (data.customers) {
+          const c = data.customers;
+          const txt = c >= 10000 ? Math.floor(c / 1000) + 'K+' : c + '+';
+          ['hstat-orders', 'bs-customers'].forEach(id => { const el = $(id); if (el) el.textContent = txt });
+        }
+        if (data.products) {
+          const p = data.products;
+          const txt = p >= 500 ? '500+' : p + '+';
+          ['hstat-products', 'bs-products'].forEach(id => { const el = $(id); if (el) el.textContent = txt });
+        }
+      } catch (e) { /* static fallback */ }
+    }
+
+    /* ── NEWSLETTER ── */
     window.handleNewsletter = async function (e) {
       e.preventDefault();
       const emailEl = $('nl-email'), btn = $('nl-btn'), email = emailEl.value.trim();
@@ -3683,33 +4035,32 @@
         await HeelsUpAuth.api('/api/newsletter', { method: 'POST', body: JSON.stringify({ email }) });
         toast('🎉 You\'re subscribed! Check your inbox.');
         emailEl.value = '';
-      } catch (err) { toast(err.message || 'Subscription failed. Try again.', 'e') }
-      finally { btn.textContent = 'Subscribe'; btn.disabled = false }
+      } catch (err) {
+        toast(err.message || 'Subscription failed. Try again.', 'e');
+      } finally {
+        btn.textContent = 'Subscribe'; btn.disabled = false;
+      }
     };
 
-    // ── LIVE STATS FROM API ──
-    async function loadStats() {
-      try {
-        const data = await HeelsUpAuth.api('/api/stats');
-        if (data.customers) $('hstat-orders').textContent = (data.customers >= 10000 ? Math.floor(data.customers / 1000) + 'K+' : data.customers + '+');
-        if (data.products) $('hstat-products').textContent = (data.products >= 500 ? '500+' : data.products + '+');
-      } catch (e) {/* static fallback shown */ }
-    }
-
-    // ── INIT ──
+    /* ── INIT ── */
     document.addEventListener('DOMContentLoaded', () => {
-      // Parallel API calls — faster perceived load
-      loadBanners();
-      loadCategories();
-      loadFeatured();
-      loadTrending('all');
-      loadStats();
-      // Update cart badge from local storage
+      // All API calls in parallel for fast load
+      Promise.allSettled([
+        loadBanners(),
+        loadCategories(),
+        loadFeatured(),
+        loadTrending('all'),
+        loadStats(),
+        loadReviews()
+      ]);
       updateCartBadge();
     });
 
     // Cart update listener
-    document.addEventListener('cart:updated', () => { updateCartBadge(); if ($('cart-drawer').classList.contains('open')) renderCartDrawer() });
+    document.addEventListener('cart:updated', () => {
+      updateCartBadge();
+      if ($('cart-drawer').classList.contains('open')) renderCartDrawer();
+    });
   </script>
 </body>
 
