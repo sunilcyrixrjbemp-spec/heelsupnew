@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Customers — HeelsUp Admin</title>
+    <title>Customers â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -780,14 +780,15 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
-        // ── STATE ────────────────────────────────────────────────────────
+        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let allCustomers = [];
         let filteredCustomers = [];
         const PAGE = 12;
         let currentPg = 1;
 
-        // ── AUTH & SETUP ──────────────────────────────────────────────────
+        // â”€â”€ AUTH & SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         try {
             const user = HeelsUpAuth.getUser();
             if (!user || user.role !== 'admin') {
@@ -800,7 +801,7 @@
             console.error("Auth initialization failed", e);
         }
 
-        // ── SIDEBAR ──────────────────────────────────────────────────────
+        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function toggleSidebar() {
             const s = document.getElementById('sidebar');
             s.classList.toggle('open');
@@ -817,7 +818,7 @@
             window.location = 'login.html';
         }
 
-        // ── UTILITIES ────────────────────────────────────────────────────
+        // â”€â”€ UTILITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toastWrap');
             const t = document.createElement('div');
@@ -837,11 +838,11 @@
         }
 
         function fmtDate(d) {
-            if (!d) return '—';
+            if (!d) return 'â€”';
             return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
-        // ── DATA FETCHING & FILTERING ────────────────────────────────────
+        // â”€â”€ DATA FETCHING & FILTERING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function loadCustomers() {
             document.getElementById('customersTableBody').innerHTML = '<tr><td colspan="5"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading customers...</div></td></tr>';
             try {
@@ -877,7 +878,7 @@
             renderCustomers();
         }
 
-        // ── RENDERING ────────────────────────────────────────────────────
+        // â”€â”€ RENDERING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderCustomers() {
             const start = (currentPg - 1) * PAGE;
             const page = filteredCustomers.slice(start, start + PAGE);
@@ -909,11 +910,11 @@
                 return `<tr>
                     <td>
                         <div class="tbl-name">${esc(fullName.trim() || 'Unknown User')}</div>
-                        <div class="tbl-sub">ID: #${c.id || '—'}</div>
+                        <div class="tbl-sub">ID: #${c.id || 'â€”'}</div>
                     </td>
                     <td>
-                        <div style="font-size: .83rem; color: var(--text);">${esc(c.email || '—')}</div>
-                        <div class="tbl-sub">${esc(c.phone || '—')}</div>
+                        <div style="font-size: .83rem; color: var(--text);">${esc(c.email || 'â€”')}</div>
+                        <div class="tbl-sub">${esc(c.phone || 'â€”')}</div>
                     </td>
                     <td>
                         <div style="font-size: .83rem; color: var(--text);">${fmtDate(c.created_at)}</div>
@@ -935,7 +936,7 @@
             renderPagination('customersPagination', filteredCustomers.length, currentPg, p => { currentPg = p; renderCustomers(); });
         }
 
-        // ── ACTIONS ──────────────────────────────────────────────────────
+        // â”€â”€ ACTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function updateCustomerRole(id, newRole) {
             if (!confirm(`Set this user as ${newRole}?`)) return;
             try {
@@ -982,7 +983,7 @@
             }
         }
 
-        // ── PAGINATION ────────────────────────────────────────────────────
+        // â”€â”€ PAGINATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderPagination(elId, total, page, onPageCallback) {
             const pages = Math.ceil(total / PAGE);
             const el = document.getElementById(elId);
@@ -993,13 +994,13 @@
             }
 
             el.innerHTML = `
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>â€¹ Prev</button>
                 <span class="pg-info">Page <strong>${page}</strong> of <strong>${pages}</strong></span>
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next ›</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next â€º</button>
             `;
         }
 
-        // ── OFFER MODAL ───────────────────────────────────────────────────
+        // â”€â”€ OFFER MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function openOfferModal() {
             document.getElementById('offerTitle').value = '';
             document.getElementById('offerMessage').value = '';
@@ -1047,7 +1048,7 @@
             }
         }
 
-        // ── INITIALIZATION ────────────────────────────────────────────────
+        // â”€â”€ INITIALIZATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         document.addEventListener('DOMContentLoaded', loadCustomers);
     </script>
 </body>

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Settings — HeelsUp Admin</title>
+  <title>Settings â€” HeelsUp Admin</title>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
     rel="stylesheet" />
@@ -929,7 +929,7 @@
                 <i class="fa-solid fa-circle-info"></i>
                 <div>Razorpay keys are stored securely. Obtain your live keys from <a
                     href="https://dashboard.razorpay.com" target="_blank"
-                    style="color:#1d4ed8;font-weight:600;text-decoration:underline;">Razorpay Dashboard → Settings → API
+                    style="color:#1d4ed8;font-weight:600;text-decoration:underline;">Razorpay Dashboard â†’ Settings â†’ API
                     Keys</a>.
                 </div>
               </div>
@@ -959,8 +959,8 @@
                   <div class="form-group" style="max-width: 300px;">
                     <label class="form-label">Operation Mode</label>
                     <select class="form-select" id="razorpay_mode">
-                      <option value="live">🟢 Live Mode (Real Transactions)</option>
-                      <option value="test">🟡 Test Mode (Simulated Gateway)</option>
+                      <option value="live">ðŸŸ¢ Live Mode (Real Transactions)</option>
+                      <option value="test">ðŸŸ¡ Test Mode (Simulated Gateway)</option>
                     </select>
                   </div>
 
@@ -1042,7 +1042,7 @@
                       <label class="form-label">Free Shipping Subtotal Threshold</label>
                       <div class="input-group">
                         <span
-                          style="display:flex;align-items:center;padding:0 14px;background:#f1f5f9;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;color:var(--muted);font-weight:600">₹</span>
+                          style="display:flex;align-items:center;padding:0 14px;background:#f1f5f9;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;color:var(--muted);font-weight:600">â‚¹</span>
                         <input type="number" class="form-input" id="shipping_free_above" min="0" placeholder="499" />
                       </div>
                       <div class="form-hint">Carts exceeding this value get standard free shipping.</div>
@@ -1051,7 +1051,7 @@
                       <label class="form-label">Base Flat Rate Charge</label>
                       <div class="input-group">
                         <span
-                          style="display:flex;align-items:center;padding:0 14px;background:#f1f5f9;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;color:var(--muted);font-weight:600">₹</span>
+                          style="display:flex;align-items:center;padding:0 14px;background:#f1f5f9;border:1.5px solid var(--border);border-radius:8px;font-size:1rem;color:var(--muted);font-weight:600">â‚¹</span>
                         <input type="number" class="form-input" id="shipping_standard_charge" min="0"
                           placeholder="49" />
                       </div>
@@ -1217,6 +1217,7 @@
 
   <script src="app-config.js"></script>
   <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
   <script>
     // System State
     let liveSettings = {};

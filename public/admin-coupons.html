@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Coupons — HeelsUp Admin</title>
+    <title>Coupons â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -994,28 +994,28 @@
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Active Coupons</div>
-                            <div class="stat-value" id="statActive">—</div>
+                            <div class="stat-value" id="statActive">â€”</div>
                         </div>
                         <div class="stat-icon gold-icon"><i class="fa-solid fa-ticket"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Total Uses</div>
-                            <div class="stat-value" id="statUses">—</div>
+                            <div class="stat-value" id="statUses">â€”</div>
                         </div>
                         <div class="stat-icon blue-icon"><i class="fa-solid fa-users"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Total Discounts</div>
-                            <div class="stat-value" id="statTotal">—</div>
+                            <div class="stat-value" id="statTotal">â€”</div>
                         </div>
                         <div class="stat-icon green-icon"><i class="fa-solid fa-piggy-bank"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Expiring Soon</div>
-                            <div class="stat-value text-warning" id="statExpiring" style="color:var(--warning)">—</div>
+                            <div class="stat-value text-warning" id="statExpiring" style="color:var(--warning)">â€”</div>
                         </div>
                         <div class="stat-icon orange-icon"><i class="fa-regular fa-clock"></i></div>
                     </div>
@@ -1087,7 +1087,7 @@
                         <label class="form-label">Discount Type</label>
                         <select class="form-select" name="type">
                             <option value="percent">Percentage (%)</option>
-                            <option value="flat">Flat Amount (₹)</option>
+                            <option value="flat">Flat Amount (â‚¹)</option>
                         </select>
                     </div>
                     <div class="form-field">
@@ -1095,11 +1095,11 @@
                         <input type="number" class="form-input" name="value" required min="0" placeholder="e.g. 20">
                     </div>
                     <div class="form-field">
-                        <label class="form-label">Min Order (₹)</label>
+                        <label class="form-label">Min Order (â‚¹)</label>
                         <input type="number" class="form-input" name="min_order" min="0" placeholder="0">
                     </div>
                     <div class="form-field">
-                        <label class="form-label">Max Discount (₹) (Optional)</label>
+                        <label class="form-label">Max Discount (â‚¹) (Optional)</label>
                         <input type="number" class="form-input" name="max_discount" min="0"
                             placeholder="Leave blank for unlimited">
                     </div>
@@ -1135,8 +1135,9 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
-        // ── AUTH & SETUP ──────────────────────────────────────────────────
+        // â”€â”€ AUTH & SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let user = null;
         try {
             user = HeelsUpAuth.getUser();
@@ -1149,14 +1150,14 @@
         document.getElementById('s-avatar').textContent = uname.charAt(0).toUpperCase();
         document.getElementById('s-name').textContent = uname;
 
-        // ── STATE ────────────────────────────────────────────────────────
+        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let allCoupons = [];
         let filteredCoupons = [];
         let editingCouponId = null;
         const PAGE = 10;
         let currentPg = 1;
 
-        // ── SIDEBAR ──────────────────────────────────────────────────────
+        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function toggleSidebar() {
             const s = document.getElementById('sidebar');
             const o = document.getElementById('mobOverlay');
@@ -1172,7 +1173,7 @@
             window.location = 'login.html';
         }
 
-        // ── TOAST ────────────────────────────────────────────────────────
+        // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toastWrap');
             const t = document.createElement('div');
@@ -1190,7 +1191,7 @@
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
         function fmtDate(d) {
-            if (!d) return '—';
+            if (!d) return 'â€”';
             return new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
         }
 
@@ -1200,7 +1201,7 @@
             });
         }
 
-        // ── DATA FETCHING ────────────────────────────────────────────────
+        // â”€â”€ DATA FETCHING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function loadCoupons() {
             document.getElementById('couponsTableBody').innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading coupons...</div></td></tr>';
             try {
@@ -1217,7 +1218,7 @@
             }
         }
 
-        // ── STATS CALCULATION ────────────────────────────────────────────
+        // â”€â”€ STATS CALCULATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function updateStats() {
             const now = new Date();
             let activeCount = 0;
@@ -1252,7 +1253,7 @@
             document.getElementById('statExpiring').textContent = expiringCount;
         }
 
-        // ── FILTERING & RENDERING ────────────────────────────────────────
+        // â”€â”€ FILTERING & RENDERING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function filterCoupons() {
             const q = document.getElementById('couponSearch').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
@@ -1292,17 +1293,17 @@
 
                 // Value & Type
                 const isPct = c.type === 'percent';
-                const valHtml = isPct ? `${c.value}% OFF` : `₹${c.value} OFF`;
+                const valHtml = isPct ? `${c.value}% OFF` : `â‚¹${c.value} OFF`;
                 const typeStr = isPct ? 'Percentage' : 'Fixed Amount';
 
                 // Conditions
-                const minOrdStr = c.min_order > 0 ? `Min. order ₹${c.min_order}` : 'No Minimum';
+                const minOrdStr = c.min_order > 0 ? `Min. order â‚¹${c.min_order}` : 'No Minimum';
                 const descStr = c.description ? c.description : 'All Products';
 
                 // Usage & Progress Bar
                 const used = c.used_count || 0;
                 const max = c.max_uses || null;
-                const usageStr = max ? `${used} / ${max}` : `${used} / ∞`;
+                const usageStr = max ? `${used} / ${max}` : `${used} / âˆž`;
                 const usagePct = max ? Math.min(100, Math.round((used / max) * 100)) : 0;
                 const barColor = usagePct >= 90 ? 'var(--danger)' : 'var(--success)';
                 const barHtml = max ? `<div class="usage-bar-wrap"><div class="usage-bar-fill" style="width:${usagePct}%; background:${barColor};"></div></div>` : '';
@@ -1366,7 +1367,7 @@
             renderPagination('couponsPagination', filteredCoupons.length, currentPg, p => { currentPg = p; renderCoupons(); });
         }
 
-        // ── MODAL LOGIC ──────────────────────────────────────────────────
+        // â”€â”€ MODAL LOGIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function openCouponModal() {
             editingCouponId = null;
             document.getElementById('couponForm').reset();
@@ -1411,7 +1412,7 @@
             if (e.target === this) closeCouponModal();
         });
 
-        // ── CRUD OPERATIONS ──────────────────────────────────────────────
+        // â”€â”€ CRUD OPERATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function saveCoupon(e) {
             e.preventDefault();
             const f = e.target;
@@ -1462,20 +1463,20 @@
             }
         }
 
-        // ── PAGINATION HELPER ────────────────────────────────────────────
+        // â”€â”€ PAGINATION HELPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderPagination(elId, total, page, onPageCallback) {
             const pages = Math.ceil(total / PAGE);
             const el = document.getElementById(elId);
             if (pages <= 1) { el.innerHTML = ''; return; }
 
             el.innerHTML = `
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>â€¹ Prev</button>
                 <span class="pg-info">Page <strong>${page}</strong> of <strong>${pages}</strong></span>
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next ›</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next â€º</button>
             `;
         }
 
-        // ── INIT ─────────────────────────────────────────────────────────
+        // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         document.addEventListener('DOMContentLoaded', loadCoupons);
     </script>
 </body>

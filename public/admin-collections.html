@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Collections — HeelsUp Admin</title>
+    <title>Collections â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -965,8 +965,9 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
-        // ── AUTH & SETUP ──────────────────────────────────────────────────
+        // â”€â”€ AUTH & SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let user = null;
         try {
             user = HeelsUpAuth.getUser();
@@ -979,14 +980,14 @@
         document.getElementById('s-avatar').textContent = uname.charAt(0).toUpperCase();
         document.getElementById('s-name').textContent = uname;
 
-        // ── STATE ────────────────────────────────────────────────────────
+        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let allCollections = [];
         let filteredCollections = [];
         let editingCollectionId = null;
         const PAGE = 10;
         let currentPg = 1;
 
-        // ── SIDEBAR ──────────────────────────────────────────────────────
+        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function toggleSidebar() {
             const s = document.getElementById('sidebar');
             const o = document.getElementById('mobOverlay');
@@ -1002,7 +1003,7 @@
             window.location = 'login.html';
         }
 
-        // ── TOAST ────────────────────────────────────────────────────────
+        // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toastWrap');
             const t = document.createElement('div');
@@ -1019,7 +1020,7 @@
 
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
 
-        // ── DATA FETCHING ────────────────────────────────────────────────
+        // â”€â”€ DATA FETCHING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function loadCollections() {
             document.getElementById('collectionsTableBody').innerHTML = '<tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading collections...</div></td></tr>';
             try {
@@ -1035,7 +1036,7 @@
             }
         }
 
-        // ── FILTERING & RENDERING ────────────────────────────────────────
+        // â”€â”€ FILTERING & RENDERING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function filterCollections() {
             const q = document.getElementById('collSearch').value.toLowerCase();
             const typeFilter = document.getElementById('typeFilter').value;
@@ -1089,7 +1090,7 @@
                     <td>${img}</td>
                     <td>
                         <div class="tbl-name">${esc(c.name)}</div>
-                        <div class="tbl-sub" title="${esc(c.slug)}">${esc(c.slug ? '/collections/' + c.slug : '—')}</div>
+                        <div class="tbl-sub" title="${esc(c.slug)}">${esc(c.slug ? '/collections/' + c.slug : 'â€”')}</div>
                     </td>
                     <td>${typeBadge}</td>
                     <td><div style="font-weight:600; color:var(--text)">${productCount}</div></td>
@@ -1106,7 +1107,7 @@
             renderPagination('collectionsPagination', filteredCollections.length, currentPg, p => { currentPg = p; renderCollections(); });
         }
 
-        // ── MODAL LOGIC ──────────────────────────────────────────────────
+        // â”€â”€ MODAL LOGIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function openCollectionModal() {
             editingCollectionId = null;
             document.getElementById('collectionForm').reset();
@@ -1139,7 +1140,7 @@
             if (e.target === this) closeCollectionModal();
         });
 
-        // ── CRUD OPERATIONS ──────────────────────────────────────────────
+        // â”€â”€ CRUD OPERATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function saveCollection(e) {
             e.preventDefault();
             const f = e.target;
@@ -1188,20 +1189,20 @@
             }
         }
 
-        // ── PAGINATION HELPER ────────────────────────────────────────────
+        // â”€â”€ PAGINATION HELPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderPagination(elId, total, page, onPageCallback) {
             const pages = Math.ceil(total / PAGE);
             const el = document.getElementById(elId);
             if (pages <= 1) { el.innerHTML = ''; return; }
 
             el.innerHTML = `
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>â€¹ Prev</button>
                 <span class="pg-info">Page <strong>${page}</strong> of <strong>${pages}</strong></span>
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next ›</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next â€º</button>
             `;
         }
 
-        // ── INIT ─────────────────────────────────────────────────────────
+        // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         document.addEventListener('DOMContentLoaded', loadCollections);
     </script>
 </body>

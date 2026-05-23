@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>POS / Offline Sales — HeelsUp Admin</title>
+    <title>POS / Offline Sales â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -947,8 +947,8 @@
                                     <tr>
                                         <th class="td-product">Product Name / SKU</th>
                                         <th class="td-qty">Qty</th>
-                                        <th class="td-price">Unit Price (₹)</th>
-                                        <th class="td-total">Total (₹)</th>
+                                        <th class="td-price">Unit Price (â‚¹)</th>
+                                        <th class="td-total">Total (â‚¹)</th>
                                         <th class="td-action"></th>
                                     </tr>
                                 </thead>
@@ -1010,12 +1010,12 @@
                             </div>
                             <div style="display: flex; gap: 16px; margin-bottom: 16px;">
                                 <div class="form-field">
-                                    <label class="form-label">Apply Discount (Flat ₹)</label>
+                                    <label class="form-label">Apply Discount (Flat â‚¹)</label>
                                     <input type="number" class="form-input" id="discountInput" value="0" min="0"
                                         oninput="calculateTotals()" style="max-width:180px" />
                                 </div>
                                 <div class="form-field">
-                                    <label class="form-label">Apply GST (Flat ₹)</label>
+                                    <label class="form-label">Apply GST (Flat â‚¹)</label>
                                     <input type="number" class="form-input" id="taxInput" value="0" min="0"
                                         oninput="calculateTotals()" style="max-width:180px" />
                                 </div>
@@ -1023,19 +1023,19 @@
                             <div class="summary-box">
                                 <div class="summary-row">
                                     <span>Subtotal</span>
-                                    <strong id="summary-subtotal">₹0.00</strong>
+                                    <strong id="summary-subtotal">â‚¹0.00</strong>
                                 </div>
                                 <div class="summary-row">
                                     <span>Discount</span>
-                                    <strong id="summary-discount" style="color:var(--danger)">-₹0.00</strong>
+                                    <strong id="summary-discount" style="color:var(--danger)">-â‚¹0.00</strong>
                                 </div>
                                 <div class="summary-row">
                                     <span>GST / Tax</span>
-                                    <strong id="summary-tax" style="color:var(--muted)">+₹0.00</strong>
+                                    <strong id="summary-tax" style="color:var(--muted)">+â‚¹0.00</strong>
                                 </div>
                                 <div class="summary-row total">
                                     <span>Grand Total</span>
-                                    <span id="summary-total">₹0.00</span>
+                                    <span id="summary-total">â‚¹0.00</span>
                                 </div>
                             </div>
                         </div>
@@ -1057,6 +1057,7 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
         // --- State Variables ---
         let allProducts = [];
@@ -1169,7 +1170,7 @@
                 <td class="td-price">
                     <input type="number" class="form-input price-input" placeholder="0.00" min="0" required style="width:110px">
                 </td>
-                <td class="td-total line-total">—</td>
+                <td class="td-total line-total">â€”</td>
                 <td class="td-action">
                     <button type="button" class="btn-icon btn-del" onclick="removeRow(this)"><i class="fa-solid fa-xmark"></i></button>
                 </td>
@@ -1225,7 +1226,7 @@
                                 Stock: ${stockVal}
                             </div>
                         </div>
-                        <div class="autocomplete-item-price">₹${p.price}</div>
+                        <div class="autocomplete-item-price">â‚¹${p.price}</div>
                     `;
 
                     // On selection
@@ -1283,17 +1284,17 @@
                 const price = Number(row.querySelector('.price-input')?.value) || 0;
                 const line = qty * price;
                 const cell = row.querySelector('.line-total');
-                if (cell) cell.textContent = line > 0 ? '₹' + line.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : '—';
+                if (cell) cell.textContent = line > 0 ? 'â‚¹' + line.toLocaleString('en-IN', { minimumFractionDigits: 2 }) : 'â€”';
                 subtotal += line;
             });
             const discount = Math.min(Number(document.getElementById('discountInput').value) || 0, subtotal);
             const tax = Number(document.getElementById('taxInput').value) || 0;
             const total = subtotal - discount + tax;
 
-            document.getElementById('summary-subtotal').textContent = '₹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-            document.getElementById('summary-discount').textContent = '-₹' + discount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-            document.getElementById('summary-tax').textContent = '+₹' + tax.toLocaleString('en-IN', { minimumFractionDigits: 2 });
-            document.getElementById('summary-total').textContent = '₹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-subtotal').textContent = 'â‚¹' + subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-discount').textContent = '-â‚¹' + discount.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-tax').textContent = '+â‚¹' + tax.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+            document.getElementById('summary-total').textContent = 'â‚¹' + total.toLocaleString('en-IN', { minimumFractionDigits: 2 });
         }
 
         // --- Submit Form (Creates Customer & Order in Live DB) ---

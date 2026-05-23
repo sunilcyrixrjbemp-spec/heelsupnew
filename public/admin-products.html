@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Products — HeelsUp Admin</title>
+    <title>Products â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <style>
-        /* (Your existing CSS – unchanged. Keep as is) */
+        /* (Your existing CSS â€“ unchanged. Keep as is) */
         * {
             margin: 0;
             padding: 0;
@@ -1164,7 +1164,7 @@
                         <select class="filter-select" id="stockFilter" onchange="filterProducts()">
                             <option value="">All Inventory</option>
                             <option value="instock">In Stock</option>
-                            <option value="lowstock">Low Stock (≤10)</option>
+                            <option value="lowstock">Low Stock (â‰¤10)</option>
                             <option value="outstock">Out of Stock</option>
                         </select>
                     </div>
@@ -1231,9 +1231,9 @@
                             <option value="Bags">Bags</option>
                             <option value="Accessories">Accessories</option>
                         </select></div>
-                    <div class="form-field"><label class="form-label">Price (₹) *</label><input type="number"
+                    <div class="form-field"><label class="form-label">Price (â‚¹) *</label><input type="number"
                             class="form-input" name="price" required min="0" placeholder="899"></div>
-                    <div class="form-field"><label class="form-label">MRP / Original (₹)</label><input type="number"
+                    <div class="form-field"><label class="form-label">MRP / Original (â‚¹)</label><input type="number"
                             class="form-input" name="mrp" min="0" placeholder="1499"></div>
                     <div class="form-field"><label class="form-label">GST (%)</label><input type="number"
                             class="form-input" name="gst_percent" min="0" max="100" placeholder="18"></div>
@@ -1267,8 +1267,9 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
-        // ── AUTH & STATE ──────────────────────────────────────────────────────────
+        // â”€â”€ AUTH & STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let allProducts = [], filteredProducts = [], editingProductId = null;
         const ITEMS_PER_PAGE = 10; let currentPage = 1;
 
@@ -1337,7 +1338,7 @@
             const start = (currentPage - 1) * ITEMS_PER_PAGE, end = Math.min(start + ITEMS_PER_PAGE, filteredProducts.length), pageData = filteredProducts.slice(start, end);
             const displayEnd = Math.min(end, filteredProducts.length), displayStart = pageData.length > 0 ? start + 1 : 0;
             document.getElementById('filterCountInfo').textContent = `Showing ${displayStart}-${displayEnd} of ${filteredProducts.length}`;
-            document.getElementById('pageInfoText').innerHTML = `Showing <strong>${displayStart}–${displayEnd}</strong> of <strong>${filteredProducts.length}</strong> products`;
+            document.getElementById('pageInfoText').innerHTML = `Showing <strong>${displayStart}â€“${displayEnd}</strong> of <strong>${filteredProducts.length}</strong> products`;
             if (!pageData.length) { tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">No products found matching your criteria.</td></tr>`; renderPagination(0); return; }
             tbody.innerHTML = pageData.map(p => {
                 const stockVal = parseInt(p.stock) || 0, priceVal = parseFloat(p.price) || 0, origPriceVal = parseFloat(p.mrp) || null;
@@ -1348,7 +1349,7 @@
                 const statusHtml = isActive ? '<span class="status-badge status-active">Active</span>' : '<span class="status-badge status-draft">Draft</span>';
                 const imgHtml = p.image_url ? `<img src="${escapeHTML(p.image_url)}" class="admin-table-img" alt="" onerror="this.outerHTML='<div class=\\'admin-table-img\\' style=\\'display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--border)\\'> <i class=\\'fa-regular fa-image\\'></i></div>'"/>` : `<div class="admin-table-img" style="display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--border)"><i class="fa-regular fa-image"></i></div>`;
                 const salesVol = p.sales_count || p.sales || 0;
-                return `<tr><td><input type="checkbox" class="table-checkbox" /></td><td><div style="display:flex;align-items:center;gap:12px">${imgHtml}<div><div class="admin-table-name ${!isActive ? 'text-muted' : ''}">${escapeHTML(p.name || 'Unnamed Product')}</div><div class="admin-table-sub">SKU: ${escapeHTML(p.sku || 'N/A')}</div></div></div></td><td><span class="badge badge-gold">${escapeHTML(p.category || '—')}</span></td><td><div class="admin-table-name">₹${priceVal.toLocaleString('en-IN')}</div>${origPriceVal ? `<div style="font-size:10px; text-decoration:line-through; color:var(--muted)">₹${origPriceVal.toLocaleString('en-IN')}</div>` : ''}</td><td><div class="stock-indicator"><span class="stock-dot" style="background:${stockColor}"></span><span class="stock-qty ${stockClass}">${stockText}</span></div><div class="admin-table-sub">${p.sizes?.length || 0} Variants</div></td><td><div class="admin-table-name">${salesVol}</div></td><td>${statusHtml}</td><td><div class="admin-table-actions"><button class="table-action-btn" title="Edit" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fa-regular fa-pen-to-square"></i></button><button class="table-action-btn danger" title="Delete" onclick="deleteProduct(${p.id})"><i class="fa-regular fa-trash-can"></i></button></div></td></tr>`;
+                return `<tr><td><input type="checkbox" class="table-checkbox" /></td><td><div style="display:flex;align-items:center;gap:12px">${imgHtml}<div><div class="admin-table-name ${!isActive ? 'text-muted' : ''}">${escapeHTML(p.name || 'Unnamed Product')}</div><div class="admin-table-sub">SKU: ${escapeHTML(p.sku || 'N/A')}</div></div></div></td><td><span class="badge badge-gold">${escapeHTML(p.category || 'â€”')}</span></td><td><div class="admin-table-name">â‚¹${priceVal.toLocaleString('en-IN')}</div>${origPriceVal ? `<div style="font-size:10px; text-decoration:line-through; color:var(--muted)">â‚¹${origPriceVal.toLocaleString('en-IN')}</div>` : ''}</td><td><div class="stock-indicator"><span class="stock-dot" style="background:${stockColor}"></span><span class="stock-qty ${stockClass}">${stockText}</span></div><div class="admin-table-sub">${p.sizes?.length || 0} Variants</div></td><td><div class="admin-table-name">${salesVol}</div></td><td>${statusHtml}</td><td><div class="admin-table-actions"><button class="table-action-btn" title="Edit" onclick='openEditModal(${JSON.stringify(p).replace(/'/g, "&#39;")})'><i class="fa-regular fa-pen-to-square"></i></button><button class="table-action-btn danger" title="Delete" onclick="deleteProduct(${p.id})"><i class="fa-regular fa-trash-can"></i></button></div></td></tr>`;
             }).join('');
             renderPagination(filteredProducts.length);
         }
@@ -1357,7 +1358,7 @@
             const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE), wrap = document.getElementById('paginationWrap');
             if (totalPages <= 1) { wrap.innerHTML = ''; return; }
             let html = `<button class="page-btn" ${currentPage === 1 ? 'disabled' : `onclick="changePage(${currentPage - 1})"`}><i class="fa-solid fa-chevron-left" style="font-size:10px"></i></button>`;
-            for (let i = 1; i <= totalPages; i++) { if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) { html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`; } else if (i === currentPage - 2 || i === currentPage + 2) { html += `<span class="page-ellipsis">…</span>`; } }
+            for (let i = 1; i <= totalPages; i++) { if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) { html += `<button class="page-btn ${currentPage === i ? 'active' : ''}" onclick="changePage(${i})">${i}</button>`; } else if (i === currentPage - 2 || i === currentPage + 2) { html += `<span class="page-ellipsis">â€¦</span>`; } }
             html += `<button class="page-btn" ${currentPage === totalPages ? 'disabled' : `onclick="changePage(${currentPage + 1})"`}><i class="fa-solid fa-chevron-right" style="font-size:10px"></i></button>`;
             wrap.innerHTML = html;
         }

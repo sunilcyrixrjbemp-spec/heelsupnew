@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Blog — HeelsUp Admin</title>
+    <title>Blog â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -993,28 +993,28 @@
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Total Posts</div>
-                            <div class="stat-value" id="statTotal">—</div>
+                            <div class="stat-value" id="statTotal">â€”</div>
                         </div>
                         <div class="stat-icon blue-icon"><i class="fa-solid fa-file-lines"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Published</div>
-                            <div class="stat-value" id="statPublished" style="color:var(--success)">—</div>
+                            <div class="stat-value" id="statPublished" style="color:var(--success)">â€”</div>
                         </div>
                         <div class="stat-icon green-icon"><i class="fa-solid fa-check-circle"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Drafts</div>
-                            <div class="stat-value" id="statDrafts" style="color:var(--warning)">—</div>
+                            <div class="stat-value" id="statDrafts" style="color:var(--warning)">â€”</div>
                         </div>
                         <div class="stat-icon orange-icon"><i class="fa-solid fa-file-pen"></i></div>
                     </div>
                     <div class="stat-card">
                         <div>
                             <div class="stat-label">Total Views</div>
-                            <div class="stat-value" id="statViews">—</div>
+                            <div class="stat-value" id="statViews">â€”</div>
                         </div>
                         <div class="stat-icon purple-icon"><i class="fa-solid fa-eye"></i></div>
                     </div>
@@ -1132,8 +1132,9 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
-        // ── AUTH & SETUP ──────────────────────────────────────────────────
+        // â”€â”€ AUTH & SETUP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let user = null;
         try {
             user = HeelsUpAuth.getUser();
@@ -1147,14 +1148,14 @@
         document.getElementById('s-avatar').textContent = uname.charAt(0).toUpperCase();
         document.getElementById('s-name').textContent = uname;
 
-        // ── STATE ────────────────────────────────────────────────────────
+        // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         let allPosts = [];
         let filteredPosts = [];
         let editingPostId = null;
         const PAGE = 10;
         let currentPg = 1;
 
-        // ── SIDEBAR ──────────────────────────────────────────────────────
+        // â”€â”€ SIDEBAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function toggleSidebar() {
             const s = document.getElementById('sidebar');
             const o = document.getElementById('mobOverlay');
@@ -1170,7 +1171,7 @@
             window.location = 'login.html';
         }
 
-        // ── TOAST ────────────────────────────────────────────────────────
+        // â”€â”€ TOAST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function showToast(msg, type = 'success') {
             const c = document.getElementById('toastWrap');
             const t = document.createElement('div');
@@ -1185,11 +1186,11 @@
             }, 4000);
         }
 
-        // ── UTILS ────────────────────────────────────────────────────────
+        // â”€â”€ UTILS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-        function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+        function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'â€”'; }
 
-        // ── DATA FETCHING ────────────────────────────────────────────────
+        // â”€â”€ DATA FETCHING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function loadPosts() {
             document.getElementById('postsTableBody').innerHTML = '<tr><td colspan="7"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading posts...</div></td></tr>';
             try {
@@ -1206,7 +1207,7 @@
             }
         }
 
-        // ── STATS CALCULATION ────────────────────────────────────────────
+        // â”€â”€ STATS CALCULATION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function updateStats() {
             const total = allPosts.length;
             const published = allPosts.filter(p => p.status === 'published').length;
@@ -1219,7 +1220,7 @@
             document.getElementById('statViews').textContent = views.toLocaleString('en-IN');
         }
 
-        // ── FILTERING & RENDERING ────────────────────────────────────────
+        // â”€â”€ FILTERING & RENDERING â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function filterPosts() {
             const q = document.getElementById('postSearch').value.toLowerCase();
             const cat = document.getElementById('catFilter').value;
@@ -1267,7 +1268,7 @@
                     <td>${img}</td>
                     <td>
                         <div class="tbl-name">${esc(p.title)}</div>
-                        <div class="tbl-sub">${esc(p.slug || '—')}</div>
+                        <div class="tbl-sub">${esc(p.slug || 'â€”')}</div>
                         <div style="margin-top:4px;">${tags}</div>
                     </td>
                     <td>
@@ -1294,7 +1295,7 @@
             renderPagination('postsPagination', filteredPosts.length, currentPg, p => { currentPg = p; renderPosts(); });
         }
 
-        // ── MODAL LOGIC ──────────────────────────────────────────────────
+        // â”€â”€ MODAL LOGIC â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function openPostModal() {
             editingPostId = null;
             document.getElementById('postForm').reset();
@@ -1329,7 +1330,7 @@
             if (e.target === this) closePostModal();
         });
 
-        // ── CRUD OPERATIONS ──────────────────────────────────────────────
+        // â”€â”€ CRUD OPERATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         async function savePost(e) {
             e.preventDefault();
             const f = e.target;
@@ -1384,20 +1385,20 @@
             }
         }
 
-        // ── PAGINATION HELPER ────────────────────────────────────────────
+        // â”€â”€ PAGINATION HELPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         function renderPagination(elId, total, page, onPageCallback) {
             const pages = Math.ceil(total / PAGE);
             const el = document.getElementById(elId);
             if (pages <= 1) { el.innerHTML = ''; return; }
 
             el.innerHTML = `
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>‹ Prev</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page - 1})" ${page <= 1 ? 'disabled' : ''}>â€¹ Prev</button>
                 <span class="pg-info">Page <strong>${page}</strong> of <strong>${pages}</strong></span>
-                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next ›</button>
+                <button class="pg-btn" onclick="(${onPageCallback.toString()})(${page + 1})" ${page >= pages ? 'disabled' : ''}>Next â€º</button>
             `;
         }
 
-        // ── INIT ─────────────────────────────────────────────────────────
+        // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         document.addEventListener('DOMContentLoaded', loadPosts);
     </script>
 </body>

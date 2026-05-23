@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Shipping Management — HeelsUp Admin</title>
+   <title>Shipping Management â€” HeelsUp Admin</title>
    <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
       rel="stylesheet" />
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
    <style>
-      /* ── GLOBAL ── */
+      /* â”€â”€ GLOBAL â”€â”€ */
       * {
          margin: 0;
          padding: 0;
@@ -47,7 +47,7 @@
          font-family: inherit;
       }
 
-      /* ── LAYOUT ── */
+      /* â”€â”€ LAYOUT â”€â”€ */
       .wrap {
          display: grid;
          grid-template-columns: 240px 1fr;
@@ -75,7 +75,7 @@
          gap: 20px;
       }
 
-      /* ── SIDEBAR (Synced perfectly with Dashboard) ── */
+      /* â”€â”€ SIDEBAR (Synced perfectly with Dashboard) â”€â”€ */
       .sidebar {
          background: var(--sidebar);
          color: #94a3b8;
@@ -243,7 +243,7 @@
          }
       }
 
-      /* ── TOPBAR ── */
+      /* â”€â”€ TOPBAR â”€â”€ */
       .topbar {
          background: #fff;
          border-bottom: 1px solid var(--border);
@@ -289,7 +289,7 @@
          }
       }
 
-      /* ── BUTTONS (Synced exactly with Dashboard) ── */
+      /* â”€â”€ BUTTONS (Synced exactly with Dashboard) â”€â”€ */
       .btn {
          display: inline-flex;
          align-items: center;
@@ -380,7 +380,7 @@
          color: #fff;
       }
 
-      /* ── BADGES ── */
+      /* â”€â”€ BADGES â”€â”€ */
       .badge {
          display: inline-flex;
          align-items: center;
@@ -404,7 +404,7 @@
          color: #64748b;
       }
 
-      /* ── SEARCH & FILTERS ── */
+      /* â”€â”€ SEARCH & FILTERS â”€â”€ */
       .filter-bar {
          display: flex;
          align-items: center;
@@ -461,7 +461,7 @@
          border-color: var(--gold);
       }
 
-      /* ── CARDS & TABLES ── */
+      /* â”€â”€ CARDS & TABLES â”€â”€ */
       .card {
          background: #fff;
          border-radius: 12px;
@@ -528,7 +528,7 @@
          margin-top: 2px;
       }
 
-      /* ── SHIPPING SPECIFIC UI ── */
+      /* â”€â”€ SHIPPING SPECIFIC UI â”€â”€ */
       .admin-page-header {
          display: flex;
          justify-content: space-between;
@@ -952,7 +952,7 @@
          color: #b91c1c;
       }
 
-      /* ── MODALS ── */
+      /* â”€â”€ MODALS â”€â”€ */
       .modal-backdrop {
          position: fixed;
          inset: 0;
@@ -1066,7 +1066,7 @@
          border-top: 1px solid var(--border);
       }
 
-      /* ── LOADING & TOASTS ── */
+      /* â”€â”€ LOADING & TOASTS â”€â”€ */
       .loading-spinner {
          text-align: center;
          padding: 40px;
@@ -1169,7 +1169,7 @@
    <div class="toast-wrap" id="toastWrap"></div>
 
    <div class="wrap">
-      <!-- ── SIDEBAR (Exact Replica) ── -->
+      <!-- â”€â”€ SIDEBAR (Exact Replica) â”€â”€ -->
       <aside class="sidebar" id="sidebar">
          <div class="sidebar-brand">
             <div class="sidebar-logo">H</div>
@@ -1230,7 +1230,7 @@
       </aside>
 
       <div class="main">
-         <!-- ── TOPBAR ── -->
+         <!-- â”€â”€ TOPBAR â”€â”€ -->
          <div class="topbar">
             <button class="btn-menu" id="menuBtn" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div class="topbar-title" id="topbarTitle">Shipping Management</div>
@@ -1254,39 +1254,39 @@
                </div>
             </div>
 
-            <!-- ── SUMMARY STATS ── -->
+            <!-- â”€â”€ SUMMARY STATS â”€â”€ -->
             <div class="shipping-stats" id="shippingStats">
                <div class="shipping-stat">
                   <div class="shipping-stat-icon icon-gold"><i class="fa-solid fa-map-location-dot"></i></div>
                   <div>
                      <div class="stat-lbl">Zones</div>
-                     <div class="stat-val" id="statZones">—</div>
+                     <div class="stat-val" id="statZones">â€”</div>
                   </div>
                </div>
                <div class="shipping-stat">
                   <div class="shipping-stat-icon icon-blue"><i class="fa-solid fa-location-pin"></i></div>
                   <div>
                      <div class="stat-lbl">Pincodes</div>
-                     <div class="stat-val" id="statPincodes">—</div>
+                     <div class="stat-val" id="statPincodes">â€”</div>
                   </div>
                </div>
                <div class="shipping-stat">
                   <div class="shipping-stat-icon icon-green"><i class="fa-solid fa-truck-fast"></i></div>
                   <div>
                      <div class="stat-lbl">Methods</div>
-                     <div class="stat-val" id="statMethods">—</div>
+                     <div class="stat-val" id="statMethods">â€”</div>
                   </div>
                </div>
                <div class="shipping-stat">
                   <div class="shipping-stat-icon icon-purple"><i class="fa-solid fa-money-bill-wave"></i></div>
                   <div>
                      <div class="stat-lbl">COD Global</div>
-                     <div class="stat-val" id="statCod">—</div>
+                     <div class="stat-val" id="statCod">â€”</div>
                   </div>
                </div>
             </div>
 
-            <!-- ── TABS ── -->
+            <!-- â”€â”€ TABS â”€â”€ -->
             <div class="tab-nav">
                <button class="tab-btn active" onclick="switchTab('zones',this)"><i
                      class="fa-solid fa-map-location-dot"></i> Zones</button>
@@ -1302,7 +1302,7 @@
                   Pincodes</button>
             </div>
 
-            <!-- ═══ ZONES TAB ═══ -->
+            <!-- â•â•â• ZONES TAB â•â•â• -->
             <div class="tab-pane active" id="tab-zones">
                <div class="card" style="border:none; padding:0; box-shadow:none; background:transparent;">
                   <div class="card-header"
@@ -1318,7 +1318,7 @@
                </div>
             </div>
 
-            <!-- ═══ RATES TAB ═══ -->
+            <!-- â•â•â• RATES TAB â•â•â• -->
             <div class="tab-pane" id="tab-rates">
                <div class="card">
                   <div class="card-header">
@@ -1326,7 +1326,7 @@
                      <div style="display:flex;gap:10px;align-items:center">
                         <div style="font-size:.82rem;color:var(--muted)">Free shipping above:</div>
                         <div style="display:flex;align-items:center;gap:6px">
-                           <span style="font-size:.87rem;font-weight:600">₹</span>
+                           <span style="font-size:.87rem;font-weight:600">â‚¹</span>
                            <input type="number" class="rate-cell-input" id="freeShippingThreshold" placeholder="999"
                               style="width:100px">
                            <button class="btn btn-sm btn-outline" onclick="saveFreeThreshold()">Save Global</button>
@@ -1341,7 +1341,7 @@
                               <th>Standard Rate</th>
                               <th>Express Rate</th>
                               <th>Same-Day Rate</th>
-                              <th>Free Above (₹)</th>
+                              <th>Free Above (â‚¹)</th>
                               <th>Actions</th>
                            </tr>
                         </thead>
@@ -1357,7 +1357,7 @@
                </div>
             </div>
 
-            <!-- ═══ METHODS TAB ═══ -->
+            <!-- â•â•â• METHODS TAB â•â•â• -->
             <div class="tab-pane" id="tab-methods">
                <div class="card">
                   <div class="card-header">
@@ -1369,7 +1369,7 @@
                </div>
             </div>
 
-            <!-- ═══ COURIERS TAB ═══ -->
+            <!-- â•â•â• COURIERS TAB â•â•â• -->
             <div class="tab-pane" id="tab-couriers">
                <div class="card" style="border:none; padding:0; box-shadow:none; background:transparent;">
                   <div class="card-header"
@@ -1386,7 +1386,7 @@
                </div>
             </div>
 
-            <!-- ═══ COD SETTINGS TAB ═══ -->
+            <!-- â•â•â• COD SETTINGS TAB â•â•â• -->
             <div class="tab-pane" id="tab-cod">
                <div class="card">
                   <div class="card-header">
@@ -1401,7 +1401,7 @@
                </div>
             </div>
 
-            <!-- ═══ PINCODES TAB ═══ -->
+            <!-- â•â•â• PINCODES TAB â•â•â• -->
             <div class="tab-pane" id="tab-pincodes">
                <!-- Verification -->
                <div class="card"
@@ -1435,7 +1435,7 @@
                      ondragover="handleDragOver(event)" ondragleave="handleDragLeave(event)" ondrop="handleDrop(event)">
                      <i class="fa-solid fa-file-csv"></i>
                      <p>Click or drag & drop CSV file here</p>
-                     <small>Format: pincode, zone_id, city, state — max 10,000 rows</small>
+                     <small>Format: pincode, zone_id, city, state â€” max 10,000 rows</small>
                   </div>
                   <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCsvUpload(event)">
                   <div id="uploadResult" style="margin-top:12px"></div>
@@ -1486,9 +1486,9 @@
                      <span id="pincodeCount"></span>
                      <div style="display:flex;gap:8px">
                         <button class="btn btn-sm btn-outline" id="prevPinBtn" onclick="pincodePage--; loadPincodes()"
-                           disabled>‹ Prev</button>
+                           disabled>â€¹ Prev</button>
                         <button class="btn btn-sm btn-outline" id="nextPinBtn" onclick="pincodePage++; loadPincodes()"
-                           disabled>Next ›</button>
+                           disabled>Next â€º</button>
                      </div>
                   </div>
                </div>
@@ -1498,7 +1498,7 @@
       </div><!-- /main -->
    </div><!-- /wrap -->
 
-   <!-- ═══ ZONE MODAL ═══ -->
+   <!-- â•â•â• ZONE MODAL â•â•â• -->
    <div class="modal-backdrop" id="zoneModal">
       <div class="modal">
          <div class="modal-header">
@@ -1542,7 +1542,7 @@
       </div>
    </div>
 
-   <!-- ═══ COURIER MODAL ═══ -->
+   <!-- â•â•â• COURIER MODAL â•â•â• -->
    <div class="modal-backdrop" id="courierModal">
       <div class="modal">
          <div class="modal-header">
@@ -1584,15 +1584,16 @@
 
    <script src="app-config.js"></script>
    <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
    <script>
-      // ── AUTH & CORE ──────────────────────────────────────────────────────────
+      // â”€â”€ AUTH & CORE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const user = HeelsUpAuth.getUser();
       if (!user || user.role !== 'admin') { window.location = 'login.html?redirect=admin-shipping.html'; }
       const name = (user?.firstName || user?.first_name || 'Admin');
       document.getElementById('s-avatar').textContent = name.charAt(0).toUpperCase();
       document.getElementById('s-name').textContent = name;
 
-      // ── STATE ──────────────────────────────────────────────────────────
+      // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let allZones = [];
       let allCouriers = [];
       let allPincodes = [];
@@ -1601,7 +1602,7 @@
       let pincodePage = 1;
       const PINCODE_PAGE_SIZE = 50;
 
-      // ── UI HELPERS ─────────────────────────────────────────────────────────
+      // â”€â”€ UI HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function toggleSidebar() {
          const s = document.getElementById('sidebar');
          const o = document.getElementById('mobOverlay');
@@ -1625,9 +1626,9 @@
       }
 
       function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-      function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+      function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'â€”'; }
 
-      // ── TABS ──────────────────────────────────────────────────────────
+      // â”€â”€ TABS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function switchTab(name, btn) {
          document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
          document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1642,7 +1643,7 @@
          if (name === 'pincodes') loadPincodes();
       }
 
-      // ── INIT & SUMMARY STATS ──────────────────────────────────────────
+      // â”€â”€ INIT & SUMMARY STATS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function init() {
          await loadZones();
          loadSummaryStats();
@@ -1673,14 +1674,14 @@
             document.getElementById('statMethods').textContent = (methodsRes.methods || []).filter(m => m.is_active).length;
             document.getElementById('statCod').textContent = codRes.enabled ? 'ON' : 'OFF';
          } catch (e) {
-            document.getElementById('statZones').textContent = "—";
-            document.getElementById('statPincodes').textContent = "—";
-            document.getElementById('statMethods').textContent = "—";
-            document.getElementById('statCod').textContent = "—";
+            document.getElementById('statZones').textContent = "â€”";
+            document.getElementById('statPincodes').textContent = "â€”";
+            document.getElementById('statMethods').textContent = "â€”";
+            document.getElementById('statCod').textContent = "â€”";
          }
       }
 
-      // ── ZONES ──────────────────────────────────────────────────────────
+      // â”€â”€ ZONES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadZones() {
          document.getElementById('zonesContainer').innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading zones...</div>';
          try {
@@ -1703,7 +1704,7 @@
                     <div class="zone-card-header">
                         <div>
                             <div class="zone-name">${esc(z.name)}</div>
-                            <div class="zone-meta">${z.delivery_days ? 'Delivery: ' + esc(z.delivery_days) + ' days' : ''}${z.pincode_count ? ' · ' + z.pincode_count + ' PINs' : ''}</div>
+                            <div class="zone-meta">${z.delivery_days ? 'Delivery: ' + esc(z.delivery_days) + ' days' : ''}${z.pincode_count ? ' Â· ' + z.pincode_count + ' PINs' : ''}</div>
                         </div>
                         <span class="badge ${z.is_active ? 'badge-active' : 'badge-inactive'}">${z.is_active ? 'Active' : 'Inactive'}</span>
                     </div>
@@ -1711,11 +1712,11 @@
                     <div class="zone-rate">
                         <div>
                             <span style="font-weight:400;color:var(--muted);font-size:.7rem;text-transform:uppercase;">Standard</span><br>
-                            ${z.standard_rate != null ? '₹' + Number(z.standard_rate).toLocaleString('en-IN') : 'N/A'}
+                            ${z.standard_rate != null ? 'â‚¹' + Number(z.standard_rate).toLocaleString('en-IN') : 'N/A'}
                         </div>
                         <div style="text-align:right">
                             <span style="font-weight:400;color:var(--muted);font-size:.7rem;text-transform:uppercase;">Express</span><br>
-                            ${z.express_rate != null ? '₹' + Number(z.express_rate).toLocaleString('en-IN') : 'N/A'}
+                            ${z.express_rate != null ? 'â‚¹' + Number(z.express_rate).toLocaleString('en-IN') : 'N/A'}
                         </div>
                     </div>
                     <div class="zone-actions">
@@ -1779,7 +1780,7 @@
          } catch (e) { showToast(e.message || 'Deletion failed.', 'error'); }
       }
 
-      // ── RATES ──────────────────────────────────────────────────────────
+      // â”€â”€ RATES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadRates() {
          document.getElementById('ratesTableBody').innerHTML = '<tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Loading rates...</div></td></tr>';
          try {
@@ -1801,10 +1802,10 @@
          tbody.innerHTML = allZones.map(z => `
                 <tr id="rate-row-${z.id}">
                     <td><div class="tbl-name">${esc(z.name)}</div><div class="tbl-sub">${esc(z.states || '')}</div></td>
-                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">₹</span><input type="number" class="rate-cell-input" id="std-${z.id}" value="${z.standard_rate != null ? z.standard_rate : ''}" placeholder="0"></div></td>
-                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">₹</span><input type="number" class="rate-cell-input" id="exp-${z.id}" value="${z.express_rate != null ? z.express_rate : ''}" placeholder="0"></div></td>
-                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">₹</span><input type="number" class="rate-cell-input" id="smd-${z.id}" value="${z.sameday_rate != null ? z.sameday_rate : ''}" placeholder="0"></div></td>
-                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">₹</span><input type="number" class="rate-cell-input" id="free-${z.id}" value="${z.free_above != null ? z.free_above : ''}" placeholder="None"></div></td>
+                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">â‚¹</span><input type="number" class="rate-cell-input" id="std-${z.id}" value="${z.standard_rate != null ? z.standard_rate : ''}" placeholder="0"></div></td>
+                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">â‚¹</span><input type="number" class="rate-cell-input" id="exp-${z.id}" value="${z.express_rate != null ? z.express_rate : ''}" placeholder="0"></div></td>
+                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">â‚¹</span><input type="number" class="rate-cell-input" id="smd-${z.id}" value="${z.sameday_rate != null ? z.sameday_rate : ''}" placeholder="0"></div></td>
+                    <td><div style="display:flex;align-items:center;gap:4px;"><span style="color:var(--muted)">â‚¹</span><input type="number" class="rate-cell-input" id="free-${z.id}" value="${z.free_above != null ? z.free_above : ''}" placeholder="None"></div></td>
                     <td><button class="btn btn-sm btn-outline" style="border-color:var(--gold); color:var(--gold-dark);" onclick="saveZoneRate(${z.id})"><i class="fa-solid fa-check"></i> Commit</button></td>
                 </tr>
             `).join('');
@@ -1834,7 +1835,7 @@
          } catch (e) { showToast('Failed to update base rules.', 'error'); }
       }
 
-      // ── METHODS ──────────────────────────────────────────────────────────
+      // â”€â”€ METHODS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadMethods() {
          document.getElementById('methodsContainer').innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Validating capabilities...</div>';
          try {
@@ -1890,7 +1891,7 @@
          } catch (e) { showToast('Database rejection.', 'error'); }
       }
 
-      // ── COURIERS ──────────────────────────────────────────────────────────
+      // â”€â”€ COURIERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadCouriers() {
          document.getElementById('couriersContainer').innerHTML = '<div class="loading-spinner" style="grid-column:1/-1;"><i class="fa-solid fa-spinner"></i>Accessing partner registry...</div>';
          try {
@@ -1961,7 +1962,7 @@
          } catch (e) { showToast('Severance blocked.', 'error'); }
       }
 
-      // ── COD SETTINGS ──────────────────────────────────────────────────────────
+      // â”€â”€ COD SETTINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadCodSettings() {
          document.getElementById('codContainer').innerHTML = '<div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Analyzing logic rules...</div>';
          try {
@@ -1985,7 +1986,7 @@
                     <div class="setting-block" style="background:#fff;">
                         <div class="setting-block-title">COD Premium Fee</div>
                         <div style="display:flex;align-items:center;gap:10px; background:#f8fafc; padding:6px 12px; border-radius:8px; border:1px solid var(--border); width:max-content;">
-                            <span style="font-size:.9rem;font-weight:700;color:var(--gold-dark)">₹</span>
+                            <span style="font-size:.9rem;font-weight:700;color:var(--gold-dark)">â‚¹</span>
                             <input type="number" class="rate-cell-input" style="border:none; background:transparent; font-size:.9rem; padding:0; width:80px; box-shadow:none;" id="codCharge" value="${s.extra_charge || 0}" placeholder="0">
                         </div>
                         <p style="font-size:.78rem;color:var(--muted);margin-top:12px">Added directly to total runtime receipts.</p>
@@ -1994,7 +1995,7 @@
                     <div class="setting-block">
                         <div class="setting-block-title">Order Value Ceiling</div>
                         <div style="display:flex;align-items:center;gap:8px">
-                            <span style="font-size:.9rem;font-weight:600">₹</span>
+                            <span style="font-size:.9rem;font-weight:600">â‚¹</span>
                             <input type="number" class="form-input" id="codMaxOrder" value="${s.max_order_amount || 10000}" placeholder="10000" style="max-width:140px; font-weight:600;">
                         </div>
                         <p style="font-size:.75rem;color:var(--danger);margin-top:8px">Block COD protocol for high-risk pipelines.</p>
@@ -2003,7 +2004,7 @@
                     <div class="setting-block">
                         <div class="setting-block-title">Order Value Floor</div>
                         <div style="display:flex;align-items:center;gap:8px">
-                            <span style="font-size:.9rem;font-weight:600">₹</span>
+                            <span style="font-size:.9rem;font-weight:600">â‚¹</span>
                             <input type="number" class="form-input" id="codMinOrder" value="${s.min_order_amount || 0}" placeholder="0" style="max-width:140px; font-weight:600;">
                         </div>
                         <p style="font-size:.75rem;color:var(--muted);margin-top:8px">Protects logistical margin overheads.</p>
@@ -2063,7 +2064,7 @@
          finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes'; }
       }
 
-      // ── PINCODES ──────────────────────────────────────────────────────────
+      // â”€â”€ PINCODES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadPincodes() {
          document.getElementById('pincodesTableBody').innerHTML = '<tr><td colspan="6"><div class="loading-spinner"><i class="fa-solid fa-spinner"></i>Parsing directory...</div></td></tr>';
          const zone = document.getElementById('pincodeZoneFilter').value;
@@ -2078,7 +2079,7 @@
 
             renderPincodeTable(allPincodes);
 
-            document.getElementById('pincodeCount').innerHTML = `Showing blocks ${offset + 1}–${Math.min(offset + PINCODE_PAGE_SIZE, total)} of ${total.toLocaleString('en-IN')}`;
+            document.getElementById('pincodeCount').innerHTML = `Showing blocks ${offset + 1}â€“${Math.min(offset + PINCODE_PAGE_SIZE, total)} of ${total.toLocaleString('en-IN')}`;
 
             document.getElementById('prevPinBtn').disabled = pincodePage <= 1;
             document.getElementById('nextPinBtn').disabled = offset + PINCODE_PAGE_SIZE >= total;
@@ -2104,8 +2105,8 @@
                 <tr>
                     <td><span style="font-family:monospace; font-weight:700; font-size:.9rem; color:var(--text); background:#f8fafc; padding:3px 7px; border-radius:5px;">${esc(p.pincode)}</span></td>
                     <td><span class="badge" style="background:rgba(201,169,110,.15); color:var(--gold-dark);">${esc(p.zone_name || 'Unmapped')}</span></td>
-                    <td style="font-weight:600;">${esc(p.city || '—')}</td>
-                    <td>${esc(p.state || '—')}</td>
+                    <td style="font-weight:600;">${esc(p.city || 'â€”')}</td>
+                    <td>${esc(p.state || 'â€”')}</td>
                     <td style="color:var(--muted);">${fmtDate(p.created_at)}</td>
                     <td><div class="act-cell"><button class="btn-icon btn-del" onclick="deletePincode('${esc(p.pincode)}')" title="Revoke Coverage"><i class="fa-solid fa-trash"></i></button></div></td>
                 </tr>
@@ -2133,7 +2134,7 @@
             const res = await HeelsUpAuth.api(`/api/admin/shipping/pincodes/check?pincode=${pin}`);
             if (res.serviceable) {
                el.className = 'pincode-result serviceable';
-               el.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>${pin}</strong> maps to <strong>${esc(res.zone_name || '—')}</strong>. Estimated SLA: <strong>${esc(res.delivery_days || '—')} days</strong>.`;
+               el.innerHTML = `<i class="fa-solid fa-circle-check"></i> <strong>${pin}</strong> maps to <strong>${esc(res.zone_name || 'â€”')}</strong>. Estimated SLA: <strong>${esc(res.delivery_days || 'â€”')} days</strong>.`;
             } else {
                el.className = 'pincode-result not-serviceable';
                el.innerHTML = `<i class="fa-solid fa-circle-xmark"></i> <strong>${pin}</strong> resolves to dead zone.`;
@@ -2149,7 +2150,7 @@
          } catch (e) { showToast('Block action failed.', 'error'); }
       }
 
-      // ── BULK CSV UPLOAD ─────────────────────────────────────────────────────────
+      // â”€â”€ BULK CSV UPLOAD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function handleDragOver(e) { e.preventDefault(); document.getElementById('dropZone').classList.add('drag-over'); }
       function handleDragLeave() { document.getElementById('dropZone').classList.remove('drag-over'); }
       function handleDrop(e) { e.preventDefault(); document.getElementById('dropZone').classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if (f) processCSV(f); }
@@ -2200,7 +2201,7 @@
          const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'heelsup_pincode_matrix_template.csv'; a.click();
       }
 
-      // ── MODAL BACKDROP CLOSE ─────────────────────────────────────────
+      // â”€â”€ MODAL BACKDROP CLOSE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       ['zoneModal', 'courierModal'].forEach(id => {
          document.getElementById(id).addEventListener('click', function (e) { if (e.target === this) this.classList.remove('show'); });
       });

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pages — HeelsUp Admin</title>
+    <title>Pages â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -1024,6 +1024,7 @@
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
     <script>
         // State
         let allPages = [];
@@ -1074,7 +1075,7 @@
         }
 
         function esc(s) { return String(s || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
-        function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'; }
+        function fmtDate(d) { return d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'â€”'; }
 
         // Live API Fetching
         async function loadPages() {
@@ -1134,7 +1135,7 @@
                 return;
             }
 
-            info.innerHTML = `Showing <strong>${start + 1}–${Math.min(start + PAGE, filteredPages.length)}</strong> of <strong>${filteredPages.length}</strong> pages`;
+            info.innerHTML = `Showing <strong>${start + 1}â€“${Math.min(start + PAGE, filteredPages.length)}</strong> of <strong>${filteredPages.length}</strong> pages`;
 
             tbody.innerHTML = page.map(p => {
                 const isPublished = (p.status || 'published').toLowerCase() === 'published';

@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HeelsUp Admin — Dashboard</title>
+  <title>HeelsUp Admin â€” Dashboard</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link
@@ -13,9 +13,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
   <style>
-    /* ═══════════════════════════════════════════════
-        DESIGN TOKENS — HeelsUp Enterprise Admin
-    ═══════════════════════════════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        DESIGN TOKENS â€” HeelsUp Enterprise Admin
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     :root {
       --primary: #F29F67;
       --primary-dark: #d4784a;
@@ -113,7 +113,7 @@
       background: #b0b5c4
     }
 
-    /* ─── AUTH GUARD ─── */
+    /* â”€â”€â”€ AUTH GUARD â”€â”€â”€ */
     #authGuard {
       position: fixed;
       inset: 0;
@@ -130,7 +130,7 @@
       display: flex
     }
 
-    /* ─── PROGRESS BAR ─── */
+    /* â”€â”€â”€ PROGRESS BAR â”€â”€â”€ */
     #nprogress {
       position: fixed;
       top: 0;
@@ -144,7 +144,7 @@
       border-radius: 0 2px 2px 0
     }
 
-    /* ─── LAYOUT ─── */
+    /* â”€â”€â”€ LAYOUT â”€â”€â”€ */
     .layout {
       display: grid;
       grid-template-columns: 260px 1fr;
@@ -157,7 +157,7 @@
       }
     }
 
-    /* ─── SIDEBAR ─── */
+    /* â”€â”€â”€ SIDEBAR â”€â”€â”€ */
     .sidebar {
       background: var(--sidebar-bg);
       color: #94A3B8;
@@ -381,7 +381,7 @@
       }
     }
 
-    /* ─── MAIN ─── */
+    /* â”€â”€â”€ MAIN â”€â”€â”€ */
     .main {
       min-height: 100vh;
       display: flex;
@@ -389,7 +389,7 @@
       background: var(--bg)
     }
 
-    /* ─── TOPBAR ─── */
+    /* â”€â”€â”€ TOPBAR â”€â”€â”€ */
     .topbar {
       background: rgba(255, 255, 255, 0.9);
       backdrop-filter: blur(16px);
@@ -448,7 +448,7 @@
       font-family: 'SF Mono', monospace;
     }
 
-    /* ─── CONTENT ─── */
+    /* â”€â”€â”€ CONTENT â”€â”€â”€ */
     .content {
       padding: 22px;
       flex: 1
@@ -475,7 +475,7 @@
       }
     }
 
-    /* ─── BUTTONS ─── */
+    /* â”€â”€â”€ BUTTONS â”€â”€â”€ */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -602,7 +602,7 @@
       border-color: #fecaca
     }
 
-    /* ─── TOAST ─── */
+    /* â”€â”€â”€ TOAST â”€â”€â”€ */
     .toast-wrap {
       position: fixed;
       bottom: 24px;
@@ -668,7 +668,7 @@
       opacity: 1
     }
 
-    /* ─── CARD ─── */
+    /* â”€â”€â”€ CARD â”€â”€â”€ */
     .card {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -695,7 +695,7 @@
       font-family: var(--font-display)
     }
 
-    /* ─── BADGES ─── */
+    /* â”€â”€â”€ BADGES â”€â”€â”€ */
     .badge {
       display: inline-flex;
       align-items: center;
@@ -818,7 +818,7 @@
       color: #b45309
     }
 
-    /* ─── ORDER PIPELINE ─── */
+    /* â”€â”€â”€ ORDER PIPELINE â”€â”€â”€ */
     .order-pipeline {
       background: var(--card-bg);
       border-radius: var(--radius);
@@ -898,7 +898,7 @@
       color: var(--text-2);
     }
 
-    /* ─── TABLE ─── */
+    /* â”€â”€â”€ TABLE â”€â”€â”€ */
     .tbl-scroll {
       overflow-x: auto
     }
@@ -970,7 +970,7 @@
       color: var(--muted)
     }
 
-    /* ─── FORM ─── */
+    /* â”€â”€â”€ FORM â”€â”€â”€ */
     .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1069,7 +1069,7 @@
       grid-column: 1/-1
     }
 
-    /* ─── PAGINATION ─── */
+    /* â”€â”€â”€ PAGINATION â”€â”€â”€ */
     .pagination {
       display: flex;
       align-items: center;
@@ -1102,7 +1102,7 @@
       cursor: not-allowed
     }
 
-    /* ─── MISC ─── */
+    /* â”€â”€â”€ MISC â”€â”€â”€ */
     .spinner-wrap {
       text-align: center;
       padding: 48px;
@@ -1199,7 +1199,7 @@
       margin-top: 6px
     }
 
-    /* ═══════════════════════ DASHBOARD ═══════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DASHBOARD â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     .date-filter-bar {
       display: flex;
       align-items: center;
@@ -1660,7 +1660,7 @@
       }
     }
 
-    /* ═══════════════════════ ORDERS ═══════════════════════ */
+    /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ORDERS â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
     .hero-banner {
       background: var(--dark-3);
       border-radius: 18px;
@@ -2006,7 +2006,7 @@
       margin-left: 6px
     }
 
-    /* ═══ ORDER MODAL ═══ */
+    /* â•â•â• ORDER MODAL â•â•â• */
     .modal-overlay {
       position: fixed;
       inset: 0;
@@ -2346,7 +2346,7 @@
       max-width: 600px
     }
 
-    /* ─── TOPBAR ACTIONS AREA  ─── */
+    /* â”€â”€â”€ TOPBAR ACTIONS AREA  â”€â”€â”€ */
     .topbar-actions-group {
       display: flex;
       align-items: center;
@@ -2418,7 +2418,7 @@
   <div class="mob-overlay" id="mobOverlay" onclick="closeSidebar()"></div>
 
   <div class="layout">
-    <!-- ══════ SIDEBAR ══════ -->
+    <!-- â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â• -->
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <div class="brand-logo" style="width: auto; height: auto;">
@@ -2479,7 +2479,7 @@
       </div>
     </aside>
 
-    <!-- ══════ MAIN ══════ -->
+    <!-- â•â•â•â•â•â• MAIN â•â•â•â•â•â• -->
     <div class="main">
       <div class="topbar">
         <button class="btn-menu" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
@@ -2497,7 +2497,7 @@
 
       <div class="content">
 
-        <!-- ══════════════════ DASHBOARD SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• DASHBOARD SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec active" id="sec-dashboard">
 
           <!-- Date Filter -->
@@ -2521,8 +2521,8 @@
           <!-- Welcome Banner -->
           <div class="welcome-banner">
             <div class="welcome-text">
-              <h2 id="welcomeHeading">Welcome Back! <span style="font-size:1.35rem">👋</span></h2>
-              <p id="dashDate" style="margin-top:5px">Loading…</p>
+              <h2 id="welcomeHeading">Welcome Back! <span style="font-size:1.35rem">ðŸ‘‹</span></h2>
+              <p id="dashDate" style="margin-top:5px">Loadingâ€¦</p>
             </div>
             <div class="welcome-actions">
               <button class="btn btn-sm btn-primary"
@@ -2600,11 +2600,11 @@
             <div class="pipeline-header">
               <div class="pipeline-title"><i class="fa-solid fa-route"
                   style="color:var(--primary);margin-right:7px"></i>Order Pipeline</div>
-              <span class="badge badge-placed" id="pipelineTotal">—</span>
+              <span class="badge badge-placed" id="pipelineTotal">â€”</span>
             </div>
             <div class="pipeline-strip" id="pipelineStrip"></div>
             <div class="pipeline-items" id="pipelineItems">
-              <div class="spinner-wrap" style="grid-column:1/-1"><i class="fa-solid fa-spinner"></i>Loading…</div>
+              <div class="spinner-wrap" style="grid-column:1/-1"><i class="fa-solid fa-spinner"></i>Loadingâ€¦</div>
             </div>
           </div>
 
@@ -2644,7 +2644,7 @@
           </div>
         </div><!-- /sec-dashboard -->
 
-        <!-- ══════════════════ PRODUCTS SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• PRODUCTS SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec" id="sec-products">
           <div class="card">
             <div class="card-hd">
@@ -2660,7 +2660,7 @@
             <div class="filter-bar"
               style="margin-bottom:0;border-radius:0;border:none;border-bottom:1px solid var(--border);box-shadow:none">
               <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" id="productSearch" placeholder="Search name or SKU…"
+                <input type="text" class="search-input" id="productSearch" placeholder="Search name or SKUâ€¦"
                   oninput="filterProducts()">
               </div>
               <select class="filter-select" id="catFilter" onchange="filterProducts()">
@@ -2679,7 +2679,7 @@
               </select>
               <select class="filter-select" id="stockFilter" onchange="filterProducts()">
                 <option value="">All Stock</option>
-                <option value="low">Low (≤5)</option>
+                <option value="low">Low (â‰¤5)</option>
                 <option value="out">Out of Stock</option>
               </select>
             </div>
@@ -2700,26 +2700,26 @@
                 <tbody id="productsTableBody">
                   <tr>
                     <td colspan="8">
-                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading products…</div>
+                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading productsâ€¦</div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="card-ft">
-              <div class="pg-info" id="productsPgInfo">—</div>
+              <div class="pg-info" id="productsPgInfo">â€”</div>
               <div class="pagination" id="productsPagination"></div>
             </div>
           </div>
         </div><!-- /sec-products -->
 
-        <!-- ══════════════════ ORDERS SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• ORDERS SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec" id="sec-orders">
           <div class="hero-banner">
             <div>
               <div class="hero-title">Order Management <i class="fa-solid fa-bag-shopping"
                   style="font-size:1.15rem;color:var(--primary);vertical-align:middle;margin-left:5px"></i></div>
-              <div class="hero-sub" id="ordersHeroSub">Loading orders…</div>
+              <div class="hero-sub" id="ordersHeroSub">Loading ordersâ€¦</div>
             </div>
             <div class="hero-actions">
               <button class="btn btn-sm btn-dark" onclick="exportOrdersCSV()"><i
@@ -2738,7 +2738,7 @@
               <div class="kpi-icon c-blue"><i class="fa-solid fa-bag-shopping"></i></div>
               <div>
                 <div class="kpi-label">Total Orders</div>
-                <div class="kpi-val" id="oKpiTotal">—</div>
+                <div class="kpi-val" id="oKpiTotal">â€”</div>
                 <div class="kpi-sub">All time</div>
               </div>
             </div>
@@ -2746,7 +2746,7 @@
               <div class="kpi-icon c-gold"><i class="fa-solid fa-clock"></i></div>
               <div>
                 <div class="kpi-label">Unfulfilled</div>
-                <div class="kpi-val" id="oKpiUnfulfilled">—</div>
+                <div class="kpi-val" id="oKpiUnfulfilled">â€”</div>
                 <div class="kpi-sub">Need action</div>
               </div>
             </div>
@@ -2754,7 +2754,7 @@
               <div class="kpi-icon c-teal"><i class="fa-solid fa-circle-check"></i></div>
               <div>
                 <div class="kpi-label">Delivered</div>
-                <div class="kpi-val" id="oKpiDelivered">—</div>
+                <div class="kpi-val" id="oKpiDelivered">â€”</div>
                 <div class="kpi-sub">Completed</div>
               </div>
             </div>
@@ -2762,7 +2762,7 @@
               <div class="kpi-icon c-orange"><i class="fa-solid fa-indian-rupee-sign"></i></div>
               <div>
                 <div class="kpi-label">Revenue</div>
-                <div class="kpi-val" id="oKpiRevenue">—</div>
+                <div class="kpi-val" id="oKpiRevenue">â€”</div>
                 <div class="kpi-sub">Paid orders</div>
               </div>
             </div>
@@ -2770,7 +2770,7 @@
               <div class="kpi-icon c-red"><i class="fa-solid fa-ban"></i></div>
               <div>
                 <div class="kpi-label">Cancelled</div>
-                <div class="kpi-val" id="oKpiCancelled">—</div>
+                <div class="kpi-val" id="oKpiCancelled">â€”</div>
                 <div class="kpi-sub">Total cancels</div>
               </div>
             </div>
@@ -2804,7 +2804,7 @@
           <div class="filter-bar">
             <div class="search-wrap">
               <i class="fa-solid fa-magnifying-glass"></i>
-              <input type="text" class="search-input" id="ordersSearch" placeholder="Order#, Customer, Phone, Email…"
+              <input type="text" class="search-input" id="ordersSearch" placeholder="Order#, Customer, Phone, Emailâ€¦"
                 oninput="applyOrderFilters()">
             </div>
             <select class="filter-select" id="oPayFilter" onchange="applyOrderFilters()">
@@ -2850,7 +2850,7 @@
                 <tbody id="ordersTbody">
                   <tr>
                     <td colspan="8">
-                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading orders…</div>
+                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading ordersâ€¦</div>
                     </td>
                   </tr>
                 </tbody>
@@ -2863,7 +2863,7 @@
           </div>
         </div><!-- /sec-orders -->
 
-        <!-- ══════════════════ CUSTOMERS SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• CUSTOMERS SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec" id="sec-customers">
           <div class="card">
             <div class="card-hd">
@@ -2874,7 +2874,7 @@
             <div class="filter-bar"
               style="margin-bottom:0;border-radius:0;border:none;border-bottom:1px solid var(--border);box-shadow:none">
               <div class="search-wrap"><i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" class="search-input" id="customerSearch" placeholder="Search name or email…"
+                <input type="text" class="search-input" id="customerSearch" placeholder="Search name or emailâ€¦"
                   oninput="filterCustomers()">
               </div>
               <select class="filter-select" id="roleFilter" onchange="filterCustomers()">
@@ -2898,20 +2898,20 @@
                 <tbody id="customersTableBody">
                   <tr>
                     <td colspan="6">
-                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div>
+                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loadingâ€¦</div>
                     </td>
                   </tr>
                 </tbody>
               </table>
             </div>
             <div class="card-ft">
-              <div class="pg-info" id="customersPgInfo">—</div>
+              <div class="pg-info" id="customersPgInfo">â€”</div>
               <div class="pagination" id="customersPagination"></div>
             </div>
           </div>
         </div><!-- /sec-customers -->
 
-        <!-- ══════════════════ COUPONS SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• COUPONS SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec" id="sec-coupons">
           <div class="card">
             <div class="card-hd">
@@ -2938,7 +2938,7 @@
                 <tbody id="couponsTableBody">
                   <tr>
                     <td colspan="9">
-                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div>
+                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loadingâ€¦</div>
                     </td>
                   </tr>
                 </tbody>
@@ -2947,7 +2947,7 @@
           </div>
         </div><!-- /sec-coupons -->
 
-        <!-- ══════════════════ REVIEWS SECTION ══════════════════ -->
+        <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• REVIEWS SECTION â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
         <div class="sec" id="sec-reviews">
           <div class="card">
             <div class="card-hd">
@@ -2974,7 +2974,7 @@
                 <tbody id="reviewsTableBody">
                   <tr>
                     <td colspan="6">
-                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div>
+                      <div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loadingâ€¦</div>
                     </td>
                   </tr>
                 </tbody>
@@ -2988,9 +2988,9 @@
   </div><!-- /layout -->
 
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ORDER DETAIL MODAL
-══════════════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="modal-overlay" id="orderDetailModal">
     <div class="modal wide">
       <div class="modal-header">
@@ -3014,9 +3014,9 @@
   </div>
 
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      PRODUCT MODAL
-══════════════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="product-modal-bd" id="productModalBd">
     <div class="modal">
       <div class="modal-header">
@@ -3040,17 +3040,17 @@
                 <option>Accessories</option>
               </select>
             </div>
-            <div class="form-field"><label class="form-label">Price ₹ *</label><input type="number" class="form-input"
+            <div class="form-field"><label class="form-label">Price â‚¹ *</label><input type="number" class="form-input"
                 name="price" required min="0" placeholder="899"></div>
-            <div class="form-field"><label class="form-label">MRP ₹</label><input type="number" class="form-input"
+            <div class="form-field"><label class="form-label">MRP â‚¹</label><input type="number" class="form-input"
                 name="mrp" min="0" placeholder="1499"></div>
             <div class="form-field"><label class="form-label">Stock Qty</label><input type="number" class="form-input"
                 name="stock" min="0" value="0"></div>
             <div class="form-field full"><label class="form-label">Description</label><textarea
-                class="form-input form-textarea" name="description" placeholder="Short product description…"></textarea>
+                class="form-input form-textarea" name="description" placeholder="Short product descriptionâ€¦"></textarea>
             </div>
             <div class="form-field full"><label class="form-label">Image URL</label><input type="url" class="form-input"
-                name="image_url" placeholder="https://…" oninput="updateProductImgPreview(this.value)"></div>
+                name="image_url" placeholder="https://â€¦" oninput="updateProductImgPreview(this.value)"></div>
             <div class="form-field full" id="imgPreviewWrap" style="display:none">
               <img id="imgPreview" src=""
                 style="max-height:100px;border-radius:10px;border:1px solid var(--border);object-fit:cover"
@@ -3080,9 +3080,9 @@
   </div>
 
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      COUPON MODAL
-══════════════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <div class="coupon-modal-bd" id="couponModalBd">
     <div class="modal">
       <div class="modal-header">
@@ -3098,14 +3098,14 @@
             <div class="form-field"><label class="form-label">Discount Type</label>
               <select class="form-select" name="type">
                 <option value="percent">Percentage (%)</option>
-                <option value="flat">Flat Amount (₹)</option>
+                <option value="flat">Flat Amount (â‚¹)</option>
               </select>
             </div>
             <div class="form-field"><label class="form-label">Value *</label><input type="number" class="form-input"
                 name="value" required min="0" placeholder="10"></div>
-            <div class="form-field"><label class="form-label">Min Order (₹)</label><input type="number"
+            <div class="form-field"><label class="form-label">Min Order (â‚¹)</label><input type="number"
                 class="form-input" name="min_order" min="0" placeholder="0" value="0"></div>
-            <div class="form-field"><label class="form-label">Max Discount (₹)</label><input type="number"
+            <div class="form-field"><label class="form-label">Max Discount (â‚¹)</label><input type="number"
                 class="form-input" name="max_discount" min="0" placeholder="Unlimited"></div>
             <div class="form-field"><label class="form-label">Max Uses</label><input type="number" class="form-input"
                 name="max_uses" min="0" placeholder="Unlimited"></div>
@@ -3113,7 +3113,7 @@
                 class="form-input" name="expires_at"></div>
             <div class="form-field full"><label class="form-label">Description</label><textarea
                 class="form-input form-textarea" name="description" style="min-height:56px"
-                placeholder="Short description…"></textarea></div>
+                placeholder="Short descriptionâ€¦"></textarea></div>
             <div class="form-field full">
               <div class="form-check"><input type="checkbox" name="active" id="chkCouponActive" checked><label
                   for="chkCouponActive">Active</label></div>
@@ -3130,20 +3130,21 @@
   </div>
 
 
-  <!-- ══════════════════════════════════════════════════
+  <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      SCRIPTS
-══════════════════════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
   <script src="app-auth.js"></script>
-  <script src="dashboard.js?v=3"></script>
+  <script src="admin-enterprise.js"></script>
+  <script src="dashboard.js?v=4"></script>
   <script>
     /* ==========================================================
-       ADMIN.HTML WIRING — runs IMMEDIATELY after dashboard.js
+       ADMIN.HTML WIRING â€” runs IMMEDIATELY after dashboard.js
        All patches applied synchronously before DOMContentLoaded
        so dashboard.js's own DOMContentLoaded sees our overrides.
        ========================================================== */
     'use strict';
 
-    /* ─── 1. LIVE CLOCK ─────────────────────────────────────── */
+    /* â”€â”€â”€ 1. LIVE CLOCK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function _startClock() {
       const el = document.getElementById('liveClock');
       if (!el) return;
@@ -3154,7 +3155,7 @@
       tick(); setInterval(tick, 1000);
     }
 
-    /* ─── 2. PRODUCT IMAGE PREVIEW ──────────────────────────── */
+    /* â”€â”€â”€ 2. PRODUCT IMAGE PREVIEW â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function updateProductImgPreview(url) {
       const wrap = document.getElementById('imgPreviewWrap');
       const img = document.getElementById('imgPreview');
@@ -3163,7 +3164,7 @@
       else wrap.style.display = 'none';
     }
 
-    /* ─── 3. LOW STOCK CHECKER ──────────────────────────────── */
+    /* â”€â”€â”€ 3. LOW STOCK CHECKER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function _checkLowStock() {
       const prods = window.allProducts || [];
       const low = prods.filter(p => (p.stock || 0) <= 5 && p.active !== false);
@@ -3181,7 +3182,7 @@
       }
     }
 
-    /* ─── 4. ENHANCED PRODUCTS TABLE (Featured + Stock Filter) ─ */
+    /* â”€â”€â”€ 4. ENHANCED PRODUCTS TABLE (Featured + Stock Filter) â”€ */
     function _renderProductsEnhanced() {
       const PAGE_S = 20;
       const pPg = window.pPg || 1;
@@ -3191,7 +3192,7 @@
       if (!tbody) return;
 
       const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-      const rs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
+      const rs = v => 'â‚¹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
 
       if (!page.length) {
         tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-search"></i><p>No products found.</p></div></td></tr>';
@@ -3209,19 +3210,19 @@
           : `<div class="tbl-img" style="display:flex;align-items:center;justify-content:center;color:var(--muted)"><i class="fa-solid fa-image" style="font-size:.7rem"></i></div>`}
           <div>
             <div class="td-name">${esc(p.name)}</div>
-            <div class="td-sub">SKU: ${esc(p.sku || '—')}</div>
+            <div class="td-sub">SKU: ${esc(p.sku || 'â€”')}</div>
           </div>
         </div>
       </td>
-      <td>${esc(p.category || '—')}</td>
+      <td>${esc(p.category || 'â€”')}</td>
       <td><strong>${rs(p.price || 0)}</strong></td>
-      <td>${p.original_price ? `<span style="text-decoration:line-through;color:var(--muted);font-size:.73rem">${rs(p.original_price)}</span>` : '—'}</td>
+      <td>${p.original_price ? `<span style="text-decoration:line-through;color:var(--muted);font-size:.73rem">${rs(p.original_price)}</span>` : 'â€”'}</td>
       <td>
         <span style="font-weight:700;color:${(p.stock || 0) === 0 ? 'var(--danger)' : (p.stock || 0) <= 5 ? '#d97706' : 'var(--teal)'}">${p.stock || 0}</span>
         ${(p.stock || 0) === 0 ? '<span class="badge badge-failed" style="margin-left:4px;font-size:.55rem">Out</span>'
           : (p.stock || 0) <= 5 ? '<span class="badge badge-pending" style="margin-left:4px;font-size:.55rem">Low</span>' : ''}
       </td>
-      <td>${p.featured ? '<span class="badge badge-paid">Yes</span>' : '<span style="color:var(--muted);font-size:.73rem">—</span>'}</td>
+      <td>${p.featured ? '<span class="badge badge-paid">Yes</span>' : '<span style="color:var(--muted);font-size:.73rem">â€”</span>'}</td>
       <td>${p.active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
       <td>
         <div style="display:flex;gap:4px">
@@ -3235,7 +3236,7 @@
         window.renderPagGen('productsPagination', 'productsPgInfo', all.length, pPg, p => { window.pPg = p; window.renderProducts(); });
     }
 
-    /* ─── 5. COUPONS ENHANCED TABLE ─────────────────────────── */
+    /* â”€â”€â”€ 5. COUPONS ENHANCED TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function _renderCouponsEnhanced() {
       const tbody = document.getElementById('couponsTableBody');
       if (!tbody) return;
@@ -3245,15 +3246,15 @@
         return;
       }
       const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-      const rs = v => '₹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
+      const rs = v => 'â‚¹' + Math.round(Number(v) || 0).toLocaleString('en-IN');
       const fmt = d => d ? new Date(d).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : 'Never';
       tbody.innerHTML = all.map(c => `
     <tr>
       <td><span style="font-family:monospace;font-size:.8rem;background:#f4f5f9;padding:3px 9px;border-radius:5px;font-weight:700">${esc(c.code)}</span></td>
       <td>${c.type === 'percent' ? 'Percentage' : 'Flat'}</td>
-      <td><strong>${c.type === 'percent' ? c.value + '%' : '₹' + c.value}</strong></td>
-      <td>${c.min_order ? rs(c.min_order) : '—'}</td>
-      <td>${c.max_discount ? rs(c.max_discount) : '—'}</td>
+      <td><strong>${c.type === 'percent' ? c.value + '%' : 'â‚¹' + c.value}</strong></td>
+      <td>${c.min_order ? rs(c.min_order) : 'â€”'}</td>
+      <td>${c.max_discount ? rs(c.max_discount) : 'â€”'}</td>
       <td><strong>${c.used_count || 0}</strong>${c.max_uses ? `/<span style="color:var(--muted)">${c.max_uses}</span>` : ''}</td>
       <td class="td-sub">${fmt(c.expires_at)}</td>
       <td>${c.active ? '<span class="badge badge-active">Active</span>' : '<span class="badge badge-inactive">Inactive</span>'}</td>
@@ -3266,10 +3267,10 @@
     </tr>`).join('');
     }
 
-    /* ─── 6. PATCH ALL dashboard.js FUNCTIONS ───────────────────
-       Done SYNCHRONOUSLY here — before dashboard.js DOMContentLoaded
-       fires — so our versions are in place when data loads.
-       ─────────────────────────────────────────────────────────── */
+    /* â”€â”€â”€ 6. PATCH ALL dashboard.js FUNCTIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+       Done SYNCHRONOUSLY here â€” before dashboard.js DOMContentLoaded
+       fires â€” so our versions are in place when data loads.
+       â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 
     // Override renderProducts to use enhanced version (Featured col)
     window.renderProducts = function () { _renderProductsEnhanced(); };
@@ -3327,27 +3328,27 @@
       };
     }
 
-    /* ─── 7. WELCOME HEADING NAME ───────────────────────────── */
+    /* â”€â”€â”€ 7. WELCOME HEADING NAME â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     function _patchWelcomeName() {
       let user = null;
       try { user = (typeof HeelsUpAuth !== 'undefined') ? HeelsUpAuth.getUser() : null; } catch (e) { }
       if (!user) return;
       const name = user.firstName || user.first_name || user.name || 'Admin';
       const heading = document.getElementById('welcomeHeading');
-      if (heading) heading.innerHTML = `Welcome Back, ${name}! <span style="font-size:1.35rem">👋</span>`;
+      if (heading) heading.innerHTML = `Welcome Back, ${name}! <span style="font-size:1.35rem">ðŸ‘‹</span>`;
       const avatar = document.getElementById('sAvatar');
       const sName = document.getElementById('sName');
       if (avatar) avatar.textContent = name.charAt(0).toUpperCase();
       if (sName) sName.textContent = name;
     }
 
-    /* ─── 8. DOM READY — final wiring ───────────────────────── */
+    /* â”€â”€â”€ 8. DOM READY â€” final wiring â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     document.addEventListener('DOMContentLoaded', () => {
 
       /* Start clock */
       _startClock();
 
-      /* Welcome name (backup — in case loadDashboard didn't fire yet) */
+      /* Welcome name (backup â€” in case loadDashboard didn't fire yet) */
       _patchWelcomeName();
 
       /* Modal backdrop click */
@@ -3365,7 +3366,7 @@
         }
       });
 
-      /* Date filter inputs — dashboard.js sets these too, but ensure they're set */
+      /* Date filter inputs â€” dashboard.js sets these too, but ensure they're set */
       const today = new Date().toISOString().split('T')[0];
       const dfTo = document.getElementById('dfTo');
       const dfFrom = document.getElementById('dfFrom');
@@ -3376,7 +3377,7 @@
       }
     });
 
-    /* ─── 9. GLOBAL 401 HANDLER ─────────────────────────────── */
+    /* â”€â”€â”€ 9. GLOBAL 401 HANDLER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
     window.addEventListener('unhandledrejection', e => {
       const msg = e.reason?.message || '';
       if (e.reason?.status === 401 || msg.includes('401') || msg.includes('Unauthorized')) {

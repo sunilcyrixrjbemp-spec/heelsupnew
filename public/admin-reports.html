@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Advanced Reports — HeelsUp Admin</title>
+    <title>Advanced Reports â€” HeelsUp Admin</title>
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
         rel="stylesheet" />
@@ -1240,6 +1240,7 @@
     <!-- App Logic -->
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
 
     <script>
         // UI Helpers
@@ -1389,7 +1390,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: 'Revenue (₹)',
+                        label: 'Revenue (â‚¹)',
                         data: dataPoints,
                         borderColor: '#c9a96e',
                         backgroundColor: gradient,
@@ -1416,7 +1417,7 @@
                             displayColors: false,
                             callbacks: {
                                 label: function (context) {
-                                    return '₹' + context.parsed.y.toLocaleString('en-IN');
+                                    return 'â‚¹' + context.parsed.y.toLocaleString('en-IN');
                                 }
                             }
                         }
@@ -1427,9 +1428,9 @@
                             border: { display: false },
                             ticks: {
                                 callback: function (value) {
-                                    if (value >= 100000) return '₹' + (value / 100000).toFixed(1) + 'L';
-                                    if (value >= 1000) return '₹' + (value / 1000).toFixed(0) + 'K';
-                                    return '₹' + value;
+                                    if (value >= 100000) return 'â‚¹' + (value / 100000).toFixed(1) + 'L';
+                                    if (value >= 1000) return 'â‚¹' + (value / 1000).toFixed(0) + 'K';
+                                    return 'â‚¹' + value;
                                 }
                             }
                         },
@@ -1496,7 +1497,7 @@
                                 label: function (context) {
                                     const val = context.parsed;
                                     const pct = Math.round((val / total) * 100);
-                                    return ` ₹${val.toLocaleString('en-IN')} (${pct}%)`;
+                                    return ` â‚¹${val.toLocaleString('en-IN')} (${pct}%)`;
                                 }
                             }
                         }
@@ -1527,9 +1528,9 @@
                 const val = data[i];
                 const pct = Math.round((val / total) * 100);
 
-                let fmtVal = '₹' + val.toLocaleString('en-IN');
-                if (val >= 100000) fmtVal = '₹' + (val / 100000).toFixed(2) + 'L';
-                else if (val >= 1000) fmtVal = '₹' + (val / 1000).toFixed(1) + 'K';
+                let fmtVal = 'â‚¹' + val.toLocaleString('en-IN');
+                if (val >= 100000) fmtVal = 'â‚¹' + (val / 100000).toFixed(2) + 'L';
+                else if (val >= 1000) fmtVal = 'â‚¹' + (val / 1000).toFixed(1) + 'K';
 
                 legendHtml += `
                     <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.875rem;">
@@ -1581,7 +1582,7 @@
                             </div>
                         </td>
                         <td style="text-align:right; font-weight:600; color:var(--text-muted)">${sales}</td>
-                        <td style="text-align:right" class="amt-cell">₹${estRev.toLocaleString('en-IN')}</td>
+                        <td style="text-align:right" class="amt-cell">â‚¹${estRev.toLocaleString('en-IN')}</td>
                     </tr>
                 `;
             }).join('');
@@ -1611,9 +1612,9 @@
             container.innerHTML = sortedCities.map((item) => {
                 const pct = Math.max(5, Math.round((item.amount / maxAmt) * 100)); // Min 5% for visual bar
 
-                let fmtAmt = '₹' + item.amount.toLocaleString('en-IN');
-                if (item.amount >= 100000) fmtAmt = '₹' + (item.amount / 100000).toFixed(2) + 'L';
-                else if (item.amount >= 1000) fmtAmt = '₹' + (item.amount / 1000).toFixed(1) + 'K';
+                let fmtAmt = 'â‚¹' + item.amount.toLocaleString('en-IN');
+                if (item.amount >= 100000) fmtAmt = 'â‚¹' + (item.amount / 100000).toFixed(2) + 'L';
+                else if (item.amount >= 1000) fmtAmt = 'â‚¹' + (item.amount / 1000).toFixed(1) + 'K';
 
                 return `
                     <div class="geo-item">
@@ -1731,7 +1732,7 @@
                 </div>
                 <div class="ret-box">
                     <div class="ret-lbl">Refund Impact</div>
-                    <div class="ret-val" style="color:var(--danger)">₹${Math.round(totalRefunds).toLocaleString('en-IN')}</div>
+                    <div class="ret-val" style="color:var(--danger)">â‚¹${Math.round(totalRefunds).toLocaleString('en-IN')}</div>
                     <div class="ret-desc">${refundPct}% of total revenue</div>
                 </div>
             `;

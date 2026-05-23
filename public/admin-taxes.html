@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
    <meta charset="UTF-8" />
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-   <title>Tax Management — HeelsUp Admin</title>
+   <title>Tax Management â€” HeelsUp Admin</title>
    <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap"
       rel="stylesheet" />
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
    <style>
-      /* ── GLOBAL ── */
+      /* â”€â”€ GLOBAL â”€â”€ */
       * {
          margin: 0;
          padding: 0;
@@ -58,7 +58,7 @@
          font-family: inherit;
       }
 
-      /* ── LAYOUT ── */
+      /* â”€â”€ LAYOUT â”€â”€ */
       .wrap {
          display: grid;
          grid-template-columns: 240px 1fr;
@@ -94,7 +94,7 @@
          }
       }
 
-      /* ── SIDEBAR ── */
+      /* â”€â”€ SIDEBAR â”€â”€ */
       .sidebar {
          background: var(--sidebar);
          color: #94a3b8;
@@ -260,7 +260,7 @@
          }
       }
 
-      /* ── TOPBAR ── */
+      /* â”€â”€ TOPBAR â”€â”€ */
       .topbar {
          background: #fff;
          border-bottom: 1px solid var(--border);
@@ -306,7 +306,7 @@
          }
       }
 
-      /* ── BUTTONS ── */
+      /* â”€â”€ BUTTONS â”€â”€ */
       .btn {
          display: inline-flex;
          align-items: center;
@@ -397,7 +397,7 @@
          color: #fff;
       }
 
-      /* ── PAGE HEADER ── */
+      /* â”€â”€ PAGE HEADER â”€â”€ */
       .admin-page-header {
          display: flex;
          justify-content: space-between;
@@ -418,7 +418,7 @@
          color: var(--muted);
       }
 
-      /* ── CARD ── */
+      /* â”€â”€ CARD â”€â”€ */
       .card {
          background: #fff;
          border-radius: var(--admin-card-radius);
@@ -451,7 +451,7 @@
          padding: 24px;
       }
 
-      /* ── FORM ELEMENTS ── */
+      /* â”€â”€ FORM ELEMENTS â”€â”€ */
       .form-grid {
          display: grid;
          grid-template-columns: 1fr 1fr;
@@ -509,7 +509,7 @@
          margin-top: 4px;
       }
 
-      /* ── TOGGLE ── */
+      /* â”€â”€ TOGGLE â”€â”€ */
       .toggle {
          position: relative;
          display: inline-block;
@@ -577,7 +577,7 @@
          color: var(--muted);
       }
 
-      /* ── GST SLAB REFERENCE ── */
+      /* â”€â”€ GST SLAB REFERENCE â”€â”€ */
       .slabs-grid {
          display: grid;
          grid-template-columns: repeat(5, 1fr);
@@ -626,7 +626,7 @@
          margin-top: 3px;
       }
 
-      /* ── INFO BOX ── */
+      /* â”€â”€ INFO BOX â”€â”€ */
       .info-box {
          padding: 16px 20px;
          border-radius: 10px;
@@ -682,7 +682,7 @@
          line-height: 1.6;
       }
 
-      /* ── TABLE ── */
+      /* â”€â”€ TABLE â”€â”€ */
       .table-wrap {
          overflow-x: auto;
       }
@@ -738,7 +738,7 @@
          gap: 6px;
       }
 
-      /* ── BADGE ── */
+      /* â”€â”€ BADGE â”€â”€ */
       .badge {
          display: inline-flex;
          align-items: center;
@@ -767,7 +767,7 @@
          color: #1d4ed8;
       }
 
-      /* ── RATE INPUT ── */
+      /* â”€â”€ RATE INPUT â”€â”€ */
       .rate-input-wrap {
          display: flex;
          align-items: center;
@@ -790,7 +790,7 @@
          box-shadow: 0 0 0 2px rgba(201, 169, 110, .1);
       }
 
-      /* ── RADIO GROUP ── */
+      /* â”€â”€ RADIO GROUP â”€â”€ */
       .radio-group {
          display: flex;
          gap: 12px;
@@ -838,7 +838,7 @@
          margin-top: 2px;
       }
 
-      /* ── MODAL ── */
+      /* â”€â”€ MODAL â”€â”€ */
       .modal-backdrop {
          position: fixed;
          inset: 0;
@@ -924,7 +924,7 @@
          border-top: 1px solid var(--border);
       }
 
-      /* ── LOADING ── */
+      /* â”€â”€ LOADING â”€â”€ */
       .loading-spinner {
          text-align: center;
          padding: 40px;
@@ -946,7 +946,7 @@
          }
       }
 
-      /* ── TOAST ── */
+      /* â”€â”€ TOAST â”€â”€ */
       .toast-wrap {
          position: fixed;
          bottom: 24px;
@@ -1000,7 +1000,7 @@
          }
       }
 
-      /* ── MOBILE ── */
+      /* â”€â”€ MOBILE â”€â”€ */
       .mob-overlay {
          display: none;
          position: fixed;
@@ -1023,7 +1023,7 @@
    <div class="toast-wrap" id="toastWrap"></div>
 
    <div class="wrap">
-      <!-- ── SIDEBAR ── -->
+      <!-- â”€â”€ SIDEBAR â”€â”€ -->
       <aside class="sidebar" id="sidebar">
          <div class="sidebar-brand">
             <div class="sidebar-logo">H</div>
@@ -1084,7 +1084,7 @@
       </aside>
 
       <div class="main">
-         <!-- ── TOPBAR ── -->
+         <!-- â”€â”€ TOPBAR â”€â”€ -->
          <div class="topbar">
             <button class="btn-menu" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
             <div class="topbar-title">Tax Management</div>
@@ -1100,11 +1100,11 @@
 
          <div class="content">
 
-            <!-- ── PAGE HEADER ── -->
+            <!-- â”€â”€ PAGE HEADER â”€â”€ -->
             <div class="admin-page-header">
                <div>
                   <h2>GST & Tax Configuration</h2>
-                  <p>India GST compliance settings — tax slabs, category rules, and invoice preferences.</p>
+                  <p>India GST compliance settings â€” tax slabs, category rules, and invoice preferences.</p>
                </div>
                <div style="display:flex;gap:10px;">
                   <button class="btn btn-outline" onclick="loadTaxSettings()">
@@ -1116,7 +1116,7 @@
                </div>
             </div>
 
-            <!-- ── LOADING STATE ── -->
+            <!-- â”€â”€ LOADING STATE â”€â”€ -->
             <div id="loadingState" style="display:none;">
                <div class="card">
                   <div class="card-body">
@@ -1125,25 +1125,25 @@
                </div>
             </div>
 
-            <!-- ── MAIN CONTENT ── (shown after load) -->
+            <!-- â”€â”€ MAIN CONTENT â”€â”€ (shown after load) -->
             <div id="mainContent">
 
-               <!-- ── INDIA GST RULE INFO BOX ── -->
+               <!-- â”€â”€ INDIA GST RULE INFO BOX â”€â”€ -->
                <div class="info-box info">
                   <i class="fa-solid fa-circle-info"></i>
                   <div>
                      <div class="info-box-title">India Footwear GST Rule (As per GST Council)</div>
                      <div class="info-box-body">
-                        Footwear priced <strong>up to ₹1,000</strong> → <strong>5% GST</strong> (HSN 6402) &nbsp;|&nbsp;
-                        Footwear priced <strong>above ₹1,000</strong> → <strong>18% GST</strong> (HSN 6402)
+                        Footwear priced <strong>up to â‚¹1,000</strong> â†’ <strong>5% GST</strong> (HSN 6402) &nbsp;|&nbsp;
+                        Footwear priced <strong>above â‚¹1,000</strong> â†’ <strong>18% GST</strong> (HSN 6402)
                         &nbsp;|&nbsp;
-                        Bags &amp; Clutches → <strong>18% GST</strong> (HSN 4202). System auto-applies the correct slab
+                        Bags &amp; Clutches â†’ <strong>18% GST</strong> (HSN 4202). System auto-applies the correct slab
                         at checkout based on product price.
                      </div>
                   </div>
                </div>
 
-               <!-- ── GST CONFIGURATION CARD ── -->
+               <!-- â”€â”€ GST CONFIGURATION CARD â”€â”€ -->
                <div class="card">
                   <div class="card-header">
                      <div class="card-title"><i class="fa-solid fa-building-columns" style="color:var(--gold)"></i> GST
@@ -1171,7 +1171,7 @@
                         <div class="toggle-row">
                            <div class="toggle-info">
                               <h4>Auto Price-Based Slab (Footwear)</h4>
-                              <p>Automatically apply 5% below ₹1,000 and 18% above ₹1,000 for footwear.</p>
+                              <p>Automatically apply 5% below â‚¹1,000 and 18% above â‚¹1,000 for footwear.</p>
                            </div>
                            <label class="toggle"><input type="checkbox" id="autoFootwearSlab"><span
                                  class="toggle-slider"></span></label>
@@ -1197,7 +1197,7 @@
                         <div class="form-field">
                            <label class="form-label">GST State</label>
                            <select class="form-select" id="gstState">
-                              <option value="">— Select State —</option>
+                              <option value="">â€” Select State â€”</option>
                               <option value="RJ">Rajasthan (08)</option>
                               <option value="GJ">Gujarat (24)</option>
                               <option value="MH">Maharashtra (27)</option>
@@ -1223,11 +1223,11 @@
                         <div class="form-field">
                            <label class="form-label">Default Tax Rate</label>
                            <select class="form-select" id="defaultTaxRate">
-                              <option value="0">0% — Exempt / Nil Rated</option>
-                              <option value="5">5% — Essential Goods</option>
-                              <option value="12">12% — Standard</option>
-                              <option value="18" selected>18% — Standard (Footwear / Bags)</option>
-                              <option value="28">28% — Luxury / Sin Goods</option>
+                              <option value="0">0% â€” Exempt / Nil Rated</option>
+                              <option value="5">5% â€” Essential Goods</option>
+                              <option value="12">12% â€” Standard</option>
+                              <option value="18" selected>18% â€” Standard (Footwear / Bags)</option>
+                              <option value="28">28% â€” Luxury / Sin Goods</option>
                            </select>
                            <div class="form-hint">Applied when no category-specific rule matches.</div>
                         </div>
@@ -1235,12 +1235,12 @@
                   </div>
                </div>
 
-               <!-- ── GST SLAB QUICK REFERENCE ── -->
+               <!-- â”€â”€ GST SLAB QUICK REFERENCE â”€â”€ -->
                <div class="card">
                   <div class="card-header">
                      <div class="card-title"><i class="fa-solid fa-percent" style="color:var(--gold)"></i> GST Slab
                         Reference</div>
-                     <span style="font-size:.78rem;color:var(--muted)">India GST Council — Standard Slabs</span>
+                     <span style="font-size:.78rem;color:var(--muted)">India GST Council â€” Standard Slabs</span>
                   </div>
                   <div class="card-body">
                      <div class="slabs-grid">
@@ -1252,7 +1252,7 @@
                         <div class="slab-card">
                            <div class="slab-rate">5%</div>
                            <div class="slab-label">Essential</div>
-                           <div class="slab-example">Footwear ≤ ₹1,000</div>
+                           <div class="slab-example">Footwear â‰¤ â‚¹1,000</div>
                         </div>
                         <div class="slab-card" style="border-color:var(--gold);background:var(--gold-light);">
                            <div class="slab-rate" style="color:var(--gold-dark)">12%</div>
@@ -1262,7 +1262,7 @@
                         <div class="slab-card" style="border-color:var(--gold);background:var(--gold-light);">
                            <div class="slab-rate" style="color:var(--gold-dark)">18%</div>
                            <div class="slab-label">Standard</div>
-                           <div class="slab-example">Footwear &gt; ₹1,000 · Bags</div>
+                           <div class="slab-example">Footwear &gt; â‚¹1,000 Â· Bags</div>
                         </div>
                         <div class="slab-card">
                            <div class="slab-rate">28%</div>
@@ -1273,7 +1273,7 @@
                   </div>
                </div>
 
-               <!-- ── TAX RULES TABLE ── -->
+               <!-- â”€â”€ TAX RULES TABLE â”€â”€ -->
                <div class="card">
                   <div class="card-header">
                      <div class="card-title"><i class="fa-solid fa-table-list" style="color:var(--gold)"></i> Category
@@ -1306,7 +1306,7 @@
                   </div>
                </div>
 
-               <!-- ── INVOICE SETTINGS CARD ── -->
+               <!-- â”€â”€ INVOICE SETTINGS CARD â”€â”€ -->
                <div class="card">
                   <div class="card-header">
                      <div class="card-title"><i class="fa-solid fa-file-invoice" style="color:var(--gold)"></i> Invoice
@@ -1317,12 +1317,12 @@
                         <div class="form-field">
                            <label class="form-label">Invoice Prefix</label>
                            <input type="text" class="form-input" id="invoicePrefix" placeholder="HU-INV" maxlength="10">
-                           <div class="form-hint">e.g. HU-INV → Invoice No: HU-INV-2024-0001</div>
+                           <div class="form-hint">e.g. HU-INV â†’ Invoice No: HU-INV-2024-0001</div>
                         </div>
                         <div class="form-field">
                            <label class="form-label">Financial Year Start</label>
                            <select class="form-select" id="fyStart">
-                              <option value="april">April (Indian FY — Apr to Mar)</option>
+                              <option value="april">April (Indian FY â€” Apr to Mar)</option>
                               <option value="january">January (Calendar Year)</option>
                            </select>
                         </div>
@@ -1347,7 +1347,7 @@
                         <div class="toggle-row">
                            <div class="toggle-info">
                               <h4>Show HSN Code on Invoice</h4>
-                              <p>Include HSN code for each line item — required for B2B invoices above ₹50,000.</p>
+                              <p>Include HSN code for each line item â€” required for B2B invoices above â‚¹50,000.</p>
                            </div>
                            <label class="toggle"><input type="checkbox" id="showHsnCode"><span
                                  class="toggle-slider"></span></label>
@@ -1364,15 +1364,15 @@
                   </div>
                </div>
 
-               <!-- ── INTER-STATE TAX INFO ── -->
+               <!-- â”€â”€ INTER-STATE TAX INFO â”€â”€ -->
                <div class="info-box warning">
                   <i class="fa-solid fa-triangle-exclamation"></i>
                   <div>
-                     <div class="info-box-title">CGST / SGST vs IGST — Auto Applied</div>
+                     <div class="info-box-title">CGST / SGST vs IGST â€” Auto Applied</div>
                      <div class="info-box-body">
-                        Orders <strong>within Rajasthan</strong> → CGST (9%) + SGST (9%) split applied
+                        Orders <strong>within Rajasthan</strong> â†’ CGST (9%) + SGST (9%) split applied
                         automatically.<br>
-                        Orders <strong>outside Rajasthan</strong> → IGST (18%) applied as single integrated tax.<br>
+                        Orders <strong>outside Rajasthan</strong> â†’ IGST (18%) applied as single integrated tax.<br>
                         System detects shipping state vs store state and applies the correct tax structure.
                      </div>
                   </div>
@@ -1385,9 +1385,9 @@
    </div><!-- /wrap -->
 
 
-   <!-- ════════════════════════════════
+   <!-- â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
      ADD / EDIT TAX RULE MODAL
-════════════════════════════════ -->
+â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
    <div class="modal-backdrop" id="ruleModal">
       <div class="modal">
          <div class="modal-header">
@@ -1400,7 +1400,7 @@
                <div class="form-field">
                   <label class="form-label">Category / Product Type</label>
                   <select name="category" class="form-select" required>
-                     <option value="">— Select Category —</option>
+                     <option value="">â€” Select Category â€”</option>
                      <option value="heels">Heels (Footwear)</option>
                      <option value="flats">Flats (Footwear)</option>
                      <option value="sandals">Sandals (Footwear)</option>
@@ -1415,17 +1415,17 @@
                   <label class="form-label">HSN Code</label>
                   <input name="hsn_code" type="text" class="form-input" placeholder="e.g. 6402, 4202" maxlength="8"
                      style="font-family:monospace;letter-spacing:.05em;">
-                  <div class="form-hint">Footwear → 6402 / 6403. Bags → 4202. Accessories → 6217.</div>
+                  <div class="form-hint">Footwear â†’ 6402 / 6403. Bags â†’ 4202. Accessories â†’ 6217.</div>
                </div>
                <div class="form-field">
                   <label class="form-label">GST Rate (%)</label>
                   <select name="tax_rate" class="form-select" required>
-                     <option value="">— Select Rate —</option>
-                     <option value="0">0% — Nil / Exempt</option>
-                     <option value="5">5% — Footwear ≤ ₹1,000</option>
-                     <option value="12">12% — Standard</option>
-                     <option value="18">18% — Footwear &gt; ₹1,000 / Bags</option>
-                     <option value="28">28% — Luxury</option>
+                     <option value="">â€” Select Rate â€”</option>
+                     <option value="0">0% â€” Nil / Exempt</option>
+                     <option value="5">5% â€” Footwear â‰¤ â‚¹1,000</option>
+                     <option value="12">12% â€” Standard</option>
+                     <option value="18">18% â€” Footwear &gt; â‚¹1,000 / Bags</option>
+                     <option value="28">28% â€” Luxury</option>
                   </select>
                </div>
                <div class="form-field">
@@ -1433,12 +1433,12 @@
                   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
                      <select name="condition_type" class="form-select">
                         <option value="none">No Condition</option>
-                        <option value="lte">Price ≤ amount</option>
+                        <option value="lte">Price â‰¤ amount</option>
                         <option value="gt">Price &gt; amount</option>
                      </select>
                      <div style="position:relative;">
                         <span
-                           style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted)">₹</span>
+                           style="position:absolute;left:12px;top:50%;transform:translateY(-50%);font-weight:700;color:var(--muted)">â‚¹</span>
                         <input name="condition_amount" type="number" class="form-input" placeholder="1000"
                            style="padding-left:28px;">
                      </div>
@@ -1472,33 +1472,34 @@
 
    <script src="app-config.js"></script>
    <script src="app-auth.js"></script>
+  <script src="admin-enterprise.js"></script>
    <script>
-      // ── AUTH ──────────────────────────────────────────────────────────────────
+      // â”€â”€ AUTH â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       const user = HeelsUpAuth.getUser();
       if (!user || user.role !== 'admin') { window.location = 'login.html?redirect=admin-taxes.html'; }
       const uname = (user?.firstName || user?.first_name || 'Admin');
       document.getElementById('s-avatar').textContent = uname.charAt(0).toUpperCase();
       document.getElementById('s-name').textContent = uname;
 
-      // ── STATE ──────────────────────────────────────────────────────────────────
+      // â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       let taxRules = [];
       let editingRuleId = null;
 
-      // DEFAULT RULES — used as fallback if API returns empty
+      // DEFAULT RULES â€” used as fallback if API returns empty
       const DEFAULT_RULES = [
-         { id: 1, category: 'heels', category_label: 'Heels', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'GST Council — footwear ≤ ₹1,000', is_active: 1 },
-         { id: 2, category: 'heels', category_label: 'Heels', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'GST Council — footwear > ₹1,000', is_active: 1 },
-         { id: 3, category: 'flats', category_label: 'Flats', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear ≤ ₹1,000', is_active: 1 },
-         { id: 4, category: 'flats', category_label: 'Flats', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > ₹1,000', is_active: 1 },
-         { id: 5, category: 'sandals', category_label: 'Sandals', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear ≤ ₹1,000', is_active: 1 },
-         { id: 6, category: 'sandals', category_label: 'Sandals', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > ₹1,000', is_active: 1 },
-         { id: 7, category: 'wedges', category_label: 'Wedges', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear ≤ ₹1,000', is_active: 1 },
-         { id: 8, category: 'wedges', category_label: 'Wedges', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > ₹1,000', is_active: 1 },
+         { id: 1, category: 'heels', category_label: 'Heels', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'GST Council â€” footwear â‰¤ â‚¹1,000', is_active: 1 },
+         { id: 2, category: 'heels', category_label: 'Heels', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'GST Council â€” footwear > â‚¹1,000', is_active: 1 },
+         { id: 3, category: 'flats', category_label: 'Flats', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear â‰¤ â‚¹1,000', is_active: 1 },
+         { id: 4, category: 'flats', category_label: 'Flats', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > â‚¹1,000', is_active: 1 },
+         { id: 5, category: 'sandals', category_label: 'Sandals', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear â‰¤ â‚¹1,000', is_active: 1 },
+         { id: 6, category: 'sandals', category_label: 'Sandals', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > â‚¹1,000', is_active: 1 },
+         { id: 7, category: 'wedges', category_label: 'Wedges', hsn_code: '6402', tax_rate: 5, condition_type: 'lte', condition_amount: 1000, notes: 'Footwear â‰¤ â‚¹1,000', is_active: 1 },
+         { id: 8, category: 'wedges', category_label: 'Wedges', hsn_code: '6402', tax_rate: 18, condition_type: 'gt', condition_amount: 1000, notes: 'Footwear > â‚¹1,000', is_active: 1 },
          { id: 9, category: 'bags', category_label: 'Bags', hsn_code: '4202', tax_rate: 18, condition_type: 'none', condition_amount: null, notes: 'Bags & travel accessories', is_active: 1 },
          { id: 10, category: 'clutches', category_label: 'Clutches', hsn_code: '4202', tax_rate: 18, condition_type: 'none', condition_amount: null, notes: 'Handbags & clutches', is_active: 1 },
       ];
 
-      // ── UI HELPERS ──────────────────────────────────────────────────────────────
+      // â”€â”€ UI HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function toggleSidebar() {
          const s = document.getElementById('sidebar'), o = document.getElementById('mobOverlay');
          s.classList.toggle('open');
@@ -1534,7 +1535,7 @@
       style.textContent = '.badge-inactive{background:#f1f5f9;color:#64748b;}';
       document.head.appendChild(style);
 
-      // ── INIT ──────────────────────────────────────────────────────────────────
+      // â”€â”€ INIT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function loadTaxSettings() {
          document.getElementById('loadingState').style.display = 'block';
          document.getElementById('mainContent').style.opacity = '0.5';
@@ -1564,7 +1565,7 @@
 
             onGstToggle();
 
-            // Populate rules — use API data or defaults if empty
+            // Populate rules â€” use API data or defaults if empty
             const apiRules = rulesRes?.rules || rulesRes || [];
             taxRules = apiRules.length ? apiRules : DEFAULT_RULES;
             renderRulesTable();
@@ -1592,7 +1593,7 @@
          } catch (e) { }
       }
 
-      // ── RENDER RULES TABLE ──────────────────────────────────────────────────────────
+      // â”€â”€ RENDER RULES TABLE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function renderRulesTable() {
          const tbody = document.getElementById('taxRulesBody');
          if (!taxRules.length) {
@@ -1609,9 +1610,9 @@
             const rate = Number(r.tax_rate);
             const rateColor = rate === 0 ? '#64748b' : rate <= 5 ? '#15803d' : rate <= 12 ? '#0284c7' : '#d97706';
 
-            let condition = '—';
-            if (r.condition_type === 'lte' && r.condition_amount) condition = `Price ≤ ₹${Number(r.condition_amount).toLocaleString('en-IN')}`;
-            if (r.condition_type === 'gt' && r.condition_amount) condition = `Price > ₹${Number(r.condition_amount).toLocaleString('en-IN')}`;
+            let condition = 'â€”';
+            if (r.condition_type === 'lte' && r.condition_amount) condition = `Price â‰¤ â‚¹${Number(r.condition_amount).toLocaleString('en-IN')}`;
+            if (r.condition_type === 'gt' && r.condition_amount) condition = `Price > â‚¹${Number(r.condition_amount).toLocaleString('en-IN')}`;
 
             return `
       <tr>
@@ -1626,7 +1627,7 @@
             </div>
           </div>
         </td>
-        <td><code style="background:#f8fafc;padding:3px 8px;border-radius:5px;font-size:.82rem;color:var(--text);border:1px solid var(--border);">${esc(r.hsn_code || '—')}</code></td>
+        <td><code style="background:#f8fafc;padding:3px 8px;border-radius:5px;font-size:.82rem;color:var(--text);border:1px solid var(--border);">${esc(r.hsn_code || 'â€”')}</code></td>
         <td>
           <span style="font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;color:${rateColor};">${rate}%</span>
           <div style="font-size:.68rem;color:var(--muted);margin-top:2px;">
@@ -1651,7 +1652,7 @@
          }).join('');
       }
 
-      // ── RULE MODAL ──────────────────────────────────────────────────────────────
+      // â”€â”€ RULE MODAL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       function openRuleModal() {
          editingRuleId = null;
          document.getElementById('ruleForm').reset();
@@ -1737,7 +1738,7 @@
          } catch (e) { showToast('Deletion failed.', 'error'); }
       }
 
-      // ── SAVE ALL SETTINGS ──────────────────────────────────────────────────────────
+      // â”€â”€ SAVE ALL SETTINGS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       async function saveAllSettings() {
          const btn = document.getElementById('saveAllBtn');
          btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
@@ -1781,7 +1782,7 @@
          if (e.target === this) this.classList.remove('show');
       });
 
-      // ── BOOT ──────────────────────────────────────────────────────────────────
+      // â”€â”€ BOOT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
       document.addEventListener('DOMContentLoaded', loadTaxSettings);
    </script>
 </body>
