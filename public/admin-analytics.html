@@ -1828,7 +1828,7 @@
                 renderKeyMetrics(s);
                 renderRecentOrders((ordersRes.orders || []).slice(0, 10));
 
-                toast(`Data loaded in ${ms}ms ✓`, 'success');
+                toast(`Dashboard has been updated successfully ✓`, 'success');
                 $('heroPeriod').textContent = ($('heroPeriod').textContent || '').replace(/·.*/, `· ${ms}ms load`);
 
             } catch (e) {
