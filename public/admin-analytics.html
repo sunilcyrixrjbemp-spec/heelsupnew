@@ -1801,7 +1801,7 @@
         }
 
         // ── MAIN LOAD ─────────────────────────────────────────────────────────────
-        async function loadAll(forceRefresh = false) {
+        async function loadAll() {
             const btn = $('refreshBtn');
             if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading'; btn.disabled = true; }
 
@@ -1810,7 +1810,7 @@
                 if (period === 'custom' && customStart && customEnd) url += `&start=${customStart}&end=${customEnd}`;
 
                 // SINGLE fast fetch now that the backend returns recent_orders too!
-                const dash = await apiFetch(url, forceRefresh);
+                const dash = await apiFetch(url);
 
                 dashData = dash;
                 const s = dash.summary || {};
@@ -1828,7 +1828,7 @@
                 renderPaymentMethods(dash.payment_methods || {});
                 renderKeyMetrics(s);
 
-                // Using dash.recent_orders directly from the batch request
+                // Using dash.recent_orders directly from the main API
                 renderRecentOrders(dash.recent_orders || []);
 
                 toast(`Dashboard updated successfully ✓`, 'success');
@@ -2125,9 +2125,9 @@
     <td><div class="td-name">${esc(o.order_number || '—')}</div></td>
     <td><div class="td-name">${esc(o.customer_name || '—')}</div><div class="td-sub">${esc(o.customer_email || '')}</div></td>
     <td style="font-size:.8rem;color:var(--muted)">${fmtDate(o.created_at)}</td>
-    <td><strong>${fmtRs(o.total_amount || 0)}</strong></td>
+    <td><strong>${fmtRs(o.total_amount || o.total || 0)}</strong></td>
     <td>${payBadge(o.payment_status)}</td>
-    <td>${statusBadge(o.order_status)}</td>
+    <td>${statusBadge(o.order_status || o.status)}</td>
     <td><a href="admin-orders.html?id=${esc(o.id || o.order_id || '')}" class="btn btn-sm btn-outline" style="padding:4px 10px;font-size:.72rem"><i class="fa-solid fa-eye"></i></a></td>
   </tr>`).join('');
         }
