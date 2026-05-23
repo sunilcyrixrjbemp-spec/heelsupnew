@@ -476,7 +476,10 @@ function renderDashOrders(orders) {
           ${orders.slice(0, 8).map(o => `
             <tr style="cursor:pointer"
               onclick="navTo(document.querySelector('[data-sec=orders]'));setTimeout(()=>openOrderModal(${o.id}),300)">
-              <td><span style="font-family:monospace;font-size:.78rem;background:#F1F5F9;padding:2px 6px;border-radius:4px">${esc(o.order_number || '—')}</span></td>
+              <td>
+                <span style="font-family:monospace;font-size:.78rem;background:#F1F5F9;padding:2px 6px;border-radius:4px">${esc(o.order_number || '—')}</span>
+                <div class="td-sub" style="margin-top:4px">${fmtDate(o.created_at, true)}</div>
+              </td>
               <td>
                 <div class="td-name">${esc(o.customer_name || '—')}</div>
                 <div class="td-sub">${esc(o.customer_email || '')}</div>

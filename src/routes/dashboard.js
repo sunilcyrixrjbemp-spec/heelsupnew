@@ -27,13 +27,13 @@ export async function dashboardRouter(request, env) {
             // 1: Total Orders
             env.DB.prepare(`SELECT COUNT(*) as count FROM orders WHERE ${dateFilter}`).bind(...params),
             // 2: Total Revenue
-            env.DB.prepare(`SELECT COALESCE(SUM(total), 0) as total FROM orders WHERE payment_status IN ('paid', 'success') AND status NOT IN ('cancelled', 'returned') AND ${dateFilter}`).bind(...params),
+            env.DB.prepare(`SELECT COALESCE(SUM(total_amount), 0) as total FROM orders WHERE payment_status IN ('paid', 'success') AND order_status NOT IN ('cancelled', 'returned') AND ${dateFilter}`).bind(...params),
             // 3: Pending Orders
-            env.DB.prepare(`SELECT COUNT(*) as count FROM orders WHERE status IN ('placed', 'confirmed', 'processing') AND ${dateFilter}`).bind(...params),
+            env.DB.prepare(`SELECT COUNT(*) as count FROM orders WHERE order_status IN ('placed', 'confirmed', 'processing') AND ${dateFilter}`).bind(...params),
             // 4: Orders By Status
-            env.DB.prepare(`SELECT status, COUNT(*) as count FROM orders WHERE ${dateFilter} GROUP BY status`).bind(...params),
+            env.DB.prepare(`SELECT order_status as status, COUNT(*) as count FROM orders WHERE ${dateFilter} GROUP BY order_status`).bind(...params),
             // 5: Recent Orders
-            env.DB.prepare('SELECT id, order_number, customer_name, customer_email, total as total_amount, status as order_status FROM orders ORDER BY created_at DESC LIMIT 8'),
+            env.DB.prepare('SELECT id, order_number, customer_name, customer_email, total_amount, order_status, created_at FROM orders ORDER BY created_at DESC LIMIT 8'),
             // 6: Top Products
             env.DB.prepare('SELECT p.id, p.name, p.category, p.image_url, p.price, p.stock, p.active, SUM(oi.qty) as total_qty FROM products p LEFT JOIN order_items oi ON p.id = oi.product_id GROUP BY p.id ORDER BY total_qty DESC LIMIT 8')
         ]);
