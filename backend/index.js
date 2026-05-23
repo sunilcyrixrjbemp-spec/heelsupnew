@@ -337,7 +337,7 @@ async function sendOtpEmail(env, email, otp, purpose) {
   if (!resendApiKey) return { ok: false, error: "Resend API key not configured. Add 'resend_api_key' to settings." };
   
   const siteName = await getSetting(env, "site_name", "HeelsUp");
-  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev"); // Defaults to resend.dev for testing
+  const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
 
   const subjects = {
     register: `Verify your ${siteName} account`,
@@ -888,7 +888,7 @@ async function verifyRazorpayPayment(request, env) {
   const siteName = await getSetting(env, "site_name", "HeelsUp");
   let resendApiKey = await getSetting(env, "resend_api_key", "");
   if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
-  const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+  const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
 
   if (user && resendApiKey) {
     await fetch("https://api.resend.com/emails", {
@@ -1179,7 +1179,7 @@ async function handleAdmin(request, path, url, env) {
     
     const testOtp = Math.floor(100000 + Math.random() * 900000).toString();
     const siteName = await getSetting(env, "site_name", "HeelsUp");
-    const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+    const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
     
     try {
       const res = await fetch("https://api.resend.com/emails", {
@@ -1456,7 +1456,7 @@ async function handleAdmin(request, path, url, env) {
       let resendApiKey = await getSetting(env, "resend_api_key", "");
       if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
       const siteName = await getSetting(env, "site_name", "HeelsUp");
-      const fromAddress = await getSetting(env, "email_from_address", "noreply@resend.dev");
+      const fromAddress = await getSetting(env, "email_from_address", "support@heelsup.in");
 
       if (order && resendApiKey && order.customer_email) {
         await fetch("https://api.resend.com/emails", {
