@@ -931,7 +931,7 @@ async function initiateOrder(request, env) {
 async function verifyRazorpayPayment(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const rzpKeySecret = await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "");
+  const rzpKeySecret = String(await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "")).trim();
   const localOrderId = toInt(body.orderId, 0);
   const rzpOrderId = String(body.razorpay_order_id || "").trim();
   const rzpPaymentId = String(body.razorpay_payment_id || "").trim();
