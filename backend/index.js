@@ -371,45 +371,31 @@ async function sendOtpEmail(env, email, otp, purpose) {
 }
 
 function buildOtpHtml(siteName, otp, purpose, userName = "Customer") {
-  let htmlBody = '';
+  let bodyText = '';
   
   if (purpose === "forgot") {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6">We received a request to reset your password.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6">Use the following OTP to reset your password:</p>
-      <div style="background:#f4f4f5;border-radius:6px;padding:30px;text-align:center;margin:30px 0">
-        <span style="font-size:42px;font-weight:700;letter-spacing:10px;color:#1a1a1a">${otp}</span>
-      </div>
-      <p style="color:#555;font-size:15px;margin:0 0 10px;line-height:1.6">⏱️ Valid for <strong>10 minutes</strong> only.</p>
-      <p style="color:#555;font-size:15px;margin:0 0 30px;line-height:1.6">Do not share this OTP with anyone.<br>If you didn’t request this, please secure your account immediately.</p>
-    `;
+    bodyText = `We received a request to reset your password.<br><br>
+Use the following OTP to reset your password:<br><br>
+🔢 <strong>${otp}</strong><br><br>
+⏱️ Valid for <strong>10 minutes</strong> only.<br><br>
+Do not share this OTP with anyone.<br>
+If you didn't request this, please secure your account immediately.`;
   } else {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6">Your One-Time Password (OTP) is:</p>
-      <div style="background:#f4f4f5;border-radius:6px;padding:30px;text-align:center;margin:30px 0">
-        <span style="font-size:42px;font-weight:700;letter-spacing:10px;color:#1a1a1a">${otp}</span>
-      </div>
-      <p style="color:#555;font-size:15px;margin:0 0 10px;line-height:1.6">⏱️ This OTP is valid for <strong>10 minutes</strong>.</p>
-      <p style="color:#555;font-size:15px;margin:0 0 30px;line-height:1.6">⚠️ Do not share this code with anyone for security reasons.<br>If you did not request this, please ignore this email.</p>
-    `;
+    bodyText = `Your One-Time Password (OTP) is:<br><br>
+🔢 <strong>${otp}</strong><br><br>
+⏱️ This OTP is valid for <strong>10 minutes</strong>.<br><br>
+⚠️ Do not share this code with anyone for security reasons.<br>
+If you did not request this, please ignore this email.`;
   }
 
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
-<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
-<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
-<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
-</td></tr>
-<tr><td style="padding:50px 40px">
-<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${userName},</h2>
-${htmlBody}
-<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Thanks,</p>
-<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
-<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
-</td></tr>
-<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
-<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
-</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #000;">
+Dear ${userName},<br><br>
+${bodyText}<br><br>
+Thanks,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in
+</body></html>`;
 }
 
 async function sendOtp(request, env) {
@@ -929,50 +915,38 @@ async function verifyRazorpayPayment(request, env) {
 function buildOrderConfirmHtml(order, siteName, orderItems = []) {
   const dateStr = order.created_at ? new Date(order.created_at).toLocaleDateString() : new Date().toLocaleDateString();
   const productList = orderItems.length > 0 
-    ? orderItems.map(item => `<li>${item.quantity}x ${item.product_name} - ₹${item.price}</li>`).join('')
-    : '<li>Items listed in your account</li>';
+    ? orderItems.map(item => `- ${item.quantity}x ${item.product_name}`).join('<br>')
+    : '- Items listed in your account';
   let addressStr = '';
   try {
     const address = order.shipping_address ? JSON.parse(order.shipping_address) : {};
     addressStr = `${address.address || ''}, ${address.city || ''}, ${address.state || ''} ${address.pincode || ''}`;
   } catch(e) { addressStr = order.shipping_address; }
 
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
-<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
-<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
-<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
-</td></tr>
-<tr><td style="padding:50px 40px">
-<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${order.customer_name || 'Customer'},</h2>
-<p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 10px">Thank you for shopping with us! 🎉</p>
-<p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">Your order has been successfully placed.</p>
-<p style="color:#1a1a1a;font-size:18px;font-weight:bold;margin:0 0 10px">🛍️ Order Details</p>
-<ul style="color:#555;font-size:15px;line-height:1.6;margin:0 0 20px;padding-left:20px">
-  <li><strong>Order ID:</strong> ${order.order_number}</li>
-  <li><strong>Order Date:</strong> ${dateStr}</li>
-  <li><strong>Payment Method:</strong> ${order.payment_method || 'Online'}</li>
-</ul>
-<p style="color:#1a1a1a;font-size:18px;font-weight:bold;margin:0 0 10px">📦 Items Ordered</p>
-<ul style="color:#555;font-size:15px;line-height:1.6;margin:0 0 20px;padding-left:20px">
-  ${productList}
-</ul>
-<p style="color:#1a1a1a;font-size:18px;font-weight:bold;margin:0 0 20px">💰 Total Amount: ₹${Number(order.total_amount).toLocaleString("en-IN")}</p>
-<p style="color:#1a1a1a;font-size:18px;font-weight:bold;margin:0 0 10px">📍 Delivery Address:</p>
-<p style="color:#555;font-size:15px;line-height:1.6;margin:0 0 30px">${addressStr}</p>
-<p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 10px">We will notify you once your order is shipped.</p>
-<p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">If you have any questions, feel free to contact us.</p>
-<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Thanks & Regards,</p>
-<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
-<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
-</td></tr>
-<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
-<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
-</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #000;">
+Dear ${order.customer_name || 'Customer'},<br><br>
+Thank you for shopping with us! 🎉<br><br>
+Your order has been successfully placed.<br><br>
+🛍️ <strong>Order Details</strong><br>
+Order ID: ${order.order_number}<br>
+Order Date: ${dateStr}<br>
+Payment Method: ${order.payment_method || 'Online'}<br><br>
+📦 <strong>Items Ordered</strong><br>
+${productList}<br><br>
+💰 <strong>Total Amount:</strong> ₹${Number(order.total_amount).toLocaleString("en-IN")}<br><br>
+📍 <strong>Delivery Address:</strong><br>
+${addressStr}<br><br>
+We will notify you once your order is shipped.<br><br>
+If you have any questions, feel free to contact us.<br><br>
+Thanks & Regards,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in
+</body></html>`;
 }
 
 function buildOrderStatusHtml(order, status, trackNo, siteName) {
-  let htmlBody = '';
+  let bodyText = '';
   const lowerStatus = String(status).toLowerCase();
   
   let addressStr = '';
@@ -982,145 +956,102 @@ function buildOrderStatusHtml(order, status, trackNo, siteName) {
   } catch(e) { addressStr = order.shipping_address; }
 
   if (lowerStatus === 'cancelled') {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Your order has been cancelled.</p>
-      <p style="color:#1a1a1a;font-size:16px;line-height:1.6;margin:0 0 20px">📦 <strong>Order ID:</strong> ${order.order_number}</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">If the payment was already made, the refund will be processed within 5–7 business days.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">If you did not request this cancellation, please contact us immediately.</p>
-      <p style="color:#333;font-size:16px;margin:0;font-weight:bold">Regards,</p>
-    `;
+    bodyText = `Your order has been cancelled.<br><br>
+📦 <strong>Order ID:</strong> ${order.order_number}<br><br>
+If the payment was already made, the refund will be processed within 5–7 business days.<br><br>
+If you did not request this cancellation, please contact us immediately.<br><br>
+Regards,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   } else if (lowerStatus === 'delivered') {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Your order has been successfully delivered. 🎉</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">We hope you love your purchase!</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">💬 We'd love your feedback. Please rate your experience.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">If there’s any issue, feel free to contact us.</p>
-      <p style="color:#333;font-size:16px;margin:0;font-weight:bold">Thanks for shopping with Heelsup ❤️</p>
-    `;
+    bodyText = `Your order has been successfully delivered. 🎉<br><br>
+We hope you love your purchase!<br><br>
+💬 We'd love your feedback. Please rate your experience.<br><br>
+If there’s any issue, feel free to contact us.<br><br>
+Thanks for shopping with Heelsup ❤️<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   } else if (lowerStatus === 'out for delivery') {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Your order is out for delivery today! 🚚</p>
-      <p style="color:#1a1a1a;font-size:16px;line-height:1.6;margin:0 0 10px">📦 <strong>Order ID:</strong> ${order.order_number}</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">📍 Delivery Address: ${addressStr}</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Please keep your phone reachable for smooth delivery.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">Thank you for choosing us!</p>
-    `;
+    bodyText = `Your order is out for delivery today! 🚚<br><br>
+📦 <strong>Order ID:</strong> ${order.order_number}<br>
+📍 Delivery Address: ${addressStr}<br><br>
+Please keep your phone reachable for smooth delivery.<br><br>
+Thank you for choosing us!<br><br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   } else if (lowerStatus === 'shipped') {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Good news! Your order is on the way. 🚚</p>
-      <p style="color:#1a1a1a;font-size:18px;font-weight:bold;margin:0 0 10px">📦 Shipment Details</p>
-      <ul style="color:#555;font-size:15px;line-height:1.6;margin:0 0 20px;padding-left:0;list-style-type:none">
-        <li>Order ID: ${order.order_number}</li>
-        <li>Tracking ID: ${trackNo || 'N/A'}</li>
-      </ul>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">We hope you enjoy your purchase!</p>
-      <p style="color:#333;font-size:16px;margin:0;font-weight:bold">Thanks & Regards,</p>
-    `;
+    bodyText = `Good news! Your order is on the way. 🚚<br><br>
+📦 <strong>Shipment Details</strong><br>
+Order ID: ${order.order_number}<br>
+Tracking ID: ${trackNo || 'N/A'}<br><br>
+We hope you enjoy your purchase!<br><br>
+Thanks & Regards,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   } else {
-    htmlBody = `
-      <p style="color:#555;margin:0 0 25px;font-size:16px;line-height:1.6">Your order <strong style="color:#1a1a1a">#${order.order_number}</strong> has a new status update.</p>
-      <div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:30px;margin-bottom:30px;text-align:center">
-      <p style="color:#777;margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:1px">Current Status</p>
-      <span style="font-size:20px;font-weight:bold;color:#ff3f6c;text-transform:uppercase;letter-spacing:2px">${status}</span>
-      </div>
-      <p style="color:#333;font-size:16px;margin:30px 0 0;font-weight:bold">Warm Regards,</p>
-    `;
+    bodyText = `Your order <strong>#${order.order_number}</strong> has a new status update.<br><br>
+Current Status: <strong>${status}</strong><br><br>
+Warm Regards,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   }
 
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
-<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
-<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
-<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
-</td></tr>
-<tr><td style="padding:50px 40px">
-<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${order.customer_name || 'Customer'},</h2>
-${htmlBody}
-${(lowerStatus === 'cancelled' || lowerStatus === 'delivered' || lowerStatus === 'out for delivery' || lowerStatus === 'shipped') ? '' : ''}
-${lowerStatus === 'delivered' || lowerStatus === 'out for delivery' ? '' : `<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>`}
-<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
-</td></tr>
-<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
-<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
-</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #000;">
+Dear ${order.customer_name || 'Customer'},<br><br>
+${bodyText}
+</body></html>`;
 }
 
 function buildWelcomeHtml(siteName, name, email, tempPassword, role) {
-  let htmlBody = '';
+  let bodyText = '';
 
   if (role === 'customer') {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Welcome to ${siteName}! 🎉</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Your account has been successfully created.</p>
-      <div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:25px;margin-bottom:30px">
-        <p style="color:#1a1a1a;font-size:16px;margin:0 0 10px">📧 <strong>Registered Email:</strong> ${email}</p>
-        <p style="color:#1a1a1a;font-size:16px;margin:0">🔑 <strong>Temporary Password:</strong> ${tempPassword}</p>
-      </div>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">You can now login and start shopping your favorite products.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">🔐 For security, never share your login credentials with anyone. Please change this temporary password after logging in.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">If you did not create this account, please contact us immediately.</p>
-      <p style="color:#333;font-size:16px;margin:0;font-weight:bold">Happy Shopping! 🛍️</p>
-      <p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
-    `;
+    bodyText = `Welcome to Heelsup! 🎉<br><br>
+Your account has been successfully created.<br><br>
+📧 <strong>Registered Email:</strong> ${email}<br>
+🔑 <strong>Temporary Password:</strong> ${tempPassword}<br><br>
+You can now login and start shopping your favorite products.<br><br>
+🔐 For security, never share your login credentials with anyone.<br><br>
+If you did not create this account, please contact us immediately.<br><br>
+Happy Shopping! 🛍️<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   } else {
-    htmlBody = `
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">You have been invited to join the ${siteName} team.</p>
-      <div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:25px;margin-bottom:30px">
-        <p style="color:#1a1a1a;font-size:16px;margin:0 0 10px">👤 <strong>Role:</strong> ${role}</p>
-        <p style="color:#1a1a1a;font-size:16px;margin:0 0 10px">📧 <strong>Email:</strong> ${email}</p>
-        <p style="color:#1a1a1a;font-size:16px;margin:0">🔑 <strong>Temporary Password:</strong> ${tempPassword}</p>
-      </div>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 20px">Login to the admin panel with the credentials above to accept the invitation and set your permanent password.</p>
-      <p style="color:#555;font-size:16px;line-height:1.6;margin:0 0 30px">If you weren’t expecting this invitation, you can safely ignore this email.</p>
-      <p style="color:#333;font-size:16px;margin:0;font-weight:bold">Welcome aboard! 🚀</p>
-      <p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
-    `;
+    bodyText = `You have been invited to join the Heelsup team.<br><br>
+👤 <strong>Role:</strong> ${role}<br>
+📧 <strong>Email:</strong> ${email}<br>
+🔑 <strong>Temporary Password:</strong> ${tempPassword}<br><br>
+Login below to accept the invitation and set your password.<br><br>
+If you weren't expecting this invitation, you can safely ignore this email.<br><br>
+Welcome aboard! 🚀<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in`;
   }
 
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
-<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
-<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
-<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
-</td></tr>
-<tr><td style="padding:50px 40px">
-<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${name || 'User'},</h2>
-${htmlBody}
-<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
-</td></tr>
-<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
-<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
-</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #000;">
+Dear ${name || 'User'},<br><br>
+${bodyText}
+</body></html>`;
 }
 
 function buildOfferHtml(siteName, offerTitle, offerMessage, discountCode, userName = "Customer") {
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
-<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
-<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
-<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
-<p style="color:#ff3f6c;margin:8px 0 0;font-size:14px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Special Offer Inside</p>
-</td></tr>
-<tr><td style="padding:50px 40px">
-<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${userName},</h2>
-<h3 style="color:#1a1a1a;margin:0 0 20px;font-size:20px;text-transform:uppercase">${offerTitle}</h3>
-<p style="color:#555;margin:0 0 30px;font-size:16px;line-height:1.6">${offerMessage.replace(/\n/g, '<br>')}</p>
-${discountCode ? `
-<div style="background:#f4f4f5;border:2px dashed #ff3f6c;border-radius:6px;padding:30px;margin-bottom:30px;text-align:center">
-<p style="margin:0 0 10px;color:#777;font-size:14px;text-transform:uppercase;letter-spacing:1px">Use Code at Checkout</p>
-<span style="font-size:32px;font-weight:bold;letter-spacing:4px;color:#1a1a1a">${discountCode}</span>
-</div>
-` : ''}
-<div style="text-align:center;margin-bottom:40px">
-<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:15px 40px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Shop Now</a>
-</div>
-<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Warm Regards,</p>
-<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
-<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
-</td></tr>
-<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
-<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
-</td></tr></table></td></tr></table></body></html>`;
+  return `<!DOCTYPE html><html><body style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.5; color: #000;">
+Dear ${userName},<br><br>
+<strong>${offerTitle}</strong><br><br>
+${offerMessage.replace(/\n/g, '<br>')}<br><br>
+${discountCode ? `<strong>Use Code at Checkout:</strong> ${discountCode}<br><br>` : ''}
+Shop Now at https://${siteName.toLowerCase().replace(/\s+/g, '')}.in<br><br>
+Warm Regards,<br>
+Team Heelsup<br>
+support@heelsup.in<br>
+https://heelsup.in
+</body></html>`;
 }
 
 async function sendWelcomeEmail(env, email, name, tempPass, role) {
