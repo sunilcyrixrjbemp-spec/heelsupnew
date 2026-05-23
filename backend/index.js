@@ -370,25 +370,27 @@ async function sendOtpEmail(env, email, otp, purpose) {
   } catch (e) { return { ok: false, error: e.message }; }
 }
 
-function buildOtpHtml(siteName, otp, purpose) {
+function buildOtpHtml(siteName, otp, purpose, userName = "Customer") {
   const purposeText = { register: "verify your email", forgot: "reset your password", login: "log in" }[purpose] || "verify";
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif">
-<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:40px 20px">
-<table width="560" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:12px;overflow:hidden">
-<tr><td style="background:linear-gradient(135deg,#c9a96e,#8b6914);padding:32px;text-align:center">
-<h1 style="color:#fff;margin:0;font-size:28px">${siteName}</h1>
-<p style="color:rgba(255,255,255,0.85);margin:8px 0 0">Premium Ladies Footwear</p>
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
+<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
+<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
+<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
 </td></tr>
-<tr><td style="padding:40px 36px">
-<h2 style="color:#1a1a1a;margin:0 0 12px">Your OTP Code</h2>
-<p style="color:#555;margin:0 0 28px">Use this code to ${purposeText}:</p>
-<div style="background:#f8f4ee;border:2px dashed #c9a96e;border-radius:10px;padding:24px;text-align:center;margin-bottom:28px">
-<span style="font-size:42px;font-weight:700;letter-spacing:12px;color:#8b6914;font-family:monospace">${otp}</span>
+<tr><td style="padding:50px 40px">
+<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${userName},</h2>
+<p style="color:#555;margin:0 0 30px;font-size:16px;line-height:1.6">We received a request to ${purposeText}. Please use the verification code below to proceed.</p>
+<div style="background:#f4f4f5;border-radius:6px;padding:30px;text-align:center;margin-bottom:40px">
+<span style="font-size:48px;font-weight:700;letter-spacing:10px;color:#1a1a1a">${otp}</span>
 </div>
-<p style="color:#888;font-size:13px;margin:0">⏱ Expires in <strong>10 minutes</strong>.<br>🔒 Never share this OTP.</p>
+<p style="color:#777;font-size:15px;margin:0 0 40px;line-height:1.6">This code expires in 10 minutes. If you did not request this, please ignore this email to keep your account safe.</p>
+<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Warm Regards,</p>
+<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
+<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
 </td></tr>
-<tr><td style="background:#f8f8f8;padding:20px 36px;text-align:center">
-<p style="color:#aaa;font-size:12px;margin:0">© ${new Date().getFullYear()} ${siteName} | If you didn't request this, ignore this email.</p>
+<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
+<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
@@ -907,105 +909,123 @@ async function verifyRazorpayPayment(request, env) {
 }
 
 function buildOrderConfirmHtml(order, siteName) {
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
-<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5"><tr><td align="center" style="padding:40px 15px">
-<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border:1px solid #eaeaec;border-top:4px solid #ff3f6c;border-radius:4px;overflow:hidden">
-<tr><td align="center" style="padding:25px 40px;border-bottom:1px solid #f5f5f6">
-<h1 style="color:#282c3f;margin:0;font-size:24px;font-weight:800;letter-spacing:1px;text-transform:uppercase">${siteName}</h1>
-<p style="color:#ff3f6c;margin:5px 0 0;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Order Confirmed</p>
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
+<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
+<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
+<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
+<p style="color:#ff3f6c;margin:8px 0 0;font-size:14px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Order Confirmed</p>
 </td></tr>
-<tr><td style="padding:40px">
-<h2 style="color:#282c3f;margin:0 0 15px;font-size:20px;font-weight:700">Thank You For Your Order!</h2>
-<p style="color:#535766;margin:0 0 25px;font-size:15px;line-height:1.6">We have successfully received your order and are currently processing it. We'll send you an update as soon as it ships.</p>
-<div style="background-color:#f9f9f9;border:1px solid #eaeaec;border-radius:4px;padding:20px;margin-bottom:25px">
-<h3 style="margin:0 0 15px;font-size:14px;color:#282c3f;text-transform:uppercase;border-bottom:1px solid #eaeaec;padding-bottom:10px">Order Details: #${order.order_number}</h3>
+<tr><td style="padding:50px 40px">
+<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${order.customer_name || 'Customer'},</h2>
+<p style="color:#555;margin:0 0 25px;font-size:16px;line-height:1.6">Thank you for your order! We have successfully received it and are currently processing it. We will notify you once it ships.</p>
+<div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:30px;margin-bottom:35px">
+<h3 style="margin:0 0 20px;font-size:16px;color:#333;text-transform:uppercase;border-bottom:1px solid #ddd;padding-bottom:15px">Order Details: #${order.order_number}</h3>
 <table width="100%" cellpadding="0" cellspacing="0">
-<tr><td style="padding:8px 0;color:#535766;font-size:14px">Total Amount</td>
-<td align="right" style="padding:8px 0;color:#282c3f;font-size:14px;font-weight:600">₹${Number(order.total_amount).toLocaleString("en-IN")}</td></tr>
-<tr><td style="padding:8px 0;color:#535766;font-size:14px">Payment Status</td>
-<td align="right" style="padding:8px 0;color:#03a685;font-size:14px;font-weight:600">Successful</td></tr>
+<tr><td style="padding:10px 0;color:#555;font-size:16px">Total Amount</td>
+<td align="right" style="padding:10px 0;color:#1a1a1a;font-size:16px;font-weight:bold">₹${Number(order.total_amount).toLocaleString("en-IN")}</td></tr>
+<tr><td style="padding:10px 0;color:#555;font-size:16px">Payment Status</td>
+<td align="right" style="padding:10px 0;color:#03a685;font-size:16px;font-weight:bold">Successful</td></tr>
 </table>
 </div>
-<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in/profile.html" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:12px 30px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Track Order</a>
+<div style="text-align:center;margin-bottom:40px">
+<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in/profile.html" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:15px 40px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Track Order</a>
+</div>
+<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Warm Regards,</p>
+<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
+<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
 </td></tr>
-<tr><td align="center" style="background-color:#fbfbfc;padding:25px;border-top:1px solid #eaeaec">
-<p style="color:#7e818c;font-size:12px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
+<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
+<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
 function buildOrderStatusHtml(order, status, trackNo, siteName) {
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
-<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5"><tr><td align="center" style="padding:40px 15px">
-<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border:1px solid #eaeaec;border-top:4px solid #ff3f6c;border-radius:4px;overflow:hidden">
-<tr><td align="center" style="padding:25px 40px;border-bottom:1px solid #f5f5f6">
-<h1 style="color:#282c3f;margin:0;font-size:24px;font-weight:800;letter-spacing:1px;text-transform:uppercase">${siteName}</h1>
-<p style="color:#ff3f6c;margin:5px 0 0;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Order Update</p>
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
+<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
+<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
+<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
+<p style="color:#ff3f6c;margin:8px 0 0;font-size:14px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Order Update</p>
 </td></tr>
-<tr><td style="padding:40px">
-<h2 style="color:#282c3f;margin:0 0 15px;font-size:20px;font-weight:700">Status Changed</h2>
-<p style="color:#535766;margin:0 0 25px;font-size:15px;line-height:1.6">Your order <strong style="color:#282c3f">#${order.order_number}</strong> has been updated to:</p>
-<div style="background-color:#f9f9f9;border:1px solid #eaeaec;border-radius:4px;padding:20px;margin-bottom:25px;display:inline-block">
-<span style="font-size:16px;font-weight:700;color:#ff3f6c;text-transform:uppercase;letter-spacing:1px">${status}</span>
+<tr><td style="padding:50px 40px">
+<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${order.customer_name || 'Customer'},</h2>
+<p style="color:#555;margin:0 0 25px;font-size:16px;line-height:1.6">Your order <strong style="color:#1a1a1a">#${order.order_number}</strong> has a new status update.</p>
+<div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:30px;margin-bottom:30px;text-align:center">
+<p style="color:#777;margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:1px">Current Status</p>
+<span style="font-size:20px;font-weight:bold;color:#ff3f6c;text-transform:uppercase;letter-spacing:2px">${status}</span>
 </div>
-${trackNo ? `<div style="background-color:#f4f4f5;border:1px solid #eaeaec;border-radius:4px;padding:20px;width:100%;box-sizing:border-box">
-<p style="color:#7e818c;margin:0 0 5px;font-size:12px;text-transform:uppercase;letter-spacing:1px">Tracking Number</p>
-<p style="color:#282c3f;margin:0;font-size:15px;font-weight:600;font-family:monospace">${trackNo}</p>
+${trackNo ? `<div style="background:#ffffff;border:2px dashed #eee;border-radius:6px;padding:25px;margin-bottom:30px;text-align:center">
+<p style="color:#777;margin:0 0 10px;font-size:14px;text-transform:uppercase;letter-spacing:1px">Tracking Number</p>
+<p style="color:#1a1a1a;margin:0;font-size:18px;font-weight:bold;font-family:monospace">${trackNo}</p>
 </div>` : ''}
-<p style="color:#535766;font-size:14px;margin:35px 0 0">Thank you for shopping with ${siteName}.</p>
+<p style="color:#333;font-size:16px;margin:30px 0 0;font-weight:bold">Warm Regards,</p>
+<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
+<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
 </td></tr>
-<tr><td align="center" style="background-color:#fbfbfc;padding:25px;border-top:1px solid #eaeaec">
-<p style="color:#7e818c;font-size:12px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
+<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
+<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
 function buildWelcomeHtml(siteName, name, email, tempPassword, role) {
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
-<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5"><tr><td align="center" style="padding:40px 15px">
-<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border:1px solid #eaeaec;border-top:4px solid #ff3f6c;border-radius:4px;overflow:hidden">
-<tr><td align="center" style="padding:25px 40px;border-bottom:1px solid #f5f5f6">
-<h1 style="color:#282c3f;margin:0;font-size:24px;font-weight:800;letter-spacing:1px;text-transform:uppercase">${siteName}</h1>
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
+<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
+<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
+<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
 </td></tr>
-<tr><td style="padding:40px">
-<h2 style="color:#282c3f;margin:0 0 20px;font-size:20px;font-weight:700">Welcome to ${siteName}</h2>
-<p style="color:#535766;margin:0 0 25px;font-size:15px;line-height:1.6">Hi ${name},<br><br>An administrator has created an account for you. Here are your private login credentials:</p>
-<div style="background-color:#f9f9f9;border:1px solid #eaeaec;border-radius:4px;padding:25px;margin-bottom:30px">
-<p style="margin:0 0 10px;color:#7e818c;font-size:12px;text-transform:uppercase;letter-spacing:1px">Email</p>
-<p style="margin:0 0 20px;color:#282c3f;font-weight:600;font-size:16px">${email}</p>
-<p style="margin:0 0 10px;color:#7e818c;font-size:12px;text-transform:uppercase;letter-spacing:1px">Temporary Password</p>
-<p style="margin:0 0 20px;color:#ff3f6c;font-weight:700;font-size:20px;font-family:monospace;letter-spacing:2px">${tempPassword}</p>
-<p style="margin:0 0 10px;color:#7e818c;font-size:12px;text-transform:uppercase;letter-spacing:1px">Account Role</p>
-<p style="margin:0;color:#282c3f;font-weight:600;font-size:14px;text-transform:capitalize">${role}</p>
+<tr><td style="padding:50px 40px">
+<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${name || 'User'},</h2>
+<p style="color:#555;margin:0 0 25px;font-size:16px;line-height:1.6">Welcome to ${siteName}! An administrator has created an account for you. Below are your private login credentials:</p>
+<div style="background:#f4f4f5;border:1px solid #eee;border-radius:6px;padding:30px;margin-bottom:30px">
+<p style="margin:0 0 10px;color:#777;font-size:14px;text-transform:uppercase;letter-spacing:1px">Email</p>
+<p style="margin:0 0 25px;color:#1a1a1a;font-weight:bold;font-size:18px">${email}</p>
+<p style="margin:0 0 10px;color:#777;font-size:14px;text-transform:uppercase;letter-spacing:1px">Temporary Password</p>
+<p style="margin:0 0 25px;color:#ff3f6c;font-weight:bold;font-size:22px;font-family:monospace;letter-spacing:2px">${tempPassword}</p>
+<p style="margin:0 0 10px;color:#777;font-size:14px;text-transform:uppercase;letter-spacing:1px">Account Role</p>
+<p style="margin:0;color:#1a1a1a;font-weight:bold;font-size:16px;text-transform:capitalize">${role}</p>
 </div>
-<p style="color:#535766;font-size:14px;line-height:1.6;margin:0">For your security, please log in and change your password immediately.</p>
+<p style="color:#555;font-size:15px;line-height:1.6;margin:0 0 30px">For your security, please log in and change your password immediately.</p>
+<div style="text-align:center;margin-bottom:40px">
+<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in/profile.html" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:15px 40px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Log In Now</a>
+</div>
+<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Warm Regards,</p>
+<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
+<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
 </td></tr>
-<tr><td align="center" style="background-color:#fbfbfc;padding:25px;border-top:1px solid #eaeaec">
-<p style="color:#7e818c;font-size:12px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
+<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
+<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
-function buildOfferHtml(siteName, offerTitle, offerMessage, discountCode) {
-  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background-color:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased">
-<table width="100%" cellpadding="0" cellspacing="0" style="background-color:#f4f4f5"><tr><td align="center" style="padding:40px 15px">
-<table width="600" cellpadding="0" cellspacing="0" style="background-color:#ffffff;border:1px solid #eaeaec;border-top:4px solid #ff3f6c;border-radius:4px;overflow:hidden">
-<tr><td align="center" style="padding:25px 40px;border-bottom:1px solid #f5f5f6">
-<h1 style="color:#282c3f;margin:0;font-size:24px;font-weight:800;letter-spacing:1px;text-transform:uppercase">${siteName}</h1>
-<p style="color:#ff3f6c;margin:5px 0 0;font-size:12px;font-weight:600;letter-spacing:1px;text-transform:uppercase">Special Offer Inside</p>
+function buildOfferHtml(siteName, offerTitle, offerMessage, discountCode, userName = "Customer") {
+  return `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f9f9fb;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:50px 20px">
+<table width="640" cellpadding="0" cellspacing="0" style="background:#fff;border-radius:8px;box-shadow:0 4px 15px rgba(0,0,0,0.05);overflow:hidden">
+<tr><td style="background:#ffffff;padding:40px;text-align:center;border-bottom:1px solid #eee">
+<h1 style="color:#1a1a1a;margin:0;font-size:32px;letter-spacing:2px;text-transform:uppercase">${siteName}</h1>
+<p style="color:#ff3f6c;margin:8px 0 0;font-size:14px;font-weight:bold;letter-spacing:2px;text-transform:uppercase">Special Offer Inside</p>
 </td></tr>
-<tr><td style="padding:40px">
-<h2 style="color:#282c3f;margin:0 0 20px;font-size:22px;font-weight:800;text-transform:uppercase">${offerTitle}</h2>
-<p style="color:#535766;margin:0 0 30px;font-size:15px;line-height:1.6">${offerMessage.replace(/\n/g, '<br>')}</p>
+<tr><td style="padding:50px 40px">
+<h2 style="color:#333;margin:0 0 20px;font-size:24px">Dear ${userName},</h2>
+<h3 style="color:#1a1a1a;margin:0 0 20px;font-size:20px;text-transform:uppercase">${offerTitle}</h3>
+<p style="color:#555;margin:0 0 30px;font-size:16px;line-height:1.6">${offerMessage.replace(/\n/g, '<br>')}</p>
 ${discountCode ? `
-<div style="background-color:#f9f9f9;border:1px dashed #ff3f6c;border-radius:4px;padding:25px;margin-bottom:30px;text-align:center">
-<p style="margin:0 0 10px;color:#7e818c;font-size:12px;text-transform:uppercase;letter-spacing:1px">Use Code at Checkout</p>
-<span style="font-size:28px;font-weight:800;letter-spacing:4px;color:#282c3f">${discountCode}</span>
+<div style="background:#f4f4f5;border:2px dashed #ff3f6c;border-radius:6px;padding:30px;margin-bottom:30px;text-align:center">
+<p style="margin:0 0 10px;color:#777;font-size:14px;text-transform:uppercase;letter-spacing:1px">Use Code at Checkout</p>
+<span style="font-size:32px;font-weight:bold;letter-spacing:4px;color:#1a1a1a">${discountCode}</span>
 </div>
 ` : ''}
-<div style="text-align:center">
-<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:15px 40px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Shop Now</a>
+<div style="text-align:center;margin-bottom:40px">
+<a href="https://${siteName.toLowerCase().replace(/\s+/g, '')}.in" style="display:inline-block;background-color:#ff3f6c;color:#ffffff;text-decoration:none;font-weight:bold;font-size:16px;padding:15px 40px;border-radius:4px;text-transform:uppercase;letter-spacing:1px">Shop Now</a>
 </div>
+<p style="color:#333;font-size:16px;margin:0;font-weight:bold">Warm Regards,</p>
+<p style="color:#555;font-size:16px;margin:5px 0 0">Team ${siteName}</p>
+<p style="color:#0066cc;font-size:16px;margin:5px 0 0"><a href="https://heelsup.in" style="color:#0066cc;text-decoration:none">https://heelsup.in</a></p>
 </td></tr>
-<tr><td align="center" style="background-color:#fbfbfc;padding:25px;border-top:1px solid #eaeaec">
-<p style="color:#7e818c;font-size:12px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
+<tr><td style="background:#f4f4f5;padding:30px;text-align:center;border-top:1px solid #eee">
+<p style="color:#888;font-size:14px;margin:0">© ${new Date().getFullYear()} ${siteName}. All rights reserved.</p>
 </td></tr></table></td></tr></table></body></html>`;
 }
 
@@ -1703,11 +1723,10 @@ async function handleAdmin(request, path, url, env) {
     // Fetch all customers asynchronously and send emails in batches
     env.ctx.waitUntil((async () => {
       try {
-        const { results: customers } = await env.DB.prepare("SELECT email FROM users WHERE role='customer' AND is_blocked=0").all();
+        const { results: customers } = await env.DB.prepare("SELECT email, first_name FROM users WHERE role='customer' AND is_blocked=0").all();
         if (!customers || customers.length === 0) return;
 
         const BATCH_SIZE = 50;
-        const htmlContent = buildOfferHtml(siteName, body.title, body.message, body.discount_code);
 
         for (let i = 0; i < customers.length; i += BATCH_SIZE) {
           const batch = customers.slice(i, i + BATCH_SIZE);
@@ -1718,7 +1737,7 @@ async function handleAdmin(request, path, url, env) {
               from: `${siteName} <${fromAddress}>`,
               to: [c.email],
               subject: body.title,
-              html: htmlContent
+              html: buildOfferHtml(siteName, body.title, body.message, body.discount_code, c.first_name || 'Customer')
             })))
           }).catch(err => console.error("Batch email failed:", err));
         }
