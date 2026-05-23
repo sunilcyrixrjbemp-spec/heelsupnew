@@ -424,11 +424,11 @@ function renderStatsError() {
 function renderPipeline(dash) {
     const STAGES = [
         { key: 'placed', label: 'Placed', clr: '#3b82f6' },
+        { key: 'processing', label: 'Processing', clr: '#f59e0b' },
         { key: 'confirmed', label: 'Confirmed', clr: '#8b5cf6' },
         { key: 'shipped', label: 'Dispatched', clr: '#06b6d4' },
         { key: 'delivered', label: 'Delivered', clr: '#22c55e' },
-        { key: 'cancelled', label: 'Cancelled', clr: '#f43f5e' },
-        { key: 'exchange_requested', label: 'Exchange', clr: '#f59e0b' },
+        { key: 'cancelled', label: 'Cancelled', clr: '#f43f5e' }
     ];
 
     const counts = dash.ordersByStatus || {};
