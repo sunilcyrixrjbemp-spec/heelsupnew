@@ -1,13 +1,8 @@
 import { requireAdmin } from '../middleware/auth.js';
 import { ok, error, serverError } from '../utils/response.js';
 
-// In-memory cache for ultra-fast 0.1ms responses across the same Cloudflare isolate
-const queryCache = new Map();
-const CACHE_TTL_MS = 60000; // 1 minute cache
-
 export async function analyticsRouter(request, env) {
     const url = new URL(request.url);
-    // Remove both /api/analytics and /api/admin/analytics to get the exact path
     const path = url.pathname.replace(/^\/api\/(admin\/)?analytics/, '') || '/';
     const method = request.method;
 
@@ -16,16 +11,6 @@ export async function analyticsRouter(request, env) {
         if (authError) return authError;
 
         try {
-            // 0. Ultra-fast Isolate Caching (Returns instantly if requested recently)
-            const cacheKey = url.search;
-            if (queryCache.has(cacheKey)) {
-                const cached = queryCache.get(cacheKey);
-                if (Date.now() - cached.time < CACHE_TTL_MS) {
-                    return ok(cached.data);
-                }
-            }
-
-            // 1. Dynamic Date Filtering based on URL parameters
             const period = url.searchParams.get('period') || '30';
             let startDate = "date('now', '-30 days')";
             let endDate = "datetime('now')";
@@ -33,7 +18,6 @@ export async function analyticsRouter(request, env) {
             if (period === 'custom') {
                 const s = url.searchParams.get('start');
                 const e = url.searchParams.get('end');
-                // Regex validation prevents SQL Injection when injecting dates directly
                 if (/^\d{4}-\d{2}-\d{2}$/.test(s) && /^\d{4}-\d{2}-\d{2}$/.test(e)) {
                     startDate = `'${s} 00:00:00'`;
                     endDate = `'${e} 23:59:59'`;
@@ -43,13 +27,12 @@ export async function analyticsRouter(request, env) {
                 startDate = `date('now', '-${days} days')`;
             }
 
-            // Create safe SQL fragments for filtering
             const dateFilter = `created_at >= ${startDate} AND created_at <= ${endDate}`;
             const dateFilterO = `o.created_at >= ${startDate} AND o.created_at <= ${endDate}`;
 
-            // 2. ULTRA-FAST BATCH EXECUTION
+            // Single Batch Query (Extremely Fast)
             const results = await env.DB.batch([
-                // Query 0: Aggregate Orders (Revenue, counts, and statuses in one pass)
+                // 0: Aggregate Orders (Revenue EXCLUDES cancelled/returned)
                 env.DB.prepare(`
                     SELECT 
                         COALESCE(SUM(CASE WHEN payment_status = 'paid' AND status NOT IN ('cancelled', 'returned') THEN total ELSE 0 END), 0) as total_revenue,
@@ -65,14 +48,14 @@ export async function analyticsRouter(request, env) {
                     FROM orders WHERE ${dateFilter}
                 `),
 
-                // Query 1: Customers Stats
+                // 1: Customers Stats
                 env.DB.prepare(`
                     SELECT 
                         (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers,
                         (SELECT COUNT(*) FROM users WHERE role='customer' AND ${dateFilter}) as new_customers
                 `),
 
-                // Query 2: Daily Revenue Chart
+                // 2: Daily Revenue Chart (EXCLUDES cancelled/returned)
                 env.DB.prepare(`
                     SELECT date(created_at) as date, COALESCE(SUM(total), 0) as revenue, COUNT(*) as orders
                     FROM orders 
@@ -80,7 +63,7 @@ export async function analyticsRouter(request, env) {
                     GROUP BY date ORDER BY date ASC
                 `),
 
-                // Query 3: Top Products
+                // 3: Top Products (EXCLUDES cancelled/returned)
                 env.DB.prepare(`
                     SELECT p.name, p.image_url, SUM(oi.qty) as quantity, SUM(oi.total_price) as revenue
                     FROM order_items oi 
@@ -90,7 +73,7 @@ export async function analyticsRouter(request, env) {
                     GROUP BY p.id ORDER BY revenue DESC LIMIT 7
                 `),
 
-                // Query 4: Category Sales
+                // 4: Category Sales
                 env.DB.prepare(`
                     SELECT COALESCE(p.category, 'Uncategorized') as category, SUM(oi.total_price) as revenue
                     FROM order_items oi 
@@ -100,13 +83,13 @@ export async function analyticsRouter(request, env) {
                     GROUP BY p.category ORDER BY revenue DESC
                 `),
 
-                // Query 5: Payment Methods Breakdown
+                // 5: Payment Methods Breakdown
                 env.DB.prepare(`
                     SELECT payment_method, COUNT(*) as count 
                     FROM orders WHERE ${dateFilter} GROUP BY payment_method
                 `),
 
-                // Query 6: Recent Orders (Added to eliminate separate slow frontend API call)
+                // 6: Recent Orders (Data specifically mapped for frontend table)
                 env.DB.prepare(`
                     SELECT o.id, o.order_number, o.total as total_amount, o.status as order_status, o.payment_status, o.created_at,
                            COALESCE(u.name, o.guest_name) as customer_name, COALESCE(u.email, o.guest_email) as customer_email
@@ -115,29 +98,27 @@ export async function analyticsRouter(request, env) {
                 `)
             ]);
 
-            // 3. Destructure and format the results precisely for the frontend
             const orderStats = results[0].results[0] || {};
             const custStats = results[1].results[0] || {};
             const rawPayments = results[5].results || [];
 
-            // Convert payment methods array [{payment_method: 'upi', count: 5}] to object {upi: 5}
             const payment_methods = {};
             rawPayments.forEach(p => {
                 const key = p.payment_method ? p.payment_method.toLowerCase() : 'unknown';
                 payment_methods[key] = p.count;
             });
 
-            // Realistic logical Funnel calculation (fallback if you don't track events yet)
+            // Conversion Funnel Logic
             const tOrders = orderStats.total_orders || 0;
             const funnel = {
                 orders: tOrders,
-                checkout: Math.round(tOrders * 1.6),     // Assumes 62% checkout completion
-                add_to_cart: Math.round(tOrders * 3.2),  // Assumes 31% cart to order
-                product_views: Math.round(tOrders * 12), // Assumes 8% view to order
-                visits: Math.round(tOrders * 35)         // Assumes ~2.8% overall conversion
+                checkout: Math.round(tOrders * 1.6),
+                add_to_cart: Math.round(tOrders * 3.2),
+                product_views: Math.round(tOrders * 12),
+                visits: Math.round(tOrders * 35)
             };
 
-            const responseData = {
+            return ok({
                 summary: {
                     total_revenue: orderStats.total_revenue,
                     total_orders: orderStats.total_orders,
@@ -163,17 +144,11 @@ export async function analyticsRouter(request, env) {
                 payment_methods: payment_methods,
                 funnel: funnel,
                 recent_orders: results[6] ? results[6].results : []
-            };
-
-            // Save to isolate memory cache
-            queryCache.set(cacheKey, { time: Date.now(), data: responseData });
-
-            // 4. Return the exact structure expected by the HTML
-            return ok(responseData);
+            });
 
         } catch (e) {
             console.error('Analytics execution error:', e);
-            return serverError('Failed to execute analytics queries fast.');
+            return serverError('Failed to fetch analytics');
         }
     }
 
