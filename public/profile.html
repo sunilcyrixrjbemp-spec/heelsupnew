@@ -4,1134 +4,2903 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Account – HeelsUp</title>
-    <meta name="description" content="Manage your HeelsUp account — profile, orders, addresses and security settings." />
+    <title>My Account — HeelsUp | Ladies Footwear & Bags</title>
+    <meta name="description" content="Manage your HeelsUp account — profile, orders, addresses and security." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
+        rel="stylesheet" />
     <style>
-        * { box-sizing: border-box; }
-
-        body { background: #F5F3F0; }
-
-        /* ─── Page wrapper ─── */
-        .profile-page {
-            min-height: 100vh;
-            padding: 32px 0 80px;
+        :root {
+            --ink: #0d0a08;
+            --ink2: #1a1510;
+            --gold: #c9a96e;
+            --gold-lt: #e8c98a;
+            --gold-dk: #8c6033;
+            --gold-glow: rgba(201, 169, 110, .12);
+            --cream: #f9f4ed;
+            --cream2: #f2ebe0;
+            --sand: #e8dece;
+            --rose: #d4456b;
+            --teal: #22c55e;
+            --white: #ffffff;
+            --border: rgba(201, 169, 110, .18);
+            --border-soft: rgba(201, 169, 110, .1);
+            --text-1: #0d0a08;
+            --text-2: #4a3f35;
+            --text-3: #8c8580;
+            --text-4: #b4a899;
+            --r: 12px;
+            --r-lg: 20px;
+            --sh-md: 0 8px 40px rgba(0, 0, 0, .13);
+            --sh-lg: 0 20px 60px rgba(0, 0, 0, .18);
+            --sh-gold: 0 8px 32px rgba(201, 169, 110, .25);
+            --fd: 'Cormorant Garamond', Georgia, serif;
+            --fh: 'Playfair Display', Georgia, serif;
+            --fb: 'DM Sans', 'Helvetica Neue', sans-serif;
+            --t: .25s cubic-bezier(.4, 0, .2, 1);
+            --ts: .55s cubic-bezier(.4, 0, .2, 1);
         }
 
-        /* ─── Breadcrumb ─── */
-        .breadcrumb {
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+            scroll-behavior: smooth
+        }
+
+        body {
+            font-family: var(--fb);
+            background: var(--cream);
+            color: var(--text-1);
+            min-height: 100vh;
+            overflow-x: hidden
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: var(--fb)
+        }
+
+        input,
+        select,
+        textarea {
+            font-family: var(--fb);
+            outline: none
+        }
+
+        /* ── TOPBAR ── */
+        .topbar {
+            background: var(--ink);
+            padding: 9px 0;
+            overflow: hidden;
+            position: relative
+        }
+
+        .topbar-track {
+            display: flex;
+            gap: 48px;
+            animation: marquee 30s linear infinite;
+            white-space: nowrap;
+            width: max-content
+        }
+
+        @keyframes marquee {
+            0% {
+                transform: translateX(0)
+            }
+
+            100% {
+                transform: translateX(-50%)
+            }
+        }
+
+        .topbar-item {
+            font-size: 11.5px;
+            color: rgba(255, 255, 255, .55);
+            letter-spacing: .06em;
+            display: flex;
+            align-items: center;
+            gap: 10px
+        }
+
+        .topbar-item strong {
+            color: var(--gold-lt);
+            font-weight: 700
+        }
+
+        .topbar-sep {
+            color: rgba(255, 255, 255, .15);
+            font-size: 16px
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 200;
+            background: rgba(249, 244, 237, .92);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+            transition: box-shadow var(--t)
+        }
+
+        .navbar.scrolled {
+            box-shadow: var(--sh-md)
+        }
+
+        .navbar-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 32px;
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            height: 64px
+        }
+
+        .navbar-logo {
+            font-family: var(--fd);
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: var(--ink);
+            letter-spacing: -.02em;
+            flex-shrink: 0
+        }
+
+        .navbar-logo span {
+            color: var(--gold)
+        }
+
+        .navbar-logo img {
+            height: 36px;
+            width: auto;
+            object-fit: contain
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 28px;
+            margin-left: auto
+        }
+
+        .nav-link {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-2);
+            letter-spacing: .03em;
+            transition: color var(--t);
+            position: relative
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 1.5px;
+            background: var(--gold);
+            transition: width var(--t)
+        }
+
+        .nav-link:hover {
+            color: var(--gold-dk)
+        }
+
+        .nav-link:hover::after {
+            width: 100%
+        }
+
+        .nav-link.sale {
+            color: var(--rose)
+        }
+
+        .nav-actions {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-bottom: 28px;
+            margin-left: 24px
         }
 
-        .breadcrumb a { color: var(--text-muted); text-decoration: none; }
-        .breadcrumb a:hover { color: var(--color-primary); }
-        .breadcrumb-active { color: var(--text-primary); font-weight: 600; }
-
-        /* ─── Layout: sidebar + content ─── */
-        .profile-layout {
-            display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 24px;
-            align-items: start;
+        .nav-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-2);
+            transition: all var(--t);
+            position: relative
         }
 
-        /* ─── Sidebar ─── */
-        .profile-sidebar {
-            background: #fff;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-            position: sticky;
-            top: 90px;
+        .nav-icon:hover {
+            background: var(--gold-glow);
+            color: var(--gold-dk)
         }
 
-        .sidebar-head {
-            background: linear-gradient(145deg, #0D0D0D 0%, #1f1208 100%);
-            padding: 28px 22px 24px;
-            text-align: center;
+        .nav-icon svg {
+            width: 19px;
+            height: 19px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8
         }
 
-        .sidebar-avatar {
-            width: 68px;
-            height: 68px;
+        .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            background: var(--color-primary);
-            color: #0D0D0D;
-            font-size: 1.6rem;
+            background: var(--rose);
+            color: #fff;
+            font-size: 9px;
             font-weight: 800;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            border: 3px solid rgba(201,169,110,0.35);
-            font-family: var(--font-display);
+            border: 2px solid var(--cream)
+        }
+
+        /* ── PAGE ── */
+        .page {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 36px 32px 80px
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            color: var(--text-3);
+            margin-bottom: 32px
+        }
+
+        .breadcrumb a {
+            color: var(--text-3);
+            transition: color var(--t)
+        }
+
+        .breadcrumb a:hover {
+            color: var(--gold-dk)
+        }
+
+        .breadcrumb-sep {
+            opacity: .4
+        }
+
+        .breadcrumb-active {
+            color: var(--text-1);
+            font-weight: 600
+        }
+
+        /* ── LAYOUT ── */
+        .profile-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 28px;
+            align-items: start
+        }
+
+        /* ── SIDEBAR ── */
+        .sidebar {
+            border-radius: var(--r-lg);
+            overflow: hidden;
+            position: sticky;
+            top: 88px;
+            border: 1px solid var(--border)
+        }
+
+        .sidebar-hero {
+            background: linear-gradient(160deg, var(--ink) 0%, var(--ink2) 60%, rgba(140, 96, 51, .4) 100%);
+            padding: 36px 28px 28px;
+            position: relative;
+            overflow: hidden
+        }
+
+        .sidebar-hero-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 169, 110, .1)
+        }
+
+        .shr1 {
+            width: 200px;
+            height: 200px;
+            top: -60px;
+            right: -60px
+        }
+
+        .shr2 {
+            width: 130px;
+            height: 130px;
+            bottom: -30px;
+            left: -40px
+        }
+
+        .sidebar-avatar-wrap {
+            position: relative;
+            margin-bottom: 16px
+        }
+
+        .sidebar-avatar {
+            width: 76px;
+            height: 76px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+            color: var(--ink);
+            font-family: var(--fd);
+            font-size: 1.9rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid rgba(201, 169, 110, .35);
+            box-shadow: var(--sh-gold);
+            position: relative;
+            z-index: 1
+        }
+
+        .sidebar-avatar-ring {
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            border: 1px solid rgba(201, 169, 110, .25);
+            animation: rotate 12s linear infinite
+        }
+
+        @keyframes rotate {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        .sidebar-online {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--teal);
+            border: 2.5px solid var(--ink);
+            z-index: 2
         }
 
         .sidebar-name {
-            font-family: var(--font-heading);
-            font-size: 1rem;
+            font-family: var(--fd);
+            font-size: 1.3rem;
             font-weight: 600;
             color: #fff;
+            letter-spacing: -.01em;
             margin-bottom: 4px;
+            position: relative;
+            z-index: 1
         }
 
         .sidebar-email {
             font-size: 11.5px;
-            color: rgba(255,255,255,0.42);
+            color: rgba(255, 255, 255, .42);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 14px;
+            word-break: break-all
+        }
+
+        .sidebar-member-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            color: var(--gold-lt);
+            background: rgba(201, 169, 110, .12);
+            border: 1px solid rgba(201, 169, 110, .25);
+            padding: 4px 12px;
+            border-radius: 100px;
+            position: relative;
+            z-index: 1
+        }
+
+        .sidebar-mini-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 1px;
+            background: rgba(255, 255, 255, .08)
+        }
+
+        .sms-item {
+            background: rgba(13, 10, 8, .5);
+            padding: 14px 12px;
+            text-align: center
+        }
+
+        .sms-num {
+            font-family: var(--fd);
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--gold-lt);
+            line-height: 1
+        }
+
+        .sms-lbl {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, .3);
+            margin-top: 3px
         }
 
         .sidebar-nav {
-            padding: 10px 0;
+            background: var(--white);
+            padding: 10px 0
         }
 
         .sidebar-nav-item {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 13px;
             padding: 13px 22px;
             font-size: 13.5px;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: var(--text-2);
             cursor: pointer;
-            transition: all 0.2s;
+            transition: all var(--t);
             border-left: 3px solid transparent;
-            text-decoration: none;
+            width: 100%;
+            text-align: left;
             background: none;
             border-right: none;
             border-top: none;
-            border-bottom: none;
-            width: 100%;
-            text-align: left;
-            font-family: var(--font-body);
+            border-bottom: none
         }
 
         .sidebar-nav-item:hover {
-            color: var(--color-primary);
-            background: rgba(201,169,110,0.06);
+            color: var(--gold-dk);
+            background: var(--gold-glow)
         }
 
         .sidebar-nav-item.active {
-            color: var(--color-primary);
-            background: rgba(201,169,110,0.07);
-            border-left-color: var(--color-primary);
-            font-weight: 600;
+            color: var(--gold-dk);
+            background: var(--gold-glow);
+            border-left-color: var(--gold);
+            font-weight: 600
         }
 
-        .sidebar-nav-item i {
-            width: 18px;
-            text-align: center;
-            font-size: 0.95rem;
+        .sidebar-nav-item svg {
+            width: 17px;
+            height: 17px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
             flex-shrink: 0;
+            opacity: .7
         }
 
-        .sidebar-nav-item.nav-logout {
-            color: var(--color-accent, #D4456B);
-            border-top: 1px solid var(--border-color);
-            margin-top: 6px;
+        .sidebar-nav-item.active svg {
+            opacity: 1
         }
 
-        .sidebar-nav-item.nav-logout:hover {
-            background: rgba(212,69,107,0.05);
+        .sidebar-nav-item.logout-btn {
+            color: var(--rose);
+            border-top: 1px solid var(--border)
         }
 
-        /* ─── Panels ─── */
-        .profile-panel { display: none; }
-        .profile-panel.active { display: block; }
+        .sidebar-nav-item.logout-btn:hover {
+            background: rgba(212, 69, 107, .06)
+        }
 
-        /* ─── Panel card ─── */
-        .panel-card {
-            background: #fff;
-            border-radius: 20px;
-            border: 1px solid var(--border-color);
-            padding: 32px 36px;
+        .sidebar-nav-sep {
+            height: 1px;
+            background: var(--border);
+            margin: 6px 0
+        }
+
+        /* ── PANEL ANIMATION ── */
+        .panel {
+            display: none
+        }
+
+        .panel.active {
+            display: block;
+            animation: fadeUp .3s cubic-bezier(.4, 0, .2, 1)
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(14px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--white);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--border);
             margin-bottom: 20px;
+            overflow: hidden
         }
 
-        .panel-card-header {
+        .card-header {
+            padding: 24px 28px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 28px;
-            padding-bottom: 18px;
-            border-bottom: 1px solid var(--border-color);
+            gap: 16px
         }
 
-        .panel-card-title {
-            font-family: var(--font-heading);
-            font-size: 1.3rem;
+        .card-title {
+            font-family: var(--fd);
+            font-size: 1.2rem;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--ink);
+            letter-spacing: -.01em
         }
 
-        .panel-card-sub {
-            font-size: 13px;
-            color: var(--text-muted);
-            margin-top: 4px;
+        .card-sub {
+            font-size: 12.5px;
+            color: var(--text-3);
+            margin-top: 3px
         }
 
-        /* ─── Stats row ─── */
+        .card-body {
+            padding: 28px
+        }
+
+        .card-eyebrow {
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: .2em;
+            text-transform: uppercase;
+            color: var(--gold-dk);
+            background: var(--gold-glow);
+            border: 1px solid rgba(201, 169, 110, .22);
+            padding: 4px 12px;
+            border-radius: 100px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 10px
+        }
+
+        /* ── STATS ROW ── */
         .stats-row {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 16px;
-            margin-bottom: 22px;
+            margin-bottom: 20px
         }
 
         .stat-card {
-            background: #fff;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            padding: 22px 18px;
-            text-align: center;
-            transition: box-shadow 0.2s;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: var(--r-lg);
+            padding: 22px 20px;
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden
         }
 
-        .stat-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,0.07); }
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold-glow) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity var(--t)
+        }
 
-        .stat-card-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(201,169,110,0.1);
-            border: 1px solid rgba(201,169,110,0.2);
+        .stat-card:hover {
+            box-shadow: var(--sh-gold);
+            transform: translateY(-2px)
+        }
+
+        .stat-card:hover::before {
+            opacity: 1
+        }
+
+        .stat-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 12px;
+            background: var(--gold-glow);
+            border: 1px solid rgba(201, 169, 110, .2);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 10px;
-            font-size: 1.1rem;
-            color: var(--color-primary);
+            margin-bottom: 14px;
+            position: relative;
+            z-index: 1
         }
 
-        .stat-card-num {
-            font-family: var(--font-display);
-            font-size: 1.9rem;
+        .stat-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: var(--gold-dk);
+            fill: none;
+            stroke-width: 1.8
+        }
+
+        .stat-num {
+            font-family: var(--fd);
+            font-size: 2rem;
             font-weight: 300;
-            color: var(--color-primary);
+            color: var(--ink);
             line-height: 1;
             margin-bottom: 4px;
+            position: relative;
+            z-index: 1
         }
 
-        .stat-card-label {
-            font-size: 12px;
-            color: var(--text-muted);
-            font-weight: 500;
-            letter-spacing: 0.04em;
-        }
-
-        /* ─── Recent orders mini ─── */
-        .order-mini {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            padding: 14px 0;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .order-mini:last-child { border-bottom: none; }
-
-        .order-mini-img {
-            width: 52px;
-            height: 64px;
-            border-radius: 10px;
-            overflow: hidden;
-            background: var(--color-light);
-            flex-shrink: 0;
-        }
-
-        .order-mini-img img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .order-mini-info { flex: 1; min-width: 0; }
-
-        .order-mini-name {
-            font-size: 13.5px;
+        .stat-lbl {
+            font-size: 11.5px;
             font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            color: var(--text-3);
+            letter-spacing: .04em;
+            position: relative;
+            z-index: 1
         }
 
-        .order-mini-meta { font-size: 12px; color: var(--text-muted); }
-
-        .order-mini-badge {
-            font-size: 10.5px;
-            font-weight: 700;
-            padding: 4px 11px;
-            border-radius: 100px;
-            flex-shrink: 0;
-        }
-
-        .badge-delivered { background: #dcfce7; color: #16a34a; }
-        .badge-shipped   { background: #dbeafe; color: #2563eb; }
-        .badge-processing { background: #fef9c3; color: #a16207; }
-        .badge-placed    { background: rgba(201,169,110,0.12); color: var(--color-primary); }
-
-        /* ─── Form elements ─── */
+        /* ── FORM ELEMENTS ── */
         .form-row-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
-            margin-bottom: 16px;
+            gap: 16px
         }
 
-        .form-group { margin-bottom: 18px; }
+        .form-group {
+            margin-bottom: 18px
+        }
 
         .form-label {
             display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 7px;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: var(--text-2);
+            letter-spacing: .04em;
+            margin-bottom: 7px
         }
 
-        .form-input {
+        .form-label .req {
+            color: var(--rose);
+            margin-left: 2px
+        }
+
+        .input-wrap {
+            position: relative
+        }
+
+        .input-wrap input,
+        .input-wrap select,
+        .input-wrap textarea {
             width: 100%;
-            padding: 12px 16px;
-            border: 1.5px solid var(--border-color);
-            border-radius: 11px;
-            font-family: var(--font-body);
+            padding: 13px 16px 13px 46px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
             font-size: 14px;
-            color: var(--text-primary);
-            background: var(--color-light, #FAF8F5);
-            transition: border-color 0.2s, box-shadow 0.2s;
-            outline: none;
+            color: var(--text-1);
+            background: var(--cream);
+            transition: all var(--t)
         }
 
-        .form-input:focus {
-            border-color: var(--color-primary);
-            background: #fff;
-            box-shadow: 0 0 0 3px rgba(201,169,110,0.12);
+        .input-wrap input:focus,
+        .input-wrap select:focus,
+        .input-wrap textarea:focus {
+            border-color: var(--gold);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, .12)
         }
 
-        .form-input:disabled {
-            background: #f5f5f5;
-            color: var(--text-muted);
-            cursor: not-allowed;
+        .input-wrap input:disabled,
+        .input-wrap select:disabled {
+            background: var(--cream2);
+            color: var(--text-3);
+            cursor: not-allowed
         }
 
-        .form-hint {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 5px;
+        .input-wrap input::placeholder {
+            color: var(--text-4)
         }
 
-        /* Password input wrap */
-        .input-wrap { position: relative; }
+        .inp-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none
+        }
 
-        .input-wrap .form-input { padding-right: 44px; }
+        .inp-icon svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-3);
+            fill: none;
+            stroke-width: 1.8
+        }
 
-        .eye-toggle {
+        .inp-suffix {
             position: absolute;
             right: 14px;
             top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: color 0.2s;
+            transform: translateY(-50%)
         }
 
-        .eye-toggle:hover { color: var(--color-primary); }
+        .inp-suffix svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text-3);
+            fill: none;
+            stroke-width: 1.8;
+            cursor: pointer;
+            transition: stroke var(--t)
+        }
 
-        /* Save button */
-        .btn-save {
+        .inp-suffix svg:hover {
+            stroke: var(--gold-dk)
+        }
+
+        .form-hint {
+            font-size: 11.5px;
+            color: var(--text-4);
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px
+        }
+
+        .form-hint svg {
+            width: 12px;
+            height: 12px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0
+        }
+
+        .field-err {
+            font-size: 11.5px;
+            color: var(--rose);
+            margin-top: 5px;
+            display: none;
+            font-weight: 500
+        }
+
+        .field-err.show {
+            display: block
+        }
+
+        /* no-icon input */
+        .input-plain {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--r);
+            font-size: 14px;
+            color: var(--text-1);
+            background: var(--cream);
+            transition: all var(--t)
+        }
+
+        .input-plain:focus {
+            border-color: var(--gold);
+            background: var(--white);
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, .12)
+        }
+
+        /* phone prefix */
+        .phone-wrap {
+            display: flex
+        }
+
+        .phone-prefix {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 13px 14px;
+            border: 1.5px solid var(--border);
+            border-right: none;
+            border-radius: var(--r) 0 0 var(--r);
+            background: var(--cream2);
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-2);
+            white-space: nowrap;
+            flex-shrink: 0
+        }
+
+        .phone-field {
+            border-radius: 0 var(--r) var(--r) 0 !important;
+            border: 1.5px solid var(--border) !important;
+            padding: 13px 14px !important;
+            width: 100%;
+            font-size: 14px;
+            color: var(--text-1);
+            background: var(--cream);
+            transition: all var(--t);
+            outline: none
+        }
+
+        .phone-field:focus {
+            border-color: var(--gold) !important;
+            background: var(--white) !important;
+            box-shadow: 0 0 0 3px rgba(201, 169, 110, .12) !important
+        }
+
+        /* password strength */
+        .pw-strength {
+            margin-top: 8px
+        }
+
+        .pw-bar {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 4px
+        }
+
+        .pw-seg {
+            flex: 1;
+            height: 3px;
+            border-radius: 100px;
+            background: var(--border);
+            transition: background .3s
+        }
+
+        .pw-seg.w {
+            background: var(--rose)
+        }
+
+        .pw-seg.m {
+            background: var(--gold)
+        }
+
+        .pw-seg.s {
+            background: var(--teal)
+        }
+
+        .pw-strength-lbl {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-4)
+        }
+
+        /* ── BUTTON ── */
+        .btn {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 8px;
-            padding: 12px 28px;
-            background: var(--color-primary);
-            color: var(--color-dark);
-            border: none;
-            border-radius: 11px;
-            font-family: var(--font-body);
+            font-family: var(--fb);
             font-size: 13.5px;
             font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.25s;
-            letter-spacing: 0.04em;
-        }
-
-        .btn-save:hover:not(:disabled) {
-            background: var(--color-primary-dark, #b8904a);
-            transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(201,169,110,0.35);
-        }
-
-        .btn-save:disabled { opacity: 0.6; cursor: not-allowed; }
-
-        /* Address card */
-        .address-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .address-card {
-            border: 1.5px solid var(--border-color);
-            border-radius: 14px;
-            padding: 18px 20px;
-            position: relative;
-            transition: border-color 0.2s;
-        }
-
-        .address-card.is-default { border-color: var(--color-primary); }
-
-        .address-default-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(201,169,110,0.12);
-            color: var(--color-primary);
-            font-size: 10px;
-            font-weight: 700;
-            letter-spacing: 0.05em;
-            padding: 3px 10px;
+            border: none;
             border-radius: 100px;
-            border: 1px solid rgba(201,169,110,0.3);
+            transition: all var(--t);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none
         }
 
-        .address-name { font-weight: 700; font-size: 14px; margin-bottom: 8px; }
-
-        .address-detail {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.7;
+        .btn svg {
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            position: relative;
+            z-index: 1
         }
 
-        .address-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 14px;
-        }
-
-        .btn-ghost-sm {
-            padding: 7px 16px;
-            border: 1.5px solid var(--border-color);
-            border-radius: 8px;
-            background: none;
-            font-family: var(--font-body);
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-ghost-sm:hover { border-color: var(--color-primary); color: var(--color-primary); }
-
-        /* Add address button */
-        .btn-add-address {
+        .btn-inner {
+            position: relative;
+            z-index: 1;
             display: flex;
             align-items: center;
-            justify-content: center;
-            gap: 8px;
-            height: 100%;
-            min-height: 120px;
-            border: 2px dashed var(--border-color);
-            border-radius: 14px;
-            background: none;
-            color: var(--text-muted);
-            font-family: var(--font-body);
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
+            gap: 8px
         }
 
-        .btn-add-address:hover {
-            border-color: var(--color-primary);
-            color: var(--color-primary);
-            background: rgba(201,169,110,0.04);
+        .btn-primary {
+            background: var(--ink);
+            color: #fff;
+            padding: 13px 28px
         }
 
-        /* Toast */
-        .toast-container {
-            position: fixed;
-            top: 24px;
-            right: 24px;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+            opacity: 0;
+            transition: opacity var(--t)
         }
 
-        .toast {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 14px 18px;
-            background: #fff;
-            border-radius: 14px;
-            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
-            border-left: 4px solid var(--color-primary);
-            min-width: 280px;
-            max-width: 360px;
-            animation: toastIn 0.35s ease;
+        .btn-primary:hover::before {
+            opacity: 1
         }
 
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateX(30px); }
-            to { opacity: 1; transform: translateX(0); }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, .22)
         }
 
-        .toast-error { border-left-color: #D4456B; }
-        .toast-success { border-left-color: #22c55e; }
-        .toast-info { border-left-color: #3b82f6; }
-        .toast-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
-        .toast-error .toast-icon { color: #D4456B; }
-        .toast-success .toast-icon { color: #22c55e; }
-        .toast-info .toast-icon { color: #3b82f6; }
-        .toast-body { flex: 1; }
-        .toast-title { font-size: 13px; font-weight: 700; color: var(--text-primary); margin-bottom: 2px; }
-        .toast-message { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
-        .toast-close { background: none; border: none; cursor: pointer; font-size: 14px; color: var(--text-muted); padding: 0; flex-shrink: 0; }
+        .btn-primary:active {
+            transform: translateY(0)
+        }
 
-        /* ─── Loading spinner ─── */
-        .profile-loading {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 300px;
+        .btn-primary:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+            transform: none
+        }
+
+        .btn-gold {
+            background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+            color: var(--ink);
+            padding: 10px 22px;
+            font-size: 12.5px
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--sh-gold)
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--text-2);
+            border: 1.5px solid var(--border);
+            padding: 10px 20px;
+            border-radius: var(--r);
+            font-size: 12.5px;
+            letter-spacing: .03em;
+            text-transform: none;
+            font-weight: 600
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold-dk);
+            background: var(--gold-glow)
+        }
+
+        .btn-danger-ghost {
+            background: transparent;
+            color: var(--rose);
+            border: 1.5px solid rgba(212, 69, 107, .2);
+            padding: 10px 20px;
+            border-radius: var(--r);
+            font-size: 12.5px;
+            letter-spacing: .03em;
+            text-transform: none;
+            font-weight: 600
+        }
+
+        .btn-danger-ghost:hover {
+            background: rgba(212, 69, 107, .06);
+            border-color: var(--rose)
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg)
+            }
         }
 
         .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, .3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            flex-shrink: 0
+        }
+
+        .spinner-dark {
+            border-color: rgba(13, 10, 8, .15);
+            border-top-color: var(--ink)
+        }
+
+        /* ── ALERT ── */
+        .alert {
+            padding: 14px 18px;
+            border-radius: var(--r);
+            font-size: 13px;
+            font-weight: 500;
+            display: none;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 20px
+        }
+
+        .alert svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            flex-shrink: 0;
+            margin-top: 1px
+        }
+
+        .alert-error {
+            background: #fff2f2;
+            border: 1px solid rgba(212, 69, 107, .2);
+            color: #a01238
+        }
+
+        .alert-success {
+            background: #f0fdf4;
+            border: 1px solid rgba(34, 197, 94, .25);
+            color: #15803d
+        }
+
+        .alert-warn {
+            background: #fffbf0;
+            border: 1px solid rgba(245, 158, 11, .25);
+            color: #92400e
+        }
+
+        /* ── ORDERS ── */
+        .order-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .order-row:last-child {
+            border-bottom: none
+        }
+
+        .order-thumb {
+            width: 56px;
+            height: 68px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: var(--cream2);
+            flex-shrink: 0
+        }
+
+        .order-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .order-info {
+            flex: 1;
+            min-width: 0
+        }
+
+        .order-name {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 3px
+        }
+
+        .order-meta {
+            font-size: 12px;
+            color: var(--text-3);
+            margin-bottom: 6px
+        }
+
+        .order-price {
+            font-family: var(--fd);
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--ink)
+        }
+
+        .badge {
+            font-size: 10.5px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            padding: 4px 12px;
+            border-radius: 100px;
+            flex-shrink: 0
+        }
+
+        .badge-placed {
+            background: rgba(201, 169, 110, .12);
+            color: var(--gold-dk)
+        }
+
+        .badge-processing {
+            background: #fef9c3;
+            color: #a16207
+        }
+
+        .badge-shipped {
+            background: #dbeafe;
+            color: #2563eb
+        }
+
+        .badge-delivered {
+            background: #dcfce7;
+            color: #16a34a
+        }
+
+        .badge-cancelled {
+            background: #fee2e2;
+            color: #dc2626
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+            flex-wrap: wrap
+        }
+
+        .order-track-btn {
+            font-size: 11.5px;
+            font-weight: 600;
+            color: var(--gold-dk);
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: color var(--t)
+        }
+
+        .order-track-btn:hover {
+            color: var(--gold)
+        }
+
+        .order-track-btn svg {
+            width: 13px;
+            height: 13px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5
+        }
+
+        /* ── ADDRESS CARDS ── */
+        .address-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px
+        }
+
+        .addr-card {
+            border: 1.5px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            position: relative;
+            transition: all var(--t)
+        }
+
+        .addr-card.default {
+            border-color: var(--gold)
+        }
+
+        .addr-card:hover {
+            box-shadow: var(--sh-md)
+        }
+
+        .addr-default-tag {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 9.5px;
+            font-weight: 800;
+            letter-spacing: .1em;
+            text-transform: uppercase;
+            color: var(--gold-dk);
+            background: var(--gold-glow);
+            border: 1px solid rgba(201, 169, 110, .25);
+            padding: 3px 10px;
+            border-radius: 100px
+        }
+
+        .addr-name {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-1);
+            margin-bottom: 8px
+        }
+
+        .addr-detail {
+            font-size: 13px;
+            color: var(--text-2);
+            line-height: 1.75
+        }
+
+        .addr-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 14px
+        }
+
+        .btn-add-addr {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 140px;
+            border: 2px dashed var(--border);
+            border-radius: 16px;
+            background: none;
+            color: var(--text-3);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all var(--t);
+            width: 100%
+        }
+
+        .btn-add-addr:hover {
+            border-color: var(--gold);
+            color: var(--gold-dk);
+            background: var(--gold-glow)
+        }
+
+        .btn-add-addr svg {
+            width: 24px;
+            height: 24px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5
+        }
+
+        /* ── SKELETON ── */
+        .skel {
+            background: linear-gradient(90deg, var(--cream2) 25%, var(--sand) 50%, var(--cream2) 75%);
+            background-size: 200%;
+            animation: skel 1.6s infinite
+        }
+
+        @keyframes skel {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        .skel-line {
+            height: 14px;
+            border-radius: 7px;
+            margin-bottom: 10px
+        }
+
+        .skel-sm {
+            width: 60%
+        }
+
+        .skel-xs {
+            width: 40%
+        }
+
+        /* ── WISHLIST ── */
+        .wishlist-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px
+        }
+
+        .wishlist-item {
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+            transition: all var(--t);
+            position: relative
+        }
+
+        .wishlist-item:hover {
+            box-shadow: var(--sh-md);
+            transform: translateY(-2px)
+        }
+
+        .wishlist-img {
+            height: 120px;
+            background: var(--cream2);
+            position: relative;
+            overflow: hidden
+        }
+
+        .wishlist-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .wishlist-remove {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, .9);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity var(--t)
+        }
+
+        .wishlist-remove svg {
+            width: 13px;
+            height: 13px;
+            stroke: var(--rose);
+            fill: none;
+            stroke-width: 2.5
+        }
+
+        .wishlist-item:hover .wishlist-remove {
+            opacity: 1
+        }
+
+        .wishlist-info {
+            padding: 10px 12px
+        }
+
+        .wishlist-name {
+            font-size: 12.5px;
+            font-weight: 600;
+            color: var(--text-1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-bottom: 4px
+        }
+
+        .wishlist-price {
+            font-family: var(--fd);
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--gold-dk)
+        }
+
+        /* ── TOAST ── */
+        .toast-wrap {
+            position: fixed;
+            bottom: 28px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            pointer-events: none;
+            width: max-content;
+            max-width: 92vw
+        }
+
+        .toast {
+            background: var(--ink);
+            color: #fff;
+            padding: 12px 22px;
+            border-radius: 100px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: var(--sh-lg);
+            pointer-events: all;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all var(--ts)
+        }
+
+        .toast svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2.5;
+            flex-shrink: 0
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1
+        }
+
+        .toast.s {
+            border-left: 3px solid var(--teal)
+        }
+
+        .toast.e {
+            border-left: 3px solid var(--rose)
+        }
+
+        .toast.w {
+            border-left: 3px solid var(--gold)
+        }
+
+        /* ── PROGRESS BAR (page load) ── */
+        .page-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2.5px;
+            background: linear-gradient(90deg, var(--gold-dk), var(--gold));
+            transform-origin: left;
+            transform: scaleX(0);
+            transition: transform .3s;
+            z-index: 9999
+        }
+
+        .page-progress.done {
+            transform: scaleX(1);
+            opacity: 0;
+            transition: transform .5s, opacity .4s .5s
+        }
+
+        /* ── SECURITY ROW ── */
+        .security-item {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border)
+        }
+
+        .security-item:last-child {
+            border-bottom: none
+        }
+
+        .security-item-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px
+        }
+
+        .security-icon {
             width: 40px;
             height: 40px;
-            border: 3px solid var(--border-color);
-            border-top-color: var(--color-primary);
+            border-radius: 10px;
+            background: var(--gold-glow);
+            border: 1px solid rgba(201, 169, 110, .2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0
+        }
+
+        .security-icon svg {
+            width: 17px;
+            height: 17px;
+            stroke: var(--gold-dk);
+            fill: none;
+            stroke-width: 1.8
+        }
+
+        .security-title {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: var(--text-1);
+            margin-bottom: 3px
+        }
+
+        .security-desc {
+            font-size: 12px;
+            color: var(--text-3);
+            line-height: 1.6
+        }
+
+        .security-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            margin-top: 6px
+        }
+
+        .security-status.on {
+            color: var(--teal)
+        }
+
+        .security-status.off {
+            color: var(--text-4)
+        }
+
+        .security-status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%
+        }
+
+        .security-status.on .security-status-dot {
+            background: var(--teal)
+        }
+
+        .security-status.off .security-status-dot {
+            background: var(--text-4)
+        }
+
+        /* ── TOGGLE SWITCH ── */
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            flex-shrink: 0
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute
+        }
+
+        .toggle-track {
+            position: absolute;
+            inset: 0;
+            background: var(--sand);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: background var(--t)
+        }
+
+        .toggle-track::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
-            animation: spin 0.8s linear infinite;
+            background: #fff;
+            top: 3px;
+            left: 3px;
+            transition: transform var(--t);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .2)
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* ─── Responsive ─── */
-        @media (max-width: 960px) {
-            .profile-layout { grid-template-columns: 1fr; }
-            .profile-sidebar { position: static; }
+        .toggle-switch input:checked+.toggle-track {
+            background: var(--teal)
         }
 
-        @media (max-width: 640px) {
-            .panel-card { padding: 22px 20px; }
-            .stats-row { grid-template-columns: 1fr 1fr; }
-            .form-row-2 { grid-template-columns: 1fr; }
-            .address-grid { grid-template-columns: 1fr; }
+        .toggle-switch input:checked+.toggle-track::after {
+            transform: translateX(20px)
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 52px 24px
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: .3
+        }
+
+        .empty-title {
+            font-family: var(--fd);
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--text-2);
+            margin-bottom: 8px
+        }
+
+        .empty-sub {
+            font-size: 13px;
+            color: var(--text-3);
+            margin-bottom: 24px
+        }
+
+        /* ── MOBILE ── */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            padding: 8px;
+            cursor: pointer;
+            background: none;
+            border: none
+        }
+
+        .h-line {
+            width: 22px;
+            height: 2px;
+            background: var(--text-1);
+            border-radius: 2px;
+            transition: all var(--t)
+        }
+
+        .mobile-nav-overlay {
+            display: none
+        }
+
+        @media(max-width:1100px) {
+            .page {
+                padding: 28px 24px 60px
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr
+            }
+        }
+
+        @media(max-width:960px) {
+            .profile-layout {
+                grid-template-columns: 1fr
+            }
+
+            .sidebar {
+                position: static
+            }
+
+            .nav-links {
+                display: none
+            }
+
+            .hamburger {
+                display: flex
+            }
+
+            .mobile-nav-overlay {
+                display: block;
+                position: fixed;
+                inset: 0;
+                z-index: 300;
+                background: rgba(13, 10, 8, .6);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity var(--t)
+            }
+
+            .mobile-nav-overlay.open {
+                opacity: 1;
+                pointer-events: all
+            }
+
+            .mobile-nav-panel {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: min(320px, 90vw);
+                height: 100%;
+                background: var(--white);
+                z-index: 301;
+                transition: right var(--ts);
+                overflow-y: auto;
+                padding: 28px 24px
+            }
+
+            .mobile-nav-panel.open {
+                right: 0
+            }
+
+            .mobile-nav-close {
+                display: flex;
+                justify-content: flex-end;
+                margin-bottom: 24px
+            }
+        }
+
+        @media(max-width:640px) {
+            .page {
+                padding: 20px 16px 60px
+            }
+
+            .stats-row {
+                grid-template-columns: 1fr
+            }
+
+            .form-row-2 {
+                grid-template-columns: 1fr
+            }
+
+            .address-grid {
+                grid-template-columns: 1fr
+            }
+
+            .card-body {
+                padding: 20px
+            }
+
+            .card-header {
+                padding: 18px 20px
+            }
+        }
+
+        @media(max-width:420px) {
+            .sidebar-mini-stats {
+                grid-template-columns: 1fr 1fr
+            }
         }
     </style>
 </head>
 
 <body>
-    <!-- ── Topbar ── -->
+
+    <div class="page-progress" id="pageProgress"></div>
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- ══ TOPBAR ══ -->
     <div class="topbar">
-        <div class="topbar-marquee">
-            <span class="topbar-text">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!</span>
-            <span class="topbar-dot"></span>
-            <span class="topbar-text">🚚 FREE Shipping on orders above <strong>₹499</strong></span>
-            <span class="topbar-dot"></span>
-            <span class="topbar-text">🏷️ Use code <strong>HEELS10</strong> for 10% off</span>
+        <div style="overflow:hidden;max-width:100%">
+            <div class="topbar-track" id="topbarTrack">
+                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">⭐ 4.9 Rating from 10,000+ Customers<span class="topbar-sep">|</span></div>
+                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span
+                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">⭐ 4.9 Rating from 10,000+ Customers<span class="topbar-sep">|</span></div>
+            </div>
         </div>
     </div>
 
-    <!-- ── Navbar ── -->
+    <!-- ══ NAVBAR ══ -->
     <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="navbar-inner">
-                <a href="index.html" class="navbar-logo">
-                    <img src="logo.png" alt="HeelsUp" onerror="this.style.display='none'" />
+        <div class="navbar-inner">
+            <a href="index.html" class="navbar-logo">
+                <img src="logo.png" alt="HeelsUp"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='inline'" />
+                <span style="display:none">Heels<span>Up</span></span>
+            </a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Home</a>
+                <a href="shop.html" class="nav-link">Shop</a>
+                <a href="category.html?cat=new" class="nav-link">New Arrivals</a>
+                <a href="category.html?cat=sale" class="nav-link sale">Sale</a>
+            </div>
+            <div class="nav-actions">
+                <a href="wishlist.html" class="nav-icon" title="Wishlist">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                    </svg>
                 </a>
-                <ul class="navbar-menu" id="nav-menu">
-                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-                    <li class="nav-item"><a href="category.html?cat=new" class="nav-link">New Arrivals</a></li>
-                    <li class="nav-item"><a href="category.html?cat=sale" class="nav-link" style="color:var(--color-accent)"><i class="fa-solid fa-fire" style="font-size:0.8rem"></i> Sale</a></li>
-                </ul>
-                <div class="navbar-actions">
-                    <a href="wishlist.html" class="nav-icon-btn" title="Wishlist"><i class="fa-regular fa-heart"></i></a>
-                    <a href="profile.html" class="nav-icon-btn" title="My Account" style="color:var(--color-primary)">
-                        <i class="fa-solid fa-user"></i>
-                        <span id="nav-user-name" style="font-size:12px;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:none"></span>
-                    </a>
-                    <button class="nav-icon-btn" id="cart-open-btn" title="Cart">
-                        <i class="fa-solid fa-bag-shopping"></i>
-                        <span class="nav-badge cart-badge" id="cart-count">0</span>
-                    </button>
-                    <button class="navbar-hamburger" id="hamburger-btn" aria-label="Menu">
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                    </button>
-                </div>
+                <a href="profile.html" class="nav-icon" style="color:var(--gold-dk)" title="Account">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                </a>
+                <button class="nav-icon" id="cartBtn" title="Cart" style="position:relative">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                        <line x1="3" y1="6" x2="21" y2="6" />
+                        <path d="M16 10a4 4 0 01-8 0" />
+                    </svg>
+                    <span class="nav-badge" id="cartCount">0</span>
+                </button>
+                <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                    <span class="h-line"></span><span class="h-line"></span><span class="h-line"></span>
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- Mobile Menu -->
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
-        <div class="mobile-menu-panel">
-            <div class="mobile-menu-header">
-                <span class="navbar-logo-text">Heels<span style="color:var(--color-primary)">Up</span></span>
-                <button id="mobile-menu-close" style="background:none;border:none;font-size:1.3rem;cursor:pointer;color:var(--text-muted)">✕</button>
-            </div>
-            <div class="mobile-menu-body">
-                <a href="index.html">🏠 Home</a>
-                <a href="shop.html">🛍️ Shop All</a>
-                <a href="category.html?cat=heels">👠 Heels</a>
-                <a href="category.html?cat=sandals">👡 Sandals</a>
-                <a href="category.html?cat=bags">👜 Bags</a>
-                <a href="category.html?cat=new">✨ New Arrivals</a>
-                <hr style="border:none;border-top:1px solid var(--border-color);margin:10px 0" />
-                <a href="profile.html">👤 My Account</a>
-                <a href="orders.html">📦 My Orders</a>
-                <a href="wishlist.html">❤️ Wishlist</a>
-            </div>
+    <!-- Mobile nav -->
+    <div class="mobile-nav-overlay" id="mobileOverlay"></div>
+    <div class="mobile-nav-panel" id="mobilePanel">
+        <div class="mobile-nav-close">
+            <button onclick="closeMobileNav()"
+                style="background:none;border:none;font-size:1.4rem;color:var(--text-3);cursor:pointer">✕</button>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+            <a href="index.html"
+                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🏠
+                Home</a>
+            <a href="shop.html"
+                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🛍️
+                Shop</a>
+            <a href="category.html?cat=new"
+                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">✨
+                New Arrivals</a>
+            <a href="category.html?cat=sale"
+                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--rose);border-bottom:1px solid var(--border)">🔥
+                Sale</a>
+            <a href="orders.html"
+                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">📦
+                My Orders</a>
+            <a href="wishlist.html" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1)">❤️
+                Wishlist</a>
         </div>
     </div>
 
-    <!-- ── Page content ── -->
-    <div class="profile-page">
-        <div class="container">
-            <!-- Breadcrumb -->
-            <nav class="breadcrumb">
-                <a href="index.html">Home</a>
-                <i class="fa-solid fa-chevron-right" style="font-size:8px;opacity:0.5"></i>
-                <span class="breadcrumb-active">My Account</span>
-            </nav>
+    <!-- ══ PAGE ══ -->
+    <div class="page">
+        <nav class="breadcrumb">
+            <a href="index.html">Home</a>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-active">My Account</span>
+        </nav>
 
-            <div class="profile-layout">
-                <!-- ── Sidebar ── -->
-                <aside class="profile-sidebar">
-                    <div class="sidebar-head">
-                        <div class="sidebar-avatar" id="sidebar-avatar">?</div>
-                        <div class="sidebar-name" id="sidebar-name">Loading…</div>
-                        <div class="sidebar-email" id="sidebar-email"></div>
+        <div class="profile-layout">
+
+            <!-- ══ SIDEBAR ══ -->
+            <aside class="sidebar">
+                <div class="sidebar-hero">
+                    <div class="sidebar-hero-ring shr1"></div>
+                    <div class="sidebar-hero-ring shr2"></div>
+                    <div class="sidebar-avatar-wrap">
+                        <div class="sidebar-avatar" id="sidebarAvatar">?</div>
+                        <div class="sidebar-avatar-ring"></div>
+                        <div class="sidebar-online"></div>
+                    </div>
+                    <div class="sidebar-name" id="sidebarName">Loading…</div>
+                    <div class="sidebar-email" id="sidebarEmail"></div>
+                    <div class="sidebar-member-badge">
+                        <span>✦</span> HeelsUp Member
+                    </div>
+                </div>
+
+                <div class="sidebar-mini-stats">
+                    <div class="sms-item">
+                        <div class="sms-num" id="miniOrders">–</div>
+                        <div class="sms-lbl">Orders</div>
+                    </div>
+                    <div class="sms-item">
+                        <div class="sms-num" id="miniWishlist">–</div>
+                        <div class="sms-lbl">Wishlist</div>
+                    </div>
+                    <div class="sms-item">
+                        <div class="sms-num" id="miniSpent">–</div>
+                        <div class="sms-lbl">Spent</div>
+                    </div>
+                </div>
+
+                <nav class="sidebar-nav">
+                    <button class="sidebar-nav-item active" data-tab="overview">
+                        <svg viewBox="0 0 24 24">
+                            <rect x="3" y="3" width="7" height="7" rx="1" />
+                            <rect x="14" y="3" width="7" height="7" rx="1" />
+                            <rect x="3" y="14" width="7" height="7" rx="1" />
+                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                        </svg>
+                        Overview
+                    </button>
+                    <button class="sidebar-nav-item" data-tab="orders">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                            <rect x="8" y="2" width="8" height="4" rx="1" />
+                            <path d="M9 12h6M9 16h4" />
+                        </svg>
+                        My Orders
+                    </button>
+                    <button class="sidebar-nav-item" data-tab="wishlist">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                        </svg>
+                        Wishlist
+                    </button>
+                    <button class="sidebar-nav-item" data-tab="profile">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                        Edit Profile
+                    </button>
+                    <button class="sidebar-nav-item" data-tab="addresses">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                            <circle cx="12" cy="10" r="3" />
+                        </svg>
+                        Addresses
+                    </button>
+                    <button class="sidebar-nav-item" data-tab="security">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                        Security
+                    </button>
+                    <div class="sidebar-nav-sep"></div>
+                    <button class="sidebar-nav-item logout-btn" id="logoutBtn">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
+                            <polyline points="16 17 21 12 16 7" />
+                            <line x1="21" y1="12" x2="9" y2="12" />
+                        </svg>
+                        Sign Out
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- ══ MAIN ══ -->
+            <div>
+
+                <!-- ─ OVERVIEW PANEL ─ -->
+                <div class="panel active" id="panel-overview">
+                    <div class="stats-row">
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                                    <rect x="8" y="2" width="8" height="4" rx="1" />
+                                </svg></div>
+                            <div class="stat-num" id="statOrders">–</div>
+                            <div class="stat-lbl">Total Orders</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <path
+                                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                                </svg></div>
+                            <div class="stat-num" id="statWishlist">–</div>
+                            <div class="stat-lbl">Wishlist Items</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><svg viewBox="0 0 24 24">
+                                    <line x1="12" y1="1" x2="12" y2="23" />
+                                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                                </svg></div>
+                            <div class="stat-num" id="statSpent">–</div>
+                            <div class="stat-lbl">Total Spent</div>
+                        </div>
                     </div>
 
-                    <nav class="sidebar-nav">
-                        <button class="sidebar-nav-item active" data-tab="profile">
-                            <i class="fa-regular fa-user"></i> My Profile
-                        </button>
-                        <a href="orders.html" class="sidebar-nav-item">
-                            <i class="fa-solid fa-box"></i> My Orders
-                        </a>
-                        <button class="sidebar-nav-item" data-tab="addresses">
-                            <i class="fa-solid fa-location-dot"></i> Addresses
-                        </button>
-                        <button class="sidebar-nav-item" data-tab="password">
-                            <i class="fa-solid fa-lock"></i> Change Password
-                        </button>
-                        <button class="sidebar-nav-item nav-logout" id="logout-btn">
-                            <i class="fa-solid fa-right-from-bracket"></i> Logout
-                        </button>
-                    </nav>
-                </aside>
+                    <!-- Recent Orders -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">
+                                    <svg viewBox="0 0 24 24"
+                                        style="width:12px;height:12px;stroke:var(--gold-dk);fill:none;stroke-width:2">
+                                        <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                                    </svg>
+                                    Recent Activity
+                                </div>
+                                <div class="card-title">Latest Orders</div>
+                            </div>
+                            <button class="btn btn-gold" onclick="switchTab('orders')">
+                                <div class="btn-inner">View All
+                                    <svg viewBox="0 0 24 24">
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                        <polyline points="12 5 19 12 12 19" />
+                                    </svg>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="card-body" id="recentOrdersBody">
+                            <div class="skel-line skel" style="width:100%;margin-bottom:14px"></div>
+                            <div class="skel-line skel skel-sm"></div>
+                        </div>
+                    </div>
 
-                <!-- ── Main content ── -->
-                <div>
-                    <!-- PROFILE TAB -->
-                    <div class="profile-panel active" id="tab-profile">
-                        <!-- Stats -->
-                        <div class="stats-row" id="stats-row">
-                            <div class="stat-card">
-                                <div class="stat-card-icon"><i class="fa-solid fa-box"></i></div>
-                                <div class="stat-card-num" id="stat-orders">–</div>
-                                <div class="stat-card-label">Total Orders</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-icon"><i class="fa-regular fa-heart"></i></div>
-                                <div class="stat-card-num" id="stat-wishlist">–</div>
-                                <div class="stat-card-label">Wishlist Items</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-card-icon"><i class="fa-solid fa-indian-rupee-sign"></i></div>
-                                <div class="stat-card-num" id="stat-spent">–</div>
-                                <div class="stat-card-label">Total Spent</div>
+                    <!-- Quick links -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">Quick Actions</div>
+                                <div class="card-sub">Shortcuts to common tasks</div>
                             </div>
                         </div>
+                        <div class="card-body">
+                            <div
+                                style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">
+                                <a href="shop.html"
+                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
+                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
+                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
+                                        stroke-width="1.8">
+                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
+                                        <line x1="3" y1="6" x2="21" y2="6" />
+                                        <path d="M16 10a4 4 0 01-8 0" />
+                                    </svg>
+                                    <span style="font-size:12px;font-weight:600;color:var(--text-2)">Shop Now</span>
+                                </a>
+                                <a href="orders.html"
+                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
+                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
+                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
+                                        stroke-width="1.8">
+                                        <path d="M21 10V20a2 2 0 01-2 2H5a2 2 0 01-2-2V10" />
+                                        <path d="M23 6H1l2-4h18l2 4z" />
+                                        <path d="M12 6v16" />
+                                    </svg>
+                                    <span style="font-size:12px;font-weight:600;color:var(--text-2)">Track Order</span>
+                                </a>
+                                <button onclick="switchTab('addresses')"
+                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;cursor:pointer;background:none;font-family:var(--fb)"
+                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
+                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
+                                        stroke-width="1.8">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
+                                        <circle cx="12" cy="10" r="3" />
+                                    </svg>
+                                    <span style="font-size:12px;font-weight:600;color:var(--text-2)">Addresses</span>
+                                </button>
+                                <a href="contact.html"
+                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
+                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
+                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
+                                        stroke-width="1.8">
+                                        <path
+                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                        <polyline points="22,6 12,13 2,6" />
+                                    </svg>
+                                    <span style="font-size:12px;font-weight:600;color:var(--text-2)">Support</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                        <!-- Edit profile form -->
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div>
-                                    <div class="panel-card-title">My Profile</div>
-                                    <div class="panel-card-sub">Update your personal information</div>
-                                </div>
+                <!-- ─ ORDERS PANEL ─ -->
+                <div class="panel" id="panel-orders">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Order History</div>
+                                <div class="card-title">My Orders</div>
+                                <div class="card-sub">Track and manage all your purchases</div>
+                            </div>
+                        </div>
+                        <div class="card-body" id="allOrdersBody">
+                            <div class="skel-line skel" style="width:100%;margin-bottom:14px"></div>
+                            <div class="skel-line skel skel-sm"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─ WISHLIST PANEL ─ -->
+                <div class="panel" id="panel-wishlist">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Saved Items</div>
+                                <div class="card-title">My Wishlist</div>
+                            </div>
+                            <span id="wishlistCount" class="badge badge-placed">0 items</span>
+                        </div>
+                        <div class="card-body" id="wishlistBody">
+                            <div class="skel-line skel" style="width:60%;margin-bottom:10px"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ─ PROFILE PANEL ─ -->
+                <div class="panel" id="panel-profile">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Personal Info</div>
+                                <div class="card-title">Edit Profile</div>
+                                <div class="card-sub">Keep your information up to date</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-error" id="profileAlert">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                </svg>
+                                <span id="profileAlertMsg"></span>
                             </div>
 
                             <div class="form-row-2">
                                 <div class="form-group">
-                                    <label class="form-label">First Name</label>
-                                    <input type="text" class="form-input" id="edit-first-name" placeholder="Priya" />
+                                    <label class="form-label">First Name <span class="req">*</span></label>
+                                    <div class="input-wrap">
+                                        <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                                <circle cx="12" cy="7" r="4" />
+                                            </svg></span>
+                                        <input type="text" id="editFname" placeholder="Priya"
+                                            autocomplete="given-name" />
+                                    </div>
+                                    <div class="field-err" id="errFname">First name is required</div>
                                 </div>
                                 <div class="form-group">
                                     <label class="form-label">Last Name</label>
-                                    <input type="text" class="form-input" id="edit-last-name" placeholder="Sharma" />
+                                    <div class="input-wrap">
+                                        <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+                                                <circle cx="12" cy="7" r="4" />
+                                            </svg></span>
+                                        <input type="text" id="editLname" placeholder="Sharma"
+                                            autocomplete="family-name" />
+                                    </div>
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label class="form-label">Email Address</label>
-                                <input type="email" class="form-input" id="edit-email" disabled />
-                                <div class="form-hint"><i class="fa-solid fa-lock" style="font-size:10px"></i> Email cannot be changed</div>
+                                <div class="input-wrap">
+                                    <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                            <polyline points="22,6 12,13 2,6" />
+                                        </svg></span>
+                                    <input type="email" id="editEmail" disabled />
+                                </div>
+                                <div class="form-hint">
+                                    <svg viewBox="0 0 24 24">
+                                        <rect x="3" y="11" width="18" height="11" rx="2" />
+                                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                                    </svg>
+                                    Email cannot be changed after registration
+                                </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Phone Number</label>
-                                <input type="tel" class="form-input" id="edit-phone" placeholder="9876543210" maxlength="10" />
-                                <div class="form-hint">Used for order notifications via SMS</div>
+                                <label class="form-label">Mobile Number</label>
+                                <div class="phone-wrap">
+                                    <div class="phone-prefix">🇮🇳 +91</div>
+                                    <input type="tel" id="editPhone" class="phone-field" placeholder="10-digit number"
+                                        maxlength="10" autocomplete="tel"
+                                        oninput="this.value=this.value.replace(/\D/g,'')" />
+                                </div>
+                                <div class="form-hint">Used for order & delivery notifications</div>
                             </div>
 
-                            <button class="btn-save" id="save-profile-btn">
-                                <i class="fa-solid fa-check"></i> Save Changes
+                            <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()">
+                                <div class="btn-inner">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                    </svg>
+                                    Save Changes
+                                </div>
                             </button>
                         </div>
-
-                        <!-- Recent orders mini -->
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div class="panel-card-title">Recent Orders</div>
-                                <a href="orders.html" class="btn-save" style="font-size:12px;padding:8px 18px;text-decoration:none">
-                                    View All <i class="fa-solid fa-arrow-right" style="font-size:0.75rem"></i>
-                                </a>
-                            </div>
-                            <div id="recent-orders-list">
-                                <div class="profile-loading"><div class="spinner"></div></div>
-                            </div>
-                        </div>
                     </div>
+                </div>
 
-                    <!-- ADDRESSES TAB -->
-                    <div class="profile-panel" id="tab-addresses">
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div>
-                                    <div class="panel-card-title">Saved Addresses</div>
-                                    <div class="panel-card-sub">Manage your delivery addresses</div>
-                                </div>
-                                <button class="btn-save" onclick="showToast('info','Coming Soon','Address management will be available soon.')">
-                                    <i class="fa-solid fa-plus"></i> Add New
-                                </button>
+                <!-- ─ ADDRESSES PANEL ─ -->
+                <div class="panel" id="panel-addresses">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Delivery</div>
+                                <div class="card-title">Saved Addresses</div>
+                                <div class="card-sub">Manage your delivery locations</div>
                             </div>
-                            <div class="address-grid">
-                                <div class="address-card is-default" id="default-address">
-                                    <span class="address-default-badge">Default</span>
-                                    <div class="address-name" id="addr-name">—</div>
-                                    <div class="address-detail" id="addr-detail">Loading address…</div>
-                                    <div class="address-actions">
-                                        <button class="btn-ghost-sm" onclick="showToast('info','Coming Soon','Edit address coming soon.')">Edit</button>
-                                        <button class="btn-ghost-sm" style="color:var(--color-accent)" onclick="showToast('info','Coming Soon','Delete address coming soon.')">Delete</button>
+                            <button class="btn btn-gold" onclick="toast('Address management coming soon!','w')">
+                                <div class="btn-inner">
+                                    <svg viewBox="0 0 24 24">
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                    </svg>
+                                    Add New
+                                </div>
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="address-grid" id="addrGrid">
+                                <div class="addr-card default">
+                                    <span class="addr-default-tag">Default</span>
+                                    <div class="addr-name" id="addrName">—</div>
+                                    <div class="addr-detail" id="addrDetail">Loading…</div>
+                                    <div class="addr-actions">
+                                        <button class="btn btn-outline"
+                                            onclick="toast('Edit address coming soon!','w')">Edit</button>
+                                        <button class="btn btn-danger-ghost"
+                                            onclick="toast('Delete coming soon!','w')">Delete</button>
                                     </div>
                                 </div>
-                                <button class="btn-add-address" onclick="showToast('info','Coming Soon','Address management will be available soon.')">
-                                    <i class="fa-solid fa-plus" style="font-size:1.2rem"></i>
+                                <button class="btn-add-addr" onclick="toast('Address management coming soon!','w')">
+                                    <svg viewBox="0 0 24 24">
+                                        <line x1="12" y1="5" x2="12" y2="19" />
+                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                    </svg>
                                     Add New Address
                                 </button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <!-- CHANGE PASSWORD TAB -->
-                    <div class="profile-panel" id="tab-password">
-                        <div class="panel-card">
-                            <div class="panel-card-header">
-                                <div>
-                                    <div class="panel-card-title">Change Password</div>
-                                    <div class="panel-card-sub">Keep your account secure with a strong password</div>
+                <!-- ─ SECURITY PANEL ─ -->
+                <div class="panel" id="panel-security">
+                    <!-- Change Password -->
+                    <div class="card" style="margin-bottom:20px">
+                        <div class="card-header">
+                            <div>
+                                <div class="card-eyebrow">Account Security</div>
+                                <div class="card-title">Change Password</div>
+                                <div class="card-sub">Use a strong, unique password</div>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-error" id="pwAlert">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <line x1="12" y1="8" x2="12" y2="12" />
+                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                </svg>
+                                <span id="pwAlertMsg"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Current Password <span class="req">*</span></label>
+                                <div class="input-wrap">
+                                    <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                                        </svg></span>
+                                    <input type="password" id="currPw" placeholder="Your current password" />
+                                    <span class="inp-suffix" onclick="togglePwField('currPw','eyeCurr')">
+                                        <svg id="eyeCurr" viewBox="0 0 24 24">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </span>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Current Password</label>
+                                <label class="form-label">New Password <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="password" class="form-input" id="current-password" placeholder="••••••••" />
-                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-curr-pass"></i>
+                                    <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        </svg></span>
+                                    <input type="password" id="newPw" placeholder="Min. 8 characters"
+                                        oninput="checkPwStrength(this.value)" />
+                                    <span class="inp-suffix" onclick="togglePwField('newPw','eyeNew')">
+                                        <svg id="eyeNew" viewBox="0 0 24 24">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="pw-strength">
+                                    <div class="pw-bar">
+                                        <div class="pw-seg" id="ps0"></div>
+                                        <div class="pw-seg" id="ps1"></div>
+                                        <div class="pw-seg" id="ps2"></div>
+                                        <div class="pw-seg" id="ps3"></div>
+                                    </div>
+                                    <span class="pw-strength-lbl" id="pwLbl">Enter a new password</span>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">New Password</label>
+                                <label class="form-label">Confirm New Password <span class="req">*</span></label>
                                 <div class="input-wrap">
-                                    <input type="password" class="form-input" id="new-password" placeholder="Minimum 8 characters" />
-                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-new-pass"></i>
+                                    <span class="inp-icon"><svg viewBox="0 0 24 24">
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
+                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                        </svg></span>
+                                    <input type="password" id="confPw" placeholder="Repeat new password" />
+                                    <span class="inp-suffix" onclick="togglePwField('confPw','eyeConf')">
+                                        <svg id="eyeConf" viewBox="0 0 24 24">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                                            <circle cx="12" cy="12" r="3" />
+                                        </svg>
+                                    </span>
                                 </div>
-                                <div class="form-hint">Use a mix of letters, numbers and symbols for best security</div>
                             </div>
 
-                            <div class="form-group">
-                                <label class="form-label">Confirm New Password</label>
-                                <div class="input-wrap">
-                                    <input type="password" class="form-input" id="confirm-new-password" placeholder="Repeat new password" />
-                                    <i class="fa-regular fa-eye eye-toggle" id="toggle-conf-pass"></i>
+                            <button class="btn btn-primary" id="updatePwBtn" onclick="updatePassword()">
+                                <div class="btn-inner">
+                                    <svg viewBox="0 0 24 24">
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                    </svg>
+                                    Update Password
                                 </div>
-                            </div>
-
-                            <button class="btn-save" id="update-password-btn">
-                                <i class="fa-solid fa-shield-halved"></i> Update Password
                             </button>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Cart Drawer -->
-    <div class="cart-drawer-backdrop" id="cart-backdrop"></div>
-    <aside class="cart-drawer" id="cart-drawer">
-        <div class="cart-drawer-header">
-            <h3>My Cart</h3>
-            <button class="cart-close-btn" id="cart-close-btn">✕</button>
-        </div>
-        <div class="cart-drawer-body" id="cart-body">
-            <div class="cart-empty">
-                <div class="cart-empty-icon">🛍️</div>
-                <div class="cart-empty-text">Your cart is empty</div>
-                <a href="shop.html" class="btn btn-primary" style="margin-top:12px">Shop Now</a>
-            </div>
-        </div>
-    </aside>
+                    <!-- Security Info -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">Security Settings</div>
+                        </div>
+                        <div class="card-body">
+                            <div class="security-item">
+                                <div class="security-item-left">
+                                    <div class="security-icon"><svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.4 19.79 19.79 0 010.21 .79 2 2 0 012.21 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91" />
+                                        </svg></div>
+                                    <div>
+                                        <div class="security-title">SMS Notifications</div>
+                                        <div class="security-desc">Receive order updates via SMS on your registered
+                                            mobile</div>
+                                        <div class="security-status on"><span class="security-status-dot"></span>
+                                            Enabled</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked
+                                        onchange="toast('Notification preferences saved!','s')">
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-top grid grid-4">
-                <div>
-                    <div style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:12px">
-                        Heels<span style="color:var(--color-primary)">Up</span>
+                            <div class="security-item">
+                                <div class="security-item-left">
+                                    <div class="security-icon"><svg viewBox="0 0 24 24">
+                                            <path
+                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+                                            <polyline points="22,6 12,13 2,6" />
+                                        </svg></div>
+                                    <div>
+                                        <div class="security-title">Email Notifications</div>
+                                        <div class="security-desc">Get order confirmations, shipping updates and offers
+                                            by email</div>
+                                        <div class="security-status on"><span class="security-status-dot"></span>
+                                            Enabled</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked
+                                        onchange="toast('Notification preferences saved!','s')">
+                                    <span class="toggle-track"></span>
+                                </label>
+                            </div>
+
+                            <div class="security-item">
+                                <div class="security-item-left">
+                                    <div class="security-icon"><svg viewBox="0 0 24 24">
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        </svg></div>
+                                    <div>
+                                        <div class="security-title">Login Alerts</div>
+                                        <div class="security-desc">Get notified when a new device logs into your account
+                                        </div>
+                                        <div class="security-status off"><span class="security-status-dot"></span>
+                                            Coming Soon</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled>
+                                    <span class="toggle-track" style="opacity:.5"></span>
+                                </label>
+                            </div>
+
+                            <div class="security-item">
+                                <div class="security-item-left">
+                                    <div class="security-icon"><svg viewBox="0 0 24 24">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                                        </svg></div>
+                                    <div>
+                                        <div class="security-title">Two-Factor Authentication</div>
+                                        <div class="security-desc">Add an extra layer of security with OTP on every
+                                            login</div>
+                                        <div class="security-status off"><span class="security-status-dot"></span>
+                                            Coming Soon</div>
+                                    </div>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" disabled>
+                                    <span class="toggle-track" style="opacity:.5"></span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    <p class="footer-tagline">Jodhpur se India tak — stylish ladies footwear &amp; bags ka sabse trusted naam.</p>
-                    <div class="footer-social">
-                        <a href="https://instagram.com/heelsup.in" class="footer-social-link" aria-label="Instagram" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i></a>
-                        <a href="https://facebook.com/heelsup.in" class="footer-social-link" aria-label="Facebook" target="_blank" rel="noopener"><i class="fa-brands fa-facebook-f"></i></a>
-                        <a href="https://wa.me/919999999999" class="footer-social-link" aria-label="WhatsApp" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+
+            </div><!-- /main -->
+        </div><!-- /profile-layout -->
+    </div><!-- /page -->
+
+    <!-- ══ FOOTER ══ -->
+    <footer style="background:var(--ink);padding:56px 0 32px;margin-top:0">
+        <div style="max-width:1280px;margin:0 auto;padding:0 32px">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px">
+                <div>
+                    <div style="font-family:var(--fd);font-size:1.8rem;color:#fff;margin-bottom:16px">Heels<span
+                            style="color:var(--gold)">Up</span></div>
+                    <p style="font-size:13.5px;color:rgba(255,255,255,.45);line-height:1.8;max-width:280px">Jodhpur se
+                        India tak — premium ladies footwear & bags ka sabse trusted naam.</p>
+                    <div style="display:flex;gap:12px;margin-top:20px">
+                        <a href="https://instagram.com/heelsup.in" target="_blank"
+                            style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)"
+                            onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'"
+                            onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" />
+                                <circle cx="12" cy="12" r="5" />
+                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+                            </svg>
+                        </a>
+                        <a href="https://wa.me/919999999999" target="_blank"
+                            style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)"
+                            onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'"
+                            onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2">
+                                <path d="M3 21l1.65-3.8a9 9 0 111.79 1.79z" />
+                            </svg>
+                        </a>
                     </div>
                 </div>
                 <div>
-                    <div class="footer-col-title">Quick Links</div>
-                    <ul class="footer-links">
-                        <li><a href="shop.html" class="footer-link">Shop All</a></li>
-                        <li><a href="category.html?cat=new" class="footer-link">New Arrivals</a></li>
-                        <li><a href="about.html" class="footer-link">About Us</a></li>
-                        <li><a href="contact.html" class="footer-link">Contact Us</a></li>
-                    </ul>
+                    <div
+                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                        Shop</div>
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                        <a href="shop.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">All Products</a>
+                        <a href="category.html?cat=heels"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Heels</a>
+                        <a href="category.html?cat=sandals"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Sandals</a>
+                        <a href="category.html?cat=bags"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Bags</a>
+                        <a href="category.html?cat=new"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">New Arrivals</a>
+                    </div>
                 </div>
                 <div>
-                    <div class="footer-col-title">Categories</div>
-                    <ul class="footer-links">
-                        <li><a href="category.html?cat=heels" class="footer-link">👠 Heels</a></li>
-                        <li><a href="category.html?cat=flats" class="footer-link">🥿 Flats</a></li>
-                        <li><a href="category.html?cat=sandals" class="footer-link">👡 Sandals</a></li>
-                        <li><a href="category.html?cat=bags" class="footer-link">👜 Bags</a></li>
-                    </ul>
+                    <div
+                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                        Help</div>
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                        <a href="orders.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Track Order</a>
+                        <a href="returns.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Returns</a>
+                        <a href="faq.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">FAQs</a>
+                        <a href="contact.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Contact Us</a>
+                    </div>
                 </div>
                 <div>
-                    <div class="footer-col-title">Help &amp; Support</div>
-                    <ul class="footer-links">
-                        <li><a href="orders.html" class="footer-link">Track Order</a></li>
-                        <li><a href="returns.html" class="footer-link">Return Policy</a></li>
-                        <li><a href="faq.html" class="footer-link">FAQs</a></li>
-                        <li><a href="contact.html" class="footer-link">Contact</a></li>
-                    </ul>
+                    <div
+                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                        Legal</div>
+                    <div style="display:flex;flex-direction:column;gap:10px">
+                        <a href="policy/privacy.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Privacy Policy</a>
+                        <a href="policy/terms.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Terms of Service</a>
+                        <a href="policy/returns.html"
+                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
+                            onmouseover="this.style.color='var(--gold-lt)'"
+                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Return Policy</a>
+                    </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">© 2025 HeelsUp. All rights reserved. Made with ❤️ in Jodhpur.</p>
-                <div class="footer-bottom-links">
-                    <a href="policy/privacy.html">Privacy</a>
-                    <a href="policy/terms.html">Terms</a>
-                    <a href="policy/returns.html">Returns</a>
+            <div
+                style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+                <p style="font-size:12.5px;color:rgba(255,255,255,.25)">© 2025 HeelsUp. All rights reserved. Made with
+                    ❤️ in Jodhpur.</p>
+                <div style="display:flex;gap:20px">
+                    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.25)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        </svg>
+                        SSL Secured
+                    </div>
+                    <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.25)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" />
+                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                        </svg>
+                        Encrypted
+                    </div>
                 </div>
             </div>
         </div>
     </footer>
 
-    <div class="toast-container" id="toast-container"></div>
-
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
     <script src="js/cart.js"></script>
     <script>
-        // ── Auth guard ──
+        'use strict';
+
+        /* ── Auth Guard ── */
         (function () {
-            if (!HeelsUpAuth.getToken()) {
-                window.location.href = 'login.html?redirect=profile.html';
-            }
+            try { if (!HeelsUpAuth.getToken()) window.location.href = 'login.html?redirect=profile.html'; } catch (e) { window.location.href = 'login.html'; }
         })();
 
-        // ── Navbar scroll ──
+        /* ── Navbar scroll ── */
         window.addEventListener('scroll', () => {
             document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
         });
 
-        // ── Mobile menu ──
-        const hamburger = document.getElementById('hamburger-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        hamburger?.addEventListener('click', () => {
-            hamburger.classList.toggle('open');
-            mobileMenu.classList.toggle('open');
-        });
-        ['mobile-backdrop','mobile-menu-close'].forEach(id => {
-            document.getElementById(id)?.addEventListener('click', () => {
-                hamburger.classList.remove('open');
-                mobileMenu.classList.remove('open');
-            });
-        });
+        /* ── Mobile nav ── */
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileOverlay = document.getElementById('mobileOverlay');
+        const mobilePanel = document.getElementById('mobilePanel');
+        function openMobileNav() { mobileOverlay.classList.add('open'); mobilePanel.classList.add('open') }
+        function closeMobileNav() { mobileOverlay.classList.remove('open'); mobilePanel.classList.remove('open') }
+        hamburgerBtn?.addEventListener('click', openMobileNav);
+        mobileOverlay?.addEventListener('click', closeMobileNav);
 
-        // ── Cart ──
-        document.getElementById('cart-open-btn')?.addEventListener('click', () => {
-            document.getElementById('cart-drawer').classList.add('open');
-            document.getElementById('cart-backdrop').classList.add('open');
-        });
-        document.getElementById('cart-close-btn')?.addEventListener('click', () => {
-            document.getElementById('cart-drawer').classList.remove('open');
-            document.getElementById('cart-backdrop').classList.remove('open');
-        });
-        document.getElementById('cart-backdrop')?.addEventListener('click', () => {
-            document.getElementById('cart-drawer').classList.remove('open');
-            document.getElementById('cart-backdrop').classList.remove('open');
-        });
-
-        // ── Toast ──
-        function showToast(type, title, msg) {
-            const c = document.getElementById('toast-container');
-            const id = 'toast-' + Date.now();
-            const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation' };
-            c.insertAdjacentHTML('beforeend', `
-                <div class="toast toast-${type}" id="${id}">
-                    <i class="fa-solid ${icons[type] || icons.info} toast-icon"></i>
-                    <div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div>
-                    <button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button>
-                </div>
-            `);
-            setTimeout(() => document.getElementById(id)?.remove(), 5000);
+        /* ── Toast ── */
+        function toast(msg, type = 's', dur = 4000) {
+            const wrap = document.getElementById('toastWrap');
+            const t = document.createElement('div');
+            t.className = 'toast ' + type;
+            const icons = { s: '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>', e: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>', w: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' };
+            t.innerHTML = (icons[type] || icons.s) + msg;
+            wrap.appendChild(t);
+            requestAnimationFrame(() => requestAnimationFrame(() => t.classList.add('show')));
+            setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 400); }, dur);
         }
 
-        // ── Tab switching ──
+        /* ── Alert boxes ── */
+        function showAlert(alertId, msgId, msg, type = 'error') {
+            const box = document.getElementById(alertId);
+            document.getElementById(msgId).textContent = msg;
+            box.className = 'alert alert-' + type;
+            box.style.display = 'flex';
+        }
+        function hideAlert(alertId) { document.getElementById(alertId).style.display = 'none'; }
+
+        /* ── Tab switch ── */
+        function switchTab(tab) {
+            document.querySelectorAll('.sidebar-nav-item[data-tab]').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            document.querySelector('.sidebar-nav-item[data-tab="' + tab + '"]')?.classList.add('active');
+            document.getElementById('panel-' + tab)?.classList.add('active');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
         document.querySelectorAll('.sidebar-nav-item[data-tab]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const tab = btn.dataset.tab;
-                document.querySelectorAll('.sidebar-nav-item').forEach(b => b.classList.remove('active'));
-                document.querySelectorAll('.profile-panel').forEach(p => p.classList.remove('active'));
-                btn.classList.add('active');
-                document.getElementById('tab-' + tab)?.classList.add('active');
-            });
+            btn.addEventListener('click', () => switchTab(btn.dataset.tab));
         });
 
-        // ── Password eye toggles ──
-        [
-            ['toggle-curr-pass', 'current-password'],
-            ['toggle-new-pass',  'new-password'],
-            ['toggle-conf-pass', 'confirm-new-password'],
-        ].forEach(([toggleId, inputId]) => {
-            document.getElementById(toggleId)?.addEventListener('click', function () {
-                const inp = document.getElementById(inputId);
-                inp.type = inp.type === 'password' ? 'text' : 'password';
-                this.classList.toggle('fa-eye');
-                this.classList.toggle('fa-eye-slash');
-            });
-        });
+        /* ── Password toggle ── */
+        function togglePwField(inputId, iconId) {
+            const inp = document.getElementById(inputId);
+            const isText = inp.type === 'text';
+            inp.type = isText ? 'password' : 'text';
+            document.getElementById(iconId).innerHTML = isText
+                ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+                : '<line x1="1" y1="1" x2="23" y2="23"/><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><circle cx="12" cy="12" r="3"/>';
+        }
 
-        // ── Format currency ──
+        /* ── Password strength ── */
+        function checkPwStrength(pw) {
+            let score = 0;
+            if (pw.length >= 8) score++;
+            if (/[A-Z]/.test(pw)) score++;
+            if (/[0-9]/.test(pw)) score++;
+            if (/[^a-zA-Z0-9]/.test(pw)) score++;
+            const cls = ['', 'w', 'w', 'm', 's'];
+            const labels = ['Enter a new password', 'Weak', 'Weak', 'Fair', 'Strong'];
+            const colors = ['var(--text-4)', 'var(--rose)', 'var(--rose)', 'var(--gold)', 'var(--teal)'];
+            ['ps0', 'ps1', 'ps2', 'ps3'].forEach((id, i) => {
+                const seg = document.getElementById(id);
+                seg.className = 'pw-seg' + (i < score ? ' ' + cls[score] : '');
+            });
+            const lbl = document.getElementById('pwLbl');
+            lbl.textContent = pw ? labels[score] : 'Enter a new password';
+            lbl.style.color = pw ? colors[score] : 'var(--text-4)';
+        }
+
+        /* ── Format currency ── */
         function formatInr(n) {
+            if (!n) return '₹0';
             if (n >= 100000) return '₹' + (n / 100000).toFixed(1) + 'L';
             if (n >= 1000) return '₹' + (n / 1000).toFixed(1) + 'K';
-            return '₹' + Number(n || 0).toLocaleString('en-IN');
+            return '₹' + Number(n).toLocaleString('en-IN');
         }
 
-        // ── Render recent orders ──
+        /* ── Render recent orders (overview panel) ── */
         function renderRecentOrders(orders) {
-            const container = document.getElementById('recent-orders-list');
+            const body = document.getElementById('recentOrdersBody');
             if (!orders || !orders.length) {
-                container.innerHTML = `
-                    <div style="text-align:center;padding:32px;color:var(--text-muted)">
-                        <i class="fa-solid fa-box-open" style="font-size:2rem;margin-bottom:8px;display:block;opacity:0.3"></i>
-                        No orders yet. <a href="shop.html" style="color:var(--color-primary);font-weight:600">Start shopping</a>
-                    </div>`;
+                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Your order history will appear here</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Start Shopping</div></a></div>`;
                 return;
             }
-
-            const statusMap = {
-                placed:    'badge-placed',
-                confirmed: 'badge-processing',
-                processing:'badge-processing',
-                shipped:   'badge-shipped',
-                delivered: 'badge-delivered',
-            };
-
-            const imgFallback = 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=100&q=60&auto=format&fit=crop';
-
-            container.innerHTML = orders.slice(0, 3).map(order => {
+            const statusMap = { placed: 'badge-placed', confirmed: 'badge-processing', processing: 'badge-processing', shipped: 'badge-shipped', delivered: 'badge-delivered', cancelled: 'badge-cancelled' };
+            const fallback = 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=120&q=60&auto=format&fit=crop';
+            body.innerHTML = orders.slice(0, 3).map(order => {
                 const st = (order.orderStatus || 'placed').toLowerCase();
-                const badgeClass = statusMap[st] || 'badge-placed';
-                const img = order.items?.[0]?.image || imgFallback;
-                const itemName = order.items?.[0]?.name || 'Product';
-                const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '—';
-                return `
-                    <div class="order-mini">
-                        <div class="order-mini-img"><img src="${img}" alt="${itemName}" loading="lazy" /></div>
-                        <div class="order-mini-info">
-                            <div class="order-mini-name">${itemName}</div>
-                            <div class="order-mini-meta">Order #${order.orderNumber || order.id} · ${date}</div>
-                        </div>
-                        <span class="order-mini-badge ${badgeClass}" style="text-transform:capitalize">${st}</span>
-                    </div>`;
+                const img = order.items?.[0]?.image || fallback;
+                const name = order.items?.[0]?.name || 'Product';
+                const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                const price = formatInr(order.totalAmount || 0);
+                return `<div class="order-row">
+      <div class="order-thumb"><img src="${img}" alt="${name}" loading="lazy" /></div>
+      <div class="order-info">
+        <div class="order-name">${name}</div>
+        <div class="order-meta">Order #${order.orderNumber || order._id || order.id} &middot; ${date}</div>
+        <div class="order-price">${price}</div>
+        <div class="order-actions">
+          <a href="orders.html" class="order-track-btn">Track Order <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+        </div>
+      </div>
+      <span class="badge ${statusMap[st] || 'badge-placed'}" style="text-transform:capitalize">${st}</span>
+    </div>`;
             }).join('');
         }
 
-        // ── Load profile ──
+        /* ── Render all orders ── */
+        function renderAllOrders(orders) {
+            const body = document.getElementById('allOrdersBody');
+            if (!orders || !orders.length) {
+                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Start shopping to see your orders here</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Browse Products</div></a></div>`;
+                return;
+            }
+            const statusMap = { placed: 'badge-placed', confirmed: 'badge-processing', processing: 'badge-processing', shipped: 'badge-shipped', delivered: 'badge-delivered', cancelled: 'badge-cancelled' };
+            const fallback = 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=120&q=60&auto=format&fit=crop';
+            body.innerHTML = orders.map(order => {
+                const st = (order.orderStatus || 'placed').toLowerCase();
+                const img = order.items?.[0]?.image || fallback;
+                const name = order.items?.[0]?.name || 'Product';
+                const date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : '—';
+                const price = formatInr(order.totalAmount || 0);
+                const itemCount = order.items?.length || 1;
+                return `<div class="order-row">
+      <div class="order-thumb"><img src="${img}" alt="${name}" loading="lazy" /></div>
+      <div class="order-info">
+        <div class="order-name">${name}${itemCount > 1 ? ` <span style="font-size:11.5px;font-weight:500;color:var(--text-3)">+${itemCount - 1} more</span>` : ''}</div>
+        <div class="order-meta">Order #${order.orderNumber || order._id || order.id} &middot; ${date} &middot; ${itemCount} item${itemCount > 1 ? 's' : ''}</div>
+        <div class="order-price">${price}</div>
+        <div class="order-actions">
+          <a href="orders.html" class="order-track-btn">View Details <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          ${st === 'delivered' ? `<button onclick="toast('Return request coming soon!','w')" class="btn btn-outline" style="font-size:11.5px;padding:6px 14px;letter-spacing:.02em;text-transform:none">Return</button>` : ''}
+        </div>
+      </div>
+      <span class="badge ${statusMap[st] || 'badge-placed'}" style="text-transform:capitalize">${st}</span>
+    </div>`;
+            }).join('');
+        }
+
+        /* ── Render wishlist ── */
+        function renderWishlist() {
+            const body = document.getElementById('wishlistBody');
+            const countEl = document.getElementById('wishlistCount');
+            try {
+                const wl = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[]');
+                countEl.textContent = wl.length + ' item' + (wl.length !== 1 ? 's' : '');
+                document.getElementById('miniWishlist').textContent = wl.length;
+                document.getElementById('statWishlist').textContent = wl.length;
+                if (!wl.length) {
+                    body.innerHTML = `<div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-title">Your wishlist is empty</div><div class="empty-sub">Save items you love for later</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Explore Products</div></a></div>`;
+                    return;
+                }
+                body.innerHTML = `<div class="wishlist-grid">${wl.map((item, i) => `
+      <div class="wishlist-item">
+        <div class="wishlist-img">
+          <img src="${item.image || 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&q=70'}" alt="${item.name}" loading="lazy" />
+          <button class="wishlist-remove" onclick="removeFromWishlist(${i})" title="Remove">
+            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+        <div class="wishlist-info">
+          <div class="wishlist-name">${item.name || 'Product'}</div>
+          <div class="wishlist-price">${formatInr(item.price || 0)}</div>
+        </div>
+      </div>`).join('')}</div>`;
+            } catch (e) {
+                body.innerHTML = '<div class="empty-state"><div class="empty-sub">Could not load wishlist.</div></div>';
+            }
+        }
+
+        function removeFromWishlist(index) {
+            try {
+                const wl = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[]');
+                wl.splice(index, 1);
+                localStorage.setItem('heelsup_wishlist', JSON.stringify(wl));
+                renderWishlist();
+                toast('Removed from wishlist', 's');
+            } catch (e) { }
+        }
+
+        /* ── Load profile data ── */
         async function loadProfile() {
+            const prog = document.getElementById('pageProgress');
+            prog.style.transform = 'scaleX(.4)';
             try {
                 const data = await HeelsUpAuth.api('/api/me');
                 const user = data.user || {};
-
                 const fullName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Customer';
-                const initials = (user.firstName?.[0] || '') + (user.lastName?.[0] || '');
+                const initials = ((user.firstName?.[0] || '') + (user.lastName?.[0] || '')).toUpperCase() || '?';
 
-                // Sidebar
-                document.getElementById('sidebar-avatar').textContent = initials.toUpperCase() || '?';
-                document.getElementById('sidebar-name').textContent = fullName;
-                document.getElementById('sidebar-email').textContent = user.email || '';
+                /* sidebar */
+                document.getElementById('sidebarAvatar').textContent = initials;
+                document.getElementById('sidebarName').textContent = fullName;
+                document.getElementById('sidebarEmail').textContent = user.email || '';
 
-                // Navbar
-                const navName = document.getElementById('nav-user-name');
-                navName.textContent = user.firstName || '';
-                navName.style.display = 'inline';
+                /* profile form */
+                document.getElementById('editFname').value = user.firstName || '';
+                document.getElementById('editLname').value = user.lastName || '';
+                document.getElementById('editEmail').value = user.email || '';
+                document.getElementById('editPhone').value = user.phone || '';
 
-                // Profile form
-                document.getElementById('edit-first-name').value = user.firstName || '';
-                document.getElementById('edit-last-name').value  = user.lastName || '';
-                document.getElementById('edit-email').value      = user.email || '';
-                document.getElementById('edit-phone').value      = user.phone || '';
+                /* address tab */
+                document.getElementById('addrName').textContent = fullName;
+                document.getElementById('addrDetail').textContent = (user.phone ? '📱 +91 ' + user.phone + '\n' : '') + '\n✉️ ' + (user.email || '—') + '\n\n📍 Jodhpur, Rajasthan';
 
-                // Addresses
-                document.getElementById('addr-name').textContent = fullName;
-                document.getElementById('addr-detail').textContent = user.phone
-                    ? `Phone: ${user.phone}\n${user.email}`
-                    : user.email || 'No address saved yet.';
-
-                // Wishlist stat
-                const wl = JSON.parse(localStorage.getItem('heelsup_wishlist') || '[]');
-                document.getElementById('stat-wishlist').textContent = wl.length;
-
+                prog.style.transform = 'scaleX(.8)';
             } catch (err) {
-                if (err.status === 401) {
+                if (err?.status === 401 || err?.message?.includes('401')) {
                     HeelsUpAuth.clearSession();
                     window.location.href = 'login.html?redirect=profile.html';
                 } else {
-                    showToast('error', 'Load Failed', 'Could not load profile. Please refresh.');
+                    toast('Could not load profile. Please refresh.', 'e');
                 }
+            } finally {
+                prog.classList.add('done');
             }
         }
 
-        // ── Load orders stats ──
-        async function loadOrderStats() {
+        async function loadOrders() {
             try {
                 const data = await HeelsUpAuth.api('/api/orders/my');
                 const orders = data.orders || [];
-                document.getElementById('stat-orders').textContent = orders.length;
-
                 const totalSpent = orders.reduce((s, o) => s + (o.totalAmount || 0), 0);
-                document.getElementById('stat-spent').textContent = formatInr(totalSpent);
+
+                document.getElementById('statOrders').textContent = orders.length;
+                document.getElementById('statSpent').textContent = formatInr(totalSpent);
+                document.getElementById('miniOrders').textContent = orders.length;
+                document.getElementById('miniSpent').textContent = formatInr(totalSpent);
 
                 renderRecentOrders(orders);
+                renderAllOrders(orders);
             } catch (e) {
-                document.getElementById('stat-orders').textContent = '—';
-                document.getElementById('stat-spent').textContent = '—';
-                document.getElementById('recent-orders-list').innerHTML = '<div style="text-align:center;padding:24px;color:var(--text-muted)">Could not load recent orders.</div>';
+                document.getElementById('statOrders').textContent = '—';
+                document.getElementById('statSpent').textContent = '—';
+                document.getElementById('miniOrders').textContent = '—';
+                document.getElementById('miniSpent').textContent = '—';
+                const rb = document.getElementById('recentOrdersBody');
+                if (rb) rb.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-3);font-size:13.5px">Could not load orders.</div>';
+                const ab = document.getElementById('allOrdersBody');
+                if (ab) ab.innerHTML = '<div style="text-align:center;padding:28px;color:var(--text-3);font-size:13.5px">Could not load orders.</div>';
             }
         }
 
-        // ── Save profile ──
-        document.getElementById('save-profile-btn')?.addEventListener('click', async () => {
-            const btn = document.getElementById('save-profile-btn');
-            const firstName = document.getElementById('edit-first-name').value.trim();
-            const lastName  = document.getElementById('edit-last-name').value.trim();
-            const phone     = document.getElementById('edit-phone').value.trim();
+        /* ── Save profile ── */
+        async function saveProfile() {
+            const fname = document.getElementById('editFname').value.trim();
+            if (!fname) {
+                document.getElementById('errFname').classList.add('show');
+                showAlert('profileAlert', 'profileAlertMsg', 'First name is required.');
+                return;
+            }
+            document.getElementById('errFname').classList.remove('show');
+            hideAlert('profileAlert');
 
-            if (!firstName) { showToast('error', 'Required', 'First name is required.'); return; }
-
+            const btn = document.getElementById('saveProfileBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+            btn.innerHTML = '<div class="btn-inner"><div class="spinner"></div>Saving…</div>';
 
             try {
                 await HeelsUpAuth.api('/api/me', {
                     method: 'PUT',
-                    body: JSON.stringify({ firstName, lastName, phone })
+                    body: JSON.stringify({
+                        firstName: fname,
+                        lastName: document.getElementById('editLname').value.trim(),
+                        phone: document.getElementById('editPhone').value.trim()
+                    })
                 });
-                showToast('success', 'Profile Updated!', 'Your changes have been saved successfully.');
+                showAlert('profileAlert', 'profileAlertMsg', 'Profile updated successfully!', 'success');
+                document.getElementById('profileAlert').style.display = 'flex';
                 await loadProfile();
+                toast('Profile saved successfully!', 's');
             } catch (err) {
-                showToast('error', 'Update Failed', err.message || 'Please try again.');
+                showAlert('profileAlert', 'profileAlertMsg', err?.message || 'Update failed. Please try again.');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+                btn.innerHTML = '<div class="btn-inner"><svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Save Changes</div>';
             }
-        });
+        }
 
-        // ── Update password ──
-        document.getElementById('update-password-btn')?.addEventListener('click', async () => {
-            const btn             = document.getElementById('update-password-btn');
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword     = document.getElementById('new-password').value;
-            const confirmPass     = document.getElementById('confirm-new-password').value;
+        /* ── Update password ── */
+        async function updatePassword() {
+            const curr = document.getElementById('currPw').value;
+            const nw = document.getElementById('newPw').value;
+            const conf = document.getElementById('confPw').value;
+            hideAlert('pwAlert');
 
-            if (!currentPassword) { showToast('error', 'Required', 'Current password is required.'); return; }
-            if (!newPassword || newPassword.length < 8) { showToast('error', 'Too Short', 'New password must be at least 8 characters.'); return; }
-            if (newPassword !== confirmPass) { showToast('error', 'Mismatch', 'New passwords do not match.'); return; }
-            if (newPassword === currentPassword) { showToast('warning', 'Same Password', 'New password must be different from current password.'); return; }
+            if (!curr) { showAlert('pwAlert', 'pwAlertMsg', 'Current password is required.'); return; }
+            if (!nw || nw.length < 8) { showAlert('pwAlert', 'pwAlertMsg', 'New password must be at least 8 characters.'); return; }
+            if (nw !== conf) { showAlert('pwAlert', 'pwAlertMsg', 'New passwords do not match.'); return; }
+            if (nw === curr) { showAlert('pwAlert', 'pwAlertMsg', 'New password must differ from your current password.', 'warn'); return; }
 
+            const btn = document.getElementById('updatePwBtn');
             btn.disabled = true;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating…';
+            btn.innerHTML = '<div class="btn-inner"><div class="spinner"></div>Updating…</div>';
 
             try {
-                await HeelsUpAuth.api('/api/me/password', {
-                    method: 'PUT',
-                    body: JSON.stringify({ currentPassword, newPassword })
-                });
-                document.getElementById('current-password').value = '';
-                document.getElementById('new-password').value = '';
-                document.getElementById('confirm-new-password').value = '';
-                showToast('success', 'Password Updated!', 'Your password has been changed successfully.');
+                await HeelsUpAuth.api('/api/me/password', { method: 'PUT', body: JSON.stringify({ currentPassword: curr, newPassword: nw }) });
+                document.getElementById('currPw').value = '';
+                document.getElementById('newPw').value = '';
+                document.getElementById('confPw').value = '';
+                ['ps0', 'ps1', 'ps2', 'ps3'].forEach(id => { document.getElementById(id).className = 'pw-seg'; });
+                document.getElementById('pwLbl').textContent = 'Enter a new password';
+                document.getElementById('pwLbl').style.color = 'var(--text-4)';
+                toast('Password updated successfully!', 's');
             } catch (err) {
-                showToast('error', 'Update Failed', err?.data?.error || err.message || 'Please check your current password.');
+                showAlert('pwAlert', 'pwAlertMsg', err?.data?.error || err?.message || 'Incorrect current password.');
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> Update Password';
+                btn.innerHTML = '<div class="btn-inner"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Update Password</div>';
             }
-        });
+        }
 
-        // ── Logout ──
-        document.getElementById('logout-btn')?.addEventListener('click', () => {
+        /* ── Logout ── */
+        document.getElementById('logoutBtn')?.addEventListener('click', () => {
             HeelsUpAuth.clearSession();
-            showToast('info', 'Logged out', 'See you soon! 👋');
-            setTimeout(() => { window.location.href = 'index.html'; }, 800);
+            toast('Logged out. See you soon! 👋', 's');
+            setTimeout(() => window.location.href = 'index.html', 900);
         });
 
-        // ── Cart badge update ──
+        /* ── Cart count ── */
         (function () {
             try {
                 const cart = JSON.parse(localStorage.getItem('heelsup_cart') || '[]');
-                document.getElementById('cart-count').textContent = cart.reduce((s, i) => s + i.qty, 0);
-            } catch (e) {}
+                document.getElementById('cartCount').textContent = cart.reduce((s, i) => s + (i.qty || 1), 0);
+            } catch (e) { }
         })();
 
-        // ── Init ──
+        /* ── Init ── */
         loadProfile();
-        loadOrderStats();
+        loadOrders();
+        renderWishlist();
     </script>
 </body>
 
