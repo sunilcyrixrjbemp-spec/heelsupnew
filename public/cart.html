@@ -526,6 +526,10 @@
         function initScrollTop() { document.getElementById('scroll-top')?.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' })); }
 
         function renderCart() {
+            // Filter out corrupted items
+            cart = cart.filter(i => i && i.price !== undefined && i.id);
+            localStorage.setItem('heelsup_cart', JSON.stringify(cart));
+            
             const count = cart.reduce((s, i) => s + i.qty, 0);
             document.getElementById('cart-count').textContent = count;
             document.getElementById('cart-header-count').textContent = count ? `(${count} item${count > 1 ? 's' : ''})` : '';

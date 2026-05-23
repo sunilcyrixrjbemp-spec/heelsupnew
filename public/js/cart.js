@@ -7,8 +7,11 @@
     const FREE_SHIP_THRESHOLD = 499;
 
     function getCart() {
-        try { return JSON.parse(localStorage.getItem(CART_KEY) || '[]'); }
-        catch { return []; }
+        try { 
+            const arr = JSON.parse(localStorage.getItem(CART_KEY) || '[]'); 
+            // Filter out any corrupted items that might have been saved during the bug
+            return Array.isArray(arr) ? arr.filter(i => i && i.id && typeof i.price === 'number') : [];
+        } catch { return []; }
     }
 
     function saveCart(cart) {

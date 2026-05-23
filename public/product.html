@@ -1131,9 +1131,13 @@
       }
 
       try {
-        const product = await HeelsUpAuth.api(`/api/products/${id}`);
-        if (!product || product.error) throw new Error('Product not found');
+        const data = await HeelsUpAuth.api(`/api/products/${id}`);
+        if (!data || data.error) throw new Error('Product not found');
+        const product = data.product || data.data || data;
+        if (!product) throw new Error('Product data missing');
         currentProduct = product;
+        
+        // Pass the whole data object to renderProduct to use reviews/images if needed
         renderProduct(product);
         loadRelated(product.category, product.id);
       } catch (err) {
