@@ -30,12 +30,10 @@ export async function analyticsRouter(request, env) {
             const dateFilter = `created_at >= ${startDate} AND created_at <= ${endDate}`;
             const dateFilterO = `o.created_at >= ${startDate} AND o.created_at <= ${endDate}`;
 
-            // Single Batch Query (Extremely Fast)
             const results = await env.DB.batch([
-                // 0: Aggregate Orders (Revenue EXCLUDES cancelled/returned)
                 env.DB.prepare(`
                     SELECT 
-                        COALESCE(SUM(CASE WHEN payment_status = 'paid' AND status NOT IN ('cancelled', 'returned') THEN total ELSE 0 END), 0) as total_revenue,
+                        COALESCE(SUM(CASE WHEN payment_status = 'paid' AND status NOT IN ('cancelled', 'returned') THEN CAST(total AS REAL) ELSE 0 END), 0) as total_revenue,
                         COUNT(*) as total_orders,
                         SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered_orders,
                         SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_orders,
@@ -47,23 +45,17 @@ export async function analyticsRouter(request, env) {
                         SUM(CASE WHEN payment_status != 'paid' THEN 1 ELSE 0 END) as payment_pending
                     FROM orders WHERE ${dateFilter}
                 `),
-
-                // 1: Customers Stats
                 env.DB.prepare(`
                     SELECT 
                         (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers,
                         (SELECT COUNT(*) FROM users WHERE role='customer' AND ${dateFilter}) as new_customers
                 `),
-
-                // 2: Daily Revenue Chart (EXCLUDES cancelled/returned)
                 env.DB.prepare(`
-                    SELECT date(created_at) as date, COALESCE(SUM(total), 0) as revenue, COUNT(*) as orders
+                    SELECT date(created_at) as date, COALESCE(SUM(CAST(total AS REAL)), 0) as revenue, COUNT(*) as orders
                     FROM orders 
                     WHERE payment_status='paid' AND status NOT IN ('cancelled', 'returned') AND ${dateFilter} 
                     GROUP BY date ORDER BY date ASC
                 `),
-
-                // 3: Top Products (EXCLUDES cancelled/returned)
                 env.DB.prepare(`
                     SELECT p.name, p.image_url, SUM(oi.qty) as quantity, SUM(oi.total_price) as revenue
                     FROM order_items oi 
@@ -72,8 +64,6 @@ export async function analyticsRouter(request, env) {
                     WHERE o.payment_status = 'paid' AND o.status NOT IN ('cancelled', 'returned') AND ${dateFilterO}
                     GROUP BY p.id ORDER BY revenue DESC LIMIT 7
                 `),
-
-                // 4: Category Sales
                 env.DB.prepare(`
                     SELECT COALESCE(p.category, 'Uncategorized') as category, SUM(oi.total_price) as revenue
                     FROM order_items oi 
@@ -82,14 +72,10 @@ export async function analyticsRouter(request, env) {
                     WHERE o.payment_status = 'paid' AND o.status NOT IN ('cancelled', 'returned') AND ${dateFilterO}
                     GROUP BY p.category ORDER BY revenue DESC
                 `),
-
-                // 5: Payment Methods Breakdown
                 env.DB.prepare(`
                     SELECT payment_method, COUNT(*) as count 
                     FROM orders WHERE ${dateFilter} GROUP BY payment_method
                 `),
-
-                // 6: Recent Orders (Data specifically mapped for frontend table)
                 env.DB.prepare(`
                     SELECT o.id, o.order_number, o.total as total_amount, o.status as order_status, o.payment_status, o.created_at,
                            COALESCE(u.name, o.guest_name) as customer_name, COALESCE(u.email, o.guest_email) as customer_email
@@ -108,7 +94,6 @@ export async function analyticsRouter(request, env) {
                 payment_methods[key] = p.count;
             });
 
-            // Conversion Funnel Logic
             const tOrders = orderStats.total_orders || 0;
             const funnel = {
                 orders: tOrders,
