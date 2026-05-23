@@ -147,6 +147,8 @@ async function router(request, env) {
   if (path === "/api/auth/logout" && method === "POST") return logoutUser(request, env);
   if (path === "/api/auth/forgot-password" && method === "POST") return forgotPassword(request, env);
   if (path === "/api/auth/reset-password" && method === "POST") return resetPassword(request, env);
+  if (path === "/api/auth/google" && method === "POST") return googleLogin(request, env);
+  if (path === "/api/config" && method === "GET") return getPublicConfig(request, env);
 
   // ── Public Products ────────────────────────────────────────────
   if (path === "/api/products" && method === "GET") return listProducts(url, env);
@@ -516,6 +518,63 @@ async function loginUser(request, env) {
   return json({ ok: true, token: session.token, user: mapUser(user) });
 }
 
+async function googleLogin(request, env) {
+  const body = await readJson(request);
+  const credential = body?.credential;
+  if (!credential) return json({ error: "Missing Google credential" }, 400);
+
+  const clientId = await getSetting(env, "google_client_id", "");
+  if (!clientId) return json({ error: "Google Login is not configured on the server." }, 500);
+
+  try {
+    const res = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${credential}`);
+    if (!res.ok) return json({ error: "Invalid Google token" }, 401);
+    const data = await res.json();
+    
+    if (data.aud !== clientId) {
+      return json({ error: "Invalid Client ID mismatch" }, 401);
+    }
+    
+    if (data.email_verified !== "true" && data.email_verified !== true) {
+      return json({ error: "Google email is not verified" }, 401);
+    }
+
+    const email = normalizeEmail(data.email);
+    let user = await env.DB.prepare("SELECT * FROM users WHERE email=?").bind(email).first();
+    
+    if (!user) {
+      // Create a new user with random password
+      const randPw = crypto.randomUUID() + crypto.randomUUID();
+      const hash = await hashPassword(randPw);
+      const fname = data.given_name || data.name || "Google User";
+      const lname = data.family_name || "";
+      
+      const r = await env.DB.prepare(
+        "INSERT INTO users (first_name, last_name, email, password_hash, role, email_verified, created_at, updated_at) VALUES (?, ?, ?, ?, 'customer', 1, ?, ?)"
+      ).bind(fname, lname, email, hash, nowIso(), nowIso()).run();
+      
+      user = await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(r.meta.last_row_id).first();
+    } else if (!user.email_verified) {
+      // If user existed but wasn't verified, Google login verifies it
+      await env.DB.prepare("UPDATE users SET email_verified=1 WHERE id=?").bind(user.id).run();
+      user.email_verified = 1;
+    }
+    
+    if (user.is_blocked) return json({ error: "Your account has been suspended. Contact support." }, 403);
+    
+    const ip = request.headers.get("CF-Connecting-IP") || "0.0.0.0";
+    await env.DB.prepare("INSERT INTO login_attempts (email,success,ip,created_at) VALUES (?,1,?,?)").bind(email, ip, nowIso()).run();
+    await env.DB.prepare("UPDATE users SET last_login_at=? WHERE id=?").bind(nowIso(), user.id).run();
+    
+    const session = await createSession(env, user.id, user.role);
+    await auditLog(env, user.id, "login_google", "users", user.id, { ip });
+    
+    return json({ ok: true, token: session.token, user: mapUser(user) });
+  } catch (err) {
+    return json({ error: "Google authentication failed" }, 500);
+  }
+}
+
 async function logoutUser(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
@@ -572,6 +631,13 @@ async function resetPassword(request, env) {
 // ════════════════════════════════════════════════════════════════
 // ME / PROFILE
 // ════════════════════════════════════════════════════════════════
+async function getPublicConfig(request, env) {
+  const googleClientId = await getSetting(env, "google_client_id", "");
+  return json({
+    googleClientId: googleClientId
+  });
+}
+
 async function getMe(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;

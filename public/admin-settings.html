@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1258,6 +1258,12 @@
                     <div class="form-hint">Ensure the script is published to execute as you and accessible by 'Anyone'.
                     </div>
                   </div>
+                  <div class="form-group">
+                    <label class="form-label">Google OAuth Client ID</label>
+                    <input type="text" class="form-input" id="google_client_id"
+                      placeholder="e.g. 1234-xyz.apps.googleusercontent.com" />
+                    <div class="form-hint">Used for "Continue with Google" login. Leave blank to disable Google Auth.</div>
+                  </div>
                   <div class="form-group" style="max-width:220px">
                     <label class="form-label">OTP Expiry Timeline</label>
                     <div class="input-group">
@@ -1606,6 +1612,7 @@
 
         // OTP
         document.getElementById('otp_script_url').value = liveSettings.otp_script_url || '';
+        document.getElementById('google_client_id').value = liveSettings.google_client_id || '';
         document.getElementById('otp_expiry_minutes').value = liveSettings.otp_expiry_minutes || '10';
         document.getElementById('require_email_otp').checked = !!liveSettings.require_email_otp;
 
@@ -1671,6 +1678,7 @@
         } else if (section === 'otp') {
           payload = {
             otp_script_url: document.getElementById('otp_script_url').value.trim(),
+            google_client_id: document.getElementById('google_client_id').value.trim(),
             otp_expiry_minutes: parseInt(document.getElementById('otp_expiry_minutes').value) || 10,
             require_email_otp: document.getElementById('require_email_otp').checked
           };

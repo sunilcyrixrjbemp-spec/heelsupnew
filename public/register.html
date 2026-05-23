@@ -1354,6 +1354,16 @@
             </div>
           </button>
 
+          <!-- Divider -->
+          <div style="display:flex; align-items:center; gap:14px; color:var(--text-4); font-size:12px; margin-bottom:20px;">
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+            or continue with
+            <div style="flex:1; height:1px; background:var(--border);"></div>
+          </div>
+
+          <!-- Google SSO -->
+          <div id="googleBtnWrapper" style="display:flex; justify-content:center; margin-bottom: 20px;"></div>
+
           <div class="form-footer">
             Already have an account? <a href="login.html">Sign In</a>
           </div>
@@ -1426,6 +1436,7 @@
 
   <script src="app-config.js"></script>
   <script src="app-auth.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="js/cart.js"></script>
   <script>
     'use strict';
@@ -1687,11 +1698,51 @@
         } else {
           showErr(msg || 'Registration failed. Please try again.');
         }
+      } catch (err) {
+        toast(err.message || 'Verification failed. Try again.', 'e');
       } finally {
-        btn.disabled = false;
-        inner.innerHTML = `<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" fill="none" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>Verify & Create Account`;
+        resetBtn('btnVerify', 'btnVerifyInner', '<svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Verify & Create Account');
       }
     }
+
+    async function handleGoogleCallback(response) {
+      try {
+        const res = await HeelsUpAuth.api('/api/auth/google', {
+          method: 'POST',
+          body: JSON.stringify({ credential: response.credential })
+        });
+        if (res.token) {
+          HeelsUpAuth.setSession(res.token, res.user);
+          toast('Account created successfully!');
+          setTimeout(() => {
+            const redirect = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+            window.location.href = redirect;
+          }, 600);
+        }
+      } catch (e) {
+        toast(e.message || 'Google authentication failed', 'e');
+      }
+    }
+
+    async function initGoogle() {
+      try {
+        const config = await HeelsUpAuth.api('/api/config');
+        if (config.googleClientId && window.google) {
+          google.accounts.id.initialize({
+            client_id: config.googleClientId,
+            callback: handleGoogleCallback
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("googleBtnWrapper"),
+            { theme: "outline", size: "large", type: "standard", width: document.getElementById('btnSendOtp').offsetWidth }
+          );
+        }
+      } catch (e) {
+        console.error("Could not load Google Config", e);
+      }
+    }
+
+    window.addEventListener('load', initGoogle);
 
     /* shake keyframe */
     const s = document.createElement('style');

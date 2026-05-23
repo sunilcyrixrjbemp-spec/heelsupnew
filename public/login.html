@@ -1105,8 +1105,9 @@
         <!-- Divider -->
         <div class="divider">or continue with</div>
 
-        <!-- Google SSO (UI only, hook in app-auth.js) -->
-        <button class="btn-google" onclick="doGoogleLogin()">
+        <!-- Google SSO -->
+        <div id="googleBtnWrapper" style="display:flex; justify-content:center; margin-bottom: 20px;"></div>
+        <button class="btn-google" id="customGoogleBtn" onclick="doGoogleLogin()">
           <svg viewBox="0 0 48 48" width="18" height="18">
             <path fill="#4285F4"
               d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
@@ -1161,6 +1162,7 @@
 ══════════════════════════════════ -->
   <script src="app-config.js"></script>
   <script src="app-auth.js"></script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <script src="js/cart.js"></script>
 
   <script>
@@ -1285,9 +1287,48 @@
 
     /* ── Google OAuth (stub — wire to app-auth.js) ── */
     function doGoogleLogin() {
-      toast('Google login coming soon!', 's', 3000);
-      // HeelsUpAuth.googleLogin().then(...)
+      toast('Google Login is not configured. Please contact the administrator.', 'e');
     }
+
+    async function handleGoogleCallback(response) {
+      try {
+        const res = await HeelsUpAuth.api('/api/auth/google', {
+          method: 'POST',
+          body: JSON.stringify({ credential: response.credential })
+        });
+        if (res.token) {
+          HeelsUpAuth.setSession(res.token, res.user);
+          toast('Logged in successfully!');
+          setTimeout(() => {
+            const redirect = new URLSearchParams(window.location.search).get('redirect') || 'profile.html';
+            window.location.href = redirect;
+          }, 600);
+        }
+      } catch (e) {
+        toast(e.message || 'Google authentication failed', 'e');
+      }
+    }
+
+    async function initGoogle() {
+      try {
+        const config = await HeelsUpAuth.api('/api/config');
+        if (config.googleClientId && window.google) {
+          document.getElementById('customGoogleBtn').style.display = 'none';
+          google.accounts.id.initialize({
+            client_id: config.googleClientId,
+            callback: handleGoogleCallback
+          });
+          google.accounts.id.renderButton(
+            document.getElementById("googleBtnWrapper"),
+            { theme: "outline", size: "large", type: "standard", width: document.getElementById('btnLogin').offsetWidth }
+          );
+        }
+      } catch (e) {
+        console.error("Could not load Google Config", e);
+      }
+    }
+
+    window.addEventListener('load', initGoogle);
 
     /* ── Fade-in animation ── */
     const style = document.createElement('style');
