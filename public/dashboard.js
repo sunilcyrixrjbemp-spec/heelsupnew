@@ -357,12 +357,13 @@ function getDateRange() {
 
 async function loadDashboard() {
     Prog.start();
-    let dash = Cache.get('dashboard');
+    const { from, to } = getDateRange();
+    let cacheKey = `dashboard_${from}_${to}`;
+    let dash = Cache.get(cacheKey);
     if (!dash) {
         try {
-            const { from, to } = getDateRange();
             dash = await api(`/api/admin/dashboard?from=${from}&to=${to}`);
-            Cache.set('dashboard', dash, 20_000);
+            Cache.set(cacheKey, dash, 20_000);
         } catch (e) {
             renderStatsError();
             Prog.done();
