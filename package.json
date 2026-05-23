@@ -11,5 +11,8 @@
   },
   "devDependencies": {
     "wrangler": "^4.15.2"
+  },
+  "dependencies": {
+    "cheerio": "^1.2.0"
   }
 }

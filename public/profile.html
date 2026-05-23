@@ -1,16 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>My Account — HeelsUp | Ladies Footwear & Bags</title>
-    <meta name="description" content="Manage your HeelsUp account — profile, orders, addresses and security." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-        rel="stylesheet" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Account — HeelsUp | Ladies Footwear &amp; Bags</title>
+    <meta name="description" content="Manage your HeelsUp account — profile, orders, addresses and security.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&amp;family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
     <style>
         :root {
             --ink: #0d0a08;
@@ -931,13 +926,13 @@
             gap: 8px
         }
 
-        .btn-primary {
+        .btn {
             background: var(--ink);
             color: #fff;
             padding: 13px 28px
         }
 
-        .btn-primary::before {
+        .btn::before {
             content: '';
             position: absolute;
             inset: 0;
@@ -946,20 +941,20 @@
             transition: opacity var(--t)
         }
 
-        .btn-primary:hover::before {
+        .btn:hover::before {
             opacity: 1
         }
 
-        .btn-primary:hover {
+        .btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 28px rgba(0, 0, 0, .22)
         }
 
-        .btn-primary:active {
+        .btn:active {
             transform: translateY(0)
         }
 
-        .btn-primary:disabled {
+        .btn:disabled {
             opacity: .6;
             cursor: not-allowed;
             transform: none
@@ -1759,19 +1754,13 @@
     <div class="topbar">
         <div style="overflow:hidden;max-width:100%">
             <div class="topbar-track" id="topbarTrack">
-                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span
-                        class="topbar-sep">|</span></div>
-                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span
-                        class="topbar-sep">|</span></div>
-                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span
-                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span class="topbar-sep">|</span></div>
+                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span class="topbar-sep">|</span></div>
+                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span class="topbar-sep">|</span></div>
                 <div class="topbar-item">⭐ 4.9 Rating from 10,000+ Customers<span class="topbar-sep">|</span></div>
-                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span
-                        class="topbar-sep">|</span></div>
-                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span
-                        class="topbar-sep">|</span></div>
-                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span
-                        class="topbar-sep">|</span></div>
+                <div class="topbar-item">🎉 <strong>NEW ARRIVALS</strong> — Summer Collection is Live!<span class="topbar-sep">|</span></div>
+                <div class="topbar-item">🚚 FREE Shipping on orders above <strong>₹499</strong><span class="topbar-sep">|</span></div>
+                <div class="topbar-item">🏷️ Use code <strong>HEELS10</strong> for 10% off<span class="topbar-sep">|</span></div>
                 <div class="topbar-item">⭐ 4.9 Rating from 10,000+ Customers<span class="topbar-sep">|</span></div>
             </div>
         </div>
@@ -1779,68 +1768,123 @@
 
     <!-- ══ NAVBAR ══ -->
     <nav class="navbar" id="navbar">
-        <div class="navbar-inner">
-            <a href="index.html" class="navbar-logo">
-                <img src="logo.png" alt="HeelsUp"
-                    onerror="this.style.display='none';this.nextElementSibling.style.display='inline'" />
-                <span style="display:none">Heels<span>Up</span></span>
+    <div class="ctn">
+      <div class="nb-inner">
+        <!-- Logo -->
+        <a href="/" class="nb-logo">
+          <img src="logo.png" alt="HeelsUp" id="logo-img" onerror="this.classList.add('err');this.style.display='none'">
+          <span class="nb-logo-txt">Heels<span>Up</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <ul class="nb-menu">
+          <li><a href="/" class="nb-link active">Home</a></li>
+          <li>
+            <a href="/shop.html" class="nb-link">
+              Shop
+              <svg class="nb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
             </a>
-            <div class="nav-links">
-                <a href="index.html" class="nav-link">Home</a>
-                <a href="shop.html" class="nav-link">Shop</a>
-                <a href="category.html?cat=new" class="nav-link">New Arrivals</a>
-                <a href="category.html?cat=sale" class="nav-link sale">Sale</a>
+            <div class="nb-drop">
+              <a href="/category.html?cat=heels">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M20 18H4l2-8h12l2 8zM4 18l-2 2M20 18l2 2M8 10V6a4 4 0 018 0v4"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
+              </a>
+              <a href="/category.html?cat=sandals">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M3 20h18M5 20V10l7-7 7 7v10M9 20v-6h6v6"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
+              </a>
+              <a href="/category.html?cat=flats">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="17" rx="9" ry="3"></ellipse>
+                    <path d="M3 17V7l9-4 9 4v10"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
+              </a>
+              <a href="/category.html?cat=wedges">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M4 20h16M4 20l4-12h8l4 12"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
+              </a>
+              <a href="/category.html?cat=bags">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
+              </a>
+              <a href="/category.html?cat=clutches">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <rect x="3" y="8" width="18" height="13" rx="2"></rect>
+                    <path d="M8 8V5a4 4 0 018 0v3"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Clutches</strong><span>Evening, Party</span></div>
+              </a>
             </div>
-            <div class="nav-actions">
-                <a href="wishlist.html" class="nav-icon" title="Wishlist">
-                    <svg viewBox="0 0 24 24">
-                        <path
-                            d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
-                    </svg>
-                </a>
-                <a href="profile.html" class="nav-icon" style="color:var(--gold-dk)" title="Account">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                </a>
-                <button class="nav-icon" id="cartBtn" title="Cart" style="position:relative">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                        <line x1="3" y1="6" x2="21" y2="6" />
-                        <path d="M16 10a4 4 0 01-8 0" />
-                    </svg>
-                    <span class="nav-badge" id="cartCount">0</span>
-                </button>
-                <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
-                    <span class="h-line"></span><span class="h-line"></span><span class="h-line"></span>
-                </button>
-            </div>
+          </li>
+          <li><a href="/category.html?cat=heels" class="nb-link">Heels</a></li>
+          <li><a href="/category.html?cat=sandals" class="nb-link">Sandals</a></li>
+          <li><a href="/category.html?cat=bags" class="nb-link">Bags</a></li>
+          <li><a href="/about.html" class="nb-link">About</a></li>
+          <li><a href="/contact.html" class="nb-link">Contact</a></li>
+        </ul>
+
+        <!-- Actions -->
+        <div class="nb-actions">
+          <button class="nb-btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+          <a href="/wishlist.html" class="nb-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+            </svg>
+          </a>
+          <a href="/profile.html" class="nb-btn" id="nav-account" aria-label="Account">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+          <button class="nb-btn" id="cart-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+            </svg>
+            <span class="nb-badge" id="cart-cnt">0</span>
+          </button>
+          <button class="nb-ham" id="hamburger" aria-label="Menu">
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+          </button>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 
     <!-- Mobile nav -->
     <div class="mobile-nav-overlay" id="mobileOverlay"></div>
     <div class="mobile-nav-panel" id="mobilePanel">
         <div class="mobile-nav-close">
-            <button onclick="closeMobileNav()"
-                style="background:none;border:none;font-size:1.4rem;color:var(--text-3);cursor:pointer">✕</button>
+            <button onclick="closeMobileNav()" style="background:none;border:none;font-size:1.4rem;color:var(--text-3);cursor:pointer">✕</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:4px">
-            <a href="index.html"
-                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🏠
+            <a href="index.html" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🏠
                 Home</a>
-            <a href="shop.html"
-                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🛍️
+            <a href="shop.html" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">🛍️
                 Shop</a>
-            <a href="category.html?cat=new"
-                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">✨
+            <a href="category.html?cat=new" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">✨
                 New Arrivals</a>
-            <a href="category.html?cat=sale"
-                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--rose);border-bottom:1px solid var(--border)">🔥
+            <a href="category.html?cat=sale" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--rose);border-bottom:1px solid var(--border)">🔥
                 Sale</a>
-            <a href="orders.html"
-                style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">📦
+            <a href="orders.html" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1);border-bottom:1px solid var(--border)">📦
                 My Orders</a>
             <a href="wishlist.html" style="padding:14px 0;font-size:15px;font-weight:500;color:var(--text-1)">❤️
                 Wishlist</a>
@@ -1892,54 +1936,53 @@
                 <nav class="sidebar-nav">
                     <button class="sidebar-nav-item active" data-tab="overview">
                         <svg viewBox="0 0 24 24">
-                            <rect x="3" y="3" width="7" height="7" rx="1" />
-                            <rect x="14" y="3" width="7" height="7" rx="1" />
-                            <rect x="3" y="14" width="7" height="7" rx="1" />
-                            <rect x="14" y="14" width="7" height="7" rx="1" />
+                            <rect x="3" y="3" width="7" height="7" rx="1"></rect>
+                            <rect x="14" y="3" width="7" height="7" rx="1"></rect>
+                            <rect x="3" y="14" width="7" height="7" rx="1"></rect>
+                            <rect x="14" y="14" width="7" height="7" rx="1"></rect>
                         </svg>
                         Overview
                     </button>
                     <button class="sidebar-nav-item" data-tab="orders">
                         <svg viewBox="0 0 24 24">
-                            <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
-                            <rect x="8" y="2" width="8" height="4" rx="1" />
-                            <path d="M9 12h6M9 16h4" />
+                            <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                            <rect x="8" y="2" width="8" height="4" rx="1"></rect>
+                            <path d="M9 12h6M9 16h4"></path>
                         </svg>
                         My Orders
                     </button>
                     <button class="sidebar-nav-item" data-tab="wishlist">
                         <svg viewBox="0 0 24 24">
-                            <path
-                                d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                         </svg>
                         Wishlist
                     </button>
                     <button class="sidebar-nav-item" data-tab="profile">
                         <svg viewBox="0 0 24 24">
-                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                            <circle cx="12" cy="7" r="4" />
+                            <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
                         </svg>
                         Edit Profile
                     </button>
                     <button class="sidebar-nav-item" data-tab="addresses">
                         <svg viewBox="0 0 24 24">
-                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                            <circle cx="12" cy="10" r="3" />
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
                         </svg>
                         Addresses
                     </button>
                     <button class="sidebar-nav-item" data-tab="security">
                         <svg viewBox="0 0 24 24">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
                         Security
                     </button>
                     <div class="sidebar-nav-sep"></div>
                     <button class="sidebar-nav-item logout-btn" id="logoutBtn">
                         <svg viewBox="0 0 24 24">
-                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" />
-                            <polyline points="16 17 21 12 16 7" />
-                            <line x1="21" y1="12" x2="9" y2="12" />
+                            <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path>
+                            <polyline points="16 17 21 12 16 7"></polyline>
+                            <line x1="21" y1="12" x2="9" y2="12"></line>
                         </svg>
                         Sign Out
                     </button>
@@ -1954,24 +1997,23 @@
                     <div class="stats-row">
                         <div class="stat-card">
                             <div class="stat-icon"><svg viewBox="0 0 24 24">
-                                    <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
-                                    <rect x="8" y="2" width="8" height="4" rx="1" />
+                                    <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
+                                    <rect x="8" y="2" width="8" height="4" rx="1"></rect>
                                 </svg></div>
                             <div class="stat-num" id="statOrders">–</div>
                             <div class="stat-lbl">Total Orders</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon"><svg viewBox="0 0 24 24">
-                                    <path
-                                        d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z" />
+                                    <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
                                 </svg></div>
                             <div class="stat-num" id="statWishlist">–</div>
                             <div class="stat-lbl">Wishlist Items</div>
                         </div>
                         <div class="stat-card">
                             <div class="stat-icon"><svg viewBox="0 0 24 24">
-                                    <line x1="12" y1="1" x2="12" y2="23" />
-                                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" />
+                                    <line x1="12" y1="1" x2="12" y2="23"></line>
+                                    <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path>
                                 </svg></div>
                             <div class="stat-num" id="statSpent">–</div>
                             <div class="stat-lbl">Total Spent</div>
@@ -1983,9 +2025,8 @@
                         <div class="card-header">
                             <div>
                                 <div class="card-eyebrow">
-                                    <svg viewBox="0 0 24 24"
-                                        style="width:12px;height:12px;stroke:var(--gold-dk);fill:none;stroke-width:2">
-                                        <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2" />
+                                    <svg viewBox="0 0 24 24" style="width:12px;height:12px;stroke:var(--gold-dk);fill:none;stroke-width:2">
+                                        <path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"></path>
                                     </svg>
                                     Recent Activity
                                 </div>
@@ -1994,8 +2035,8 @@
                             <button class="btn btn-gold" onclick="switchTab('orders')">
                                 <div class="btn-inner">View All
                                     <svg viewBox="0 0 24 24">
-                                        <line x1="5" y1="12" x2="19" y2="12" />
-                                        <polyline points="12 5 19 12 12 19" />
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                        <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
                                 </div>
                             </button>
@@ -2015,52 +2056,34 @@
                             </div>
                         </div>
                         <div class="card-body">
-                            <div
-                                style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">
-                                <a href="shop.html"
-                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
-                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
-                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
-                                        stroke-width="1.8">
-                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                                        <line x1="3" y1="6" x2="21" y2="6" />
-                                        <path d="M16 10a4 4 0 01-8 0" />
+                            <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px">
+                                <a href="shop.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none" onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)" stroke-width="1.8">
+                                        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+                                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                                        <path d="M16 10a4 4 0 01-8 0"></path>
                                     </svg>
                                     <span style="font-size:12px;font-weight:600;color:var(--text-2)">Shop Now</span>
                                 </a>
-                                <a href="orders.html"
-                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
-                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
-                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
-                                        stroke-width="1.8">
-                                        <path d="M21 10V20a2 2 0 01-2 2H5a2 2 0 01-2-2V10" />
-                                        <path d="M23 6H1l2-4h18l2 4z" />
-                                        <path d="M12 6v16" />
+                                <a href="orders.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none" onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)" stroke-width="1.8">
+                                        <path d="M21 10V20a2 2 0 01-2 2H5a2 2 0 01-2-2V10"></path>
+                                        <path d="M23 6H1l2-4h18l2 4z"></path>
+                                        <path d="M12 6v16"></path>
                                     </svg>
                                     <span style="font-size:12px;font-weight:600;color:var(--text-2)">Track Order</span>
                                 </a>
-                                <button onclick="switchTab('addresses')"
-                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;cursor:pointer;background:none;font-family:var(--fb)"
-                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
-                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
-                                        stroke-width="1.8">
-                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
-                                        <circle cx="12" cy="10" r="3" />
+                                <button onclick="switchTab('addresses')" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;cursor:pointer;background:none;font-family:var(--fb)" onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)" stroke-width="1.8">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"></path>
+                                        <circle cx="12" cy="10" r="3"></circle>
                                     </svg>
                                     <span style="font-size:12px;font-weight:600;color:var(--text-2)">Addresses</span>
                                 </button>
-                                <a href="contact.html"
-                                    style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none"
-                                    onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'"
-                                    onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)"
-                                        stroke-width="1.8">
-                                        <path
-                                            d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                        <polyline points="22,6 12,13 2,6" />
+                                <a href="contact.html" style="display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px 12px;border:1.5px solid var(--border);border-radius:14px;transition:all var(--t);text-align:center;text-decoration:none" onmouseover="this.style.borderColor='var(--gold)';this.style.background='var(--gold-glow)'" onmouseout="this.style.borderColor='var(--border)';this.style.background='transparent'">
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--gold-dk)" stroke-width="1.8">
+                                        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                        <polyline points="22,6 12,13 2,6"></polyline>
                                     </svg>
                                     <span style="font-size:12px;font-weight:600;color:var(--text-2)">Support</span>
                                 </a>
@@ -2115,9 +2138,9 @@
                         <div class="card-body">
                             <div class="alert alert-error" id="profileAlert">
                                 <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="12" y1="8" x2="12" y2="12" />
-                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
                                 </svg>
                                 <span id="profileAlertMsg"></span>
                             </div>
@@ -2127,11 +2150,10 @@
                                     <label class="form-label">First Name <span class="req">*</span></label>
                                     <div class="input-wrap">
                                         <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                                                <circle cx="12" cy="7" r="4" />
+                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
                                             </svg></span>
-                                        <input type="text" id="editFname" placeholder="Priya"
-                                            autocomplete="given-name" />
+                                        <input type="text" id="editFname" placeholder="Priya" autocomplete="given-name">
                                     </div>
                                     <div class="field-err" id="errFname">First name is required</div>
                                 </div>
@@ -2139,11 +2161,10 @@
                                     <label class="form-label">Last Name</label>
                                     <div class="input-wrap">
                                         <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
-                                                <circle cx="12" cy="7" r="4" />
+                                                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+                                                <circle cx="12" cy="7" r="4"></circle>
                                             </svg></span>
-                                        <input type="text" id="editLname" placeholder="Sharma"
-                                            autocomplete="family-name" />
+                                        <input type="text" id="editLname" placeholder="Sharma" autocomplete="family-name">
                                     </div>
                                 </div>
                             </div>
@@ -2152,16 +2173,15 @@
                                 <label class="form-label">Email Address</label>
                                 <div class="input-wrap">
                                     <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                            <path
-                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                            <polyline points="22,6 12,13 2,6" />
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                            <polyline points="22,6 12,13 2,6"></polyline>
                                         </svg></span>
-                                    <input type="email" id="editEmail" disabled />
+                                    <input type="email" id="editEmail" disabled="">
                                 </div>
                                 <div class="form-hint">
                                     <svg viewBox="0 0 24 24">
-                                        <rect x="3" y="11" width="18" height="11" rx="2" />
-                                        <path d="M7 11V7a5 5 0 0110 0v4" />
+                                        <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                        <path d="M7 11V7a5 5 0 0110 0v4"></path>
                                     </svg>
                                     Email cannot be changed after registration
                                 </div>
@@ -2171,18 +2191,16 @@
                                 <label class="form-label">Mobile Number</label>
                                 <div class="phone-wrap">
                                     <div class="phone-prefix">🇮🇳 +91</div>
-                                    <input type="tel" id="editPhone" class="phone-field" placeholder="10-digit number"
-                                        maxlength="10" autocomplete="tel"
-                                        oninput="this.value=this.value.replace(/\D/g,'')" />
+                                    <input type="tel" id="editPhone" class="phone-field" placeholder="10-digit number" maxlength="10" autocomplete="tel" oninput="this.value=this.value.replace(/\D/g,'')">
                                 </div>
-                                <div class="form-hint">Used for order & delivery notifications</div>
+                                <div class="form-hint">Used for order &amp; delivery notifications</div>
                             </div>
 
-                            <button class="btn btn-primary" id="saveProfileBtn" onclick="saveProfile()">
+                            <button class="btn btn" id="saveProfileBtn" onclick="saveProfile()">
                                 <div class="btn-inner">
                                     <svg viewBox="0 0 24 24">
-                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                                        <polyline points="22 4 12 14.01 9 11.01" />
+                                        <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
                                     </svg>
                                     Save Changes
                                 </div>
@@ -2203,8 +2221,8 @@
                             <button class="btn btn-gold" onclick="toast('Address management coming soon!','w')">
                                 <div class="btn-inner">
                                     <svg viewBox="0 0 24 24">
-                                        <line x1="12" y1="5" x2="12" y2="19" />
-                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
                                     Add New
                                 </div>
@@ -2217,16 +2235,14 @@
                                     <div class="addr-name" id="addrName">—</div>
                                     <div class="addr-detail" id="addrDetail">Loading…</div>
                                     <div class="addr-actions">
-                                        <button class="btn btn-outline"
-                                            onclick="toast('Edit address coming soon!','w')">Edit</button>
-                                        <button class="btn btn-danger-ghost"
-                                            onclick="toast('Delete coming soon!','w')">Delete</button>
+                                        <button class="btn btn-outline" onclick="toast('Edit address coming soon!','w')">Edit</button>
+                                        <button class="btn btn-danger-ghost" onclick="toast('Delete coming soon!','w')">Delete</button>
                                     </div>
                                 </div>
                                 <button class="btn-add-addr" onclick="toast('Address management coming soon!','w')">
                                     <svg viewBox="0 0 24 24">
-                                        <line x1="12" y1="5" x2="12" y2="19" />
-                                        <line x1="5" y1="12" x2="19" y2="12" />
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
                                     </svg>
                                     Add New Address
                                 </button>
@@ -2249,9 +2265,9 @@
                         <div class="card-body">
                             <div class="alert alert-error" id="pwAlert">
                                 <svg viewBox="0 0 24 24">
-                                    <circle cx="12" cy="12" r="10" />
-                                    <line x1="12" y1="8" x2="12" y2="12" />
-                                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
                                 </svg>
                                 <span id="pwAlertMsg"></span>
                             </div>
@@ -2260,14 +2276,14 @@
                                 <label class="form-label">Current Password <span class="req">*</span></label>
                                 <div class="input-wrap">
                                     <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                            <rect x="3" y="11" width="18" height="11" rx="2" />
-                                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                            <path d="M7 11V7a5 5 0 0110 0v4"></path>
                                         </svg></span>
-                                    <input type="password" id="currPw" placeholder="Your current password" />
+                                    <input type="password" id="currPw" placeholder="Your current password">
                                     <span class="inp-suffix" onclick="togglePwField('currPw','eyeCurr')">
                                         <svg id="eyeCurr" viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
                                         </svg>
                                     </span>
                                 </div>
@@ -2277,14 +2293,13 @@
                                 <label class="form-label">New Password <span class="req">*</span></label>
                                 <div class="input-wrap">
                                     <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                                         </svg></span>
-                                    <input type="password" id="newPw" placeholder="Min. 8 characters"
-                                        oninput="checkPwStrength(this.value)" />
+                                    <input type="password" id="newPw" placeholder="Min. 8 characters" oninput="checkPwStrength(this.value)">
                                     <span class="inp-suffix" onclick="togglePwField('newPw','eyeNew')">
                                         <svg id="eyeNew" viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
                                         </svg>
                                     </span>
                                 </div>
@@ -2303,23 +2318,23 @@
                                 <label class="form-label">Confirm New Password <span class="req">*</span></label>
                                 <div class="input-wrap">
                                     <span class="inp-icon"><svg viewBox="0 0 24 24">
-                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14" />
-                                            <polyline points="22 4 12 14.01 9 11.01" />
+                                            <path d="M22 11.08V12a10 10 0 11-5.93-9.14"></path>
+                                            <polyline points="22 4 12 14.01 9 11.01"></polyline>
                                         </svg></span>
-                                    <input type="password" id="confPw" placeholder="Repeat new password" />
+                                    <input type="password" id="confPw" placeholder="Repeat new password">
                                     <span class="inp-suffix" onclick="togglePwField('confPw','eyeConf')">
                                         <svg id="eyeConf" viewBox="0 0 24 24">
-                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                            <circle cx="12" cy="12" r="3" />
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
                                         </svg>
                                     </span>
                                 </div>
                             </div>
 
-                            <button class="btn btn-primary" id="updatePwBtn" onclick="updatePassword()">
+                            <button class="btn btn" id="updatePwBtn" onclick="updatePassword()">
                                 <div class="btn-inner">
                                     <svg viewBox="0 0 24 24">
-                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                                     </svg>
                                     Update Password
                                 </div>
@@ -2336,8 +2351,7 @@
                             <div class="security-item">
                                 <div class="security-item-left">
                                     <div class="security-icon"><svg viewBox="0 0 24 24">
-                                            <path
-                                                d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.4 19.79 19.79 0 010.21 .79 2 2 0 012.21 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91" />
+                                            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.4 19.79 19.79 0 010.21 .79 2 2 0 012.21 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91"></path>
                                         </svg></div>
                                     <div>
                                         <div class="security-title">SMS Notifications</div>
@@ -2348,8 +2362,7 @@
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" checked
-                                        onchange="toast('Notification preferences saved!','s')">
+                                    <input type="checkbox" checked="" onchange="toast('Notification preferences saved!','s')">
                                     <span class="toggle-track"></span>
                                 </label>
                             </div>
@@ -2357,9 +2370,8 @@
                             <div class="security-item">
                                 <div class="security-item-left">
                                     <div class="security-icon"><svg viewBox="0 0 24 24">
-                                            <path
-                                                d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
-                                            <polyline points="22,6 12,13 2,6" />
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                            <polyline points="22,6 12,13 2,6"></polyline>
                                         </svg></div>
                                     <div>
                                         <div class="security-title">Email Notifications</div>
@@ -2370,8 +2382,7 @@
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" checked
-                                        onchange="toast('Notification preferences saved!','s')">
+                                    <input type="checkbox" checked="" onchange="toast('Notification preferences saved!','s')">
                                     <span class="toggle-track"></span>
                                 </label>
                             </div>
@@ -2379,7 +2390,7 @@
                             <div class="security-item">
                                 <div class="security-item-left">
                                     <div class="security-icon"><svg viewBox="0 0 24 24">
-                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                                         </svg></div>
                                     <div>
                                         <div class="security-title">Login Alerts</div>
@@ -2390,7 +2401,7 @@
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" disabled>
+                                    <input type="checkbox" disabled="">
                                     <span class="toggle-track" style="opacity:.5"></span>
                                 </label>
                             </div>
@@ -2398,8 +2409,8 @@
                             <div class="security-item">
                                 <div class="security-item-left">
                                     <div class="security-icon"><svg viewBox="0 0 24 24">
-                                            <rect x="3" y="11" width="18" height="11" rx="2" />
-                                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                                            <path d="M7 11V7a5 5 0 0110 0v4"></path>
                                         </svg></div>
                                     <div>
                                         <div class="security-title">Two-Factor Authentication</div>
@@ -2410,7 +2421,7 @@
                                     </div>
                                 </div>
                                 <label class="toggle-switch">
-                                    <input type="checkbox" disabled>
+                                    <input type="checkbox" disabled="">
                                     <span class="toggle-track" style="opacity:.5"></span>
                                 </label>
                             </div>
@@ -2427,120 +2438,69 @@
         <div style="max-width:1280px;margin:0 auto;padding:0 32px">
             <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px">
                 <div>
-                    <div style="font-family:var(--fd);font-size:1.8rem;color:#fff;margin-bottom:16px">Heels<span
-                            style="color:var(--gold)">Up</span></div>
+                    <div style="font-family:var(--fd);font-size:1.8rem;color:#fff;margin-bottom:16px">Heels<span style="color:var(--gold)">Up</span></div>
                     <p style="font-size:13.5px;color:rgba(255,255,255,.45);line-height:1.8;max-width:280px">Jodhpur se
-                        India tak — premium ladies footwear & bags ka sabse trusted naam.</p>
+                        India tak — premium ladies footwear &amp; bags ka sabse trusted naam.</p>
                     <div style="display:flex;gap:12px;margin-top:20px">
-                        <a href="https://instagram.com/heelsup.in" target="_blank"
-                            style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)"
-                            onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'"
-                            onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <rect x="2" y="2" width="20" height="20" rx="5" />
-                                <circle cx="12" cy="12" r="5" />
-                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor" />
+                        <a href="https://instagram.com/heelsup.in" target="_blank" style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)" onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'" onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+                                <circle cx="12" cy="12" r="5"></circle>
+                                <circle cx="17.5" cy="6.5" r="1" fill="currentColor"></circle>
                             </svg>
                         </a>
-                        <a href="https://wa.me/919999999999" target="_blank"
-                            style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)"
-                            onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'"
-                            onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                stroke-width="2">
-                                <path d="M3 21l1.65-3.8a9 9 0 111.79 1.79z" />
+                        <a href="https://wa.me/919999999999" target="_blank" style="width:36px;height:36px;border-radius:9px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.5);font-size:15px;transition:all var(--t)" onmouseover="this.style.background='var(--gold-glow)';this.style.color='var(--gold)'" onmouseout="this.style.background='rgba(255,255,255,.07)';this.style.color='rgba(255,255,255,.5)'">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 21l1.65-3.8a9 9 0 111.79 1.79z"></path>
                             </svg>
                         </a>
                     </div>
                 </div>
                 <div>
-                    <div
-                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
                         Shop</div>
                     <div style="display:flex;flex-direction:column;gap:10px">
-                        <a href="shop.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">All Products</a>
-                        <a href="category.html?cat=heels"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Heels</a>
-                        <a href="category.html?cat=sandals"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Sandals</a>
-                        <a href="category.html?cat=bags"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Bags</a>
-                        <a href="category.html?cat=new"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">New Arrivals</a>
+                        <a href="shop.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">All Products</a>
+                        <a href="category.html?cat=heels" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Heels</a>
+                        <a href="category.html?cat=sandals" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Sandals</a>
+                        <a href="category.html?cat=bags" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Bags</a>
+                        <a href="category.html?cat=new" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">New Arrivals</a>
                     </div>
                 </div>
                 <div>
-                    <div
-                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
                         Help</div>
                     <div style="display:flex;flex-direction:column;gap:10px">
-                        <a href="orders.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Track Order</a>
-                        <a href="returns.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Returns</a>
-                        <a href="faq.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">FAQs</a>
-                        <a href="contact.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Contact Us</a>
+                        <a href="orders.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Track Order</a>
+                        <a href="returns.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Returns</a>
+                        <a href="faq.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">FAQs</a>
+                        <a href="contact.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Contact Us</a>
                     </div>
                 </div>
                 <div>
-                    <div
-                        style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
+                    <div style="font-size:10.5px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px">
                         Legal</div>
                     <div style="display:flex;flex-direction:column;gap:10px">
-                        <a href="policy/privacy.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Privacy Policy</a>
-                        <a href="policy/terms.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Terms of Service</a>
-                        <a href="policy/returns.html"
-                            style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)"
-                            onmouseover="this.style.color='var(--gold-lt)'"
-                            onmouseout="this.style.color='rgba(255,255,255,.45)'">Return Policy</a>
+                        <a href="policy/privacy.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Privacy Policy</a>
+                        <a href="policy/terms.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Terms of Service</a>
+                        <a href="policy/returns.html" style="font-size:13.5px;color:rgba(255,255,255,.45);transition:color var(--t)" onmouseover="this.style.color='var(--gold-lt)'" onmouseout="this.style.color='rgba(255,255,255,.45)'">Return Policy</a>
                     </div>
                 </div>
             </div>
-            <div
-                style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+            <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
                 <p style="font-size:12.5px;color:rgba(255,255,255,.25)">© 2025 HeelsUp. All rights reserved. Made with
                     ❤️ in Jodhpur.</p>
                 <div style="display:flex;gap:20px">
                     <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.25)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
                         </svg>
                         SSL Secured
                     </div>
                     <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(255,255,255,.25)">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2">
-                            <rect x="3" y="11" width="18" height="11" rx="2" />
-                            <path d="M7 11V7a5 5 0 0110 0v4" />
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2"></rect>
+                            <path d="M7 11V7a5 5 0 0110 0v4"></path>
                         </svg>
                         Encrypted
                     </div>
@@ -2648,7 +2608,7 @@
         function renderRecentOrders(orders) {
             const body = document.getElementById('recentOrdersBody');
             if (!orders || !orders.length) {
-                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Your order history will appear here</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Start Shopping</div></a></div>`;
+                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Your order history will appear here</div><a href="shop.html" class="btn btn"><div class="btn-inner">Start Shopping</div></a></div>`;
                 return;
             }
             const statusMap = { placed: 'badge-placed', confirmed: 'badge-processing', processing: 'badge-processing', shipped: 'badge-shipped', delivered: 'badge-delivered', cancelled: 'badge-cancelled' };
@@ -2678,7 +2638,7 @@
         function renderAllOrders(orders) {
             const body = document.getElementById('allOrdersBody');
             if (!orders || !orders.length) {
-                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Start shopping to see your orders here</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Browse Products</div></a></div>`;
+                body.innerHTML = `<div class="empty-state"><div class="empty-icon">📦</div><div class="empty-title">No orders yet</div><div class="empty-sub">Start shopping to see your orders here</div><a href="shop.html" class="btn btn"><div class="btn-inner">Browse Products</div></a></div>`;
                 return;
             }
             const statusMap = { placed: 'badge-placed', confirmed: 'badge-processing', processing: 'badge-processing', shipped: 'badge-shipped', delivered: 'badge-delivered', cancelled: 'badge-cancelled' };
@@ -2716,7 +2676,7 @@
                 document.getElementById('miniWishlist').textContent = wl.length;
                 document.getElementById('statWishlist').textContent = wl.length;
                 if (!wl.length) {
-                    body.innerHTML = `<div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-title">Your wishlist is empty</div><div class="empty-sub">Save items you love for later</div><a href="shop.html" class="btn btn-primary"><div class="btn-inner">Explore Products</div></a></div>`;
+                    body.innerHTML = `<div class="empty-state"><div class="empty-icon">❤️</div><div class="empty-title">Your wishlist is empty</div><div class="empty-sub">Save items you love for later</div><a href="shop.html" class="btn btn"><div class="btn-inner">Explore Products</div></a></div>`;
                     return;
                 }
                 body.innerHTML = `<div class="wishlist-grid">${wl.map((item, i) => `
@@ -2899,6 +2859,7 @@
         loadOrders();
         renderWishlist();
     </script>
-</body>
 
-</html>
+
+  <script src="/js/wishlist.js"></script>
+</body></html>

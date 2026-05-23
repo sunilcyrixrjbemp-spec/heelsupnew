@@ -1,20 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Search – HeelsUp</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&amp;family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
     <style>
         .search-page {
-            background: var(--color-light);
+            background: var(--cream2);
             min-height: 100vh;
             padding: 40px 0 80px;
         }
@@ -26,7 +21,7 @@
         }
 
         .search-hero h1 {
-            font-family: var(--font-display);
+            font-family: var(--fd);
             font-size: clamp(2rem, 5vw, 3.5rem);
             font-weight: 300;
             color: #fff;
@@ -63,7 +58,7 @@
 
         .search-bar-big button {
             padding: 11px 28px;
-            background: var(--color-primary);
+            background: var(--gold);
             color: var(--color-dark);
             font-size: 13px;
             font-weight: 700;
@@ -97,7 +92,7 @@
         }
 
         .popular-tag:hover {
-            border-color: var(--color-primary);
+            border-color: var(--gold);
             color: var(--color-primary-light);
             background: rgba(201, 169, 110, 0.1);
         }
@@ -109,12 +104,12 @@
 
         .search-results-meta {
             font-size: 14px;
-            color: var(--text-muted);
+            color: var(--text-3);
             margin-bottom: 24px;
         }
 
         .search-results-meta strong {
-            color: var(--text-primary);
+            color: var(--text-1);
         }
 
         .results-grid {
@@ -154,30 +149,113 @@
         <div class="topbar-marquee"><span class="topbar-text">🔍 Kuch bhi search karo — heels, bags, sandals!</span>
         </div>
     </div>
-    <nav class="navbar" id="navbar"
-        style="position:relative;background:var(--color-dark);border-bottom-color:rgba(255,255,255,0.08)">
-        <div class="container">
-            <div class="navbar-inner">
-                <a href="index.html" class="navbar-logo"><span class="navbar-logo-text"
-                        style="color:#fff">Heels<span>Up</span></span></a>
-                <div class="navbar-actions">
-                    <a href="wishlist.html" class="nav-icon-btn" style="color:rgba(255,255,255,0.7)"><i
-                            class="fa-regular fa-heart"></i></a>
-                    <a href="profile.html" class="nav-icon-btn" style="color:rgba(255,255,255,0.7)"><i
-                            class="fa-regular fa-user"></i></a>
-                    <button class="nav-icon-btn" id="cart-open-btn" style="color:rgba(255,255,255,0.7)"><i
-                            class="fa-solid fa-bag-shopping"></i><span class="nav-badge"
-                            id="cart-count">0</span></button>
-                </div>
+    <nav class="navbar" id="navbar">
+    <div class="ctn">
+      <div class="nb-inner">
+        <!-- Logo -->
+        <a href="/" class="nb-logo">
+          <img src="logo.png" alt="HeelsUp" id="logo-img" onerror="this.classList.add('err');this.style.display='none'">
+          <span class="nb-logo-txt">Heels<span>Up</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <ul class="nb-menu">
+          <li><a href="/" class="nb-link active">Home</a></li>
+          <li>
+            <a href="/shop.html" class="nb-link">
+              Shop
+              <svg class="nb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            </a>
+            <div class="nb-drop">
+              <a href="/category.html?cat=heels">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M20 18H4l2-8h12l2 8zM4 18l-2 2M20 18l2 2M8 10V6a4 4 0 018 0v4"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
+              </a>
+              <a href="/category.html?cat=sandals">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M3 20h18M5 20V10l7-7 7 7v10M9 20v-6h6v6"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
+              </a>
+              <a href="/category.html?cat=flats">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="17" rx="9" ry="3"></ellipse>
+                    <path d="M3 17V7l9-4 9 4v10"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
+              </a>
+              <a href="/category.html?cat=wedges">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M4 20h16M4 20l4-12h8l4 12"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
+              </a>
+              <a href="/category.html?cat=bags">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
+              </a>
+              <a href="/category.html?cat=clutches">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <rect x="3" y="8" width="18" height="13" rx="2"></rect>
+                    <path d="M8 8V5a4 4 0 018 0v3"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Clutches</strong><span>Evening, Party</span></div>
+              </a>
             </div>
+          </li>
+          <li><a href="/category.html?cat=heels" class="nb-link">Heels</a></li>
+          <li><a href="/category.html?cat=sandals" class="nb-link">Sandals</a></li>
+          <li><a href="/category.html?cat=bags" class="nb-link">Bags</a></li>
+          <li><a href="/about.html" class="nb-link">About</a></li>
+          <li><a href="/contact.html" class="nb-link">Contact</a></li>
+        </ul>
+
+        <!-- Actions -->
+        <div class="nb-actions">
+          <button class="nb-btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+          <a href="/wishlist.html" class="nb-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+            </svg>
+          </a>
+          <a href="/profile.html" class="nb-btn" id="nav-account" aria-label="Account">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+          <button class="nb-btn" id="cart-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+            </svg>
+            <span class="nb-badge" id="cart-cnt">0</span>
+          </button>
+          <button class="nb-ham" id="hamburger" aria-label="Menu">
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+          </button>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 
     <div class="search-hero">
-        <div class="container">
+        <div class="ctn">
             <h1>Kya <em>dhundh rahe ho</em>?</h1>
             <div class="search-bar-big">
-                <input type="text" id="main-search" placeholder="Heels, bags, sandals..." autocomplete="off" />
+                <input type="text" id="main-search" placeholder="Heels, bags, sandals..." autocomplete="off">
                 <button onclick="doSearch()"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
             </div>
             <div class="search-popular">
@@ -192,20 +270,20 @@
     </div>
 
     <div class="search-page">
-        <div class="container">
+        <div class="ctn">
             <div id="search-results-section" class="search-results-section" style="display:none">
                 <div class="search-results-meta" id="results-meta"></div>
                 <div class="results-grid" id="results-grid"></div>
             </div>
             <div id="no-results" class="no-results" style="display:none">
                 <div class="no-results-icon">🔍</div>
-                <h3 style="font-family:var(--font-heading);margin-bottom:10px">Koi result nahi mila</h3>
-                <p style="color:var(--text-muted);margin-bottom:24px">Koi aur keyword try karo</p>
-                <a href="shop.html" class="btn btn-primary">Shop All Products</a>
+                <h3 style="font-family:var(--fh);margin-bottom:10px">Koi result nahi mila</h3>
+                <p style="color:var(--text-3);margin-bottom:24px">Koi aur keyword try karo</p>
+                <a href="shop.html" class="btn btn">Shop All Products</a>
             </div>
             <!-- Default state -->
             <div id="default-state">
-                <h2 style="font-family:var(--font-heading);font-size:1.5rem;font-weight:600;margin-bottom:24px">Trending
+                <h2 style="font-family:var(--fh);font-size:1.5rem;font-weight:600;margin-bottom:24px">Trending
                     Searches</h2>
                 <div class="results-grid" id="trending-default"></div>
             </div>
@@ -277,6 +355,7 @@
         document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
         function showToast(type, title, msg) { const c = document.getElementById('toast-container'); const id = 't' + Date.now(); c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid fa-circle-check toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">✕</button></div>`); setTimeout(() => document.getElementById(id)?.remove(), 4000); }
     </script>
-</body>
 
-</html>
+
+  <script src="/js/wishlist.js"></script>
+</body></html>

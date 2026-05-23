@@ -1,18 +1,13 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FAQs – HeelsUp | Frequently Asked Questions</title>
-    <meta name="description" content="HeelsUp ke baare mein aapke saare sawaal aur unke jawab." />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <meta name="description" content="HeelsUp ke baare mein aapke saare sawaal aur unke jawab.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&amp;family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&amp;family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
     <style>
         .faq-hero {
             background: linear-gradient(135deg, var(--color-dark) 0%, #1a1008 100%);
@@ -21,7 +16,7 @@
         }
 
         .faq-hero h1 {
-            font-family: var(--font-display);
+            font-family: var(--fd);
             font-size: clamp(2.2rem, 5vw, 4rem);
             font-weight: 300;
             color: #fff;
@@ -63,7 +58,7 @@
 
         .faq-search-wrap button {
             padding: 10px 22px;
-            background: var(--color-primary);
+            background: var(--gold);
             color: var(--color-dark);
             border-radius: 100px;
             font-size: 12px;
@@ -73,7 +68,7 @@
         }
 
         .faq-page {
-            background: var(--color-light);
+            background: var(--cream2);
             padding: 70px 0;
         }
 
@@ -88,7 +83,7 @@
         .faq-cats {
             background: var(--color-white);
             border-radius: 18px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             overflow: hidden;
             position: sticky;
             top: 90px;
@@ -100,8 +95,8 @@
             font-weight: 700;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-color);
+            color: var(--text-3);
+            border-bottom: 1px solid var(--border);
         }
 
         .faq-cat-item {
@@ -111,27 +106,27 @@
             padding: 13px 22px;
             font-size: 14px;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: var(--text-2);
             cursor: pointer;
             border-left: 3px solid transparent;
             transition: all 0.2s;
         }
 
         .faq-cat-item:hover {
-            color: var(--color-primary);
+            color: var(--gold);
             background: var(--color-primary-glow);
         }
 
         .faq-cat-item.active {
-            color: var(--color-primary);
+            color: var(--gold);
             background: var(--color-primary-glow);
-            border-left-color: var(--color-primary);
+            border-left-color: var(--gold);
         }
 
         .faq-cat-count {
             margin-left: auto;
             font-size: 11px;
-            color: var(--text-muted);
+            color: var(--text-3);
             background: var(--color-light-3);
             padding: 2px 8px;
             border-radius: 100px;
@@ -143,7 +138,7 @@
         }
 
         .faq-group-title {
-            font-family: var(--font-heading);
+            font-family: var(--fh);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 16px;
@@ -153,13 +148,13 @@
         }
 
         .faq-group-icon {
-            color: var(--color-primary);
+            color: var(--gold);
         }
 
         /* Accordion */
         .faq-item {
             background: var(--color-white);
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             border-radius: 14px;
             margin-bottom: 10px;
             overflow: hidden;
@@ -182,31 +177,31 @@
         .faq-question-text {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-1);
             line-height: 1.4;
         }
 
         .faq-item.open .faq-question-text {
-            color: var(--color-primary-dark);
+            color: var(--gold-dk);
         }
 
         .faq-toggle {
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            border: 1.5px solid var(--border-color);
+            border: 1.5px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: var(--text-3);
             flex-shrink: 0;
             transition: all 0.3s;
         }
 
         .faq-item.open .faq-toggle {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
+            background: var(--gold);
+            border-color: var(--gold);
             color: var(--color-dark);
             transform: rotate(45deg);
         }
@@ -215,9 +210,9 @@
             display: none;
             padding: 0 24px 20px;
             font-size: 14px;
-            color: var(--text-secondary);
+            color: var(--text-2);
             line-height: 1.8;
-            border-top: 1px solid var(--border-color);
+            border-top: 1px solid var(--border);
             padding-top: 16px;
         }
 
@@ -235,7 +230,7 @@
         }
 
         .faq-contact-cta h3 {
-            font-family: var(--font-display);
+            font-family: var(--fd);
             font-size: 2rem;
             font-weight: 300;
             color: #fff;
@@ -274,64 +269,136 @@
 
 <body>
     <div class="topbar">
-        <div class="topbar-marquee"><span class="topbar-text">🚚 FREE Shipping above ₹499</span><span
-                class="topbar-dot"></span><span class="topbar-text">💬 24/7 WhatsApp Support</span></div>
+        <div class="topbar-marquee"><span class="topbar-text">🚚 FREE Shipping above ₹499</span><span class="topbar-dot"></span><span class="topbar-text">💬 24/7 WhatsApp Support</span></div>
     </div>
     <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="navbar-inner">
-                <a href="index.html" class="navbar-logo"><span class="navbar-logo-text">Heels<span>Up</span></span></a>
-                <ul class="navbar-menu">
-                    <li><a href="index.html" class="nav-link">Home</a></li>
-                    <li><a href="shop.html" class="nav-link">Shop</a></li>
-                    <li><a href="contact.html" class="nav-link">Contact</a></li>
-                </ul>
-                <div class="navbar-actions">
-                    <a href="wishlist.html" class="nav-icon-btn"><i class="fa-regular fa-heart"></i></a>
-                    <a href="profile.html" class="nav-icon-btn"><i class="fa-regular fa-user"></i></a>
-                    <button class="nav-icon-btn" id="cart-open-btn"><i class="fa-solid fa-bag-shopping"></i><span
-                            class="nav-badge" id="cart-count">0</span></button>
-                    <button class="navbar-hamburger" id="hamburger-btn"><span class="hamburger-line"></span><span
-                            class="hamburger-line"></span><span class="hamburger-line"></span></button>
-                </div>
+    <div class="ctn">
+      <div class="nb-inner">
+        <!-- Logo -->
+        <a href="/" class="nb-logo">
+          <img src="logo.png" alt="HeelsUp" id="logo-img" onerror="this.classList.add('err');this.style.display='none'">
+          <span class="nb-logo-txt">Heels<span>Up</span></span>
+        </a>
+
+        <!-- Desktop Menu -->
+        <ul class="nb-menu">
+          <li><a href="/" class="nb-link active">Home</a></li>
+          <li>
+            <a href="/shop.html" class="nb-link">
+              Shop
+              <svg class="nb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            </a>
+            <div class="nb-drop">
+              <a href="/category.html?cat=heels">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M20 18H4l2-8h12l2 8zM4 18l-2 2M20 18l2 2M8 10V6a4 4 0 018 0v4"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
+              </a>
+              <a href="/category.html?cat=sandals">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M3 20h18M5 20V10l7-7 7 7v10M9 20v-6h6v6"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
+              </a>
+              <a href="/category.html?cat=flats">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="17" rx="9" ry="3"></ellipse>
+                    <path d="M3 17V7l9-4 9 4v10"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
+              </a>
+              <a href="/category.html?cat=wedges">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M4 20h16M4 20l4-12h8l4 12"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
+              </a>
+              <a href="/category.html?cat=bags">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
+              </a>
+              <a href="/category.html?cat=clutches">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <rect x="3" y="8" width="18" height="13" rx="2"></rect>
+                    <path d="M8 8V5a4 4 0 018 0v3"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Clutches</strong><span>Evening, Party</span></div>
+              </a>
             </div>
+          </li>
+          <li><a href="/category.html?cat=heels" class="nb-link">Heels</a></li>
+          <li><a href="/category.html?cat=sandals" class="nb-link">Sandals</a></li>
+          <li><a href="/category.html?cat=bags" class="nb-link">Bags</a></li>
+          <li><a href="/about.html" class="nb-link">About</a></li>
+          <li><a href="/contact.html" class="nb-link">Contact</a></li>
+        </ul>
+
+        <!-- Actions -->
+        <div class="nb-actions">
+          <button class="nb-btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+          <a href="/wishlist.html" class="nb-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+            </svg>
+          </a>
+          <a href="/profile.html" class="nb-btn" id="nav-account" aria-label="Account">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+          <button class="nb-btn" id="cart-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+            </svg>
+            <span class="nb-badge" id="cart-cnt">0</span>
+          </button>
+          <button class="nb-ham" id="hamburger" aria-label="Menu">
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+          </button>
         </div>
-    </nav>
+      </div>
+    </div>
+  </nav>
 
     <!-- Hero -->
     <div class="faq-hero">
-        <div class="container">
+        <div class="ctn">
             <h1>Frequently Asked <em>Questions</em></h1>
             <p>Aapke sawaalon ke jawab ek jagah par. Nahi mila? Hum se seedha poochho.</p>
             <div class="faq-search-wrap">
-                <input type="text" id="faq-search" placeholder="Koi sawaal dhundho..." />
+                <input type="text" id="faq-search" placeholder="Koi sawaal dhundho...">
                 <button><i class="fa-solid fa-magnifying-glass"></i></button>
             </div>
         </div>
     </div>
 
     <div class="faq-page">
-        <div class="container">
-            <nav class="breadcrumb"><span class="breadcrumb-item"><a href="index.html">Home</a></span><span
-                    class="breadcrumb-sep"><i class="fa-solid fa-chevron-right" style="font-size:8px"></i></span><span
-                    class="breadcrumb-item active">FAQs</span></nav>
+        <div class="ctn">
+            <nav class="breadcrumb"><span class="breadcrumb-item"><a href="index.html">Home</a></span><span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right" style="font-size:8px"></i></span><span class="breadcrumb-item active">FAQs</span></nav>
             <div class="faq-layout">
                 <!-- Category Nav -->
                 <aside class="faq-cats">
                     <div class="faq-cats-title">Categories</div>
-                    <div class="faq-cat-item active" data-cat="all"><i class="fa-solid fa-list"
-                            style="color:var(--color-primary)"></i> All Questions <span class="faq-cat-count">20</span>
+                    <div class="faq-cat-item active" data-cat="all"><i class="fa-solid fa-list" style="color:var(--gold)"></i> All Questions <span class="faq-cat-count">20</span>
                     </div>
-                    <div class="faq-cat-item" data-cat="orders"><i class="fa-solid fa-box"
-                            style="color:var(--color-primary)"></i> Orders <span class="faq-cat-count">5</span></div>
-                    <div class="faq-cat-item" data-cat="shipping"><i class="fa-solid fa-truck"
-                            style="color:var(--color-primary)"></i> Shipping <span class="faq-cat-count">4</span></div>
-                    <div class="faq-cat-item" data-cat="returns"><i class="fa-solid fa-rotate-left"
-                            style="color:var(--color-primary)"></i> Returns <span class="faq-cat-count">4</span></div>
-                    <div class="faq-cat-item" data-cat="payment"><i class="fa-solid fa-credit-card"
-                            style="color:var(--color-primary)"></i> Payments <span class="faq-cat-count">4</span></div>
-                    <div class="faq-cat-item" data-cat="products"><i class="fa-solid fa-shoe-prints"
-                            style="color:var(--color-primary)"></i> Products <span class="faq-cat-count">3</span></div>
+                    <div class="faq-cat-item" data-cat="orders"><i class="fa-solid fa-box" style="color:var(--gold)"></i> Orders <span class="faq-cat-count">5</span></div>
+                    <div class="faq-cat-item" data-cat="shipping"><i class="fa-solid fa-truck" style="color:var(--gold)"></i> Shipping <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="returns"><i class="fa-solid fa-rotate-left" style="color:var(--gold)"></i> Returns <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="payment"><i class="fa-solid fa-credit-card" style="color:var(--gold)"></i> Payments <span class="faq-cat-count">4</span></div>
+                    <div class="faq-cat-item" data-cat="products"><i class="fa-solid fa-shoe-prints" style="color:var(--gold)"></i> Products <span class="faq-cat-count">3</span></div>
                 </aside>
 
                 <!-- FAQs -->
@@ -348,8 +415,7 @@
                         </div>
                         <div class="faq-item">
                             <div class="faq-question"><span class="faq-question-text">Order place karne ke baad cancel
-                                    kar sakte hain?</span><span class="faq-toggle"><i
-                                        class="fa-solid fa-plus"></i></span></div>
+                                    kar sakte hain?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
                             <div class="faq-answer">Haan! Agar order shipped nahi hua hai, toh aap profile mein jaake
                                 cancel kar sakte hain. Shipped hone ke baad return policy apply hogi.</div>
                         </div>
@@ -376,7 +442,7 @@
 
                     <!-- Shipping -->
                     <div class="faq-group" data-cat="shipping">
-                        <div class="faq-group-title"><i class="fa-solid fa-truck faq-group-icon"></i> Shipping &
+                        <div class="faq-group-title"><i class="fa-solid fa-truck faq-group-icon"></i> Shipping &amp;
                             Delivery</div>
                         <div class="faq-item">
                             <div class="faq-question"><span class="faq-question-text">Delivery charge kitna
@@ -407,14 +473,12 @@
 
                     <!-- Returns -->
                     <div class="faq-group" data-cat="returns">
-                        <div class="faq-group-title"><i class="fa-solid fa-rotate-left faq-group-icon"></i> Returns &
+                        <div class="faq-group-title"><i class="fa-solid fa-rotate-left faq-group-icon"></i> Returns &amp;
                             Exchange</div>
                         <div class="faq-item">
-                            <div class="faq-question"><span class="faq-question-text">Return policy kya hai?</span><span
-                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-question"><span class="faq-question-text">Return policy kya hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
                             <div class="faq-answer">Delivery ke 7 din ke andar return ya exchange kar sakte hain.
-                                Product original condition mein, tags ke saath honi chahiye. <a
-                                    href="policy/returns.html" style="color:var(--color-primary)">Full return policy
+                                Product original condition mein, tags ke saath honi chahiye. <a href="policy/returns.html" style="color:var(--gold)">Full return policy
                                     padhein.</a></div>
                         </div>
                         <div class="faq-item">
@@ -425,8 +489,7 @@
                                 ho jaati hai.</div>
                         </div>
                         <div class="faq-item">
-                            <div class="faq-question"><span class="faq-question-text">Refund kab milega?</span><span
-                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-question"><span class="faq-question-text">Refund kab milega?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
                             <div class="faq-answer">Return receive hone ke 5-7 business days mein refund original
                                 payment method pe aa jaata hai. UPI/Wallet refunds faster hoti hain.</div>
                         </div>
@@ -450,8 +513,7 @@
                                 Cash on Delivery (COD) accept karte hain.</div>
                         </div>
                         <div class="faq-item">
-                            <div class="faq-question"><span class="faq-question-text">EMI available hai?</span><span
-                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-question"><span class="faq-question-text">EMI available hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
                             <div class="faq-answer">Haan! ₹1999 se upar ke orders pe EMI available hai major credit
                                 cards pe (3, 6, 12 months).</div>
                         </div>
@@ -471,11 +533,10 @@
 
                     <!-- Products -->
                     <div class="faq-group" data-cat="products">
-                        <div class="faq-group-title"><i class="fa-solid fa-shoe-prints faq-group-icon"></i> Products &
+                        <div class="faq-group-title"><i class="fa-solid fa-shoe-prints faq-group-icon"></i> Products &amp;
                             Sizing</div>
                         <div class="faq-item">
-                            <div class="faq-question"><span class="faq-question-text">Size chart kahan hai?</span><span
-                                    class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
+                            <div class="faq-question"><span class="faq-question-text">Size chart kahan hai?</span><span class="faq-toggle"><i class="fa-solid fa-plus"></i></span></div>
                             <div class="faq-answer">Har product page pe size chart available hai. Generally India size
                                 3-9 mein available hain. Doubt ho toh WhatsApp karo — hum guide karenge.</div>
                         </div>
@@ -498,8 +559,7 @@
                         <h3>Aur <em>Sawaal</em> Hai?</h3>
                         <p>Hum hamesha available hain — WhatsApp pe ya email pe seedha poochho</p>
                         <div class="faq-contact-btns">
-                            <a href="https://wa.me/919xxxxxxxxx" class="btn btn-primary" target="_blank"><i
-                                    class="fa-brands fa-whatsapp"></i> WhatsApp Chat</a>
+                            <a href="https://wa.me/919xxxxxxxxx" class="btn btn" target="_blank"><i class="fa-brands fa-whatsapp"></i> WhatsApp Chat</a>
                             <a href="contact.html" class="btn btn-white">Contact Form</a>
                         </div>
                     </div>
@@ -510,10 +570,8 @@
 
     <!-- Footer minimal -->
     <footer style="background:var(--color-dark);padding:32px 0;border-top:1px solid rgba(255,255,255,0.06)">
-        <div class="container"
-            style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
-            <span style="font-family:var(--font-display);font-size:1.4rem;color:#fff">Heels<span
-                    style="color:var(--color-primary)">Up</span></span>
+        <div class="ctn" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px">
+            <span style="font-family:var(--fd);font-size:1.4rem;color:#fff">Heels<span style="color:var(--gold)">Up</span></span>
             <p style="font-size:12px;color:rgba(255,255,255,0.35)">© 2025 HeelsUp. Made with ❤️ in Jodhpur.</p>
             <div style="display:flex;gap:20px">
                 <a href="policy/privacy.html" style="font-size:12px;color:rgba(255,255,255,0.4)">Privacy</a>
@@ -531,8 +589,7 @@
         <div class="cart-drawer-body">
             <div class="cart-empty">
                 <div class="cart-empty-icon">🛍️</div>
-                <div class="cart-empty-text">Cart is empty</div><a href="shop.html" class="btn btn-primary"
-                    style="margin-top:12px">Shop Now</a>
+                <div class="cart-empty-text">Cart is empty</div><a href="shop.html" class="btn btn" style="margin-top:12px">Shop Now</a>
             </div>
         </div>
     </aside>
@@ -574,6 +631,7 @@
         document.getElementById('cart-close-btn')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
         document.getElementById('cart-backdrop')?.addEventListener('click', () => { document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('cart-backdrop').classList.remove('open'); });
     </script>
-</body>
 
-</html>
+
+  <script src="/js/wishlist.js"></script>
+</body></html>

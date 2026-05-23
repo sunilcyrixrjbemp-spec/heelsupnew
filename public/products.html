@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Products Admin - HeelsUp</title>
-    <link rel="stylesheet" href="style.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         .admin-wrap { max-width: 1100px; margin: 40px auto; padding: 0 16px; }
         .admin-card { background: #fff; border: 1px solid #ececec; border-radius: 14px; padding: 16px; margin-bottom: 16px; }
@@ -34,20 +31,20 @@
 
         <div class="admin-card">
             <h2 style="margin:0 0 12px;font-size:20px">Add / Update Product</h2>
-            <input type="hidden" id="p-id" />
+            <input type="hidden" id="p-id">
             <div class="admin-grid">
-                <input class="form-input" id="p-name" placeholder="Product name" />
-                <input class="form-input" id="p-sku" placeholder="SKU" />
-                <input class="form-input" id="p-category" placeholder="Category" />
-                <input class="form-input" id="p-price" type="number" placeholder="Price" />
-                <input class="form-input" id="p-mrp" type="number" placeholder="MRP (optional)" />
-                <input class="form-input" id="p-stock" type="number" placeholder="Stock" />
-                <input class="form-input" id="p-image" placeholder="Image URL" />
-                <input class="form-input" id="p-sizes" placeholder="Sizes comma separated (36,37,38)" />
-                <label style="display:flex;align-items:center;gap:8px;font-size:14px"><input type="checkbox" id="p-active" checked /> Active</label>
+                <input class="form-input" id="p-name" placeholder="Product name">
+                <input class="form-input" id="p-sku" placeholder="SKU">
+                <input class="form-input" id="p-category" placeholder="Category">
+                <input class="form-input" id="p-price" type="number" placeholder="Price">
+                <input class="form-input" id="p-mrp" type="number" placeholder="MRP (optional)">
+                <input class="form-input" id="p-stock" type="number" placeholder="Stock">
+                <input class="form-input" id="p-image" placeholder="Image URL">
+                <input class="form-input" id="p-sizes" placeholder="Sizes comma separated (36,37,38)">
+                <label style="display:flex;align-items:center;gap:8px;font-size:14px"><input type="checkbox" id="p-active" checked=""> Active</label>
             </div>
             <div style="margin-top:12px;display:flex;gap:8px">
-                <button class="btn btn-primary" id="save-btn"><i class="fa-solid fa-check"></i> Save Product</button>
+                <button class="btn btn" id="save-btn"><i class="fa-solid fa-check"></i> Save Product</button>
                 <button class="btn btn-ghost" id="clear-btn">Clear</button>
             </div>
         </div>
@@ -55,7 +52,7 @@
         <div class="admin-card">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px">
                 <h2 style="margin:0;font-size:20px">All Products</h2>
-                <input class="form-input" id="search" placeholder="Search by name or SKU" style="max-width:280px" />
+                <input class="form-input" id="search" placeholder="Search by name or SKU" style="max-width:280px">
             </div>
             <div style="overflow:auto">
                 <table class="admin-table">
@@ -87,7 +84,7 @@
             const c = document.getElementById('toast-container');
             const id = 't' + Date.now();
             const icons = { success: 'fa-circle-check', error: 'fa-circle-xmark', info: 'fa-circle-info' };
-            c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid ${icons[type] || icons.info} toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">×</button></div>`);
+            c.insertAdjacentHTML('beforeend', `<div class="toast toast-${type}" id="${id}"><i class="fa-solid ${icons[type] || icons.info} toast-icon"></i><div class="toast-body"><div class="toast-title">${title}</div><div class="toast-message">${msg}</div></div><button class="toast-close" onclick="document.getElementById('${id}').remove()">ï¿½</button></div>`);
             setTimeout(() => document.getElementById(id)?.remove(), 3500);
         }
 
@@ -205,6 +202,7 @@
 
         loadProducts();
     </script>
-</body>
 
-</html>
+
+  <script src="/js/wishlist.js"></script>
+</body></html>

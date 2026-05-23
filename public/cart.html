@@ -1,21 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<!DOCTYPE html><html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Cart – HeelsUp</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap"
-        rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="style.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&amp;family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="main.css">
     <style>
         .cart-page {
             padding: 60px 0 90px;
-            background: var(--bg-page);
+            background: var(--cream);
             min-height: 60vh
         }
 
@@ -29,7 +24,7 @@
         .cart-table-wrap {
             background: #fff;
             border-radius: 20px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             overflow: hidden
         }
 
@@ -38,13 +33,13 @@
             grid-template-columns: 2fr 1fr 1fr 1fr 40px;
             gap: 16px;
             padding: 16px 24px;
-            background: var(--color-light);
+            background: var(--cream2);
             font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.15em;
             text-transform: uppercase;
-            color: var(--text-muted);
-            border-bottom: 1px solid var(--border-color)
+            color: var(--text-3);
+            border-bottom: 1px solid var(--border)
         }
 
         .cart-row {
@@ -52,7 +47,7 @@
             grid-template-columns: 2fr 1fr 1fr 1fr 40px;
             gap: 16px;
             padding: 20px 24px;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: 1px solid var(--border);
             align-items: center
         }
 
@@ -84,33 +79,33 @@
         .cart-row-name {
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-primary);
+            color: var(--text-1);
             margin-bottom: 4px
         }
 
         .cart-row-cat {
             font-size: 12px;
-            color: var(--text-muted)
+            color: var(--text-3)
         }
 
         .cart-row-price {
             font-size: 15px;
             font-weight: 600;
-            color: var(--text-primary)
+            color: var(--text-1)
         }
 
         .cart-row-total {
             font-size: 15px;
             font-weight: 700;
-            color: var(--text-primary)
+            color: var(--text-1)
         }
 
         .cart-row-remove {
             width: 36px;
             height: 36px;
             border-radius: 50%;
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
+            border: 1px solid var(--border);
+            color: var(--text-3);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -120,8 +115,8 @@
         }
 
         .cart-row-remove:hover {
-            border-color: var(--color-accent);
-            color: var(--color-accent);
+            border-color: var(--rose);
+            color: var(--rose);
             background: #fff5f7
         }
 
@@ -129,14 +124,14 @@
         .cart-summary-box {
             background: #fff;
             border-radius: 20px;
-            border: 1px solid var(--border-color);
+            border: 1px solid var(--border);
             padding: 28px;
             position: sticky;
             top: 90px
         }
 
         .cart-summary-title {
-            font-family: var(--font-heading);
+            font-family: var(--fh);
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 20px
@@ -148,26 +143,26 @@
             align-items: center;
             margin-bottom: 14px;
             font-size: 14px;
-            color: var(--text-secondary)
+            color: var(--text-2)
         }
 
         .cs-total {
             font-size: 1.1rem;
             font-weight: 700;
-            color: var(--text-primary);
-            border-top: 1px solid var(--border-color);
+            color: var(--text-1);
+            border-top: 1px solid var(--border);
             padding-top: 14px;
             margin-top: 4px
         }
 
         /* Coupon */
         .coupon-applied {
-            background: var(--color-success-light);
-            border: 1px solid var(--color-success);
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid var(--teal);
             border-radius: 10px;
             padding: 10px 14px;
             font-size: 13px;
-            color: var(--color-success);
+            color: var(--teal);
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -193,7 +188,7 @@
         /* Recommended */
         .recommended-section {
             padding: 60px 0 80px;
-            background: var(--color-light)
+            background: var(--cream2)
         }
 
         @media(max-width:900px) {
@@ -249,8 +244,8 @@
             height: 44px;
             border-radius: 50%;
             background: #fff;
-            color: var(--text-primary);
-            border: 1.5px solid var(--border-color);
+            color: var(--text-1);
+            border: 1.5px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -270,76 +265,184 @@
 
 <body>
 
-    <div class="topbar" id="topbar">
-        <div class="topbar-marquee"><span class="topbar-text">🚚 FREE Shipping on orders above
-                <strong>₹499</strong></span><span class="topbar-dot"></span><span class="topbar-text">🏷️ Use code
-                <strong>HEELS10</strong> for 10% off</span><span class="topbar-dot"></span><span class="topbar-text">🚚
-                FREE Shipping on orders above <strong>₹499</strong></span></div>
-        <button class="topbar-close" id="topbar-close">✕</button>
-    </div>
+    
 
     <nav class="navbar" id="navbar">
-        <div class="container">
-            <div class="navbar-inner">
-                <a href="index.html" class="navbar-logo"><img src="logo.png" alt="HeelsUp"
-                        onerror="this.style.display='none'" /><span
-                        class="navbar-logo-text">Heels<span>Up</span></span></a>
-                <ul class="navbar-menu">
-                    <li class="nav-item"><a href="index.html" class="nav-link">Home</a></li>
-                    <li class="nav-item"><a href="shop.html" class="nav-link">Shop</a></li>
-                    <li class="nav-item"><a href="category.html?cat=new" class="nav-link">New Arrivals</a></li>
-                    <li class="nav-item"><a href="category.html?cat=sale" class="nav-link"
-                            style="color:var(--color-accent)">Sale</a></li>
-                    <li class="nav-item"><a href="about.html" class="nav-link">About</a></li>
-                    <li class="nav-item"><a href="contact.html" class="nav-link">Contact</a></li>
-                </ul>
-                <div class="navbar-actions">
-                    <button class="nav-icon-btn" id="search-toggle-btn"><i
-                            class="fa-solid fa-magnifying-glass"></i></button>
-                    <a href="wishlist.html" class="nav-icon-btn"><i class="fa-regular fa-heart"></i></a>
-                    <a href="profile.html" class="nav-icon-btn"><i class="fa-regular fa-user"></i></a>
-                    <a href="cart.html" class="nav-icon-btn" style="color:var(--color-primary)"><i
-                            class="fa-solid fa-bag-shopping"></i><span class="nav-badge" id="cart-count">0</span></a>
-                    <button class="navbar-hamburger" id="hamburger-btn"><span class="hamburger-line"></span><span
-                            class="hamburger-line"></span><span class="hamburger-line"></span></button>
-                </div>
-            </div>
-        </div>
-    </nav>
+    <div class="ctn">
+      <div class="nb-inner">
+        <!-- Logo -->
+        <a href="/" class="nb-logo">
+          <img src="logo.png" alt="HeelsUp" id="logo-img" onerror="this.classList.add('err');this.style.display='none'">
+          <span class="nb-logo-txt">Heels<span>Up</span></span>
+        </a>
 
-    <div class="mobile-menu" id="mobile-menu">
-        <div class="mobile-menu-backdrop" id="mobile-backdrop"></div>
-        <div class="mobile-menu-panel">
-            <div class="mobile-menu-header"><span class="navbar-logo-text">Heels<span
-                        style="color:var(--color-primary)">Up</span></span><button id="mobile-menu-close"
-                    style="font-size:1.3rem;color:var(--text-muted);cursor:pointer;background:none;border:none">✕</button>
+        <!-- Desktop Menu -->
+        <ul class="nb-menu">
+          <li><a href="/" class="nb-link active">Home</a></li>
+          <li>
+            <a href="/shop.html" class="nb-link">
+              Shop
+              <svg class="nb-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M6 9l6 6 6-6"></path>
+              </svg>
+            </a>
+            <div class="nb-drop">
+              <a href="/category.html?cat=heels">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M20 18H4l2-8h12l2 8zM4 18l-2 2M20 18l2 2M8 10V6a4 4 0 018 0v4"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
+              </a>
+              <a href="/category.html?cat=sandals">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M3 20h18M5 20V10l7-7 7 7v10M9 20v-6h6v6"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
+              </a>
+              <a href="/category.html?cat=flats">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <ellipse cx="12" cy="17" rx="9" ry="3"></ellipse>
+                    <path d="M3 17V7l9-4 9 4v10"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
+              </a>
+              <a href="/category.html?cat=wedges">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M4 20h16M4 20l4-12h8l4 12"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Wedges</strong><span>Espadrilles, Platform</span></div>
+              </a>
+              <a href="/category.html?cat=bags">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <path d="M6 2 3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
+              </a>
+              <a href="/category.html?cat=clutches">
+                <div class="nb-drop-ico"><svg viewBox="0 0 24 24">
+                    <rect x="3" y="8" width="18" height="13" rx="2"></rect>
+                    <path d="M8 8V5a4 4 0 018 0v3"></path>
+                  </svg></div>
+                <div class="nb-drop-txt"><strong>Clutches</strong><span>Evening, Party</span></div>
+              </a>
             </div>
-            <div class="mobile-menu-body">
-                <a href="index.html">🏠 Home</a><a href="shop.html">🛍️ Shop All</a><a href="category.html?cat=heels">👠
-                    Heels</a><a href="category.html?cat=bags">👜 Bags</a><a href="category.html?cat=new">✨ New
-                    Arrivals</a><a href="category.html?cat=sale" style="color:var(--color-accent)">🔥 Sale</a>
-            </div>
-        </div>
-    </div>
+          </li>
+          <li><a href="/category.html?cat=heels" class="nb-link">Heels</a></li>
+          <li><a href="/category.html?cat=sandals" class="nb-link">Sandals</a></li>
+          <li><a href="/category.html?cat=bags" class="nb-link">Bags</a></li>
+          <li><a href="/about.html" class="nb-link">About</a></li>
+          <li><a href="/contact.html" class="nb-link">Contact</a></li>
+        </ul>
 
-    <div class="search-overlay" id="search-overlay">
-        <div class="search-box"><i class="fa-solid fa-magnifying-glass search-icon"></i><input type="text"
-                class="search-input" id="search-input" placeholder="Search products…" autocomplete="off" /><button
-                class="search-close" id="search-close-btn">✕</button></div>
+        <!-- Actions -->
+        <div class="nb-actions">
+          <button class="nb-btn" id="search-btn" aria-label="Search">
+            <svg viewBox="0 0 24 24">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="M21 21l-4.35-4.35"></path>
+            </svg>
+          </button>
+          <a href="/wishlist.html" class="nb-btn" aria-label="Wishlist">
+            <svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+            </svg>
+          </a>
+          <a href="/profile.html" class="nb-btn" id="nav-account" aria-label="Account">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </a>
+          <button class="nb-btn" id="cart-btn" aria-label="Cart">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4zM3 6h18M16 10a4 4 0 01-8 0"></path>
+            </svg>
+            <span class="nb-badge" id="cart-cnt">0</span>
+          </button>
+          <button class="nb-ham" id="hamburger" aria-label="Menu">
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+            <span class="ham-ln"></span>
+          </button>
+        </div>
+      </div>
     </div>
+  </nav>
+
+    <div class="mob" id="mob-menu">
+    <div class="mob-bd" id="mob-bd"></div>
+    <div class="mob-panel">
+      <div class="mob-head">
+        <div style="display:flex;align-items:center;gap:10px">
+          <img src="logo.png" alt="" style="height:32px;width:auto;object-fit:contain" onerror="this.style.display='none'">
+          <span style="font-family:var(--fd);font-size:1.3rem;font-weight:600;color:var(--ink)">Heels<span style="color:var(--gold)">Up</span></span>
+        </div>
+        <button class="mob-close" id="mob-close">
+          <svg viewBox="0 0 24 24">
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="mob-body">
+        <a href="/" class="mob-lnk active"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg></span>Home</a>
+        <a href="/shop.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <circle cx="9" cy="21" r="1"></circle>
+              <circle cx="20" cy="21" r="1"></circle>
+              <path d="M1 1h4l2.68 13.39a2 2 0 002 1.61h9.72a2 2 0 001.95-1.57l1.65-7.43H6"></path>
+            </svg></span>Shop All</a>
+        <a href="/category.html?cat=heels" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M20 18H4l2-8h12l2 8z"></path>
+            </svg></span>Heels</a>
+        <a href="/category.html?cat=sandals" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M3 20h18M5 20V10l7-7 7 7v10"></path>
+            </svg></span>Sandals</a>
+        <a href="/category.html?cat=flats" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <ellipse cx="12" cy="17" rx="9" ry="3"></ellipse>
+            </svg></span>Flats</a>
+        <a href="/category.html?cat=bags" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"></path>
+            </svg></span>Bags</a>
+        <div class="mob-sep"></div>
+        <a href="/about.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg></span>About Us</a>
+        <a href="/contact.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014.95 12 19.79 19.79 0 011.9 3.38 2 2 0 013.89 1.22h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 8.91a16 16 0 006 6l1.06-1.06a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"></path>
+            </svg></span>Contact</a>
+        <div class="mob-sep"></div>
+        <a href="/profile.html" class="mob-lnk" id="mob-account"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg></span>My Account</a>
+        <a href="/orders.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+              <line x1="8" y1="21" x2="16" y2="21"></line>
+              <line x1="12" y1="17" x2="12" y2="21"></line>
+            </svg></span>Track Order</a>
+        <a href="/wishlist.html" class="mob-lnk"><span class="mob-ico"><svg viewBox="0 0 24 24">
+              <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"></path>
+            </svg></span>Wishlist</a>
+      </div>
+      <div class="mob-foot">
+        <a href="/login.html" class="mob-auth primary" id="mob-login-btn">Login / Sign Up</a>
+      </div>
+    </div>
+  </div>
+
+    
 
     <!-- Page Header -->
-    <div style="background:#fff;border-bottom:1px solid var(--border-color);padding:20px 0">
-        <div class="container">
+    <div style="background:#fff;border-bottom:1px solid var(--border);padding:20px 0">
+        <div class="ctn">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
                 <div>
-                    <nav class="breadcrumb" style="padding:0 0 8px"><span class="breadcrumb-item"><a
-                                href="index.html">Home</a></span><span class="breadcrumb-sep"><i
-                                class="fa-solid fa-chevron-right" style="font-size:9px"></i></span><span
-                            class="breadcrumb-item active">My Cart</span></nav>
-                    <h1 style="font-family:var(--font-heading);font-size:1.8rem;font-weight:600">My Cart <span
-                            id="cart-header-count"
-                            style="font-size:1rem;font-weight:400;color:var(--text-muted)"></span></h1>
+                    <nav class="breadcrumb" style="padding:0 0 8px"><span class="breadcrumb-item"><a href="index.html">Home</a></span><span class="breadcrumb-sep"><i class="fa-solid fa-chevron-right" style="font-size:9px"></i></span><span class="breadcrumb-item active">My Cart</span></nav>
+                    <h1 style="font-family:var(--fh);font-size:1.8rem;font-weight:600">My Cart <span id="cart-header-count" style="font-size:1rem;font-weight:400;color:var(--text-3)"></span></h1>
                 </div>
                 <a href="shop.html" class="btn btn-ghost"><i class="fa-solid fa-arrow-left"></i> Continue Shopping</a>
             </div>
@@ -347,14 +450,14 @@
     </div>
 
     <section class="cart-page">
-        <div class="container">
+        <div class="ctn">
             <!-- EMPTY STATE -->
             <div class="empty-cart-page" id="empty-cart" style="display:none">
                 <div class="empty-cart-icon">🛍️</div>
-                <h2 style="font-family:var(--font-heading)">Your cart is empty</h2>
-                <p style="color:var(--text-muted);max-width:340px">Koi product cart mein nahi hai. Shop karo aur apni
+                <h2 style="font-family:var(--fh)">Your cart is empty</h2>
+                <p style="color:var(--text-3);max-width:340px">Koi product cart mein nahi hai. Shop karo aur apni
                     favourite heels add karo!</p>
-                <a href="shop.html" class="btn btn-primary btn-lg"><i class="fa-solid fa-bag-shopping"></i> Shop Now</a>
+                <a href="shop.html" class="btn btn btn-lg"><i class="fa-solid fa-bag-shopping"></i> Shop Now</a>
             </div>
 
             <div class="cart-page-grid" id="cart-page-content">
@@ -371,17 +474,13 @@
                         <div id="cart-items-list"></div>
                     </div>
                     <!-- Coupon Row -->
-                    <div
-                        style="margin-top:20px;background:#fff;border-radius:16px;border:1px solid var(--border-color);padding:20px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-                        <i class="fa-solid fa-tag" style="color:var(--color-primary)"></i>
+                    <div style="margin-top:20px;background:#fff;border-radius:16px;border:1px solid var(--border);padding:20px 24px;display:flex;gap:12px;flex-wrap:wrap;align-items:center">
+                        <i class="fa-solid fa-tag" style="color:var(--gold)"></i>
                         <div class="coupon-input-wrap" style="flex:1;min-width:200px">
-                            <input type="text" class="coupon-input" id="coupon-input"
-                                placeholder="Enter coupon code (e.g. HEELS10)" />
+                            <input type="text" class="coupon-input" id="coupon-input" placeholder="Enter coupon code (e.g. HEELS10)">
                             <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
                         </div>
-                        <div id="coupon-msg"
-                            style="font-size:13px;color:var(--color-success);font-weight:600;display:none"><i
-                                class="fa-solid fa-circle-check"></i> Coupon applied!</div>
+                        <div id="coupon-msg" style="font-size:13px;color:var(--teal);font-weight:600;display:none"><i class="fa-solid fa-circle-check"></i> Coupon applied!</div>
                     </div>
                 </div>
 
@@ -389,31 +488,25 @@
                 <div class="cart-summary-box">
                     <div class="cart-summary-title">Order Summary</div>
                     <div class="cs-row"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
-                    <div class="cs-row"><span>Discount</span><span id="summary-discount"
-                            style="color:var(--color-success)">-₹0</span></div>
-                    <div class="cs-row"><span>Shipping</span><span id="summary-shipping"
-                            style="color:var(--color-success)">Free</span></div>
+                    <div class="cs-row"><span>Discount</span><span id="summary-discount" style="color:var(--teal)">-₹0</span></div>
+                    <div class="cs-row"><span>Shipping</span><span id="summary-shipping" style="color:var(--teal)">Free</span></div>
                     <div class="cs-row cs-total">
                         <span>Total</span>
                         <span id="summary-total">₹0</span>
                     </div>
-                    <a href="checkout.html" class="btn btn-primary btn-full" style="margin-top:20px;font-size:15px">
+                    <a href="checkout.html" class="btn btn btn-full" style="margin-top:20px;font-size:15px">
                         <i class="fa-solid fa-lock"></i> Proceed to Checkout
                     </a>
                     <div style="text-align:center;margin-top:14px">
-                        <div
-                            style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;color:var(--text-muted);margin-bottom:10px">
-                            <i class="fa-solid fa-shield-halved" style="color:var(--color-primary)"></i> Secure Checkout
-                            <i class="fa-solid fa-lock" style="color:var(--color-primary)"></i> SSL Encrypted
+                        <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:11px;color:var(--text-3);margin-bottom:10px">
+                            <i class="fa-solid fa-shield-halved" style="color:var(--gold)"></i> Secure Checkout
+                            <i class="fa-solid fa-lock" style="color:var(--gold)"></i> SSL Encrypted
                         </div>
-                        <div style="font-size:12px;color:var(--text-muted)">We accept: <strong
-                                style="color:var(--color-primary)">UPI · Cards · COD · EMI</strong></div>
+                        <div style="font-size:12px;color:var(--text-3)">We accept: <strong style="color:var(--gold)">UPI · Cards · COD · EMI</strong></div>
                     </div>
                     <!-- Shipping Notice -->
-                    <div id="shipping-notice"
-                        style="margin-top:16px;background:var(--color-light);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text-secondary)">
-                        <i class="fa-solid fa-truck-fast" style="color:var(--color-primary)"></i> <span
-                            id="shipping-msg">Add ₹499+ for free shipping!</span>
+                    <div id="shipping-notice" style="margin-top:16px;background:var(--cream2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(--text-2)">
+                        <i class="fa-solid fa-truck-fast" style="color:var(--gold)"></i> <span id="shipping-msg">Add ₹499+ for free shipping!</span>
                     </div>
                 </div>
             </div>
@@ -422,10 +515,10 @@
 
     <!-- Recommended Products -->
     <section class="recommended-section">
-        <div class="container">
+        <div class="ctn">
             <div class="section-header reveal">
                 <span class="section-label">You May Also Like</span>
-                <h2>Trending <em style="font-family:var(--font-display);font-style:italic;font-weight:400">Products</em>
+                <h2>Trending <em style="font-family:var(--fd);font-style:italic;font-weight:400">Products</em>
                 </h2>
             </div>
             <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px" id="rec-grid">
@@ -434,56 +527,95 @@
     </section>
 
     <div class="toast-container" id="toast-container"></div>
-    <a href="https://wa.me/919xxxxxxxxx" class="whatsapp-float" target="_blank" rel="noopener"><i
-            class="fa-brands fa-whatsapp"></i></a>
+    <a href="https://wa.me/919xxxxxxxxx" class="whatsapp-float" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i></a>
     <button class="scroll-top-btn" id="scroll-top"><i class="fa-solid fa-chevron-up"></i></button>
 
     <footer class="footer">
-        <div class="container">
-            <div class="footer-top grid grid-4">
-                <div>
-                    <div style="font-family:var(--font-display);font-size:1.6rem;color:#fff;margin-bottom:12px">
-                        Heels<span style="color:var(--color-primary)">Up</span></div>
-                    <p class="footer-tagline">Jodhpur se India tak — stylish ladies footwear &amp; bags.</p>
-                    <div class="footer-social"><a href="#" class="footer-social-link"><i
-                                class="fa-brands fa-instagram"></i></a><a href="#" class="footer-social-link"><i
-                                class="fa-brands fa-facebook-f"></i></a><a href="#" class="footer-social-link"><i
-                                class="fa-brands fa-whatsapp"></i></a></div>
-                </div>
-                <div>
-                    <div class="footer-col-title">Quick Links</div>
-                    <ul class="footer-links">
-                        <li><a href="shop.html" class="footer-link">Shop All</a></li>
-                        <li><a href="category.html?cat=new" class="footer-link">New Arrivals</a></li>
-                        <li><a href="category.html?cat=sale" class="footer-link">Sale</a></li>
-                        <li><a href="about.html" class="footer-link">About Us</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="footer-col-title">Categories</div>
-                    <ul class="footer-links">
-                        <li><a href="category.html?cat=heels" class="footer-link">👠 Heels</a></li>
-                        <li><a href="category.html?cat=flats" class="footer-link">🥿 Flats</a></li>
-                        <li><a href="category.html?cat=sandals" class="footer-link">👡 Sandals</a></li>
-                        <li><a href="category.html?cat=bags" class="footer-link">👜 Bags</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="footer-col-title">Help</div>
-                    <ul class="footer-links">
-                        <li><a href="orders.html" class="footer-link">Track Order</a></li>
-                        <li><a href="policy/returns.html" class="footer-link">Returns</a></li>
-                        <li><a href="faq.html" class="footer-link">FAQs</a></li>
-                    </ul>
-                </div>
+    <div class="ctn">
+      <div class="footer-top">
+        <div class="footer-grid">
+          <div>
+            <div class="footer-brand">
+              <img src="logo.png" alt="HeelsUp" onerror="this.style.display='none'">
+              <span>Heels<span>Up</span></span>
             </div>
-            <div class="footer-bottom">
-                <p class="footer-copyright">© 2025 HeelsUp. All rights reserved.</p>
-                <div class="footer-bottom-links"><a href="policy/privacy.html">Privacy</a><a
-                        href="policy/terms.html">Terms</a></div>
+            <p class="footer-tagline">Premium ladies footwear &amp; bags for the modern Indian woman. Quality, style, and
+              comfort — all in one place.</p>
+            <div class="footer-socials">
+              <a href="https://instagram.com/heelsup.in" target="_blank" rel="noopener" class="footer-soc" aria-label="Instagram">
+                <svg viewBox="0 0 24 24">
+                  <rect x="2" y="2" width="20" height="20" rx="5"></rect>
+                  <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+              </a>
+              <a href="https://facebook.com/heelsup.in" target="_blank" rel="noopener" class="footer-soc" aria-label="Facebook">
+                <svg viewBox="0 0 24 24">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"></path>
+                </svg>
+              </a>
+              <a href="https://wa.me/919000000000" target="_blank" rel="noopener" class="footer-soc" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor" stroke="none">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"></path>
+                </svg>
+              </a>
+              <a href="https://pinterest.com/heelsup" target="_blank" rel="noopener" class="footer-soc" aria-label="Pinterest">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                  <path d="M12 2C6.48 2 2 6.48 2 12c0 4.24 2.65 7.86 6.39 9.29-.09-.78-.17-1.98.04-2.83.18-.76 1.22-5.14 1.22-5.14s-.31-.62-.31-1.54c0-1.44.84-2.52 1.88-2.52.89 0 1.32.67 1.32 1.47 0 .9-.57 2.24-.87 3.48-.25 1.04.52 1.88 1.53 1.88 1.84 0 3.08-2.37 3.08-5.18 0-2.14-1.44-3.74-4.05-3.74-2.95 0-4.78 2.2-4.78 4.64 0 .84.24 1.44.62 1.9.17.2.19.28.13.51-.04.17-.14.56-.18.72-.06.23-.24.31-.44.22-1.24-.51-1.82-1.88-1.82-3.42 0-2.54 2.14-5.6 6.39-5.6 3.42 0 5.67 2.48 5.67 5.15 0 3.54-1.96 6.18-4.84 6.18-.97 0-1.88-.52-2.19-1.11l-.62 2.37c-.2.76-.62 1.52-1 2.08.74.23 1.52.35 2.33.35 5.52 0 10-4.48 10-10S17.52 2 12 2z"></path>
+                </svg>
+              </a>
             </div>
+          </div>
+          <div>
+            <div class="footer-col-title">Shop</div>
+            <nav class="footer-links">
+              <a href="/shop.html">All Products</a>
+              <a href="/category.html?cat=heels">Heels</a>
+              <a href="/category.html?cat=sandals">Sandals</a>
+              <a href="/category.html?cat=flats">Flats</a>
+              <a href="/category.html?cat=bags">Bags</a>
+              <a href="/category.html?cat=new">New Arrivals</a>
+              <a href="/category.html?cat=sale">Sale</a>
+            </nav>
+          </div>
+          <div>
+            <div class="footer-col-title">Company</div>
+            <nav class="footer-links">
+              <a href="/about.html">About Us</a>
+              <a href="/contact.html">Contact</a>
+              <a href="/blog.html">Blog</a>
+              <a href="/faq.html">FAQ</a>
+            </nav>
+          </div>
+          <div>
+            <div class="footer-col-title">Help</div>
+            <nav class="footer-links">
+              <a href="/shipping.html">Shipping Info</a>
+              <a href="/returns.html">Returns &amp; Exchange</a>
+              <a href="/faq.html#size">Size Guide</a>
+              <a href="/orders.html">Track Order</a>
+              <a href="/contact.html">Customer Support</a>
+              <a href="/policy/privacy.html">Privacy Policy</a>
+            </nav>
+          </div>
         </div>
-    </footer>
+      </div>
+      <div class="footer-bottom">
+        <p class="footer-copy">© 2025 HeelsUp. All rights reserved. Made with ❤️ in India.</p>
+        <div class="footer-pay">
+          <span class="pay-badge">UPI</span>
+          <span class="pay-badge">Visa</span>
+          <span class="pay-badge">Mastercard</span>
+          <span class="pay-badge">COD</span>
+        </div>
+        <div class="footer-legal">
+          <a href="/policy/privacy.html">Privacy Policy</a>
+          <a href="/policy/terms.html">Terms of Service</a>
+          <a href="/policy/returns.html">Returns</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
     <script src="app-config.js"></script>
     <script src="app-auth.js"></script>
@@ -548,7 +680,7 @@
                 <div>
                     <div class="cart-row-name">${item.name}</div>
                     <div class="cart-row-cat">${item.category}</div>
-                    <a href="product.html?id=${item.id}" style="font-size:11px;color:var(--color-primary);margin-top:4px;display:block">View Product</a>
+                    <a href="product.html?id=${item.id}" style="font-size:11px;color:var(--gold);margin-top:4px;display:block">View Product</a>
                 </div>
             </div>
             <div class="cart-row-price" style="text-align:center">₹${item.price.toLocaleString('en-IN')}</div>
@@ -646,6 +778,7 @@
             setTimeout(() => document.getElementById(id)?.remove(), 4000);
         }
     </script>
-</body>
 
-</html>
+
+  <script src="/js/wishlist.js"></script>
+</body></html>
