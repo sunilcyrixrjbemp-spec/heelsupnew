@@ -1,29 +1,29 @@
 /**
  * ═══════════════════════════════════════════════════════════════════
- *  HeelsUp Admin — dashboard.js  v3.0
- *  Enterprise Admin Engine
+ * HeelsUp Admin — dashboard.js  v3.0
+ * Enterprise Admin Engine
  *
- *  Architecture mirrors worker/src/routes/orders.js:
- *   • Auth Guard      — session check on boot
- *   • Cache           — TTL key-value store
- *   • API             — single authenticated fetch wrapper
- *   • Progress        — NProgress-style top bar
- *   • Toast           — self-dismissing notifications
- *   • Nav             — section routing
- *   • Dashboard       — stats, pipeline, recent orders, top products
- *   • Orders          — full CRUD, filters, tabs, pagination, modal,
- *                        invoice print, CSV export
- *   • Products        — list, add/edit, delete
- *   • Customers       — list, role management
- *   • Coupons         — list, add/edit, delete
- *   • Reviews         — list, approve/reject
- *   • Helpers         — formatters, pagination renderer
+ * Architecture mirrors worker/src/routes/orders.js:
+ * • Auth Guard      — session check on boot
+ * • Cache           — TTL key-value store
+ * • API             — single authenticated fetch wrapper
+ * • Progress        — NProgress-style top bar
+ * • Toast           — self-dismissing notifications
+ * • Nav             — section routing
+ * • Dashboard       — stats, pipeline, recent orders, top products
+ * • Orders          — full CRUD, filters, tabs, pagination, modal,
+ * invoice print, CSV export
+ * • Products        — list, add/edit, delete
+ * • Customers       — list, role management
+ * • Coupons         — list, add/edit, delete
+ * • Reviews         — list, approve/reject
+ * • Helpers         — formatters, pagination renderer
  *
- *  Security rules (mirrors orders.js):
- *   • Auth guard fires before any data load
- *   • Razorpay payment_status is LOCKED — never editable by admin UI
- *   • 401/403 → authGuard shown, layout hidden
- *   • All user-supplied strings are HTML-escaped before render
+ * Security rules (mirrors orders.js):
+ * • Auth guard fires before any data load
+ * • Razorpay payment_status is LOCKED — never editable by admin UI
+ * • 401/403 → authGuard shown, layout hidden
+ * • All user-supplied strings are HTML-escaped before render
  * ═══════════════════════════════════════════════════════════════════
  */
 
@@ -41,16 +41,24 @@
     } catch (_) { }
 
     if (!user || user.role !== 'admin') {
-        document.getElementById('authGuard').classList.add('show');
-        document.querySelector('.layout').style.visibility = 'hidden';
+        const ag = document.getElementById('authGuard');
+        const layout = document.querySelector('.layout');
+        if (ag) ag.classList.add('show');
+        if (layout) layout.style.visibility = 'hidden';
         return;
     }
 
-    // Populate sidebar user info
+    // Populate sidebar user info - FIX: Used document.getElementById to avoid ReferenceError TDZ crash
     const name = user.firstName || user.first_name || 'Admin';
-    _el('sAvatar').textContent = name.charAt(0).toUpperCase();
-    _el('sName').textContent = name;
-    _el('dashDate').textContent = new Date().toLocaleDateString('en-IN', {
+
+    const avatarEl = document.getElementById('sAvatar');
+    if (avatarEl) avatarEl.textContent = name.charAt(0).toUpperCase();
+
+    const nameEl = document.getElementById('sName');
+    if (nameEl) nameEl.textContent = name;
+
+    const dashDateEl = document.getElementById('dashDate');
+    if (dashDateEl) dashDateEl.textContent = new Date().toLocaleDateString('en-IN', {
         weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
 })();
@@ -93,13 +101,15 @@ async function api(path, opts = {}) {
 
 const Prog = {
     _el: document.getElementById('nprogress'),
-    start() { this._el.style.width = '30%'; this._el.style.opacity = '1'; },
-    set(v) { this._el.style.width = v + '%'; },
+    start() { if (this._el) { this._el.style.width = '30%'; this._el.style.opacity = '1'; } },
+    set(v) { if (this._el) this._el.style.width = v + '%'; },
     done() {
+        if (!this._el) return;
         this._el.style.width = '100%';
         setTimeout(() => {
+            if (!this._el) return;
             this._el.style.opacity = '0';
-            setTimeout(() => { this._el.style.width = '0'; this._el.style.opacity = '1'; }, 300);
+            setTimeout(() => { if (this._el) { this._el.style.width = '0'; this._el.style.opacity = '1'; } }, 300);
         }, 200);
     },
 };
@@ -218,6 +228,7 @@ function animateCount(el, target, prefix = '') {
  */
 function toast(msg, type = 'success') {
     const wrap = _el('toastWrap');
+    if (!wrap) return;
     const t = document.createElement('div');
     t.className = `toast ${type}`;
     const icons = { error: 'fa-circle-xmark', info: 'fa-circle-info', warning: 'fa-triangle-exclamation', success: 'fa-circle-check' };
@@ -247,9 +258,15 @@ function navTo(el) {
     const sec = el.dataset.sec;
     document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
     document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-    _el('sec-' + sec).classList.add('active');
+
+    const targetSec = _el('sec-' + sec);
+    if (targetSec) targetSec.classList.add('active');
+
     el.classList.add('active');
-    _el('topbarTitle').textContent = SEC_TITLES[sec] || sec;
+
+    const topbarTitle = _el('topbarTitle');
+    if (topbarTitle) topbarTitle.textContent = SEC_TITLES[sec] || sec;
+
     currentSec = sec;
     closeSidebar();
     const loaders = {
@@ -263,12 +280,16 @@ function navTo(el) {
 }
 
 function toggleSidebar() {
-    _el('sidebar').classList.toggle('open');
-    _el('mobOverlay').style.display = _el('sidebar').classList.contains('open') ? 'block' : 'none';
+    const sidebar = _el('sidebar');
+    const overlay = _el('mobOverlay');
+    if (sidebar) sidebar.classList.toggle('open');
+    if (overlay) overlay.style.display = sidebar.classList.contains('open') ? 'block' : 'none';
 }
 function closeSidebar() {
-    _el('sidebar').classList.remove('open');
-    _el('mobOverlay').style.display = 'none';
+    const sidebar = _el('sidebar');
+    const overlay = _el('mobOverlay');
+    if (sidebar) sidebar.classList.remove('open');
+    if (overlay) overlay.style.display = 'none';
 }
 
 function doLogout() {
@@ -302,13 +323,16 @@ let currentDays = 30, customFrom = null, customTo = null;
 function setDays(d, btn) {
     currentDays = d; customFrom = null; customTo = null;
     document.querySelectorAll('.df-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     Cache.bust('dashboard');
     loadDashboard();
 }
 
 function applyCustomRange() {
-    const from = _el('dfFrom').value, to = _el('dfTo').value;
+    const dfFrom = _el('dfFrom'), dfTo = _el('dfTo');
+    if (!dfFrom || !dfTo) return;
+    const from = dfFrom.value, to = dfTo.value;
+
     if (!from || !to) { toast('Select both From and To dates', 'warning'); return; }
     if (new Date(from) > new Date(to)) { toast('From must be before To', 'error'); return; }
     customFrom = from; customTo = to; currentDays = 0;
@@ -350,15 +374,18 @@ async function loadDashboard() {
     renderPipeline(dash);
     renderDashOrders(dash.recentOrders || []);
     renderDashProducts(dash.topProducts || []);
-    if ((dash.pendingOrders || 0) > 0) {
-        _el('ordersBadge').textContent = dash.pendingOrders;
-        _el('ordersBadge').style.display = '';
+
+    const obadge = _el('ordersBadge');
+    if (obadge && (dash.pendingOrders || 0) > 0) {
+        obadge.textContent = dash.pendingOrders;
+        obadge.style.display = '';
     }
     Prog.done();
 }
 
 function renderStats(dash) {
     const grid = _el('statsGrid');
+    if (!grid) return;
     const stats = [
         { icon: 'fa-box', cls: 'si-orange', label: 'Products', val: dash.totalProducts || 0, sub: 'In catalogue', prefix: '' },
         { icon: 'fa-bag-shopping', cls: 'si-blue', label: 'Orders', val: dash.totalOrders || 0, sub: 'All time', prefix: '' },
@@ -380,7 +407,9 @@ function renderStats(dash) {
 }
 
 function renderStatsError() {
-    _el('statsGrid').innerHTML = `
+    const grid = _el('statsGrid');
+    if (!grid) return;
+    grid.innerHTML = `
     <div class="stat-card" style="grid-column:1/-1">
       <div class="error-state">
         <i class="fa-solid fa-circle-exclamation"></i>
@@ -405,14 +434,17 @@ function renderPipeline(dash) {
     const counts = dash.ordersByStatus || {};
     const total = STAGES.reduce((s, st) => s + (counts[st.key] || 0), 0);
 
-    _el('pipelineTotal').textContent = `${total} Total Orders`;
+    const pt = _el('pipelineTotal');
+    if (pt) pt.textContent = `${total} Total Orders`;
 
-    _el('pipelineStrip').innerHTML = STAGES.map(st => {
+    const ps = _el('pipelineStrip');
+    if (ps) ps.innerHTML = STAGES.map(st => {
         const pct = total ? (counts[st.key] || 0) / total * 100 : 0;
         return `<div class="ps-seg" style="flex:${Math.max(pct, 0.5)};background:${st.clr}" title="${st.label}: ${counts[st.key] || 0}"></div>`;
     }).join('');
 
-    _el('pipelineItems').innerHTML = STAGES.map(st => {
+    const pi = _el('pipelineItems');
+    if (pi) pi.innerHTML = STAGES.map(st => {
         const cnt = counts[st.key] || 0;
         const pct = total ? Math.round(cnt / total * 100) : 0;
         return `
@@ -431,6 +463,7 @@ function renderPipeline(dash) {
 
 function renderDashOrders(orders) {
     const el = _el('dashOrders');
+    if (!el) return;
     if (!orders.length) {
         el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-bag-shopping"></i><p>No orders yet.</p></div>';
         return;
@@ -458,6 +491,7 @@ function renderDashOrders(orders) {
 
 function renderDashProducts(prods) {
     const el = _el('dashProducts');
+    if (!el) return;
     if (!prods.length) {
         el.innerHTML = '<div class="empty-state"><i class="fa-solid fa-box-open"></i><p>No products yet.</p></div>';
         return;
@@ -518,7 +552,9 @@ async function loadOrders(forceRefresh = false) {
 
     const btn = _el('ordersRefreshBtn');
     if (btn) { btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>'; btn.disabled = true; }
-    _el('ordersHeroSub').textContent = 'Fetching orders…';
+
+    const heroSub = _el('ordersHeroSub');
+    if (heroSub) heroSub.textContent = 'Fetching orders…';
 
     const cached = Cache.get('orders');
     if (cached) {
@@ -536,11 +572,12 @@ async function loadOrders(forceRefresh = false) {
         allOrders.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0));
         Cache.set('orders', allOrders, 30_000);
         syncOrdersUI();
-        _el('ordersHeroSub').textContent = `${fmtNum(allOrders.length)} total orders · loaded in ${ms}ms`;
+        if (heroSub) heroSub.textContent = `${fmtNum(allOrders.length)} total orders · loaded in ${ms}ms`;
         toast(`${allOrders.length} orders loaded in ${ms}ms`);
     } catch (e) {
         toast('Failed to load orders: ' + (e.message || 'Network error'), 'error');
-        _el('ordersTbody').innerHTML = `
+        const tbody = _el('ordersTbody');
+        if (tbody) tbody.innerHTML = `
       <tr><td colspan="8">
         <div class="empty-state">
           <i class="fa-solid fa-triangle-exclamation" style="color:var(--danger);opacity:1"></i>
@@ -563,9 +600,11 @@ function syncOrdersUI() {
     const unfulfilled = allOrders.filter(o =>
         ['placed', 'confirmed', 'processing'].includes((o.order_status || '').toLowerCase())
     ).length;
-    if (unfulfilled > 0) {
-        _el('ordersBadge').textContent = unfulfilled;
-        _el('ordersBadge').style.display = '';
+
+    const ob = _el('ordersBadge');
+    if (ob && unfulfilled > 0) {
+        ob.textContent = unfulfilled;
+        ob.style.display = '';
     }
 }
 
@@ -581,11 +620,11 @@ function updateOrderKPIs() {
         .filter(o => o.payment_status === 'paid' || o.payment_status === 'success')
         .reduce((s, o) => s + Number(o.total_amount || 0), 0);
 
-    _el('oKpiTotal').textContent = fmtNum(allOrders.length);
-    _el('oKpiDelivered').textContent = fmtNum(delivered);
-    _el('oKpiUnfulfilled').textContent = fmtNum(unfulfilled);
-    _el('oKpiCancelled').textContent = fmtNum(cancelled);
-    _el('oKpiRevenue').textContent = fmtRs(revenue);
+    if (_el('oKpiTotal')) _el('oKpiTotal').textContent = fmtNum(allOrders.length);
+    if (_el('oKpiDelivered')) _el('oKpiDelivered').textContent = fmtNum(delivered);
+    if (_el('oKpiUnfulfilled')) _el('oKpiUnfulfilled').textContent = fmtNum(unfulfilled);
+    if (_el('oKpiCancelled')) _el('oKpiCancelled').textContent = fmtNum(cancelled);
+    if (_el('oKpiRevenue')) _el('oKpiRevenue').textContent = fmtRs(revenue);
 }
 
 // ── Tabs ──────────────────────────────────────────────────────────────────────
@@ -625,7 +664,7 @@ function updateOrderTabCounts() {
 function setOrderTab(tab, btn) {
     orderActiveTab = tab;
     document.querySelectorAll('#ordersTabStrip .tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+    if (btn) btn.classList.add('active');
     orderCurrentPg = 1;
     applyOrderFilters();
 }
@@ -699,17 +738,19 @@ function renderOrdersTable() {
     const tbody = _el('ordersTbody');
     const pgInfo = _el('ordersPgInfo');
     const pgEl = _el('ordersPagination');
+    if (!tbody) return;
+
     const start = (orderCurrentPg - 1) * ORDER_PAGE_SIZE;
     const page = filteredOrders.slice(start, start + ORDER_PAGE_SIZE);
 
     if (!filteredOrders.length) {
         tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-bag-shopping"></i><p>No orders match your filters</p></div></td></tr>`;
-        pgInfo.textContent = 'Showing 0 orders';
-        pgEl.innerHTML = '';
+        if (pgInfo) pgInfo.textContent = 'Showing 0 orders';
+        if (pgEl) pgEl.innerHTML = '';
         return;
     }
 
-    pgInfo.innerHTML = `Showing <strong>${start + 1}–${Math.min(start + ORDER_PAGE_SIZE, filteredOrders.length)}</strong> of <strong>${fmtNum(filteredOrders.length)}</strong> orders`;
+    if (pgInfo) pgInfo.innerHTML = `Showing <strong>${start + 1}–${Math.min(start + ORDER_PAGE_SIZE, filteredOrders.length)}</strong> of <strong>${fmtNum(filteredOrders.length)}</strong> orders`;
 
     tbody.innerHTML = page.map(o => {
         const src = (o.source || 'online').toLowerCase();
@@ -760,6 +801,7 @@ function renderOrdersTable() {
 function renderOrderPagination(total) {
     const pages = Math.ceil(total / ORDER_PAGE_SIZE);
     const el = _el('ordersPagination');
+    if (!el) return;
     if (pages <= 1) { el.innerHTML = ''; return; }
 
     let html = `<button class="pg-btn" onclick="goOrderPage(${orderCurrentPg - 1})" ${orderCurrentPg <= 1 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left" style="font-size:.7rem"></i></button>`;
@@ -781,17 +823,17 @@ function openOrderModal(id) {
     const o = allOrders.find(x => x.id === id);
     if (!o) return;
     currentOrderData = o;
-    _el('orderModalTitle').textContent = `Order: ${o.order_number || '#' + o.id}`;
-    _el('orderModalSubtitle').innerHTML = `${fmtDate(o.created_at)} &nbsp;·&nbsp; ${esc(o.customer_name || 'Guest')} &nbsp;·&nbsp; ${fmtRs(o.total_amount || 0)}`;
-    _el('orderModalBody').innerHTML = buildOrderModalBody(o, isRazorpayOrder(o));
+    if (_el('orderModalTitle')) _el('orderModalTitle').textContent = `Order: ${o.order_number || '#' + o.id}`;
+    if (_el('orderModalSubtitle')) _el('orderModalSubtitle').innerHTML = `${fmtDate(o.created_at)} &nbsp;·&nbsp; ${esc(o.customer_name || 'Guest')} &nbsp;·&nbsp; ${fmtRs(o.total_amount || 0)}`;
+    if (_el('orderModalBody')) _el('orderModalBody').innerHTML = buildOrderModalBody(o, isRazorpayOrder(o));
 
     const isFinal = ['delivered', 'cancelled', 'exchange_approved', 'exchange_rejected']
         .includes((o.order_status || '').toLowerCase());
-    _el('btnSaveOrder').style.display = isFinal ? 'none' : '';
-    _el('orderDetailModal').classList.add('show');
+    if (_el('btnSaveOrder')) _el('btnSaveOrder').style.display = isFinal ? 'none' : '';
+    if (_el('orderDetailModal')) _el('orderDetailModal').classList.add('show');
 }
 
-function closeOrderModal() { _el('orderDetailModal').classList.remove('show'); currentOrderData = null; }
+function closeOrderModal() { if (_el('orderDetailModal')) _el('orderDetailModal').classList.remove('show'); currentOrderData = null; }
 
 /**
  * Builds full order modal HTML
@@ -989,18 +1031,17 @@ async function saveOrderUpdate() {
     if (!statusEl) return;
 
     const btn = _el('btnSaveOrder');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
 
     try {
         // Build payload — never include payment_status for Razorpay orders
         const payload = {
             status: statusEl.value,
-            tracking_number: trackEl.value.trim() || null,
-            tracking_url: urlEl.value.trim() || null,
+            tracking_number: trackEl ? trackEl.value.trim() || null : null,
+            tracking_url: urlEl ? urlEl.value.trim() || null : null,
         };
         // Only non-Razorpay orders allow admin to set payment_status
-        if (!isRazorpayOrder(currentOrderData)) {
+        if (!isRazorpayOrder(currentOrderData) && payEl) {
             payload.payment_status = payEl.value;
         }
 
@@ -1015,7 +1056,7 @@ async function saveOrderUpdate() {
             allOrders[idx].order_status = payload.status;
             allOrders[idx].tracking_number = payload.tracking_number;
             allOrders[idx].tracking_url = payload.tracking_url;
-            if (!isRazorpayOrder(currentOrderData)) allOrders[idx].payment_status = payload.payment_status;
+            if (!isRazorpayOrder(currentOrderData) && payload.payment_status) allOrders[idx].payment_status = payload.payment_status;
         }
 
         Cache.bust('orders');
@@ -1027,8 +1068,7 @@ async function saveOrderUpdate() {
     } catch (e) {
         toast('Update failed: ' + (e.message || 'Server error'), 'error');
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes';
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-check"></i> Save Changes'; }
     }
 }
 
@@ -1063,6 +1103,7 @@ function printOrderInvoiceById(id) { const o = allOrders.find(x => x.id === id);
 function printInvoiceData(o) {
     const items = o.items || o.order_items || [];
     const win = window.open('', '_blank', 'width=800,height=700');
+    if (!win) return;
     win.document.write(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Invoice — ${esc(o.order_number || '#' + o.id)}</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Open Sans',Arial,sans-serif;font-size:13px;color:#1E1E2C;padding:32px;background:#fff}.inv-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:28px;padding-bottom:20px;border-bottom:2px solid #F29F67}.brand{font-size:1.8rem;font-weight:800;color:#F29F67}.brand small{display:block;font-size:.65rem;font-weight:400;color:#64748B;text-transform:uppercase;letter-spacing:.1em;margin-top:2px}.inv-meta{text-align:right}.inv-meta h2{font-size:1.1rem;font-weight:700;margin-bottom:4px}.inv-meta p{font-size:.78rem;color:#64748B;margin-bottom:2px}.inv-body{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:24px}.inv-sec h3{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94A3B8;margin-bottom:8px}.inv-sec p{font-size:.85rem;line-height:1.6}table{width:100%;border-collapse:collapse;margin-bottom:16px}thead th{text-align:left;padding:8px 10px;font-size:.65rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#64748B;background:#F8FAFC;border-bottom:2px solid #E4E8F0}tbody td{padding:10px;font-size:.83rem;border-bottom:1px solid #F5F7FA}.totals{margin-left:auto;width:260px}.total-row{display:flex;justify-content:space-between;padding:5px 0;font-size:.83rem;border-bottom:1px solid #F5F7FA}.total-row.grand{font-weight:800;font-size:1rem;color:#F29F67;border-top:2px solid #F29F67;border-bottom:none;padding-top:8px;margin-top:4px}.footer{margin-top:32px;padding-top:16px;border-top:1px solid #E4E8F0;text-align:center;font-size:.72rem;color:#94A3B8}@media print{body{padding:16px}}</style>
 </head><body>
@@ -1125,25 +1166,28 @@ const PAGE = 20;
 async function loadProducts() {
     const cached = Cache.get('products');
     if (cached) { allProducts = cached; filterProducts(); return; }
-    _el('productsTableBody').innerHTML = `<tr><td colspan="7"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading products…</div></td></tr>`;
+
+    const tbody = _el('productsTableBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="7"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading products…</div></td></tr>`;
+
     try {
         const data = await api('/api/admin/products');
         allProducts = data.products || [];
         Cache.set('products', allProducts, 60_000);
         filterProducts();
     } catch (e) {
-        _el('productsTableBody').innerHTML = `<tr><td colspan="7"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load products</span><button style="margin-left:auto;padding:4px 10px;border-radius:6px;background:var(--danger);color:#fff;font-size:.72rem;font-weight:600;cursor:pointer;border:none" onclick="loadProducts()">Retry</button></div></td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="7"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load products</span><button style="margin-left:auto;padding:4px 10px;border-radius:6px;background:var(--danger);color:#fff;font-size:.72rem;font-weight:600;cursor:pointer;border:none" onclick="loadProducts()">Retry</button></div></td></tr>`;
     }
 }
 
 function filterProducts() {
-    const q = (_el('productSearch').value || '').toLowerCase();
-    const cat = _el('catFilter').value;
-    const st = _el('statusFilter2').value;
+    const q = (_el('productSearch')?.value || '').toLowerCase();
+    const cat = _el('catFilter')?.value;
+    const st = _el('statusFilter2')?.value;
     filteredProducts = allProducts.filter(p => {
         const mq = !q || p.name.toLowerCase().includes(q) || (p.sku || '').toLowerCase().includes(q);
         const mc = !cat || (p.category || '').toLowerCase() === cat.toLowerCase();
-        const ms = st === '' || String(p.active ? 1 : 0) === st;
+        const ms = !st || String(p.active ? 1 : 0) === st;
         return mq && mc && ms;
     });
     pPg = 1;
@@ -1153,6 +1197,8 @@ function filterProducts() {
 function renderProducts() {
     const start = (pPg - 1) * PAGE, page = filteredProducts.slice(start, start + PAGE);
     const tbody = _el('productsTableBody');
+    if (!tbody) return;
+
     if (!page.length) {
         tbody.innerHTML = '<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-search"></i><p>No products found.</p></div></td></tr>';
         renderPagGen('productsPagination', 'productsPgInfo', filteredProducts.length, pPg, p => { pPg = p; renderProducts(); });
@@ -1186,18 +1232,20 @@ function renderProducts() {
 
 function openProductModal() {
     editingProductId = null;
-    _el('productForm').reset();
-    _el('productModalTitle').textContent = 'Add New Product';
-    _el('chkActive').checked = true;
-    _el('productFormError').style.display = 'none';
-    _el('productModalBd').classList.add('show');
+    if (_el('productForm')) _el('productForm').reset();
+    if (_el('productModalTitle')) _el('productModalTitle').textContent = 'Add New Product';
+    if (_el('chkActive')) _el('chkActive').checked = true;
+    if (_el('productFormError')) _el('productFormError').style.display = 'none';
+    if (_el('productModalBd')) _el('productModalBd').classList.add('show');
 }
 
 /** @param {Object} p product object */
 function editProduct(p) {
     editingProductId = p.id;
-    _el('productModalTitle').textContent = 'Edit Product';
+    if (_el('productModalTitle')) _el('productModalTitle').textContent = 'Edit Product';
     const f = _el('productForm');
+    if (!f) return;
+
     f.name.value = p.name || '';
     f.sku.value = p.sku || '';
     f.category.value = p.category || 'Heels';
@@ -1212,20 +1260,20 @@ function editProduct(p) {
     f.featured.checked = !!p.featured;
     f.is_new.checked = !!p.is_new;
     f.active.checked = p.active !== false && p.active !== 0;
-    _el('productFormError').style.display = 'none';
-    _el('productModalBd').classList.add('show');
+
+    if (_el('productFormError')) _el('productFormError').style.display = 'none';
+    if (_el('productModalBd')) _el('productModalBd').classList.add('show');
 }
 
-function closeProductModal() { _el('productModalBd').classList.remove('show'); editingProductId = null; }
+function closeProductModal() { if (_el('productModalBd')) _el('productModalBd').classList.remove('show'); editingProductId = null; }
 
 /** @param {SubmitEvent} e */
 async function saveProduct(e) {
     e.preventDefault();
     const f = e.target;
     const btn = _el('saveProductBtn');
-    _el('productFormError').style.display = 'none';
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    if (_el('productFormError')) _el('productFormError').style.display = 'none';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
 
     const data = {
         name: f.name.value.trim(),
@@ -1255,11 +1303,10 @@ async function saveProduct(e) {
         closeProductModal();
         loadProducts();
     } catch (err) {
-        _el('productFormError').style.display = 'flex';
-        _el('productFormErrorMsg').textContent = err.message || 'Failed to save product';
+        if (_el('productFormError')) _el('productFormError').style.display = 'flex';
+        if (_el('productFormErrorMsg')) _el('productFormErrorMsg').textContent = err.message || 'Failed to save product';
     } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Product';
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Product'; }
     }
 }
 
@@ -1287,20 +1334,23 @@ let cPg = 1;
 async function loadCustomers() {
     const cached = Cache.get('customers');
     if (cached) { allCustomers = cached; filterCustomers(); return; }
-    _el('customersTableBody').innerHTML = `<tr><td colspan="6"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div></td></tr>`;
+
+    const tbody = _el('customersTableBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div></td></tr>`;
+
     try {
         const { customers } = await api('/api/admin/customers');
         allCustomers = customers || [];
         Cache.set('customers', allCustomers, 60_000);
         filterCustomers();
     } catch (e) {
-        _el('customersTableBody').innerHTML = `<tr><td colspan="6"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load customers</span></div></td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load customers</span></div></td></tr>`;
     }
 }
 
 function filterCustomers() {
-    const q = (_el('customerSearch').value || '').toLowerCase();
-    const role = _el('roleFilter').value;
+    const q = (_el('customerSearch')?.value || '').toLowerCase();
+    const role = _el('roleFilter')?.value;
     filteredCustomers = allCustomers.filter(c => {
         const mq = !q || (c.first_name || '').toLowerCase().includes(q) || (c.last_name || '').toLowerCase().includes(q) || (c.email || '').toLowerCase().includes(q);
         const mr = !role || c.role === role;
@@ -1313,6 +1363,8 @@ function filterCustomers() {
 function renderCustomers() {
     const start = (cPg - 1) * PAGE, page = filteredCustomers.slice(start, start + PAGE);
     const tbody = _el('customersTableBody');
+    if (!tbody) return;
+
     if (!page.length) {
         tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-users"></i><p>No customers found.</p></div></td></tr>';
         renderPagGen('customersPagination', 'customersPgInfo', filteredCustomers.length, cPg, p => { cPg = p; renderCustomers(); });
@@ -1368,18 +1420,20 @@ let allCoupons = [];
 let editingCouponId = null;
 
 async function loadCoupons() {
-    _el('couponsTableBody').innerHTML = `<tr><td colspan="8"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div></td></tr>`;
+    const tbody = _el('couponsTableBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading…</div></td></tr>`;
     try {
         const { coupons } = await api('/api/admin/coupons');
         allCoupons = coupons || [];
         renderCoupons();
     } catch (e) {
-        _el('couponsTableBody').innerHTML = `<tr><td colspan="8"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load coupons</span></div></td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="8"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load coupons</span></div></td></tr>`;
     }
 }
 
 function renderCoupons() {
     const tbody = _el('couponsTableBody');
+    if (!tbody) return;
     if (!allCoupons.length) {
         tbody.innerHTML = '<tr><td colspan="8"><div class="empty-state"><i class="fa-solid fa-ticket"></i><p>No coupons yet.</p></div></td></tr>';
         return;
@@ -1404,17 +1458,19 @@ function renderCoupons() {
 
 function openCouponModal() {
     editingCouponId = null;
-    _el('couponForm').reset();
-    _el('couponModalTitle').textContent = 'Add Coupon';
-    _el('chkCouponActive').checked = true;
-    _el('couponModalBd').classList.add('show');
+    if (_el('couponForm')) _el('couponForm').reset();
+    if (_el('couponModalTitle')) _el('couponModalTitle').textContent = 'Add Coupon';
+    if (_el('chkCouponActive')) _el('chkCouponActive').checked = true;
+    if (_el('couponModalBd')) _el('couponModalBd').classList.add('show');
 }
 
 /** @param {Object} c coupon object */
 function editCoupon(c) {
     editingCouponId = c.id;
-    _el('couponModalTitle').textContent = 'Edit Coupon';
+    if (_el('couponModalTitle')) _el('couponModalTitle').textContent = 'Edit Coupon';
     const f = _el('couponForm');
+    if (!f) return;
+
     f.code.value = c.code || '';
     f.type.value = c.type || 'percent';
     f.value.value = c.value || '';
@@ -1424,18 +1480,19 @@ function editCoupon(c) {
     f.expires_at.value = c.expires_at ? c.expires_at.replace('Z', '').substring(0, 16) : '';
     f.description.value = c.description || '';
     f.active.checked = !!c.active;
-    _el('couponModalBd').classList.add('show');
+
+    if (_el('couponModalBd')) _el('couponModalBd').classList.add('show');
 }
 
-function closeCouponModal() { _el('couponModalBd').classList.remove('show'); editingCouponId = null; }
+function closeCouponModal() { if (_el('couponModalBd')) _el('couponModalBd').classList.remove('show'); editingCouponId = null; }
 
 /** @param {SubmitEvent} e */
 async function saveCoupon(e) {
     e.preventDefault();
     const f = e.target;
     const btn = _el('saveCouponBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+    if (btn) { btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…'; }
+
     const data = {
         code: f.code.value.trim().toUpperCase(),
         type: f.type.value,
@@ -1456,7 +1513,7 @@ async function saveCoupon(e) {
         closeCouponModal();
         loadCoupons();
     } catch (err) { toast(err.message || 'Failed to save coupon', 'error'); }
-    finally { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Coupon'; }
+    finally { if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Coupon'; } }
 }
 
 /** @param {number} id */
@@ -1475,11 +1532,12 @@ async function deleteCoupon(id) {
 // ══════════════════════════════════════════════════════════════════════════════
 
 async function loadReviews() {
-    const status = _el('reviewStatusFilter').value;
-    _el('reviewsTableBody').innerHTML = `<tr><td colspan="6"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading reviews…</div></td></tr>`;
+    const status = _el('reviewStatusFilter')?.value || 'pending';
+    const tbody = _el('reviewsTableBody');
+    if (tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="spinner-wrap"><i class="fa-solid fa-spinner"></i>Loading reviews…</div></td></tr>`;
     try {
         const { reviews } = await api(`/api/admin/reviews?status=${status}`);
-        const tbody = _el('reviewsTableBody');
+        if (!tbody) return;
         if (!reviews.length) {
             tbody.innerHTML = '<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-star"></i><p>No reviews with this status.</p></div></td></tr>';
             return;
@@ -1502,7 +1560,7 @@ async function loadReviews() {
         </td>
       </tr>`).join('');
     } catch (e) {
-        _el('reviewsTableBody').innerHTML = `<tr><td colspan="6"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load reviews</span></div></td></tr>`;
+        if (tbody) tbody.innerHTML = `<tr><td colspan="6"><div class="error-state" style="margin:8px"><i class="fa-solid fa-circle-exclamation"></i><span>Failed to load reviews</span></div></td></tr>`;
     }
 }
 
@@ -1550,9 +1608,9 @@ function renderPagGen(pgElId, pgInfoId, total, page, onPage) {
 // § MODAL CLOSE  —  backdrop click + ESC key
 // ══════════════════════════════════════════════════════════════════════════════
 
-_el('orderDetailModal').addEventListener('click', function (e) { if (e.target === this) closeOrderModal(); });
-_el('productModalBd').addEventListener('click', function (e) { if (e.target === this) closeProductModal(); });
-_el('couponModalBd').addEventListener('click', function (e) { if (e.target === this) closeCouponModal(); });
+if (_el('orderDetailModal')) _el('orderDetailModal').addEventListener('click', function (e) { if (e.target === this) closeOrderModal(); });
+if (_el('productModalBd')) _el('productModalBd').addEventListener('click', function (e) { if (e.target === this) closeProductModal(); });
+if (_el('couponModalBd')) _el('couponModalBd').addEventListener('click', function (e) { if (e.target === this) closeCouponModal(); });
 
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeOrderModal(); closeProductModal(); closeCouponModal(); }
@@ -1566,8 +1624,10 @@ document.addEventListener('keydown', e => {
 window.addEventListener('unhandledrejection', e => {
     const msg = e.reason?.message || '';
     if (e.reason?.status === 401 || msg.includes('401') || msg.includes('Unauthorized')) {
-        _el('authGuard').classList.add('show');
-        document.querySelector('.layout').style.visibility = 'hidden';
+        const guard = _el('authGuard');
+        if (guard) guard.classList.add('show');
+        const layout = document.querySelector('.layout');
+        if (layout) layout.style.visibility = 'hidden';
     }
 });
 
@@ -1578,9 +1638,15 @@ window.addEventListener('unhandledrejection', e => {
 
 document.addEventListener('DOMContentLoaded', () => {
     const today = new Date().toISOString().split('T')[0];
-    _el('dfTo').value = today;
+    const dfTo = _el('dfTo');
+    const dfFrom = _el('dfFrom');
+    if (dfTo) dfTo.value = today;
     const from30 = new Date();
     from30.setDate(from30.getDate() - 30);
-    _el('dfFrom').value = from30.toISOString().split('T')[0];
-    loadDashboard();
+    if (dfFrom) dfFrom.value = from30.toISOString().split('T')[0];
+
+    // Safety check - avoid loading twice if the admin.html inline script already patched and called it
+    if (typeof loadDashboard === 'function') {
+        loadDashboard();
+    }
 });
