@@ -3488,7 +3488,7 @@
         function renderCart() {
             const bodyEl = $('cart-body-el'), footEl = $('cart-foot-el'), cntEl = $('cart-head-cnt');
             let items = [], total = 0;
-            try { items = HeelsUpCart.getItems(); total = HeelsUpCart.getTotal() } catch (e) { }
+            try { items = HeelsUpCart.getCart(); total = HeelsUpCart.getSubtotal() } catch (e) { }
             if (!items.length) {
                 bodyEl.innerHTML = `<div class="cart-empty-state"><i class="fa-solid fa-bag-shopping" aria-hidden="true"></i><p>Your bag is empty</p><button class="btn btn-primary btn-sm btn-pill" onclick="closeCart()">Start Shopping</button></div>`;
                 if (footEl) footEl.style.display = 'none';

@@ -3331,7 +3331,7 @@
         function renderCartDrawer() {
             const bodyEl = $('cart-body'), footEl = $('cart-foot'), cntEl = $('cart-drawer-cnt');
             let items = [], total = 0;
-            try { items = HeelsUpCart.getItems(); total = HeelsUpCart.getTotal(); } catch (e) { }
+            try { items = HeelsUpCart.getCart(); total = HeelsUpCart.getSubtotal(); } catch (e) { }
             if (!items.length) {
                 bodyEl.innerHTML = `<div class="cart-empty"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg><p>Your bag is empty</p><button class="btn btn-sm" style="margin-top:16px" onclick="closeCart()">Start Shopping</button></div>`;
                 footEl.style.display = 'none'; cntEl.textContent = ''; return;
@@ -3459,20 +3459,24 @@
 
         /* ── WISHLIST ── */
         window.toggleWish = function (id, btn) {
-            btn.classList.toggle('active');
-            toast(btn.classList.contains('active') ? 'Added to wishlist ❤️' : 'Removed from wishlist', btn.classList.contains('active') ? 's' : 's');
-        };
-
-        /* ── ADD TO CART ── */
-        window.addToCartQuick = async function (productId) {
-            try {
-                const data = await HeelsUpAuth.api('/api/products/' + encodeURIComponent(productId));
-                const p = data.product || data.data || data;
-                if (typeof HeelsUpCart !== 'undefined') HeelsUpCart.addItem(p, 1, '');
-                updateCartBadge();
-                toast('"' + esc(p.name) + '" added to bag!');
-                openCart();
-            } catch (e) { toast('Could not add to bag. Please try again.', 'e'); }
+            btn.classList.toggle('wishlisted');
+            const isWish = btn.classList.contains('wishlisted');
+            if (isWish) {
+                btn.innerHTML = '<i class="fa-solid fa-heart" aria-hidden="true"></i>';
+                btn.setAttribute('aria-pressed', 'true');
+            } else {
+                btn.innerHTML = '<i class="fa-regular fa-heart" aria-hidden="true"></i>';
+                btn.setAttribute('aria-pressed', 'false');
+            }
+            if (typeof HeelsUpWishlistSystem !== 'undefined') {
+                if (isWish) HeelsUpWishlistSystem.add(id);
+                else HeelsUpWishlistSystem.remove(id);
+                // System shows toast on its own? Actually no, add() doesn't show toast, toggle does.
+                // We'll show toast manually here.
+                toast(isWish ? 'Added to Wishlist' : 'Removed from Wishlist', isWish ? 'success' : 'info');
+            } else {
+                toast(isWish ? 'Added to Wishlist' : 'Removed from Wishlist', isWish ? 'success' : 'info');
+            }
         };
 
         /* ── FILTER / SORT PRODUCTS ── */

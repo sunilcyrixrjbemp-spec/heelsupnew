@@ -1302,7 +1302,7 @@
         // Fallback simulate total from Cart for visual feedback if testing
         try {
           if (typeof HeelsUpCart !== 'undefined') {
-            const total = HeelsUpCart.getTotal();
+            const total = HeelsUpCart.getSubtotal();
             if (total > 0) document.getElementById('order-total').textContent = '₹' + (total / 100).toLocaleString('en-IN');
           }
         } catch (e) { }
