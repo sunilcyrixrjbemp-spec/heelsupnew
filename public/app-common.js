@@ -147,7 +147,7 @@
 
   // ── Announcement Bar ────────────────────────────────────────────
   function renderAnnouncementBar(messages = []) {
-    const defaults = ['🎉 Free Shipping on orders above ₹499', '✨ New Arrivals Every Week', '🔒 100% Secure Payments via Razorpay'];
+    const defaults = ['🎉 Free Shipping on orders above ₹799', '✨ New Arrivals Every Week', '🔒 100% Secure Payments via Razorpay'];
     const msgs = messages.length ? messages : defaults;
     const bar = document.createElement('div');
     bar.style.cssText = 'background:#0d0d0d;color:rgba(255,255,255,0.85);font-size:12px;font-weight:500;letter-spacing:0.04em;padding:9px 0;text-align:center;position:relative;z-index:201;overflow:hidden';

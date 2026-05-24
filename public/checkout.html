@@ -1235,8 +1235,8 @@
         return;
       }
 
-      // Fetch user data if we have a token but no local cache
-      if (!currentUser && typeof HeelsUpAuth !== 'undefined' && HeelsUpAuth.getToken()) {
+      // Fetch user data if we have a token
+      if (typeof HeelsUpAuth !== 'undefined' && HeelsUpAuth.getToken()) {
         try {
           const res = await HeelsUpAuth.api('/api/me');
           if (res && res.user) {
@@ -1548,7 +1548,7 @@
             btn.innerHTML = '<i class="fa-solid fa-shield-check"></i> Verifying...';
             try {
               // 6. Verify Payment Backend Call
-              await HeelsUpAuth.api('/api/payments/razorpay/verify', {
+              const verifyRes = await HeelsUpAuth.api('/api/payments/razorpay/verify', {
                 method: 'POST',
                 body: JSON.stringify({
                   orderId: orderData.order.id,
@@ -1560,7 +1560,7 @@
 
               // 7. Success
               if (typeof HeelsUpCart !== 'undefined') HeelsUpCart.clearCart();
-              window.location.href = `/order-confirmation?id=${orderData.order.id}&num=${orderData.order.order_number}`;
+              window.location.href = `/order-confirmation?id=${verifyRes.orderId}&num=${verifyRes.orderNumber}`;
             } catch (e) {
               toast('Verification failed. Please contact support with Order #' + orderData.order.order_number, 'error', 8000);
               resetPayBtn(btn, ogHtml);
@@ -1570,7 +1570,7 @@
             ondismiss: function () {
               toast('Payment cancelled', 'warning');
               resetPayBtn(btn, ogHtml);
-              HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id }) }).catch(() => { });
+              HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id, razorpay_order_id: orderData.razorpayOrder.id }) }).catch(() => { });
             }
           }
         };
@@ -1580,7 +1580,7 @@
         rzp.on('payment.failed', function (resp) {
           toast('Payment Failed: ' + (resp.error?.description || 'Unknown error'), 'error', 6000);
           resetPayBtn(btn, ogHtml);
-          HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id }) }).catch(() => { });
+          HeelsUpAuth.api('/api/payments/razorpay/fail', { method: 'POST', body: JSON.stringify({ orderId: orderData.order.id, razorpay_order_id: orderData.razorpayOrder.id }) }).catch(() => { });
         });
         rzp.open();
 

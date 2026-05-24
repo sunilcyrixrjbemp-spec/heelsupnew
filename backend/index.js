@@ -35,10 +35,6 @@ function checkRateLimit(ip, limit = 100, windowMs = 60000) {
 // ════════════════════════════════════════════════════════════════
 export default {
   async fetch(request, env, ctx) {
-    // Auto-migrate schema gracefully
-    await env.DB.prepare("ALTER TABLE orders ADD COLUMN tax_amount REAL DEFAULT 0").run().catch(() => { });
-    await env.DB.prepare("ALTER TABLE products ADD COLUMN gst_percent REAL DEFAULT 0").run().catch(() => { });
-
     const url = new URL(request.url);
     const path = url.pathname;
     const method = request.method;
@@ -64,12 +60,26 @@ export default {
     // Caching (Enterprise Scalability)
     let cache = null;
     let cacheKey = null;
-    const isCacheable = method === "GET" && (path === "/api/products" || path === "/api/categories" || path === "/api/public-settings");
+    const pathNormalized = path.replace(/\/$/, "");
+    const isCacheable = method === "GET" && (
+      pathNormalized === "/api/banners" ||
+      pathNormalized === "/api/categories" ||
+      pathNormalized === "/api/settings" ||
+      pathNormalized === "/api/products" ||
+      pathNormalized === "/api/reviews" ||
+      pathNormalized === "/api/search" ||
+      /^\/api\/products\/(\d+)$/.test(pathNormalized) ||
+      /^\/api\/products\/(\d+)\/reviews$/.test(pathNormalized)
+    );
     if (isCacheable) {
-      cache = caches.default;
-      cacheKey = new Request(url.toString(), request);
-      const cachedRes = await cache.match(cacheKey);
-      if (cachedRes) return cachedRes;
+      try {
+        cache = caches.default;
+        cacheKey = new Request(url.toString(), request);
+        const cachedRes = await cache.match(cacheKey);
+        if (cachedRes) return cachedRes;
+      } catch (err) {
+        console.warn("Cache match failed:", err);
+      }
     }
 
     if (path === "/api/test-db") {
@@ -85,42 +95,18 @@ export default {
     }
 
     try {
-      // Automatic Schema Upgrades for Shipping and Taxes
-      const upgrades = [
-        "ALTER TABLE product_images ADD COLUMN r2_key TEXT",
-        "ALTER TABLE product_images ADD COLUMN is_primary INTEGER DEFAULT 0",
-        "ALTER TABLE product_images ADD COLUMN alt TEXT",
-        
-        "ALTER TABLE tax_rules ADD COLUMN hsn_code TEXT",
-        "ALTER TABLE tax_rules ADD COLUMN condition_type TEXT",
-        "ALTER TABLE tax_rules ADD COLUMN condition_amount REAL",
-        "ALTER TABLE tax_rules ADD COLUMN notes TEXT",
-        "ALTER TABLE shipping_zones ADD COLUMN delivery_days TEXT",
-        "ALTER TABLE shipping_zones ADD COLUMN standard_rate REAL",
-        "ALTER TABLE shipping_zones ADD COLUMN express_rate REAL",
-        "ALTER TABLE shipping_zones ADD COLUMN sameday_rate REAL",
-        "ALTER TABLE shipping_zones ADD COLUMN free_above REAL"
-      ];
-      for (const sql of upgrades) {
-        try { await env.DB.prepare(sql).run(); } catch (e) { }
-      }
-    } catch (err) {
-      if (err.message && err.message.includes("no such table")) {
-        console.log("Waiting for schema initialization...");
-      } else {
-        console.error("Unhandled error in ensureTables:", err?.stack || err);
-      }
-    }
-
-    try {
       const response = await router(request, env);
 
       // Store in cache if cacheable
-      if (isCacheable && response && response.status === 200) {
-        const cacheableRes = new Response(response.clone().body, response);
-        cacheableRes.headers.set("Cache-Control", "public, max-age=60"); // 60s
-        if (ctx && ctx.waitUntil) ctx.waitUntil(cache.put(cacheKey, cacheableRes));
-        else await cache.put(cacheKey, cacheableRes);
+      if (isCacheable && response && response.status === 200 && cache && cacheKey) {
+        try {
+          const cacheableRes = new Response(response.clone().body, response);
+          cacheableRes.headers.set("Cache-Control", "public, max-age=60"); // 60s
+          if (ctx && ctx.waitUntil) ctx.waitUntil(cache.put(cacheKey, cacheableRes).catch(() => {}));
+          else await cache.put(cacheKey, cacheableRes).catch(() => {});
+        } catch (e) {
+          console.warn("Cache write failed:", e);
+        }
       }
 
       return response;
@@ -165,6 +151,9 @@ async function router(request, env) {
 
   // ── Public Banners ─────────────────────────────────────────────
   if (path === "/api/banners" && method === "GET") return publicBanners(env);
+
+  // ── Public Reviews ─────────────────────────────────────────────
+  if (path === "/api/reviews" && method === "GET") return getPublicReviews(url, env);
 
   // ── Public Blog ────────────────────────────────────────────────
   if (path === "/api/blogs" && method === "GET") return publicBlogs(url, env);
@@ -235,7 +224,7 @@ async function publicSettings(env) {
   const [keyId, mode, freeAbove, stdCharge, siteName, siteEmail, phone] = await Promise.all([
     getSetting(env, "razorpay_key_id", ""),
     getSetting(env, "razorpay_mode", "live"),
-    getSetting(env, "shipping_free_above", "499"),
+    getSetting(env, "shipping_free_above", "799"),
     getSetting(env, "shipping_standard_charge", "49"),
     getSetting(env, "site_name", "HeelsUp"),
     getSetting(env, "site_email", ""),
@@ -840,6 +829,36 @@ async function addProductReview(request, path, env) {
   return json({ ok: true, message: "Review submitted. It will appear after moderation." }, 201);
 }
 
+async function getPublicReviews(url, env) {
+  try {
+    const limit = Math.min(toInt(url.searchParams.get("limit"), 6), 20);
+    const { results } = await env.DB.prepare(
+      `SELECT r.id, r.product_id, r.rating, r.title, r.body, r.created_at, u.first_name, u.last_name, p.name as product_name
+       FROM product_reviews r
+       JOIN users u ON u.id = r.user_id
+       JOIN products p ON p.id = r.product_id
+       WHERE r.status = 'approved'
+       ORDER BY r.id DESC
+       LIMIT ?`
+    ).bind(limit).all();
+    
+    const reviews = (results || []).map(r => ({
+      id: r.id,
+      product_id: r.product_id,
+      rating: r.rating,
+      title: r.title,
+      comment: r.body,
+      created_at: r.created_at,
+      first_name: r.first_name,
+      last_name: r.last_name,
+      product_name: r.product_name
+    }));
+    return json({ reviews });
+  } catch (e) {
+    return json({ reviews: [] });
+  }
+}
+
 // ════════════════════════════════════════════════════════════════
 // COUPONS
 // ════════════════════════════════════════════════════════════════
@@ -864,16 +883,26 @@ async function validateCoupon(request, env) {
 async function failRazorpayPayment(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
-  const localOrderId = toInt(body.orderId, 0);
-  if (!localOrderId) return json({ error: "orderId required" }, 400);
-  const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
-  if (!order) return json({ error: "Order not found" }, 404);
-  if (order.payment_status === 'paid') return json({ error: "Already paid" }, 400);
   
-    await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(localOrderId).run();
-    await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(localOrderId).run();
-    return json({ ok: true });
+  const rzpOrderId = String(body.razorpay_order_id || "").trim();
+  if (rzpOrderId) {
+    try {
+      await env.KV.delete(`pending_order:${rzpOrderId}`);
+    } catch (e) {
+      console.error("Failed to delete KV key pending_order:" + rzpOrderId, e);
+    }
+  }
 
+  const localOrderId = toInt(body.orderId, 0);
+  if (localOrderId) {
+    const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
+    if (order) {
+      if (order.payment_status === 'paid') return json({ error: "Already paid" }, 400);
+      await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(localOrderId).run();
+      await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(localOrderId).run();
+    }
+  }
+  return json({ ok: true });
 }
 
 async function initiateOrder(request, env) {
@@ -886,85 +915,189 @@ async function initiateOrder(request, env) {
   if (!rzpKeyId || !rzpKeySecret) return json({ error: "Payment gateway not configured. Contact admin." }, 503);
   const items = Array.isArray(body.items) ? body.items : [];
   if (!items.length) return json({ error: "Order items required" }, 400);
+
+  // Validate stock
+  for (const item of items) {
+    if (item.productId) {
+      const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(item.productId).first();
+      if (!prod) {
+        return json({ error: `Product "${item.name}" not found.` }, 404);
+      }
+      const qty = Math.max(1, toInt(item.qty || item.quantity, 1));
+      if ((prod.stock || 0) < qty) {
+        return json({ error: `Insufficient stock for "${prod.name}". Only ${prod.stock} left.` }, 400);
+      }
+    }
+  }
+
   let discountAmount = 0;
   let couponCode = String(body.couponCode || "").trim().toUpperCase();
+  const subtotalAmount = Number(items.reduce((s, i) => s + (Number(i.price || 0) * Math.max(1, i.qty || i.quantity || 1)), 0).toFixed(2));
   if (couponCode) {
-    const subtotal = items.reduce((s, i) => s + (Number(i.price || 0) * Math.max(1, i.qty || 1)), 0);
     const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND active=1").bind(couponCode).first();
-    if (coupon && subtotal >= coupon.min_order) {
-      let disc = coupon.type === "percent" ? Math.round(subtotal * (coupon.value / 100)) : coupon.value;
+    if (coupon && subtotalAmount >= coupon.min_order) {
+      let disc = coupon.type === "percent" ? Math.round(subtotalAmount * (coupon.value / 100)) : coupon.value;
       if (coupon.max_discount) disc = Math.min(disc, coupon.max_discount);
       discountAmount = disc;
     }
   }
-  const created = await createOrderRecord(env, {
+
+  const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "799")) || 799;
+  const shipCharge = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
+  const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
+  const taxAmount = 0;
+  const totalAmount = Math.max(0, Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2)));
+
+  const orderNumber = await generateOrderNumber(env);
+
+  const itemsValidated = items.map(item => {
+    const qty = Math.max(1, toInt(item.qty || item.quantity, 1));
+    const unitPrice = Number(item.price || 0);
+    return {
+      productId: item.productId ? toInt(item.productId, 0) : null,
+      name: String(item.name),
+      sku: String(item.sku || ""),
+      qty,
+      unitPrice,
+      lineTotal: Number((unitPrice * qty).toFixed(2)),
+      size: String(item.size || ""),
+      image: String(item.image || item.img || "")
+    };
+  });
+
+  const amountPaise = Math.round(totalAmount * 100);
+
+  // If order is free, place it immediately in SQL DB
+  if (amountPaise <= 0) {
+    const created = await createOrderRecord(env, {
+      userId: auth.user.id,
+      customer: body.customer || {
+        name: `${auth.user.first_name} ${auth.user.last_name || ""}`.trim(),
+        email: auth.user.email,
+        phone: auth.user.phone || body.phone || ""
+      },
+      items: itemsValidated,
+      deliveryMethod: body.deliveryMethod || "standard",
+      notes: body.notes || "",
+      paymentMethod: "FREE",
+      paymentStatus: "paid",
+      orderStatus: "confirmed",
+      couponCode: couponCode || null,
+      discountAmount,
+      orderNumber // Pass pre-generated order number
+    });
+    if (!created.ok) return json({ error: created.error }, 400);
+    if (couponCode) await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(couponCode).run();
+    return json({ ok: true, key: "free_order", order: { id: created.order.id, orderNumber: created.order.order_number, amount: 0, discount: discountAmount } });
+  }
+
+  // Create Razorpay Order
+  const basicAuth = btoa(`${rzpKeyId}:${rzpKeySecret}`);
+  const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
+    method: "POST",
+    headers: { Authorization: `Basic ${basicAuth}`, "content-type": "application/json" },
+    body: JSON.stringify({ amount: amountPaise, currency: "INR", receipt: String(orderNumber) })
+  });
+  if (!rzpRes.ok) {
+    const t = await rzpRes.text();
+    return json({ error: "Payment gateway error: " + t, detail: t }, 502);
+  }
+  const rzpOrder = await rzpRes.json();
+
+  // Save pending order payload to KV
+  const pendingPayload = {
     userId: auth.user.id,
     customer: body.customer || {
       name: `${auth.user.first_name} ${auth.user.last_name || ""}`.trim(),
       email: auth.user.email,
       phone: auth.user.phone || body.phone || ""
     },
-    items: body.items,
+    items: itemsValidated,
     deliveryMethod: body.deliveryMethod || "standard",
     notes: body.notes || "",
     paymentMethod: "RAZORPAY",
-    paymentStatus: "pending",
-    orderStatus: "placed",
     couponCode: couponCode || null,
-    discountAmount
-  });
-  if (!created.ok) return json({ error: created.error }, 400);
-  const amountPaise = Math.round(Number(created.order.total_amount) * 100);
-    
-    if (amountPaise <= 0) {
-      await env.DB.prepare("UPDATE orders SET payment_status='paid', order_status='confirmed', paid_at=?, updated_at=? WHERE id=?").bind(nowIso(), nowIso(), created.order.id).run();
-      if (couponCode) await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(couponCode).run();
-      return json({ ok: true, key: "free_order", order: { id: created.order.id, orderNumber: created.order.order_number, amount: 0, discount: discountAmount } });
-    }
+    discountAmount,
+    subtotalAmount,
+    shippingAmount,
+    taxAmount,
+    totalAmount,
+    orderNumber
+  };
+  await env.KV.put(`pending_order:${rzpOrder.id}`, JSON.stringify(pendingPayload), { expirationTtl: 86400 });
 
-    const basicAuth = btoa(`${rzpKeyId}:${rzpKeySecret}`);
-  const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
-    method: "POST",
-    headers: { Authorization: `Basic ${basicAuth}`, "content-type": "application/json" },
-    body: JSON.stringify({ amount: amountPaise, currency: "INR", receipt: String(created.order.order_number), notes: { internal_order_id: String(created.order.id) } })
+  return json({
+    ok: true,
+    key: rzpKeyId,
+    order: {
+      id: null,
+      orderNumber: orderNumber,
+      amount: totalAmount,
+      discount: discountAmount
+    },
+    razorpayOrder: rzpOrder
   });
-    if (!rzpRes.ok) {
-      const t = await rzpRes.text();
-      await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(created.order.id).run();
-      await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(created.order.id).run();
-      return json({ error: "Payment gateway error: " + t, detail: t }, 502);
-    }
-    const rzpOrder = await rzpRes.json();
-    await env.DB.prepare("UPDATE orders SET razorpay_order_id=?, updated_at=? WHERE id=?").bind(rzpOrder.id, nowIso(), created.order.id).run();
-  return json({ ok: true, key: rzpKeyId, order: { id: created.order.id, orderNumber: created.order.order_number, amount: created.order.total_amount, discount: discountAmount }, razorpayOrder: rzpOrder });
 }
 
 async function verifyRazorpayPayment(request, env) {
   const body = await readJson(request);
   if (!body) return json({ error: "Invalid JSON" }, 400);
   const rzpKeySecret = String(await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "")).trim();
-  const localOrderId = toInt(body.orderId, 0);
   const rzpOrderId = String(body.razorpay_order_id || "").trim();
   const rzpPaymentId = String(body.razorpay_payment_id || "").trim();
   const rzpSignature = String(body.razorpay_signature || "").trim();
-  if (!localOrderId || !rzpOrderId || !rzpPaymentId || !rzpSignature)
-    return json({ error: "orderId, razorpay_order_id, razorpay_payment_id, razorpay_signature required" }, 400);
-  const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
-  if (!order) return json({ error: "Order not found" }, 404);
+  if (!rzpOrderId || !rzpPaymentId || !rzpSignature)
+    return json({ error: "razorpay_order_id, razorpay_payment_id, razorpay_signature required" }, 400);
+
   const expected = await hmacHex(rzpKeySecret, `${rzpOrderId}|${rzpPaymentId}`);
   if (expected !== rzpSignature) {
-    await auditLog(env, null, "payment_signature_failed", "orders", localOrderId, { rzpOrderId });
+    await auditLog(env, null, "payment_signature_failed", "orders", null, { rzpOrderId });
     return json({ error: "Payment verification failed. Invalid signature." }, 400);
   }
+
+  // Get pending order details from KV
+  const pendingStr = await env.KV.get(`pending_order:${rzpOrderId}`);
+  if (!pendingStr) {
+    return json({ error: "Order details not found or expired. If amount was debited, please contact support." }, 404);
+  }
+  const pending = JSON.parse(pendingStr);
+
+  // Now create the actual order in D1 DB
+  const created = await createOrderRecord(env, {
+    userId: pending.userId,
+    customer: pending.customer,
+    items: pending.items,
+    deliveryMethod: pending.deliveryMethod,
+    notes: pending.notes,
+    paymentMethod: pending.paymentMethod,
+    paymentStatus: "paid",
+    orderStatus: "confirmed",
+    couponCode: pending.couponCode,
+    discountAmount: pending.discountAmount,
+    orderNumber: pending.orderNumber
+  });
+  if (!created.ok) {
+    return json({ error: "Failed to place order in database: " + created.error }, 500);
+  }
+
+  // Update order with razorpay details
   const paidAt = nowIso();
   await env.DB.prepare(
     "UPDATE orders SET payment_status='paid', order_status='confirmed', razorpay_order_id=?, razorpay_payment_id=?, razorpay_signature=?, paid_at=?, updated_at=? WHERE id=?"
-  ).bind(rzpOrderId, rzpPaymentId, rzpSignature, paidAt, paidAt, localOrderId).run();
+  ).bind(rzpOrderId, rzpPaymentId, rzpSignature, paidAt, paidAt, created.order.id).run();
+
+  // Insert payment log
   await env.DB.prepare(
     "INSERT INTO payments (order_id, provider, provider_order_id, provider_payment_id, amount, currency, status, raw_payload, created_at) VALUES (?,'RAZORPAY',?,?,?,'INR','captured',?,?)"
-  ).bind(localOrderId, rzpOrderId, rzpPaymentId, order.total_amount, JSON.stringify(body), paidAt).run();
+  ).bind(created.order.id, rzpOrderId, rzpPaymentId, pending.totalAmount, JSON.stringify(body), paidAt).run();
+
+  // If coupon was used, increment used_count
+  if (pending.couponCode) {
+    await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(pending.couponCode).run();
+  }
+
   // Reduce stock for order items
-  const { results: orderItems } = await env.DB.prepare("SELECT * FROM order_items WHERE order_id=?").bind(localOrderId).all();
+  const { results: orderItems } = await env.DB.prepare("SELECT * FROM order_items WHERE order_id=?").bind(created.order.id).all();
   for (const item of (orderItems || [])) {
     if (item.product_id) {
       const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(item.product_id).first();
@@ -977,8 +1110,9 @@ async function verifyRazorpayPayment(request, env) {
       }
     }
   }
-  // Send order confirmation email (async, don't block response)
-  const user = order.user_id ? await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(order.user_id).first() : null;
+
+  // Send email
+  const user = pending.userId ? await env.DB.prepare("SELECT * FROM users WHERE id=?").bind(pending.userId).first() : null;
   const siteName = await getSetting(env, "site_name", "HeelsUp");
   let resendApiKey = await getSetting(env, "resend_api_key", "");
   if (!resendApiKey && env.RESEND_API_KEY) resendApiKey = env.RESEND_API_KEY;
@@ -991,13 +1125,17 @@ async function verifyRazorpayPayment(request, env) {
       body: JSON.stringify({
         from: `${siteName} <${fromAddress}>`,
         to: [user.email],
-        subject: `Order Confirmed! #${order.order_number} — ${siteName}`,
-        html: buildOrderConfirmHtml(order, siteName, orderItems || [])
+        subject: `Order Confirmed! #${created.order.order_number} — ${siteName}`,
+        html: buildOrderConfirmHtml(created.order, siteName, orderItems || [])
       })
     }).catch(() => { });
   }
-  await auditLog(env, user?.id || null, "payment_confirmed", "orders", localOrderId, { rzpPaymentId });
-  return json({ ok: true, message: "Payment verified successfully" });
+
+  // Delete KV pending order details
+  await env.KV.delete(`pending_order:${rzpOrderId}`);
+
+  await auditLog(env, user?.id || null, "payment_confirmed", "orders", created.order.id, { rzpPaymentId });
+  return json({ ok: true, message: "Payment verified successfully", orderId: created.order.id, orderNumber: created.order.order_number });
 }
 
 function buildOrderConfirmHtml(order, siteName, orderItems = []) {
@@ -1249,17 +1387,11 @@ async function handleAdmin(request, path, url, env) {
   // R2 upload is auth-checked inside
 
   // Special: allow upload without full admin check? No — always require admin.
-  let auth;
-  let isAdmin = false;
-  if (path !== "/api/admin/dev-sql") {
-    auth = await requireAuth(request, env);
-    if (!auth.ok) return auth.response;
-    if (!["admin", "staff"].includes((auth.user.role || "").toLowerCase()))
-      return json({ error: "Admin access required" }, 403);
-    isAdmin = auth.user.role === "admin";
-  } else {
-    isAdmin = true; // For dev-sql
-  }
+  let auth = await requireAuth(request, env);
+  if (!auth.ok) return auth.response;
+  if (!["admin", "staff"].includes((auth.user.role || "").toLowerCase()))
+    return json({ error: "Admin access required" }, 403);
+  let isAdmin = auth.user.role === "admin";
 
   // ── DASHBOARD ─────────────────────────────────────────────────
   if (method === "GET" && path === "/api/admin/dashboard") return adminDashboard(env);
@@ -1374,8 +1506,8 @@ async function handleAdmin(request, path, url, env) {
   if (method === "POST" && path === "/api/admin/dev-sql") {
     const body = await readJson(request);
     try {
-      await env.DB.prepare(body.query).run();
-      return json({ ok: true });
+      const result = await env.DB.prepare(body.query).all();
+      return json({ ok: true, result });
     } catch (e) {
       return json({ error: e.message }, 500);
     }
@@ -1445,6 +1577,36 @@ async function handleAdmin(request, path, url, env) {
     } catch (e) {
       return json({ ok: false, error: e.message });
     }
+  }
+
+  // ── RUN SCHEMA MIGRATIONS (On demand) ──────────────────────────
+  if (method === "POST" && path === "/api/admin/run-migrations") {
+    const upgrades = [
+      "ALTER TABLE orders ADD COLUMN tax_amount REAL DEFAULT 0",
+      "ALTER TABLE products ADD COLUMN gst_percent REAL DEFAULT 0",
+      "ALTER TABLE product_images ADD COLUMN r2_key TEXT",
+      "ALTER TABLE product_images ADD COLUMN is_primary INTEGER DEFAULT 0",
+      "ALTER TABLE product_images ADD COLUMN alt TEXT",
+      "ALTER TABLE tax_rules ADD COLUMN hsn_code TEXT",
+      "ALTER TABLE tax_rules ADD COLUMN condition_type TEXT",
+      "ALTER TABLE tax_rules ADD COLUMN condition_amount REAL",
+      "ALTER TABLE tax_rules ADD COLUMN notes TEXT",
+      "ALTER TABLE shipping_zones ADD COLUMN delivery_days TEXT",
+      "ALTER TABLE shipping_zones ADD COLUMN standard_rate REAL",
+      "ALTER TABLE shipping_zones ADD COLUMN express_rate REAL",
+      "ALTER TABLE shipping_zones ADD COLUMN sameday_rate REAL",
+      "ALTER TABLE shipping_zones ADD COLUMN free_above REAL"
+    ];
+    const results = [];
+    for (const sql of upgrades) {
+      try {
+        await env.DB.prepare(sql).run();
+        results.push({ sql, status: "success" });
+      } catch (e) {
+        results.push({ sql, status: "skipped/error", error: e.message });
+      }
+    }
+    return json({ ok: true, results });
   }
 
   // ── PRODUCTS ──────────────────────────────────────────────────
@@ -2941,13 +3103,13 @@ async function createOrderRecord(env, input) {
   if (!items.length) return { ok: false, error: "No valid order items" };
 
   const subtotalAmount = Number(items.reduce((s, i) => s + i.lineTotal, 0).toFixed(2));
-  const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "499")) || 499;
+  const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "799")) || 799;
   const shipCharge = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
   const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
   const discountAmount = Number(input.discountAmount || 0);
   const taxAmount = Number(input.taxAmount || 0);
   const totalAmount = Math.max(0, Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2)));
-  const orderNumber = await generateOrderNumber(env);
+  const orderNumber = input.orderNumber || await generateOrderNumber(env);
   const createdAt = nowIso();
   const source = String(input.source || "online");
 
@@ -3050,7 +3212,9 @@ async function generateOrderNumber(env) {
   const today = new Date();
   const prefix = `HU-${today.getUTCFullYear()}${String(today.getUTCMonth() + 1).padStart(2, "0")}${String(today.getUTCDate()).padStart(2, "0")}`;
   const row = await env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_number LIKE ?").bind(`${prefix}-%`).first();
-  return `${prefix}-${String((row?.c || 0) + 1).padStart(4, "0")}`;
+  const seq = String((row?.c || 0) + 1).padStart(4, "0");
+  const rand = Math.floor(1000 + Math.random() * 9000);
+  return `${prefix}-${seq}-${rand}`;
 }
 
 function normalizeEmail(e) { return String(e || "").trim().toLowerCase(); }
@@ -3070,7 +3234,9 @@ function json(data, status = 200) {
       "Access-Control-Allow-Methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type,Authorization",
       "X-Content-Type-Options": "nosniff",
-      "X-Frame-Options": "DENY"
+      "X-Frame-Options": "DENY",
+      "Content-Security-Policy": "default-src 'none'; frame-ancestors 'none'",
+      "Referrer-Policy": "strict-origin-when-cross-origin"
     }
   });
 }
