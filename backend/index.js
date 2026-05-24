@@ -87,6 +87,10 @@ export default {
     try {
       // Automatic Schema Upgrades for Shipping and Taxes
       const upgrades = [
+        "ALTER TABLE product_images ADD COLUMN r2_key TEXT",
+        "ALTER TABLE product_images ADD COLUMN is_primary INTEGER DEFAULT 0",
+        "ALTER TABLE product_images ADD COLUMN alt TEXT",
+        
         "ALTER TABLE tax_rules ADD COLUMN hsn_code TEXT",
         "ALTER TABLE tax_rules ADD COLUMN condition_type TEXT",
         "ALTER TABLE tax_rules ADD COLUMN condition_amount REAL",
