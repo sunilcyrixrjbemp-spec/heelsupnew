@@ -2550,13 +2550,13 @@
 
                 <!-- Actions -->
                 <div class="nav-actions">
-                    <button class="nav-btn" id="search-btn" aria-label="Search products">
+                    <a href="/search.html" class="nav-btn" aria-label="Search products">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="11" cy="11" r="8"></circle>
                             <path d="M21 21l-4.35-4.35"></path>
                         </svg>
-                    </button>
+                    </a>
                     <a href="/wishlist.html" class="nav-btn" aria-label="My Wishlist">
                         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                             stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -3102,7 +3102,7 @@
             srchTimer = setTimeout(() => doSearch(q), 320);
         });
         srchInp?.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && srchInp.value.trim()) window.location.href = '/shop?q=' + encodeURIComponent(srchInp.value.trim());
+            if (e.key === 'Enter' && srchInp.value.trim()) window.location.href = '/search.html?q=' + encodeURIComponent(srchInp.value.trim());
         });
 
         async function doSearch(q) {

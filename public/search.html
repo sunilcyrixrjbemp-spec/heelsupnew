@@ -1942,9 +1942,9 @@
 
         <!-- Actions -->
         <div class="nav-actions">
-          <button class="nav-btn active" id="search-btn" aria-label="Search products">
+          <a href="/search.html" class="nav-btn active" id="search-btn" aria-label="Search products">
             <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-          </button>
+          </a>
           <a href="/wishlist.html" class="nav-btn" aria-label="My Wishlist">
             <i class="fa-regular fa-heart" aria-hidden="true"></i>
           </a>
@@ -2287,7 +2287,7 @@
       navSrchTimer = setTimeout(() => doNavSearch(q), 320);
     });
     navSrchInp?.addEventListener('keydown', e => {
-      if (e.key === 'Enter' && navSrchInp.value.trim()) window.location.href = '/search?q=' + encodeURIComponent(navSrchInp.value.trim());
+      if (e.key === 'Enter' && navSrchInp.value.trim()) window.location.href = '/search.html?q=' + encodeURIComponent(navSrchInp.value.trim());
     });
 
     // Quick Nav Search Simulation (Reuses PRODUCTS for mockup if API fails)

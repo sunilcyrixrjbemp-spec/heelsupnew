@@ -2727,9 +2727,9 @@
 
                 <!-- Actions -->
                 <div class="nav-actions">
-                    <button class="nav-btn" id="search-btn" aria-label="Search products">
-                        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-                    </button>
+                    <a href="/search.html" class="nav-btn">
+            <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          </a>
                     <a href="/wishlist.html" class="nav-btn" aria-label="My Wishlist">
                         <i class="fa-regular fa-heart" aria-hidden="true"></i>
                     </a>
@@ -3436,7 +3436,7 @@
             srchTimer = setTimeout(() => doSearch(q), 320);
         });
         srchInp?.addEventListener('keydown', e => {
-            if (e.key === 'Enter' && srchInp.value.trim()) window.location.href = '/shop?q=' + encodeURIComponent(srchInp.value.trim());
+            if (e.key === 'Enter' && srchInp.value.trim()) window.location.href = '/search.html?q=' + encodeURIComponent(srchInp.value.trim());
         });
         async function doSearch(q) {
             if (!q || q.length < 2) return;
