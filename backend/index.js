@@ -916,7 +916,7 @@ async function initiateOrder(request, env) {
   if (!created.ok) return json({ error: created.error }, 400);
   const amountPaise = Math.round(Number(created.order.total_amount) * 100);
     
-    if (amountPaise === 0) {
+    if (amountPaise <= 0) {
       await env.DB.prepare("UPDATE orders SET payment_status='paid', order_status='confirmed', paid_at=?, updated_at=? WHERE id=?").bind(nowIso(), nowIso(), created.order.id).run();
       if (couponCode) await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(couponCode).run();
       return json({ ok: true, key: "free_order", order: { id: created.order.id, orderNumber: created.order.order_number, amount: 0, discount: discountAmount } });
@@ -2946,7 +2946,7 @@ async function createOrderRecord(env, input) {
   const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
   const discountAmount = Number(input.discountAmount || 0);
   const taxAmount = Number(input.taxAmount || 0);
-  const totalAmount = Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2));
+  const totalAmount = Math.max(0, Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2)));
   const orderNumber = await generateOrderNumber(env);
   const createdAt = nowIso();
   const source = String(input.source || "online");

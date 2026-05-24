@@ -1487,6 +1487,12 @@
           $('cart-header').style.display = 'flex';
           $('cart-layout').style.display = 'grid';
           renderCart();
+          
+          const savedCoupon = localStorage.getItem('heelsup_coupon');
+          if (savedCoupon && !couponDiscount) {
+              $('coupon-input').value = savedCoupon;
+              window.applyCoupon();
+          }
         }
       }, 600);
     }
@@ -1582,10 +1588,11 @@
     const successEl = $('coupon-success');
     const msgEl = $('coupon-msg');
 
-    if (!code) {
-        toast('Please enter a coupon code', 'warning');
-        return;
-    }
+      if (!code) {
+          localStorage.removeItem('heelsup_coupon');
+          toast('Please enter a coupon code', 'warning');
+          return;
+      }
 
     try {
         const subtotal = cart.reduce((s, i) => s + (i.price * (i.qty || 1)), 0);
@@ -1595,29 +1602,32 @@
                 method: 'POST',
                 body: JSON.stringify({ code, subtotal })
             });
-            couponDiscount = res.discount || 0;
-            successEl.style.display = 'flex';
-            msgEl.textContent = `Coupon "${code}" applied!`;
-            updateSummary();
-            toast('Coupon applied successfully!', 'success');
+              couponDiscount = res.discount || 0;
+              successEl.style.display = 'flex';
+              msgEl.textContent = `Coupon "${code}" applied!`;
+              localStorage.setItem('heelsup_coupon', code);
+              updateSummary();
+              toast('Coupon applied successfully!', 'success');
         } else {
             // Fallback logic
-            if (code === 'HEELS10') {
-                couponDiscount = Math.round(subtotal * 0.1);
-                successEl.style.display = 'flex';
-                msgEl.textContent = `Coupon "${code}" applied! 10% discount`;
-                updateSummary();
-                toast('Coupon applied successfully!', 'success');
+              if (code === 'HEELS10') {
+                  couponDiscount = Math.round(subtotal * 0.1);
+                  successEl.style.display = 'flex';
+                  msgEl.textContent = `Coupon "${code}" applied! 10% discount`;
+                  localStorage.setItem('heelsup_coupon', code);
+                  updateSummary();
+                  toast('Coupon applied successfully!', 'success');
             } else {
                 throw new Error('Invalid coupon code');
             }
         }
-    } catch(e) {
-        successEl.style.display = 'none';
-        couponDiscount = 0;
-        updateSummary();
-        toast(e.message || 'Invalid coupon code', 'error');
-    }
+      } catch(e) {
+          successEl.style.display = 'none';
+          couponDiscount = 0;
+          localStorage.removeItem('heelsup_coupon');
+          updateSummary();
+          toast(e.message || 'Invalid coupon code', 'error');
+      }
 };
 
     /* ── CART UPDATES ── */

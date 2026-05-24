@@ -1235,11 +1235,27 @@
         return;
       }
 
+      // Fetch user data if we have a token but no local cache
+      if (!currentUser && typeof HeelsUpAuth !== 'undefined' && HeelsUpAuth.getToken()) {
+        try {
+          const res = await HeelsUpAuth.api('/api/me');
+          if (res && res.user) {
+            if (typeof HeelsUpAuth.setSession === 'function') HeelsUpAuth.setSession(HeelsUpAuth.getToken(), res.user);
+            currentUser = res.user;
+          }
+        } catch (e) { console.warn("Failed to fetch user:", e); }
+      }
+
       // Pre-fill user data if available
       if (currentUser) {
-        if ($('c-name')) $('c-name').value = `${currentUser.firstName || ''} ${currentUser.lastName || ''}`.trim();
+        if ($('c-name')) $('c-name').value = `${currentUser.firstName || currentUser.first_name || ''} ${currentUser.lastName || currentUser.last_name || ''}`.trim();
         if ($('c-email')) $('c-email').value = currentUser.email || '';
         if (currentUser.phone && $('c-phone')) $('c-phone').value = currentUser.phone;
+      }
+      
+      const savedCoupon = localStorage.getItem('heelsup_coupon');
+      if (savedCoupon) {
+        setTimeout(() => window.applyCouponCode(savedCoupon), 100);
       }
 
       renderCheckoutCart(cart);
@@ -1405,6 +1421,7 @@
         $('coupon-msg').innerHTML = `<strong>${esc(code)}</strong> applied! You saved ₹${discount.toLocaleString('en-IN')}`;
 
         calculateAndRenderSummary();
+        localStorage.setItem('heelsup_coupon', code);
         toast(`Awesome! You saved ₹${discount.toLocaleString('en-IN')}`, 'success');
 
       } catch (err) {
@@ -1417,6 +1434,7 @@
     };
 
     window.removeCoupon = function () {
+      localStorage.removeItem('heelsup_coupon');
       couponDiscountAmount = 0;
       appliedCouponCode = '';
       $('coupon-success').style.display = 'none';
@@ -1499,8 +1517,17 @@
           await new Promise(r => setTimeout(r, 1200));
           toast('Simulating payment for development. Redirecting...', 'info');
           if (typeof HeelsUpCart !== 'undefined') HeelsUpCart.clear();
+          localStorage.removeItem('heelsup_coupon');
           setTimeout(() => { window.location.href = '/orders'; }, 1500);
           return;
+        }
+
+        if (orderData.key === 'free_order') {
+           toast('Order confirmed successfully (Free Order)!', 'success');
+           if (typeof HeelsUpCart !== 'undefined') HeelsUpCart.clear();
+           localStorage.removeItem('heelsup_coupon');
+           setTimeout(() => { window.location.href = '/orders'; }, 1500);
+           return;
         }
 
         // 4. Load Razorpay Script Dynamically
