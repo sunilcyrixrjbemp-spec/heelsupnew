@@ -870,10 +870,10 @@ async function failRazorpayPayment(request, env) {
   if (!order) return json({ error: "Order not found" }, 404);
   if (order.payment_status === 'paid') return json({ error: "Already paid" }, 400);
   
-  await env.DB.prepare(
-    "UPDATE orders SET payment_status='failed', order_status='cancelled', updated_at=? WHERE id=?"
-  ).bind(nowIso(), localOrderId).run();
-  return json({ ok: true });
+    await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(localOrderId).run();
+    await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(localOrderId).run();
+    return json({ ok: true });
+
 }
 
 async function initiateOrder(request, env) {
@@ -928,14 +928,14 @@ async function initiateOrder(request, env) {
     headers: { Authorization: `Basic ${basicAuth}`, "content-type": "application/json" },
     body: JSON.stringify({ amount: amountPaise, currency: "INR", receipt: String(created.order.order_number), notes: { internal_order_id: String(created.order.id) } })
   });
-  if (!rzpRes.ok) {
-    const t = await rzpRes.text();
-    return json({ error: "Payment gateway error: " + t, detail: t }, 502);
-  }
-  const rzpOrder = await rzpRes.json();
-  await env.DB.prepare("UPDATE orders SET razorpay_order_id=?, updated_at=? WHERE id=?").bind(rzpOrder.id, nowIso(), created.order.id).run();
-  if (couponCode) await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(couponCode).run();
-  await auditLog(env, auth.user.id, "order_initiated", "orders", created.order.id, { orderNumber: created.order.order_number });
+    if (!rzpRes.ok) {
+      const t = await rzpRes.text();
+      await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(created.order.id).run();
+      await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(created.order.id).run();
+      return json({ error: "Payment gateway error: " + t, detail: t }, 502);
+    }
+    const rzpOrder = await rzpRes.json();
+    await env.DB.prepare("UPDATE orders SET razorpay_order_id=?, updated_at=? WHERE id=?").bind(rzpOrder.id, nowIso(), created.order.id).run();
   return json({ ok: true, key: rzpKeyId, order: { id: created.order.id, orderNumber: created.order.order_number, amount: created.order.total_amount, discount: discountAmount }, razorpayOrder: rzpOrder });
 }
 
@@ -1166,7 +1166,7 @@ async function listMyOrders(request, env) {
   const auth = await requireAuth(request, env);
   if (!auth.ok) return auth.response;
   const { results: orders } = await env.DB.prepare(
-    "SELECT * FROM orders WHERE user_id=? ORDER BY id DESC LIMIT 100"
+    "SELECT * FROM orders WHERE user_id=? AND payment_status NOT IN ('pending', 'failed') ORDER BY id DESC LIMIT 100"
   ).bind(auth.user.id).all();
   const data = [];
   for (const order of orders) {
