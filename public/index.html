@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" />
   <meta name="theme-color" content="#E8CCC5" />
 
   <!-- ═══ PRIMARY SEO ═══ -->
@@ -41,8 +41,8 @@
   <script type="application/ld+json">
 {"@context":"https://schema.org","@graph":[
   {"@type":"WebSite","name":"HeelsUp","url":"https://heelsup.in","potentialAction":{"@type":"SearchAction","target":"https://heelsup.in/search?q={search_term_string}","query-input":"required name=search_term_string"}},
-  {"@type":"Organization","name":"HeelsUp","url":"https://heelsup.in","logo":"https://heelsup.in/logo.png","foundingDate":"2021","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"},"sameAs":["https://instagram.com/heelsup.in","https://facebook.com/heelsup.in"],"contactPoint":{"@type":"ContactPoint","contactType":"customer service","availableLanguage":["English","Hindi"]}},
-  {"@type":"Store","name":"HeelsUp","image":"https://heelsup.in/logo.png","priceRange":"₹₹","currenciesAccepted":"INR","paymentAccepted":"Cash, UPI, Credit Card, Debit Card","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"}}
+  {"@type":"Organization","name":"HeelsUp","url":"https://heelsup.in","logo":"https://heelsup.in/logo.png","foundingDate":"2021","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"},"sameAs":["https://www.instagram.com/heel_s_up"],"contactPoint":{"@type":"ContactPoint","contactType":"customer service","availableLanguage":["English","Hindi"]}},
+  {"@type":"Store","name":"HeelsUp","image":"https://heelsup.in/logo.png","priceRange":"₹₹","currenciesAccepted":"INR","paymentAccepted":"UPI, Credit Card, Debit Card, Net Banking","address":{"@type":"PostalAddress","addressLocality":"Jodhpur","addressRegion":"Rajasthan","addressCountry":"IN"}}
 ]}
 </script>
 
@@ -58,11 +58,6 @@
   <style>
     /* ═══════════════════════════════════════════════════
    DESIGN SYSTEM — HeelsUp Brand Colors
-   Palette from provided swatches:
-   Blush Pink: #E8CCC5 | Warm Cream: #F6E7C6
-   Sage Blue: #BDCED3  | Warm Gray: #BBB9B2
-   Sage Green: #CFD4AE | Dark Gray: #807E79
-   Light Gray: #E3E3E3 | Red Accent: #C0392B
 ═══════════════════════════════════════════════════ */
     :root {
       /* Brand Colors */
@@ -140,6 +135,13 @@
       box-sizing: border-box
     }
 
+    html,
+    body {
+      overflow-x: hidden;
+      width: 100%;
+      max-width: 100vw;
+    }
+
     html {
       scroll-behavior: smooth;
       -webkit-font-smoothing: antialiased;
@@ -154,7 +156,6 @@
       line-height: 1.6;
       color: var(--text-b);
       background: var(--bg);
-      overflow-x: hidden
     }
 
     h1,
@@ -369,16 +370,15 @@
     .nav-logo {
       display: flex;
       align-items: center;
-      gap: 0;
       flex-shrink: 0;
       text-decoration: none;
+      max-width: 200px;
     }
 
     .nav-logo img {
-      height: 52px;
+      height: 42px;
       width: auto;
       object-fit: contain;
-      /* mix-blend-mode ensures clean look on any bg */
       mix-blend-mode: multiply;
       filter: contrast(1.05);
       transition: transform var(--t);
@@ -475,20 +475,22 @@
     }
 
     .nav-drop-icon {
-      width: 34px;
-      height: 34px;
-      border-radius: 8px;
-      background: var(--bg2);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: #f4f0eb;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 16px;
+      color: #7b756d;
       flex-shrink: 0;
-      transition: background var(--t);
+      transition: all var(--t);
     }
 
     .nav-drop-link:hover .nav-drop-icon {
-      background: var(--blush)
+      background: var(--blush);
+      color: var(--primary);
+      transform: scale(1.05);
     }
 
     .nav-drop-text strong {
@@ -503,7 +505,6 @@
       color: var(--text-pale)
     }
 
-    /* Divider in dropdown */
     .nav-drop-sep {
       height: 1px;
       background: var(--border);
@@ -668,9 +669,10 @@
     }
 
     .mob-head img {
-      height: 40px;
+      height: 32px;
       mix-blend-mode: multiply;
-      filter: contrast(1.05)
+      filter: contrast(1.05);
+      object-fit: contain;
     }
 
     .mob-close {
@@ -730,10 +732,12 @@
       font-size: 14px;
       flex-shrink: 0;
       transition: background var(--t);
+      color: var(--text-m);
     }
 
     .mob-link:hover .m-icon {
-      background: var(--blush)
+      background: var(--blush);
+      color: var(--primary);
     }
 
     .mob-cat-title {
@@ -1103,7 +1107,8 @@
 
     .hero-slides {
       position: absolute;
-      inset: 0
+      inset: 0;
+      background: var(--ink)
     }
 
     .hero-slide {
@@ -1220,10 +1225,13 @@
     .hero-stats {
       position: absolute;
       bottom: 36px;
-      right: 0;
+      right: 5%;
       z-index: 2;
       display: flex;
-      gap: 0;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 4px;
       animation: fadeUp .9s 1.1s both;
     }
 
@@ -1234,28 +1242,32 @@
     }
 
     .hero-stat {
-      padding: 16px 20px;
-      text-align: right;
-      background: rgba(250, 248, 245, .08);
-      backdrop-filter: blur(12px);
-      border-left: 1px solid rgba(255, 255, 255, .1);
+      padding: 20px 32px;
+      text-align: center;
+      border-right: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .hero-stat:last-child {
+      border-right: none;
     }
 
     .hero-stat-num {
       font-family: var(--font-head);
-      font-size: 1.9rem;
+      font-size: 2.6rem;
       font-weight: 800;
       color: #fff;
       line-height: 1;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
     }
 
     .hero-stat-lbl {
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: .12em;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .15em;
       text-transform: uppercase;
-      color: rgba(255, 255, 255, .4);
-      margin-top: 3px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-top: 6px;
+      text-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
     }
 
     /* Slide Dots */
@@ -1348,7 +1360,7 @@
 
       .hero-actions {
         flex-direction: column;
-        max-width: 280px
+        width: 100%;
       }
 
       .hero-actions .btn {
@@ -1867,153 +1879,6 @@
     }
 
     /* ═══════════════════════════
-   PROMO BANNER
-═══════════════════════════ */
-    .promo-sec {
-      padding: 80px 0;
-      background: var(--ink);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .promo-sec::before {
-      content: '';
-      position: absolute;
-      right: -120px;
-      top: -120px;
-      width: 480px;
-      height: 480px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(232, 204, 197, .1) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .promo-sec::after {
-      content: '';
-      position: absolute;
-      left: -60px;
-      bottom: -80px;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(189, 206, 211, .07) 0%, transparent 70%);
-      pointer-events: none;
-    }
-
-    .promo-grid {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      align-items: center;
-      gap: 48px;
-    }
-
-    @media(max-width:900px) {
-      .promo-grid {
-        grid-template-columns: 1fr;
-        text-align: center
-      }
-    }
-
-    .promo-tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      font-family: var(--font-head);
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: .2em;
-      text-transform: uppercase;
-      background: rgba(232, 204, 197, .12);
-      border: 1px solid rgba(232, 204, 197, .25);
-      color: var(--blush);
-      padding: 5px 14px;
-      border-radius: var(--radius-pill);
-      margin-bottom: 14px;
-    }
-
-    .promo-title {
-      font-family: var(--font-head);
-      font-size: clamp(1.9rem, 4vw, 3.2rem);
-      font-weight: 800;
-      color: #fff;
-      line-height: 1.12;
-      letter-spacing: -.02em;
-      margin-bottom: 14px;
-    }
-
-    .promo-title em {
-      font-style: normal;
-      color: var(--blush)
-    }
-
-    .promo-desc {
-      font-size: 14.5px;
-      color: rgba(255, 255, 255, .52);
-      line-height: 1.75;
-      max-width: 500px;
-    }
-
-    @media(max-width:900px) {
-      .promo-desc {
-        margin: 0 auto 24px
-      }
-    }
-
-    .promo-right {
-      flex-shrink: 0
-    }
-
-    .promo-timer {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 24px
-    }
-
-    @media(max-width:900px) {
-      .promo-timer {
-        justify-content: center
-      }
-    }
-
-    .timer-box {
-      text-align: center;
-      background: rgba(255, 255, 255, .06);
-      border: 1px solid rgba(255, 255, 255, .1);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      min-width: 66px;
-    }
-
-    .timer-num {
-      font-family: var(--font-head);
-      font-size: 2rem;
-      font-weight: 800;
-      color: var(--blush);
-      line-height: 1;
-      display: block;
-    }
-
-    .timer-lbl {
-      font-size: 9px;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: rgba(255, 255, 255, .35);
-      margin-top: 4px;
-      display: block;
-    }
-
-    @media(max-width:900px) {
-      .promo-right {
-        display: flex;
-        flex-direction: column;
-        align-items: center
-      }
-    }
-
-    /* ═══════════════════════════
    TRENDING SECTION
 ═══════════════════════════ */
     .trending-sec {
@@ -2124,15 +1989,15 @@
     .story-img-main,
     .story-img-accent {
       position: absolute;
-      border-radius: var(--radius-lg);
+      border-radius: 24px;
       overflow: hidden
     }
 
     .story-img-main {
       top: 0;
       left: 0;
-      width: 72%;
-      height: 86%;
+      width: 75%;
+      height: 85%;
       box-shadow: var(--shadow-md)
     }
 
@@ -2145,10 +2010,10 @@
     .story-img-accent {
       bottom: 0;
       right: 0;
-      width: 52%;
-      height: 56%;
+      width: 55%;
+      height: 55%;
       box-shadow: var(--shadow-lg);
-      border: 5px solid var(--white);
+      border: 6px solid var(--white);
     }
 
     .story-img-accent img {
@@ -2609,11 +2474,13 @@
     }
 
     .footer-logo-wrap img {
-      height: 50px;
+      height: 42px;
       width: auto;
-      /* Keep logo visible on dark bg */
-      filter: brightness(0) invert(1);
+      /* Fix for logo white background on dark footer */
+      filter: grayscale(1) invert(1) brightness(1.5);
+      mix-blend-mode: screen;
       margin-bottom: 14px;
+      opacity: 0.95;
     }
 
     .footer-tagline {
@@ -2730,7 +2597,6 @@
     /* ═══════════════════════════
    FLOATING & TOASTS
 ═══════════════════════════ */
-    /* WhatsApp */
     .whatsapp-fab {
       position: fixed;
       bottom: 24px;
@@ -2755,7 +2621,6 @@
       box-shadow: 0 10px 28px rgba(37, 211, 102, .5)
     }
 
-    /* Scroll Top */
     .scroll-top {
       position: fixed;
       bottom: 82px;
@@ -2791,7 +2656,6 @@
       color: #fff
     }
 
-    /* Toast */
     .toast-container {
       position: fixed;
       bottom: 24px;
@@ -2803,7 +2667,8 @@
       align-items: center;
       gap: 8px;
       pointer-events: none;
-      width: min(380px, calc(100vw - 32px));
+      width: min(380px, 100%);
+      padding: 0 16px;
     }
 
     .toast {
@@ -2869,7 +2734,7 @@
       top: 0;
       right: 0;
       bottom: 0;
-      width: min(400px, 100vw);
+      width: min(400px, 100%);
       background: var(--white);
       z-index: var(--z-cart);
       box-shadow: var(--shadow-xl);
@@ -3174,15 +3039,13 @@
   <!-- ═══ ANNOUNCEMENT BAR ═══ -->
   <div class="ann-bar" id="ann-bar">
     <div class="ann-scroll">
-      <span class="ann-item">🚚 <strong>Free Shipping</strong> above ₹799 &nbsp;·&nbsp; Use <strong>HEELS10</strong> for
-        10% Off</span>
+      <span class="ann-item">🚚 <strong>Free Shipping</strong> on orders above ₹799!</span>
       <span class="ann-dot"></span>
       <span class="ann-item">✨ 21,700+ Happy Customers &nbsp;·&nbsp; Pan-India Delivery</span>
       <span class="ann-dot"></span>
       <span class="ann-item">💫 Exchange Policy Available &nbsp;·&nbsp; Authentic Quality Guaranteed</span>
       <span class="ann-dot"></span>
-      <span class="ann-item">🚚 <strong>Free Shipping</strong> above ₹799 &nbsp;·&nbsp; Use <strong>HEELS10</strong> for
-        10% Off</span>
+      <span class="ann-item">🚚 <strong>Free Shipping</strong> on orders above ₹799!</span>
       <span class="ann-dot"></span>
       <span class="ann-item">✨ 21,700+ Happy Customers &nbsp;·&nbsp; Pan-India Delivery</span>
       <span class="ann-dot"></span>
@@ -3199,8 +3062,7 @@
 
         <!-- Logo -->
         <a href="/" class="nav-logo" aria-label="HeelsUp Home">
-          <img src="data:image/png;base64,''' + logo_b64 + '''" alt="HeelsUp — Give Value to Your Feet" id="logo-img"
-            width="200" height="52" loading="eager" />
+          <img src="/logo.png" alt="HeelsUp" id="logo-img" width="140" height="42" loading="eager" />
         </a>
 
         <!-- Desktop Menu -->
@@ -3212,32 +3074,76 @@
             </a>
             <div class="nav-drop" role="menu">
               <a href="/shop/heels" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">👠</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M10.15 4.38C8.94 3.32 6.99 3.44 5.34 4.88 3.7 6.31 2.94 8.5 4.14 9.56c1.21 1.06 3.16.94 4.81-.5 1.64-1.43 2.4-3.62 1.2-4.68zm7.55 10.06c-1.21-1.06-3.16-.94-4.81.5-1.64 1.44-2.4 3.63-1.2 4.69 1.21 1.06 3.16.94 4.81-.5 1.64-1.44 2.4-3.63 1.2-4.69z" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Heels</strong><span>Block, Stiletto, Cone</span></div>
               </a>
               <a href="/shop/flats" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">🥿</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M10.15 4.38C8.94 3.32 6.99 3.44 5.34 4.88 3.7 6.31 2.94 8.5 4.14 9.56c1.21 1.06 3.16.94 4.81-.5 1.64-1.43 2.4-3.62 1.2-4.68zm7.55 10.06c-1.21-1.06-3.16-.94-4.81.5-1.64 1.44-2.4 3.63-1.2 4.69 1.21 1.06 3.16.94 4.81-.5 1.64-1.44 2.4-3.63 1.2-4.69z" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Flats</strong><span>Mules, Loafers, Slip-ons</span></div>
               </a>
               <a href="/shop/sandals" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">👡</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M10.15 4.38C8.94 3.32 6.99 3.44 5.34 4.88 3.7 6.31 2.94 8.5 4.14 9.56c1.21 1.06 3.16.94 4.81-.5 1.64-1.43 2.4-3.62 1.2-4.68zm7.55 10.06c-1.21-1.06-3.16-.94-4.81.5-1.64 1.44-2.4 3.63-1.2 4.69 1.21 1.06 3.16.94 4.81-.5 1.64-1.44 2.4-3.63 1.2-4.69z" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Sandals</strong><span>Strappy, Flat, Wedge</span></div>
               </a>
               <a href="/shop/bags" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">👜</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M16 6V4c0-1.1-.9-2-2-2h-4c-1.1 0-2 .9-2 2v2H4v14c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V6h-4zM10 4h4v2h-4V4z" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Bags</strong><span>Tote, Clutch, Sling</span></div>
               </a>
               <div class="nav-drop-sep" role="separator"></div>
               <a href="/shop/summer-collection" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">☀️</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5" />
+                    <line x1="12" y1="1" x2="12" y2="3" />
+                    <line x1="12" y1="21" x2="12" y2="23" />
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+                    <line x1="1" y1="12" x2="3" y2="12" />
+                    <line x1="21" y1="12" x2="23" y2="12" />
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Summer Collection</strong><span>Fresh seasonal picks</span></div>
               </a>
               <a href="/shop/wedding-collection" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">💍</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="7" />
+                    <circle cx="12" cy="5" r="2" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Wedding Collection</strong><span>Bridal &amp; festive</span></div>
               </a>
               <a href="/shop/trending" class="nav-drop-link" role="menuitem">
-                <span class="nav-drop-icon" aria-hidden="true">🔥</span>
+                <span class="nav-drop-icon" aria-hidden="true">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                      d="M12 2c0 0-4.5 3.5-5.5 8a6.5 6.5 0 0 0 11 0c-1-4.5-5.5-8-5.5-8zM12 18a3 3 0 0 1-3-3c0-2 3-5 3-5s3 3 3 5a3 3 0 0 1-3 3z" />
+                  </svg>
+                </span>
                 <div class="nav-drop-text"><strong>Trending</strong><span>Most-loved right now</span></div>
               </a>
             </div>
@@ -3280,7 +3186,7 @@
     <div class="mob-backdrop" id="mob-backdrop"></div>
     <nav class="mob-panel">
       <div class="mob-head">
-        <img src="data:image/png;base64,''' + logo_b64 + '''" alt="HeelsUp" height="40" />
+        <img src="/logo.png" alt="HeelsUp" height="32" />
         <button class="mob-close" id="mob-close" aria-label="Close menu">
           <i class="fa-solid fa-xmark" aria-hidden="true"></i>
         </button>
@@ -3375,20 +3281,8 @@
      HERO SECTION
 ══════════════════════════════════════════ -->
   <section class="hero" id="hero" aria-label="Hero banner">
-    <div class="hero-slides" id="hero-slides" role="img" aria-label="Product showcase">
-      <div class="hero-slide active">
-        <img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=85&auto=format&fit=crop"
-          alt="Premium ladies heels collection" loading="eager" fetchpriority="high" />
-      </div>
-      <div class="hero-slide">
-        <img src="https://images.unsplash.com/photo-1596703263926-eb0762ee17e4?w=1920&q=85&auto=format&fit=crop"
-          alt="HeelsUp ladies sandals" loading="lazy" />
-      </div>
-      <div class="hero-slide">
-        <img src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1920&q=85&auto=format&fit=crop"
-          alt="Wedding collection" loading="lazy" />
-      </div>
-    </div>
+    <!-- Slides will be injected dynamically via JS from DB -->
+    <div class="hero-slides" id="hero-slides" role="img" aria-label="Product showcase"></div>
     <div class="hero-overlay" aria-hidden="true"></div>
 
     <div class="container" style="position:relative;z-index:2;width:100%">
@@ -3439,12 +3333,8 @@
       </div>
     </div>
 
-    <!-- Slide Dots -->
-    <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Slide navigation">
-      <button class="hero-dot active" data-slide="0" role="tab" aria-selected="true" aria-label="Slide 1"></button>
-      <button class="hero-dot" data-slide="1" role="tab" aria-selected="false" aria-label="Slide 2"></button>
-      <button class="hero-dot" data-slide="2" role="tab" aria-selected="false" aria-label="Slide 3"></button>
-    </div>
+    <!-- Slide Dots (Will be populated by JS) -->
+    <div class="hero-dots" id="hero-dots" role="tablist" aria-label="Slide navigation"></div>
 
     <div class="hero-scroll" aria-hidden="true">
       <div class="hero-scroll-line"></div>
@@ -3456,11 +3346,9 @@
   <div class="marquee-strip" aria-hidden="true">
     <div class="marquee-track">
       <span class="marquee-item">Free Shipping ₹799+</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Heels</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Flats</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Sandals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Bags</span><span class="marquee-sep"></span>
-      <span class="marquee-item">HEELS10 — 10% Off</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Premium Heels</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Flats & Sandals</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Ladies Bags</span><span class="marquee-sep"></span>
       <span class="marquee-item">Summer Collection</span><span class="marquee-sep"></span>
       <span class="marquee-item">Wedding Collection</span><span class="marquee-sep"></span>
       <span class="marquee-item">21,700+ Happy Customers</span><span class="marquee-sep"></span>
@@ -3468,11 +3356,9 @@
       <span class="marquee-item">Easy Exchange Policy</span><span class="marquee-sep"></span>
       <!-- Duplicate for seamless loop -->
       <span class="marquee-item">Free Shipping ₹799+</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Heels</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Flats</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Sandals</span><span class="marquee-sep"></span>
-      <span class="marquee-item">Bags</span><span class="marquee-sep"></span>
-      <span class="marquee-item">HEELS10 — 10% Off</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Premium Heels</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Flats & Sandals</span><span class="marquee-sep"></span>
+      <span class="marquee-item">Ladies Bags</span><span class="marquee-sep"></span>
       <span class="marquee-item">Summer Collection</span><span class="marquee-sep"></span>
       <span class="marquee-item">Wedding Collection</span><span class="marquee-sep"></span>
       <span class="marquee-item">21,700+ Happy Customers</span><span class="marquee-sep"></span>
@@ -3593,55 +3479,15 @@
     </div>
   </section>
 
-  <!-- ═══ PROMO BANNER ═══ -->
-  <section class="promo-sec" aria-labelledby="promo-heading">
-    <div class="container">
-      <div class="promo-grid">
-        <div>
-          <div class="promo-tag">
-            <i class="fa-solid fa-bolt" aria-hidden="true"></i> Limited Time Offer
-          </div>
-          <h2 class="promo-title" id="promo-heading">
-            Flat <em>10% Off</em><br>Your First Order
-          </h2>
-          <p class="promo-desc">
-            Use code <strong style="color:var(--blush)">HEELS10</strong> at checkout.
-            Valid on all orders above ₹499. New arrivals included.
-            Don't miss this exclusive offer!
-          </p>
-        </div>
-        <div class="promo-right">
-          <div class="promo-timer" role="timer" aria-label="Offer countdown">
-            <div class="timer-box">
-              <span class="timer-num" id="t-h">00</span>
-              <span class="timer-lbl">Hrs</span>
-            </div>
-            <div class="timer-box">
-              <span class="timer-num" id="t-m">00</span>
-              <span class="timer-lbl">Min</span>
-            </div>
-            <div class="timer-box">
-              <span class="timer-num" id="t-s">00</span>
-              <span class="timer-lbl">Sec</span>
-            </div>
-          </div>
-          <a href="/shop" class="btn btn-blush btn-lg btn-pill">
-            <i class="fa-solid fa-bolt" aria-hidden="true"></i> Shop Now
-          </a>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- ═══════════════════════════════════════
      TRENDING NOW
 ══════════════════════════════════════════ -->
   <section class="trending-sec" aria-labelledby="trend-heading">
     <div class="container">
       <div class="sec-hd center">
-        <span class="sec-label">What\'s Hot</span>
+        <span class="sec-label">What's Hot</span>
         <h2 class="sec-title" id="trend-heading">Trending Now</h2>
-        <p class="sec-sub">The styles everyone\'s loving right now</p>
+        <p class="sec-sub">The styles everyone's loving right now</p>
       </div>
       <div class="trend-tabs" role="tablist" aria-label="Product category tabs">
         <button class="trend-tab active" data-tab="all" role="tab" aria-selected="true"
@@ -3709,8 +3555,8 @@
       <div class="story-grid">
         <div class="story-imgs">
           <div class="story-img-main">
-            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?w=700&q=85&auto=format&fit=crop"
-              alt="HeelsUp store Jodhpur" loading="lazy" />
+            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=700&q=85&auto=format&fit=crop"
+              alt="HeelsUp style & fashion" loading="lazy" />
           </div>
           <div class="story-img-accent">
             <img src="https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400&q=85&auto=format&fit=crop"
@@ -3840,8 +3686,8 @@
         </article>
         <article class="review-card">
           <div class="review-stars" aria-label="5 out of 5 stars">★★★★★</div>
-          <p class="review-text">"HeelsUp is my go-to for footwear! Great prices, authentic products. The HEELS10
-            discount code was a cherry on top! So happy with my purchase."</p>
+          <p class="review-text">"HeelsUp is my go-to for footwear! Great prices, authentic products. So happy with my
+            purchase."</p>
           <div class="review-author">
             <div class="review-av" aria-label="Rekha J">R</div>
             <div>
@@ -3892,22 +3738,19 @@
           <!-- Brand -->
           <div>
             <div class="footer-logo-wrap">
-              <img src="data:image/png;base64,''' + logo_b64[:200] + '''..." alt="HeelsUp"
-                onerror="this.style.display=\'none\'" height="50" />
+              <img src="/logo.png" alt="HeelsUp" onerror="this.style.display='none'" height="42" />
             </div>
             <p class="footer-tagline">
               Premium ladies footwear &amp; bags for the modern Indian woman.
               Quality, style, and comfort — all in one place. Give Value to Your Feet.
             </p>
             <div class="footer-socials">
-              <a href="https://instagram.com/heelsup.in" target="_blank" rel="noopener noreferrer" class="footer-soc"
+              <a href="https://www.instagram.com/heel_s_up" target="_blank" rel="noopener noreferrer" class="footer-soc"
                 aria-label="HeelsUp on Instagram"><i class="fa-brands fa-instagram" aria-hidden="true"></i></a>
-              <a href="https://facebook.com/heelsup.in" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="HeelsUp on Facebook"><i class="fa-brands fa-facebook-f" aria-hidden="true"></i></a>
-              <a href="https://wa.me/919876543210" target="_blank" rel="noopener noreferrer" class="footer-soc"
+              <a href="https://wa.me/917891470935" target="_blank" rel="noopener noreferrer" class="footer-soc"
                 aria-label="HeelsUp on WhatsApp"><i class="fa-brands fa-whatsapp" aria-hidden="true"></i></a>
-              <a href="https://twitter.com/heelsup_in" target="_blank" rel="noopener noreferrer" class="footer-soc"
-                aria-label="HeelsUp on Twitter"><i class="fa-brands fa-x-twitter" aria-hidden="true"></i></a>
+              <a href="mailto:support@heelsup.in" class="footer-soc" aria-label="Email HeelsUp"><i
+                  class="fa-regular fa-envelope" aria-hidden="true"></i></a>
             </div>
           </div>
 
@@ -3956,12 +3799,11 @@
       </div>
 
       <div class="footer-bottom">
-        <p class="footer-copy">© 2025 HeelsUp. All rights reserved. Made with ❤️ in India.</p>
+        <p class="footer-copy">© 2025 HeelsUp. All rights reserved.</p>
         <div class="footer-pay" aria-label="Accepted payment methods">
           <span class="pay-chip">UPI</span>
           <span class="pay-chip">Visa</span>
           <span class="pay-chip">Mastercard</span>
-          <span class="pay-chip">COD</span>
           <span class="pay-chip">Net Banking</span>
         </div>
         <div class="footer-legal">
@@ -3974,7 +3816,7 @@
   </footer>
 
   <!-- ═══ FLOATING ═══ -->
-  <a href="https://wa.me/919876543210?text=Hi%20HeelsUp%2C%20I%20need%20help%20with%20an%20order" target="_blank"
+  <a href="https://wa.me/917891470935?text=Hi%20HeelsUp%2C%20I%20need%20help%20with%20an%20order" target="_blank"
     rel="noopener noreferrer" class="whatsapp-fab" aria-label="Chat on WhatsApp">
     <i class="fa-brands fa-whatsapp" aria-hidden="true"></i>
   </a>
@@ -3991,7 +3833,6 @@
     /*!
      * HeelsUp Homepage Engine v5.0
      * Production-grade | Live API | Security-first | SEO-ready
-     * No eval(), no innerHTML from untrusted sources, all URLs encoded
      */
     'use strict';
 
@@ -4106,38 +3947,38 @@
     }
 
     /* ── HERO SLIDESHOW ── */
-    const heroSlides = document.querySelectorAll('.hero-slide');
-    const heroDots = document.querySelectorAll('.hero-dot');
+    let heroSlides = [];
+    let heroDots = [];
     let slideIdx = 0, slideInterval = null;
+
     function goSlide(n) {
+      if (!heroSlides.length) return;
       heroSlides[slideIdx].classList.remove('active');
-      heroDots[slideIdx].classList.remove('active');
-      heroDots[slideIdx].setAttribute('aria-selected', 'false');
+      if (heroDots[slideIdx]) {
+        heroDots[slideIdx].classList.remove('active');
+        heroDots[slideIdx].setAttribute('aria-selected', 'false');
+      }
+
       slideIdx = (n + heroSlides.length) % heroSlides.length;
+
       heroSlides[slideIdx].classList.add('active');
-      heroDots[slideIdx].classList.add('active');
-      heroDots[slideIdx].setAttribute('aria-selected', 'true');
+      if (heroDots[slideIdx]) {
+        heroDots[slideIdx].classList.add('active');
+        heroDots[slideIdx].setAttribute('aria-selected', 'true');
+      }
     }
-    function startSlider() { slideInterval = setInterval(() => goSlide(slideIdx + 1), 5500) }
-    function stopSlider() { clearInterval(slideInterval) }
-    heroDots.forEach((d, i) => d.addEventListener('click', () => { stopSlider(); goSlide(i); startSlider() }));
+
+    function startSlider() {
+      if (heroSlides.length > 1) {
+        clearInterval(slideInterval);
+        slideInterval = setInterval(() => goSlide(slideIdx + 1), 5500);
+      }
+    }
+    function stopSlider() { clearInterval(slideInterval); }
+
     const heroEl = $('hero');
     heroEl?.addEventListener('mouseenter', stopSlider);
     heroEl?.addEventListener('mouseleave', startSlider);
-    startSlider();
-
-    /* ── COUNTDOWN ── */
-    function updateTimer() {
-      const now = new Date();
-      const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1);
-      const diff = midnight - now;
-      const h = Math.floor(diff / 3.6e6), m = Math.floor((diff % 3.6e6) / 6e4), s = Math.floor((diff % 6e4) / 1e3);
-      const th = $('t-h'), tm = $('t-m'), ts = $('t-s');
-      if (th) th.textContent = pad2(h);
-      if (tm) tm.textContent = pad2(m);
-      if (ts) ts.textContent = pad2(s);
-    }
-    updateTimer(); setInterval(updateTimer, 1000);
 
     /* ── AUTH STATE ── */
     (function initAuth() {
@@ -4321,9 +4162,16 @@
       try {
         const data = await HeelsUpAuth.api('/api/banners');
         const banners = data.banners || [];
-        if (!banners.length) return;
         const sl = $('hero-slides'), dotsEl = $('hero-dots');
         if (!sl || !dotsEl) return;
+
+        // Handle empty db response
+        if (!banners.length) {
+          sl.innerHTML = `<div class="hero-slide active"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=85&auto=format&fit=crop" alt="Premium Ladies Heels" loading="eager" /></div>`;
+          heroSlides = document.querySelectorAll('.hero-slide');
+          return;
+        }
+
         sl.innerHTML = ''; dotsEl.innerHTML = '';
         banners.slice(0, 4).forEach((b, i) => {
           const div = document.createElement('div');
@@ -4334,19 +4182,32 @@
           imgEl.loading = i === 0 ? 'eager' : 'lazy';
           if (i === 0) imgEl.setAttribute('fetchpriority', 'high');
           div.appendChild(imgEl); sl.appendChild(div);
+
           const btn = document.createElement('button');
           btn.className = 'hero-dot' + (i === 0 ? ' active' : '');
           btn.setAttribute('data-slide', i);
           btn.setAttribute('role', 'tab');
           btn.setAttribute('aria-label', 'Slide ' + (i + 1));
-          btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-          btn.addEventListener('click', () => { stopSlider(); goSlide(i); startSlider() });
           dotsEl.appendChild(btn);
         });
+
+        // Setup the newly added dynamic slides
+        heroSlides = document.querySelectorAll('.hero-slide');
+        heroDots = document.querySelectorAll('.hero-dot');
+        heroDots.forEach((d, i) => d.addEventListener('click', () => { stopSlider(); goSlide(i); startSlider() }));
+        startSlider(); // Start it
+
         const b0 = banners[0];
         if (b0?.title && $('hero-title')) $('hero-title').textContent = b0.title;
         if (b0?.subtitle && $('hero-sub')) $('hero-sub').textContent = b0.subtitle;
-      } catch (e) {/* static fallback already visible */ }
+      } catch (e) {
+        // Fallback incase api fully fails
+        const sl = $('hero-slides');
+        if (sl && sl.innerHTML.trim() === '') {
+          sl.innerHTML = `<div class="hero-slide active"><img src="https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1920&q=85&auto=format&fit=crop" alt="Premium Ladies Heels" loading="eager" /></div>`;
+          heroSlides = document.querySelectorAll('.hero-slide');
+        }
+      }
     }
 
     /* ── LIVE API: CATEGORIES ── */
@@ -4359,23 +4220,19 @@
           grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:48px;color:var(--text-m)">No categories available.</p>';
           return;
         }
-        const catImgs = {
-          Heels: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=800&q=80&auto=format&fit=crop',
-          Flats: 'https://images.unsplash.com/photo-1620064916958-605375619af8?w=800&q=80&auto=format&fit=crop',
-          Sandals: 'https://images.unsplash.com/photo-1603487742131-4160ec999306?w=800&q=80&auto=format&fit=crop',
-          Bags: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=800&q=80&auto=format&fit=crop',
-          Wedges: 'https://images.unsplash.com/photo-1515347619252-60a4bf4fff4f?w=800&q=80&auto=format&fit=crop',
-          Accessories: 'https://images.unsplash.com/photo-1631209121750-a9f656d28f04?w=800&q=80&auto=format&fit=crop',
-        };
+
         grid.innerHTML = cats.map((c, i) => {
           const slug = encPath(c.slug || c.name);
-          const imgSrc = esc(c.image_url || catImgs[c.name] || catImgs.Heels);
+          const imgSrc = esc(c.image_url || '');
           const name = esc(c.name);
           const cnt = c.product_count ? c.product_count + ' Products' : 'Explore Collection';
+          const imgHtml = imgSrc
+            ? `<img src="${imgSrc}" alt="${name}" loading="lazy" />`
+            : `<div style="width:100%;height:100%;background:var(--bg2);"></div>`;
+
           return `<a href="/shop/${slug}" class="cat-card ${i === 0 ? 'cat-large' : ''}" aria-label="${name} category">
         <div class="cat-img-wrap">
-          <img src="${imgSrc}" alt="${name}" loading="lazy"
-               onerror="this.src='${esc(catImgs.Heels)}'"/>
+          ${imgHtml}
         </div>
         <div class="cat-overlay" aria-hidden="true"></div>
         <div class="cat-body">
