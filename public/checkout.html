@@ -1385,12 +1385,11 @@
 
         // Mock API or actual API call depending on environment
         if (typeof HeelsUpAuth !== 'undefined' && HeelsUpAuth.api && window.location.hostname !== 'localhost') {
-          const res = await HeelsUpAuth.api('/api/coupons/validate', { method: 'POST', body: JSON.stringify({ code, subtotal }) });
-          if (!res.ok && res.error) throw new Error(res.error);
+          const res = await HeelsUpAuth.api('/api/coupons/validate', {
+            method: 'POST',
+            body: JSON.stringify({ code, subtotal })
+          });
           discount = res.discount || 0;
-        } else {
-          discount = 0;
-          throw new Error(res.error || 'Invalid coupon code');
         } else {
           // Fallback local logic for demo/preview
           if (code === 'HEELS10') discount = Math.round(subtotal * 0.1);

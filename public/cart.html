@@ -1531,11 +1531,6 @@
 
       updateSummary();
     }
-      const savedCoupon = localStorage.getItem('heelsup_coupon');
-      if (savedCoupon && !couponDiscount) {
-          $('coupon-input').value = savedCoupon;
-          window.applyCoupon();
-      }
 
     /* ── UPDATE SUMMARY ── */
     function updateSummary() {
@@ -1588,7 +1583,6 @@
     const msgEl = $('coupon-msg');
 
     if (!code) {
-        localStorage.removeItem('heelsup_coupon');
         toast('Please enter a coupon code', 'warning');
         return;
     }
@@ -1604,7 +1598,6 @@
             couponDiscount = res.discount || 0;
             successEl.style.display = 'flex';
             msgEl.textContent = `Coupon "${code}" applied!`;
-            localStorage.setItem('heelsup_coupon', code);
             updateSummary();
             toast('Coupon applied successfully!', 'success');
         } else {
@@ -1613,7 +1606,6 @@
                 couponDiscount = Math.round(subtotal * 0.1);
                 successEl.style.display = 'flex';
                 msgEl.textContent = `Coupon "${code}" applied! 10% discount`;
-                localStorage.setItem('heelsup_coupon', code);
                 updateSummary();
                 toast('Coupon applied successfully!', 'success');
             } else {
@@ -1624,7 +1616,6 @@
         successEl.style.display = 'none';
         couponDiscount = 0;
         updateSummary();
-        localStorage.removeItem('heelsup_coupon');
         toast(e.message || 'Invalid coupon code', 'error');
     }
 };
