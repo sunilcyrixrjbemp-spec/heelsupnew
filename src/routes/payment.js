@@ -1,129 +1,21 @@
-// ============================================================
-// HeelsUp — Razorpay Payment Routes
-// POST /api/payment/create-order   → Razorpay order banao
-// POST /api/payment/verify         → Signature verify + order confirm
-// POST /api/payment/webhook        → Razorpay webhook (server-side events)
-// GET  /api/payment/key            → Public key frontend ko do
-// ============================================================
-
+// worker/src/routes/payment.js
 import { razorpay } from '../utils/razorpay.js';
-import { ok, error as err }  from '../utils/response.js';
+import { ok, error as err } from '../utils/response.js';
 import { optionalAuth } from '../middleware/auth.js';
+import { createOrderRecord } from './orders.js';
 
 export async function paymentRouter(request, env) {
-  const url     = new URL(request.url);
-  const path    = url.pathname.replace('/api/payment', '');
-  const method  = request.method;
+  const url = new URL(request.url);
+  const path = url.pathname.replace('/api/payment', '');
+  const method = request.method;
 
   // ── GET /api/payment/key ─────────────────────────────────
   if (method === 'GET' && path === '/key') {
     return ok({ key_id: env.RAZORPAY_KEY_ID });
   }
 
-  // ── POST /api/payment/create-order ───────────────────────
-  if (method === 'POST' && path === '/create-order') {
-    // JWT auth required
-    const user = await optionalAuth(request, env);
-    if (!user) return err('Unauthorized', 401);
-
-    let body;
-    try { body = await request.json(); }
-    catch { return err('Invalid JSON', 400); }
-
-    const { cart_items, address_id, coupon_code } = body;
-
-    if (!cart_items?.length) return err('Cart is empty', 400);
-    if (!address_id)         return err('Address required', 400);
-
-    // ── Recalculate total server-side (NEVER trust frontend amount) ──
-    const productIds = cart_items.map(i => i.product_id);
-    const placeholders = productIds.map(() => '?').join(',');
-    const products = await env.DB
-      .prepare(`SELECT id, price, is_active FROM products WHERE id IN (${placeholders}) AND is_active = 1`)
-      .bind(...productIds)
-      .all();
-
-    if (products.results.length !== cart_items.length)
-      return err('One or more products unavailable', 400);
-
-    const priceMap = {};
-    products.results.forEach(p => { priceMap[p.id] = p.price; });
-
-    let subtotal = 0;
-    for (const item of cart_items) {
-      if (!priceMap[item.product_id]) return err(`Product ${item.product_id} not found`, 400);
-      subtotal += priceMap[item.product_id] * (item.qty || 1);
-    }
-
-    // Coupon discount
-    let discount = 0;
-    if (coupon_code) {
-      const coupon = await env.DB
-        .prepare(`SELECT * FROM coupons WHERE code = ? AND is_active = 1 AND
-                  (expires_at IS NULL OR expires_at > datetime('now')) AND
-                  (usage_limit IS NULL OR used_count < usage_limit)`)
-        .bind(coupon_code.toUpperCase())
-        .first();
-
-      if (coupon) {
-        if (coupon.type === 'percent') {
-          discount = Math.round(subtotal * coupon.value / 100);
-          if (coupon.max_discount) discount = Math.min(discount, coupon.max_discount);
-        } else {
-          discount = coupon.value;
-        }
-      }
-    }
-
-    const total = Math.max(subtotal - discount, 0); // in paise
-
-    // ── Create Razorpay Order ────────────────────────────────
-    const rzpOrder = await razorpay.createOrder(env, {
-      amount:   total,          // paise
-      currency: 'INR',
-      receipt:  `hu_${Date.now()}`,
-      notes: {
-        user_id:    user.id,
-        address_id: address_id,
-      },
-    });
-
-    if (!rzpOrder.id) return err('Payment gateway error', 502);
-
-    // ── Save pending order in DB ─────────────────────────────
-    const orderNum = `ORD-${Date.now().toString(36).toUpperCase()}`;
-    const newOrder = await env.DB
-      .prepare(`INSERT INTO orders
-        (order_number, user_id, address_id, subtotal, discount, total,
-         payment_method, payment_status, status, razorpay_order_id, items_json)
-        VALUES (?,?,?,?,?,?,'razorpay','pending','pending',?,?)`)
-      .bind(
-        orderNum,
-        user.id,
-        address_id,
-        subtotal,
-        discount,
-        total,
-        rzpOrder.id,
-        JSON.stringify(cart_items),
-      )
-      .run();
-
-    return ok({
-      razorpay_order_id: rzpOrder.id,
-      amount:            total,
-      currency:          'INR',
-      order_number:      orderNum,
-      order_db_id:       newOrder.meta.last_row_id,
-      key_id:            env.RAZORPAY_KEY_ID,
-    });
-  }
-
   // ── POST /api/payment/verify ─────────────────────────────
   if (method === 'POST' && path === '/verify') {
-    const user = await optionalAuth(request, env);
-    if (!user) return err('Unauthorized', 401);
-
     let body;
     try { body = await request.json(); }
     catch { return err('Invalid JSON', 400); }
@@ -133,7 +25,7 @@ export async function paymentRouter(request, env) {
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature)
       return err('Missing payment fields', 400);
 
-    // ── HMAC-SHA256 Signature Verification ──────────────────
+    // Verify Razorpay signature
     const isValid = await razorpay.verifySignature(env, {
       razorpay_order_id,
       razorpay_payment_id,
@@ -142,58 +34,105 @@ export async function paymentRouter(request, env) {
 
     if (!isValid) return err('Invalid payment signature', 400);
 
-    // ── Update order to paid ─────────────────────────────────
-    await env.DB
-      .prepare(`UPDATE orders SET
-        payment_status = 'paid',
-        status = 'processing',
-        razorpay_payment_id = ?,
-        razorpay_signature = ?,
-        paid_at = datetime('now'),
-        updated_at = datetime('now')
-        WHERE razorpay_order_id = ? AND user_id = ?`)
-      .bind(razorpay_payment_id, razorpay_signature, razorpay_order_id, user.id)
-      .run();
+    // Get pending order details from KV
+    const pendingStr = await env.KV.get(`pending_order:${razorpay_order_id}`);
+    if (!pendingStr) {
+      return err("Order details not found or expired. If amount was debited, please contact support.", 404);
+    }
+    const pending = JSON.parse(pendingStr);
 
-    // Fetch updated order
-    const order = await env.DB
-      .prepare(`SELECT * FROM orders WHERE razorpay_order_id = ?`)
-      .bind(razorpay_order_id)
-      .first();
+    // Now create the actual order record in D1 DB
+    const createdRes = await createOrderRecord(env, {
+      userId: pending.userId,
+      customer: pending.customer,
+      items: pending.items,
+      deliveryMethod: pending.deliveryMethod,
+      notes: pending.notes,
+      paymentMethod: pending.paymentMethod,
+      paymentStatus: "paid",
+      orderStatus: "confirmed",
+      couponCode: pending.couponCode,
+      discountAmount: pending.discountAmount,
+      orderNumber: pending.orderNumber
+    });
 
-    // Decrement inventory
-    if (order?.items_json) {
-      const items = JSON.parse(order.items_json);
-      for (const item of items) {
-        await env.DB
-          .prepare(`UPDATE inventory SET stock = MAX(0, stock - ?)
-                    WHERE product_id = ? AND size = ?`)
-          .bind(item.qty || 1, item.product_id, item.size || '')
-          .run();
+    if (!createdRes.ok) {
+      return err("Failed to place order in database: " + createdRes.error, 500);
+    }
+
+    const orderId = createdRes.order.id;
+    const paidAt = new Date().toISOString();
+
+    // Update order with razorpay details
+    await env.DB.prepare(
+      "UPDATE orders SET payment_status='paid', order_status='confirmed', razorpay_order_id=?, razorpay_payment_id=?, razorpay_signature=?, paid_at=?, updated_at=? WHERE id=?"
+    ).bind(razorpay_order_id, razorpay_payment_id, razorpay_signature, paidAt, paidAt, orderId).run();
+
+    // Insert payment record
+    await env.DB.prepare(
+      "INSERT INTO payments (order_id, provider, provider_order_id, provider_payment_id, amount, currency, status, raw_payload, created_at) VALUES (?,'RAZORPAY',?,?,?,'INR','captured',?,?)"
+    ).bind(orderId, razorpay_order_id, razorpay_payment_id, pending.totalAmount, JSON.stringify(body), paidAt).run();
+
+    // Increment coupon usage
+    if (pending.couponCode) {
+      await env.DB.prepare("UPDATE coupons SET used_count = used_count + 1 WHERE code = ?").bind(pending.couponCode).run();
+    }
+
+    // Decrement stock for products
+    for (const item of pending.items) {
+      if (item.productId) {
+        const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(item.productId).first();
+        if (prod) {
+          const newStock = Math.max(0, (prod.stock || 0) - (item.qty || 1));
+          await env.DB.prepare("UPDATE products SET stock=?, sold_count=sold_count+?, updated_at=? WHERE id=?").bind(newStock, item.qty || 1, paidAt, prod.id).run();
+          
+          const diff = - (item.qty || 1);
+          await env.DB.prepare(
+            "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, created_at) VALUES (?,?,'sale',?,?,?,?,datetime('now'))"
+          ).bind(prod.id, prod.name, prod.stock || 0, diff, newStock, `Razorpay sale: Order ${pending.orderNumber}`).run();
+        }
       }
     }
 
-    // Clear coupon usage if used
-    if (order?.coupon_code) {
-      await env.DB
-        .prepare(`UPDATE coupons SET used_count = used_count + 1 WHERE code = ?`)
-        .bind(order.coupon_code)
-        .run();
-    }
+    // Delete pending KV draft order
+    await env.KV.delete(`pending_order:${razorpay_order_id}`).catch(() => {});
 
     return ok({
-      success:      true,
-      order_number: order?.order_number,
-      order_id:     order?.id,
-      message:      'Payment successful! Order placed.',
+      success: true,
+      order_number: createdRes.order.order_number,
+      order_id: orderId,
+      message: 'Payment successful! Order placed.',
     });
   }
 
+  // ── POST /api/payment/fail ───────────────────────────────
+  if (method === 'POST' && path === '/fail') {
+    let body;
+    try { body = await request.json(); }
+    catch { return err('Invalid JSON', 400); }
+
+    const rzpOrderId = String(body.razorpay_order_id || "").trim();
+    if (rzpOrderId) {
+      await env.KV.delete(`pending_order:${rzpOrderId}`).catch(() => {});
+    }
+
+    const localOrderId = parseInt(body.orderId || 0);
+    if (localOrderId) {
+      const order = await env.DB.prepare("SELECT * FROM orders WHERE id=?").bind(localOrderId).first();
+      if (order) {
+        if (order.payment_status === 'paid') return err("Already paid", 400);
+        await env.DB.prepare("DELETE FROM order_items WHERE order_id=?").bind(localOrderId).run();
+        await env.DB.prepare("DELETE FROM orders WHERE id=?").bind(localOrderId).run();
+      }
+    }
+
+    return ok({ ok: true });
+  }
+
   // ── POST /api/payment/webhook ────────────────────────────
-  // Razorpay Dashboard → Webhooks → URL: https://heelsup.in/api/payment/webhook
   if (method === 'POST' && path === '/webhook') {
     const signature = request.headers.get('x-razorpay-signature');
-    const rawBody   = await request.text();
+    const rawBody = await request.text();
 
     const isValid = await razorpay.verifyWebhook(env, rawBody, signature);
     if (!isValid) return err('Invalid webhook signature', 400);
@@ -203,11 +142,9 @@ export async function paymentRouter(request, env) {
     if (event.event === 'payment.failed') {
       const rzpOrderId = event.payload?.payment?.entity?.order_id;
       if (rzpOrderId) {
-        await env.DB
-          .prepare(`UPDATE orders SET payment_status = 'failed', status = 'cancelled',
-                    updated_at = datetime('now') WHERE razorpay_order_id = ?`)
-          .bind(rzpOrderId)
-          .run();
+        await env.DB.prepare(
+          "UPDATE orders SET payment_status='failed', order_status='cancelled', updated_at=datetime('now') WHERE razorpay_order_id = ?"
+        ).bind(rzpOrderId).run();
       }
     }
 

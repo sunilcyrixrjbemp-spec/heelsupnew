@@ -1,88 +1,68 @@
 // worker/src/routes/orders.js
-// HeelsUp — Complete Orders Router v2
-// Payment: Razorpay ONLY (no COD)
-// Exchange only (no returns/refunds)
-// All amounts in PAISE (₹1 = 100 paise)
-
 import { requireAuth, requireAdmin } from '../middleware/auth.js';
 import { ok, list, created, error, notFound, serverError } from '../utils/response.js';
-import { verifyRazorpaySignature } from '../utils/razorpay.js';
+import { razorpay } from '../utils/razorpay.js';
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-function genOrderNumber() {
-    const ts = Date.now().toString(36).toUpperCase().slice(-4);
-    const rnd = Math.floor(Math.random() * 9000 + 1000);
-    return `ORD-${rnd}-${ts}`;
-}
-
-/** Denormalize address snapshot → flat fields */
-function parseAddress(snapshot) {
-    if (!snapshot) return {};
+async function getSetting(env, key, fallback = '') {
     try {
-        const a = typeof snapshot === 'string' ? JSON.parse(snapshot) : snapshot;
-        return {
-            address_line1: a.line1 || a.address_line1 || '',
-            address_line2: a.line2 || a.address_line2 || '',
-            city: a.city || '',
-            state: a.state || '',
-            pincode: a.pincode || '',
-            country: a.country || 'India',
-        };
-    } catch { return {}; }
+        const row = await env.DB.prepare('SELECT value FROM settings WHERE key = ?').bind(key).first();
+        return row ? row.value : fallback;
+    } catch {
+        return fallback;
+    }
 }
 
-/** Format a complete order row for API response */
+async function generateOrderNumber(env) {
+    const today = new Date();
+    const prefix = `HU-${today.getUTCFullYear()}${String(today.getUTCMonth() + 1).padStart(2, "0")}${String(today.getUTCDate()).padStart(2, "0")}`;
+    const row = await env.DB.prepare("SELECT COUNT(*) as c FROM orders WHERE order_number LIKE ?").bind(`${prefix}-%`).first();
+    const seq = String((row?.c || 0) + 1).padStart(4, "0");
+    const rand = Math.floor(1000 + Math.random() * 9000);
+    return `${prefix}-${seq}-${rand}`;
+}
+
+function normalizeEmail(e) {
+    return String(e || "").trim().toLowerCase();
+}
+
+function toInt(v, def) {
+    const n = parseInt(v);
+    return isNaN(n) ? def : n;
+}
+
 function formatOrder(o, items = null) {
-    const addr = parseAddress(o.address_snapshot);
     return {
         id: o.id,
         order_number: o.order_number,
-
-        // Customer
         customer_name: o.customer_name || '',
         customer_email: o.customer_email || '',
         customer_phone: o.customer_phone || '',
-
-        // Address
-        address_line1: o.address_line1 || addr.address_line1 || '',
-        address_line2: o.address_line2 || addr.address_line2 || '',
-        city: o.city || addr.city || '',
-        state: o.state || addr.state || '',
-        pincode: o.pincode || addr.pincode || '',
-        country: o.country || addr.country || 'India',
+        address_line1: o.address_line1 || '',
+        address_line2: o.address_line2 || '',
+        city: o.city || '',
+        state: o.state || '',
+        pincode: o.pincode || '',
+        country: o.country || 'India',
         delivery_method: o.delivery_method || 'Standard',
-
-        // Order info
         order_status: o.order_status || 'placed',
         payment_status: o.payment_status || 'pending',
         payment_method: o.payment_method || '',
         source: o.source || 'online',
-
-        // Razorpay (immutable fields — always present if paid via Razorpay)
         razorpay_order_id: o.razorpay_order_id || null,
         razorpay_payment_id: o.razorpay_payment_id || null,
         razorpay_signature: o.razorpay_signature || null,
-
-        // Amounts (paise)
-        subtotal_amount: o.subtotal_amount || o.subtotal || 0,
-        discount_amount: o.discount_amount || o.discount || 0,
-        shipping_amount: o.shipping_amount || o.shipping || 0,
-        tax_amount: o.tax_amount || o.tax || 0,
-        total_amount: o.total_amount || o.total || 0,
-
-        // Coupon
+        subtotal_amount: o.subtotal_amount || 0,
+        discount_amount: o.discount_amount || 0,
+        shipping_amount: o.shipping_amount || 0,
+        tax_amount: o.tax_amount || 0,
+        total_amount: o.total_amount || 0,
         coupon_code: o.coupon_code || null,
-
-        // Tracking
         tracking_number: o.tracking_number || null,
         tracking_url: o.tracking_url || null,
-
-        // Exchange
         exchange_reason: o.exchange_reason || null,
         exchange_product: o.exchange_product || null,
-
-        // Timestamps
         paid_at: o.paid_at || null,
         confirmed_at: o.confirmed_at || null,
         shipped_at: o.shipped_at || null,
@@ -91,717 +71,499 @@ function formatOrder(o, items = null) {
         cancelled_at: o.cancelled_at || null,
         created_at: o.created_at || null,
         updated_at: o.updated_at || null,
-
         notes: o.notes || null,
-
-        // Items (optional, only when fetched)
         ...(items !== null ? { items } : {}),
     };
 }
 
-/** Format order_items row */
 function formatItem(it) {
-    let snap = {};
-    try { snap = JSON.parse(it.product_snapshot || '{}'); } catch { }
     return {
         id: it.id,
         product_id: it.product_id,
-        product_name: snap.name || 'Product',
-        sku: snap.sku || null,
-        image: snap.image || null,
-        size: it.size || null,
-        color: it.color || null,
-        quantity: it.qty || it.quantity || 1,
+        product_name: it.product_name || 'Product',
+        sku: it.product_sku || null,
+        image: it.image_url || null,
+        size: it.size_label || null,
+        color: null,
+        quantity: it.quantity || 1,
         price: it.unit_price || 0,
-        total_price: it.total_price || 0,
+        total_price: it.line_total || 0,
     };
 }
 
-/** Get DB settings as a key→value map (batched single query) */
-async function getSettings(db, keys) {
-    if (!keys.length) return {};
-    const qs = keys.map(() => '?').join(',');
-    const rows = await db.prepare(
-        `SELECT key, value FROM settings WHERE key IN (${qs})`
-    ).bind(...keys).all();
-    return Object.fromEntries((rows.results || []).map(r => [r.key, r.value]));
+// ── CREATE ORDER RECORD (Used on successful verification) ─────────────────────
+export async function createOrderRecord(env, input) {
+    const customer = input.customer || {};
+    const itemsRaw = Array.isArray(input.items) ? input.items : [];
+    if (!itemsRaw.length) return { ok: false, error: "Order items are required" };
+
+    const customerName = String(customer.name || "").trim();
+    const customerEmail = normalizeEmail(customer.email);
+    const customerPhone = String(customer.phone || "").trim();
+    const addressLine1 = String(customer.addressLine1 || customer.address_line1 || "").trim();
+    const addressLine2 = String(customer.addressLine2 || customer.address_line2 || "").trim();
+    const city = String(customer.city || "").trim();
+    const state = String(customer.state || "").trim();
+    const pincode = String(customer.pincode || "").trim();
+    const country = String(customer.country || "India").trim();
+
+    const isPos = input.deliveryMethod === 'pos' || input.deliveryMethod === 'store';
+    if (!customerName || !customerEmail || !customerPhone || (!isPos && (!addressLine1 || !city || !state || !pincode)))
+        return { ok: false, error: "Incomplete customer details. name, email, phone, address, city, state, pincode required." };
+
+    const finalAddressLine1 = isPos ? (addressLine1 || 'In-Store Purchase') : addressLine1;
+    const finalCity = isPos ? (city || 'Store City') : city;
+    const finalState = isPos ? (state || 'Store State') : state;
+    const finalPincode = isPos ? (pincode || '000000') : pincode;
+
+    const items = [];
+    for (const item of itemsRaw) {
+        const qty = Math.max(1, toInt(item.qty || item.quantity, 1));
+        const unitPrice = Number(item.price || item.unitPrice || 0);
+        if (!item.name || unitPrice <= 0) continue;
+        items.push({
+            productId: item.productId ? toInt(item.productId, 0) : null,
+            name: String(item.name),
+            sku: String(item.sku || ""),
+            qty, unitPrice,
+            lineTotal: Number((unitPrice * qty).toFixed(2)),
+            size: String(item.size || ""),
+            image: String(item.image || item.img || "")
+        });
+    }
+    if (!items.length) return { ok: false, error: "No valid order items" };
+
+    const subtotalAmount = Number(items.reduce((s, i) => s + i.lineTotal, 0).toFixed(2));
+    const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "799")) || 799;
+    const shipCharge = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
+    const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
+    const discountAmount = Number(input.discountAmount || 0);
+    const taxAmount = Number(input.taxAmount || 0);
+    const totalAmount = Math.max(0, Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2)));
+    const orderNumber = input.orderNumber || await generateOrderNumber(env);
+    const createdAt = new Date().toISOString();
+    const source = String(input.source || "online");
+
+    const result = await env.DB.prepare(
+        `INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone,
+         address_line1, address_line2, city, state, pincode, country, delivery_method, coupon_code,
+         payment_method, payment_status, order_status, subtotal_amount, shipping_amount, tax_amount, discount_amount,
+         total_amount, notes, source, created_at, updated_at)
+         VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
+    ).bind(
+        orderNumber, input.userId, customerName, customerEmail, customerPhone,
+        finalAddressLine1, addressLine2, finalCity, finalState, finalPincode, country,
+        String(input.deliveryMethod || "standard"), input.couponCode || null,
+        input.paymentMethod, input.paymentStatus, input.orderStatus,
+        subtotalAmount, shippingAmount, taxAmount, discountAmount,
+        totalAmount, String(input.notes || "").trim(), source, createdAt, createdAt
+    ).run();
+
+    const orderId = result.meta?.last_row_id;
+    for (const item of items) {
+        await env.DB.prepare(
+            "INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, line_total, size_label, image_url, created_at) VALUES (?,?,?,?,?,?,?,?,?,?)"
+        ).bind(orderId, item.productId, item.name, item.sku, item.qty, item.unitPrice, item.lineTotal, item.size, item.image, createdAt).run();
+    }
+
+    return { ok: true, order: { id: orderId, order_number: orderNumber, total_amount: totalAmount, subtotal_amount: subtotalAmount, shipping_amount: shippingAmount, tax_amount: taxAmount, discount_amount: discountAmount } };
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// MAIN ROUTER
-// ══════════════════════════════════════════════════════════════════════════════
+// ── MAIN ROUTER ──────────────────────────────────────────────────────────────
 export async function ordersRouter(request, env) {
     const url = new URL(request.url);
     const path = url.pathname.replace('/api/orders', '') || '/';
     const method = request.method;
     const params = url.searchParams;
 
-    // ── POST /api/orders — Create Order (Razorpay: called AFTER payment verify) ──
-    // This endpoint should only be called after payment verification (see /api/payment/verify)
-    // But we also accept a pre-verified body with razorpay fields.
-    if (path === '/' && method === 'POST') {
-        return handleCreateOrder(request, env);
+    // ── POST /api/orders/initiate ───────────────────────────────────────────
+    if (path === '/initiate' && method === 'POST') {
+        try {
+            const { user, error: authErr } = await requireAuth(request, env);
+            if (authErr) return authErr;
+
+            const body = await request.json();
+            if (!body) return error('Invalid JSON', 400);
+
+            const rzpKeyId = String(await getSetting(env, "razorpay_key_id", env.RAZORPAY_KEY_ID || "")).trim();
+            const rzpKeySecret = String(await getSetting(env, "razorpay_key_secret", env.RAZORPAY_KEY_SECRET || "")).trim();
+            if (!rzpKeyId || !rzpKeySecret) return error("Payment gateway not configured. Contact admin.", 503);
+
+            const items = Array.isArray(body.items) ? body.items : [];
+            if (!items.length) return error("Order items required", 400);
+
+            // Validate stock from D1 products table
+            for (const item of items) {
+                if (item.productId) {
+                    const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(item.productId).first();
+                    if (!prod) {
+                        return error(`Product "${item.name}" not found.`, 404);
+                    }
+                    const qty = Math.max(1, toInt(item.qty || item.quantity, 1));
+                    if ((prod.stock || 0) < qty) {
+                        return error(`Insufficient stock for "${prod.name}". Only ${prod.stock} left.`, 400);
+                    }
+                }
+            }
+
+            let discountAmount = 0;
+            let couponCode = String(body.couponCode || "").trim().toUpperCase();
+            const subtotalAmount = Number(items.reduce((s, i) => s + (Number(i.price || 0) * Math.max(1, i.qty || i.quantity || 1)), 0).toFixed(2));
+            if (couponCode) {
+                const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND is_active = 1").bind(couponCode).first();
+                if (coupon && subtotalAmount >= coupon.min_order) {
+                    let disc = coupon.type === "percent" ? Math.round(subtotalAmount * (coupon.value / 100)) : coupon.value;
+                    if (coupon.max_discount) disc = Math.min(disc, coupon.max_discount);
+                    discountAmount = disc;
+                }
+            }
+
+            const freeShipAbove = Number(await getSetting(env, "shipping_free_above", "799")) || 799;
+            const shipCharge = Number(await getSetting(env, "shipping_standard_charge", "49")) || 49;
+            const shippingAmount = subtotalAmount >= freeShipAbove ? 0 : shipCharge;
+            const taxAmount = 0;
+            const totalAmount = Math.max(0, Number((subtotalAmount + shippingAmount + taxAmount - discountAmount).toFixed(2)));
+
+            const orderNumber = await generateOrderNumber(env);
+
+            const itemsValidated = items.map(item => {
+                const qty = Math.max(1, toInt(item.qty || item.quantity, 1));
+                const unitPrice = Number(item.price || 0);
+                return {
+                    productId: item.productId ? toInt(item.productId, 0) : null,
+                    name: String(item.name),
+                    sku: String(item.sku || ""),
+                    qty,
+                    unitPrice,
+                    lineTotal: Number((unitPrice * qty).toFixed(2)),
+                    size: String(item.size || ""),
+                    image: String(item.image || item.img || "")
+                };
+            });
+
+            const amountPaise = Math.round(totalAmount * 100);
+
+            // Free order bypass
+            if (amountPaise <= 0) {
+                const createdRes = await createOrderRecord(env, {
+                    userId: user.id,
+                    customer: body.customer || {
+                        name: `${user.first_name} ${user.last_name || ""}`.trim(),
+                        email: user.email,
+                        phone: user.phone || body.phone || ""
+                    },
+                    items: itemsValidated,
+                    deliveryMethod: body.deliveryMethod || "standard",
+                    notes: body.notes || "",
+                    paymentMethod: "FREE",
+                    paymentStatus: "paid",
+                    orderStatus: "confirmed",
+                    couponCode: couponCode || null,
+                    discountAmount,
+                    orderNumber
+                });
+                if (!createdRes.ok) return error(createdRes.error, 400);
+                if (couponCode) await env.DB.prepare("UPDATE coupons SET used_count=used_count+1 WHERE code=?").bind(couponCode).run();
+                return ok({ key: "free_order", order: { id: createdRes.order.id, orderNumber: createdRes.order.order_number, amount: 0, discount: discountAmount } });
+            }
+
+            // Call Razorpay API
+            const basicAuth = btoa(`${rzpKeyId}:${rzpKeySecret}`);
+            const rzpRes = await fetch("https://api.razorpay.com/v1/orders", {
+                method: "POST",
+                headers: { Authorization: `Basic ${basicAuth}`, "content-type": "application/json" },
+                body: JSON.stringify({ amount: amountPaise, currency: "INR", receipt: String(orderNumber) })
+            });
+            if (!rzpRes.ok) {
+                const t = await rzpRes.text();
+                return error("Payment gateway error: " + t, 502);
+            }
+            const rzpOrder = await rzpRes.json();
+
+            // Save pending payload in KV (expires in 24 hours)
+            const pendingPayload = {
+                userId: user.id,
+                customer: body.customer || {
+                    name: `${user.first_name} ${user.last_name || ""}`.trim(),
+                    email: user.email,
+                    phone: user.phone || body.phone || ""
+                },
+                items: itemsValidated,
+                deliveryMethod: body.deliveryMethod || "standard",
+                notes: body.notes || "",
+                paymentMethod: "RAZORPAY",
+                couponCode: couponCode || null,
+                discountAmount,
+                subtotalAmount,
+                shippingAmount,
+                taxAmount,
+                totalAmount,
+                orderNumber
+            };
+            await env.KV.put(`pending_order:${rzpOrder.id}`, JSON.stringify(pendingPayload), { expirationTtl: 86400 });
+
+            return ok({
+                key: rzpKeyId,
+                order: {
+                    id: null,
+                    orderNumber: orderNumber,
+                    amount: totalAmount,
+                    discount: discountAmount
+                },
+                razorpayOrder: rzpOrder
+            });
+        } catch (e) {
+            console.error('Initiate order error:', e);
+            return serverError('Failed to initiate order');
+        }
     }
 
-    // ── GET /api/orders/my — Customer's own orders ────────────────────────────
+    // ── GET /api/orders/my ──────────────────────────────────────────────────
     if (path === '/my' && method === 'GET') {
-        return handleMyOrders(request, env, params);
+        const { user, error: authErr } = await requireAuth(request, env);
+        if (authErr) return authErr;
+        try {
+            const page = Math.max(1, parseInt(params.get('page') || '1'));
+            const limit = Math.min(50, parseInt(params.get('limit') || '10'));
+            const offset = (page - 1) * limit;
+
+            const countRow = await env.DB.prepare('SELECT COUNT(*) as cnt FROM orders WHERE user_id = ?').bind(user.id).first();
+            const ordersRes = await env.DB.prepare(
+                `SELECT * FROM orders WHERE user_id = ? ORDER BY id DESC LIMIT ? OFFSET ?`
+            ).bind(user.id, limit, offset).all();
+
+            const orders = [];
+            for (const o of (ordersRes.results || [])) {
+                const itemsRes = await env.DB.prepare(
+                    `SELECT product_name, image_url, size_label, quantity, unit_price FROM order_items WHERE order_id = ? LIMIT 4`
+                ).bind(o.id).all();
+                const items = (itemsRes.results || []).map(it => ({
+                    name: it.product_name,
+                    image: it.image_url,
+                    size: it.size_label,
+                    qty: it.quantity,
+                    price: it.unit_price
+                }));
+                orders.push({ ...formatOrder(o), items });
+            }
+
+            const total = countRow?.cnt || 0;
+            return list(orders, { page, limit, total, pages: Math.ceil(total / limit) });
+        } catch (e) {
+            console.error('My orders error:', e);
+            return serverError('Failed to fetch orders');
+        }
     }
 
-    // ── GET /api/orders/track/:orderNumber — Public tracking ─────────────────
+    // ── GET /api/orders/track/:orderNumber ──────────────────────────────────
     if (path.startsWith('/track/') && method === 'GET') {
-        return handleTrack(path, env);
+        const orderNumber = path.replace('/track/', '');
+        if (!orderNumber) return error('Order number required', 400);
+        try {
+            const order = await env.DB.prepare(
+                `SELECT order_number, order_status, payment_status, tracking_number, tracking_url, shipped_at, delivered_at, created_at
+                 FROM orders WHERE order_number = ?`
+            ).bind(orderNumber.toUpperCase()).first();
+            if (!order) return notFound('Order not found');
+            return ok(order);
+        } catch (e) {
+            return serverError('Tracking lookup failed');
+        }
     }
 
-    // ── GET /api/orders/my/:id — Customer order detail ───────────────────────
+    // ── GET /api/orders/my/:id ──────────────────────────────────────────────
     if (path.match(/^\/my\/\d+$/) && method === 'GET') {
-        return handleMyOrderDetail(path, request, env);
+        const { user, error: authErr } = await requireAuth(request, env);
+        if (authErr) return authErr;
+        const id = parseInt(path.match(/(\d+)/)?.[1]);
+        try {
+            const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?').bind(id, user.id).first();
+            if (!order) return notFound('Order not found');
+            const itemsRes = await env.DB.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(id).all();
+            const items = (itemsRes.results || []).map(formatItem);
+            return ok(formatOrder(order, items));
+        } catch (e) {
+            return serverError('Failed to fetch order');
+        }
     }
 
-    // ── POST /api/orders/:id/exchange — Customer requests exchange ────────────
+    // ── POST /api/orders/:id/exchange ───────────────────────────────────────
     if (path.match(/^\/\d+\/exchange$/) && method === 'POST') {
-        return handleExchangeRequest(path, request, env);
+        const { user, error: authErr } = await requireAuth(request, env);
+        if (authErr) return authErr;
+        const id = parseInt(path.match(/(\d+)/)?.[1]);
+        try {
+            const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?').bind(id, user.id).first();
+            if (!order) return notFound('Order not found');
+
+            if (order.order_status !== 'delivered')
+                return error('Exchange can only be requested for delivered orders', 400);
+
+            const windowDays = parseInt(await getSetting(env, "exchange_window_days", "7"));
+            if (order.delivered_at) {
+                const deliveredAt = new Date(order.delivered_at);
+                const daysPassed = (Date.now() - deliveredAt.getTime()) / (1000 * 60 * 60 * 24);
+                if (daysPassed > windowDays)
+                    return error(`Exchange window of ${windowDays} days has expired`, 400);
+            }
+
+            const { reason, exchange_product } = await request.json();
+            if (!reason?.trim()) return error('Exchange reason is required', 400);
+
+            await env.DB.prepare(
+                `UPDATE orders SET order_status = 'exchange_requested', exchange_reason = ?, exchange_product = ?, updated_at = datetime('now') WHERE id = ?`
+            ).bind(reason.trim(), exchange_product || null, id).run();
+
+            return ok(null, 'Exchange request submitted successfully');
+        } catch (e) {
+            return serverError('Failed to submit exchange request');
+        }
     }
 
     // ─────────────── ADMIN ROUTES ────────────────────────────────────────────
 
-    // ── GET /api/orders/admin — Admin: all orders (fast, paginated) ───────────
+    // ── GET /api/orders/admin ────────────────────────────────────────────────
     if (path === '/admin' && method === 'GET') {
-        return handleAdminListOrders(request, env, params);
+        const { error: authErr } = await requireAdmin(request, env);
+        if (authErr) return authErr;
+        try {
+            const page = Math.max(1, parseInt(params.get('page') || '1'));
+            const limit = Math.min(100, parseInt(params.get('limit') || '20'));
+            const offset = (page - 1) * limit;
+
+            const status = params.get('status') || '';
+            const source = params.get('source') || '';
+            const q = params.get('q') || '';
+
+            const where = [];
+            const binds = [];
+
+            if (status) { where.push('order_status = ?'); binds.push(status); }
+            if (source) { where.push('source = ?'); binds.push(source); }
+            if (q) {
+                where.push('(order_number LIKE ? OR customer_name LIKE ? OR customer_email LIKE ? OR customer_phone LIKE ?)');
+                const like = `%${q}%`;
+                binds.push(like, like, like, like);
+            }
+
+            const whereSQL = where.length ? 'WHERE ' + where.join(' AND ') : '';
+
+            const countRow = await env.DB.prepare(`SELECT COUNT(*) as cnt FROM orders ${whereSQL}`).bind(...binds).first();
+            const ordersRes = await env.DB.prepare(
+                `SELECT * FROM orders ${whereSQL} ORDER BY id DESC LIMIT ? OFFSET ?`
+            ).bind(...binds, limit, offset).all();
+
+            const total = countRow?.cnt || 0;
+            const orders = (ordersRes.results || []).map(o => formatOrder(o, null));
+
+            return list(orders, { page, limit, total, pages: Math.ceil(total / limit) });
+        } catch (e) {
+            console.error('Admin list orders error:', e);
+            return serverError('Failed to fetch orders');
+        }
     }
 
-    // ── GET /api/orders/admin/stats — Admin: order stats summary ─────────────
+    // ── GET /api/orders/admin/stats ──────────────────────────────────────────
     if (path === '/admin/stats' && method === 'GET') {
-        return handleAdminStats(request, env, params);
+        const { error: authErr } = await requireAdmin(request, env);
+        if (authErr) return authErr;
+        try {
+            const stats = await env.DB.prepare(
+                `SELECT
+             COUNT(*) as total_orders,
+             SUM(CASE WHEN order_status = 'delivered' THEN 1 ELSE 0 END) as delivered,
+             SUM(CASE WHEN order_status = 'placed' THEN 1 ELSE 0 END) as placed,
+             SUM(CASE WHEN order_status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+             SUM(CASE WHEN order_status = 'shipped' THEN 1 ELSE 0 END) as shipped,
+             SUM(CASE WHEN order_status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
+             SUM(CASE WHEN order_status = 'exchange_requested' THEN 1 ELSE 0 END) as exchange_requested,
+             SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as revenue,
+             SUM(discount_amount) as total_discount,
+             COUNT(DISTINCT user_id) as unique_customers
+           FROM orders`
+            ).first();
+
+            return ok(stats);
+        } catch (e) {
+            return serverError('Failed to fetch stats');
+        }
     }
 
-    // ── GET /api/orders/admin/:id — Admin: single order full detail ──────────
+    // ── GET /api/orders/admin/:id ─────────────────────────────────────────────
     if (path.match(/^\/admin\/\d+$/) && method === 'GET') {
-        return handleAdminOrderDetail(path, request, env);
+        const { error: authErr } = await requireAdmin(request, env);
+        if (authErr) return authErr;
+        const id = parseInt(path.match(/(\d+)/)?.[1]);
+        try {
+            const order = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(id).first();
+            if (!order) return notFound('Order not found');
+            const itemsRes = await env.DB.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(id).all();
+            const items = (itemsRes.results || []).map(formatItem);
+            return ok(formatOrder(order, items));
+        } catch (e) {
+            return serverError('Failed to fetch order');
+        }
     }
 
-    // ── PUT /api/orders/admin/:id/status — Admin: update status ──────────────
-    // (frontend sends PUT, keep backward compat with PATCH too)
+    // ── PUT /api/orders/admin/:id/status ──────────────────────────────────────
     if (path.match(/^\/admin\/\d+\/status$/) && (method === 'PUT' || method === 'PATCH')) {
-        return handleAdminUpdateStatus(path, request, env);
+        const { error: authErr } = await requireAdmin(request, env);
+        if (authErr) return authErr;
+        const id = parseInt(path.match(/(\d+)/)?.[1]);
+        try {
+            const body = await request.json();
+            const { status, tracking_number, tracking_url } = body;
+            if (!status) return error('Status is required', 400);
+
+            const sets = ['order_status = ?', "updated_at = datetime('now')"];
+            const binds = [status];
+
+            if (status === 'confirmed') sets.push("confirmed_at = datetime('now')");
+            if (status === 'shipped') sets.push("shipped_at = datetime('now')");
+            if (status === 'delivered') sets.push("delivered_at = datetime('now')");
+            if (status === 'cancelled') sets.push("cancelled_at = datetime('now')");
+
+            if (tracking_number !== undefined) {
+                sets.push('tracking_number = ?');
+                binds.push(tracking_number);
+            }
+            if (tracking_url !== undefined) {
+                sets.push('tracking_url = ?');
+                binds.push(tracking_url);
+            }
+
+            binds.push(id);
+
+            await env.DB.prepare(`UPDATE orders SET ${sets.join(', ')} WHERE id = ?`).bind(...binds).run();
+
+            const updated = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(id).first();
+            return ok(formatOrder(updated), 'Order status updated');
+        } catch (e) {
+            console.error('Update status error:', e);
+            return serverError('Failed to update status');
+        }
     }
 
-    // ── PUT /api/orders/admin/:id/exchange — Admin: approve/reject exchange ───
+    // ── PUT /api/orders/admin/:id/exchange ──────────────────────────────────
     if (path.match(/^\/admin\/\d+\/exchange$/) && method === 'PUT') {
-        return handleAdminExchange(path, request, env);
-    }
+        const { error: authErr } = await requireAdmin(request, env);
+        if (authErr) return authErr;
+        const id = parseInt(path.match(/(\d+)/)?.[1]);
+        try {
+            const { action } = await request.json();
+            if (!['approve', 'reject'].includes(action))
+                return error('action must be approve or reject', 400);
 
-    // ── Legacy routes (backward compat) ──────────────────────────────────────
-    // Old: GET /api/orders/admin/all
-    if (path === '/admin/all' && method === 'GET') {
-        return handleAdminListOrders(request, env, params);
-    }
-    // Old: PATCH /api/orders/:id/status (no admin prefix)
-    if (path.match(/^\/\d+\/status$/) && (method === 'PATCH' || method === 'PUT')) {
-        return handleAdminUpdateStatus(path, request, env);
+            const status = action === 'approve' ? 'exchange_approved' : 'exchange_rejected';
+            await env.DB.prepare(
+                `UPDATE orders SET order_status = ?, updated_at = datetime('now') WHERE id = ?`
+            ).bind(status, id).run();
+
+            return ok(null, `Exchange request ${action}d`);
+        } catch (e) {
+            return serverError('Failed to process exchange');
+        }
     }
 
     return error('Route not found', 404);
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// HANDLERS
-// ══════════════════════════════════════════════════════════════════════════════
-
-// ── Create Order (post-payment) ────────────────────────────────────────────
-async function handleCreateOrder(request, env) {
-    try {
-        const { user } = await requireAuth(request, env);
-
-        const body = await request.json();
-        const {
-            items, address_id, coupon_code,
-            razorpay_order_id, razorpay_payment_id, razorpay_signature,
-            notes, delivery_method,
-        } = body;
-
-        // ── Validate required fields ──────────────────────────────────────────
-        if (!items || !items.length) return error('No items in order', 400);
-        if (!razorpay_payment_id) return error('Payment verification required. Complete Razorpay payment first.', 402);
-        if (!razorpay_order_id) return error('Razorpay order ID missing', 400);
-        if (!razorpay_signature) return error('Razorpay signature missing', 400);
-
-        // ── Verify Razorpay signature ─────────────────────────────────────────
-        const sigValid = await verifyRazorpaySignature(
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-            env.RAZORPAY_KEY_SECRET
-        );
-        if (!sigValid) return error('Payment verification failed. Invalid signature.', 402);
-
-        // ── Check for duplicate payment ───────────────────────────────────────
-        const dupCheck = await env.DB.prepare(
-            'SELECT id FROM orders WHERE razorpay_payment_id = ?'
-        ).bind(razorpay_payment_id).first();
-        if (dupCheck) return error('This payment has already been used.', 409);
-
-        // ── Validate & build order items (server-side prices) ────────────────
-        let subtotal = 0;
-        const orderItems = [];
-
-        for (const item of items) {
-            if (!item.product_id || !item.size || !item.qty || item.qty < 1)
-                return error(`Invalid item: product_id, size, and qty required`, 400);
-
-            const product = await env.DB.prepare(
-                'SELECT id, name, sku, price, images FROM products WHERE id = ? AND is_active = 1'
-            ).bind(item.product_id).first();
-            if (!product) return error(`Product ${item.product_id} not found or unavailable`, 400);
-
-            // Check stock
-            const inv = await env.DB.prepare(
-                'SELECT stock FROM inventory WHERE product_id = ? AND size = ?'
-            ).bind(item.product_id, item.size).first();
-            if (!inv || inv.stock < item.qty)
-                return error(`Insufficient stock: ${product.name} size ${item.size}`, 400);
-
-            const images = (() => { try { return JSON.parse(product.images || '[]'); } catch { return []; } })();
-            const lineTotal = product.price * item.qty;
-            subtotal += lineTotal;
-            orderItems.push({
-                product_id: product.id,
-                product_snapshot: JSON.stringify({
-                    name: product.name,
-                    sku: product.sku,
-                    image: images[0] || null,
-                    price: product.price,
-                }),
-                size: item.size,
-                color: item.color || null,
-                qty: item.qty,
-                unit_price: product.price,
-                total_price: lineTotal,
-            });
-        }
-
-        // ── Apply coupon ──────────────────────────────────────────────────────
-        let discount = 0;
-        let couponId = null;
-        let validatedCouponCode = null;
-
-        if (coupon_code) {
-            const coupon = await env.DB.prepare(
-                `SELECT * FROM coupons
-         WHERE code = ? AND is_active = 1
-           AND (valid_from  IS NULL OR valid_from  <= datetime('now'))
-           AND (valid_until IS NULL OR valid_until >= datetime('now'))
-           AND (max_uses    IS NULL OR uses_count  < max_uses)`
-            ).bind(coupon_code.toUpperCase()).first();
-
-            if (coupon && subtotal >= coupon.min_order) {
-                couponId = coupon.id;
-                validatedCouponCode = coupon.code;
-                if (coupon.type === 'percent')
-                    discount = Math.min(Math.floor(subtotal * coupon.value / 100), coupon.max_discount || Infinity);
-                else if (coupon.type === 'flat')
-                    discount = Math.min(coupon.value, subtotal);
-                else if (coupon.type === 'free_shipping')
-                    discount = 0; // handled below
-            }
-        }
-
-        // ── Shipping & Tax (from settings — single batch query) ───────────────
-        const cfg = await getSettings(env.DB, [
-            'free_shipping_above', 'shipping_charge', 'gst_percent'
-        ]);
-        const freeShipAbove = parseInt(cfg.free_shipping_above || '49900');
-        const shippingCharge = parseInt(cfg.shipping_charge || '4900');
-        const gstPct = parseInt(cfg.gst_percent || '5');
-
-        const isFreeShipping = coupon_code && (await env.DB.prepare(
-            'SELECT type FROM coupons WHERE code = ? AND type = ?'
-        ).bind(coupon_code.toUpperCase(), 'free_shipping').first());
-
-        const effectiveSubtotal = subtotal - discount;
-        const shipping = isFreeShipping || effectiveSubtotal >= freeShipAbove ? 0 : shippingCharge;
-        const tax = Math.floor(effectiveSubtotal * gstPct / 100);
-        const total = effectiveSubtotal + shipping + tax;
-
-        // ── Get address snapshot ──────────────────────────────────────────────
-        let addrSnap = null;
-        let addrFields = {};
-
-        if (address_id && user) {
-            const addr = await env.DB.prepare(
-                'SELECT * FROM addresses WHERE id = ? AND user_id = ?'
-            ).bind(address_id, user.id).first();
-            if (addr) {
-                addrSnap = JSON.stringify(addr);
-                addrFields = {
-                    address_line1: addr.line1 || '',
-                    address_line2: addr.line2 || '',
-                    city: addr.city || '',
-                    state: addr.state || '',
-                    pincode: addr.pincode || '',
-                    country: addr.country || 'India',
-                };
-            }
-        }
-
-        // ── Insert order ──────────────────────────────────────────────────────
-        const orderNumber = genOrderNumber();
-        const now = new Date().toISOString();
-
-        const order = await env.DB.prepare(
-            `INSERT INTO orders (
-        order_number, user_id,
-        customer_name, customer_email, customer_phone,
-        address_line1, address_line2, city, state, pincode, country,
-        address_id, address_snapshot,
-        delivery_method, source,
-        order_status, payment_status, payment_method,
-        razorpay_order_id, razorpay_payment_id, razorpay_signature,
-        subtotal_amount, discount_amount, shipping_amount, tax_amount, total_amount,
-        coupon_id, coupon_code,
-        paid_at, created_at, updated_at, notes
-      ) VALUES (
-        ?, ?,
-        ?, ?, ?,
-        ?, ?, ?, ?, ?, ?,
-        ?, ?,
-        ?, 'online',
-        'placed', 'paid', 'razorpay',
-        ?, ?, ?,
-        ?, ?, ?, ?, ?,
-        ?, ?,
-        ?, datetime('now'), datetime('now'), ?
-      ) RETURNING *`
-        ).bind(
-            orderNumber, user?.id || null,
-            user?.name || '',
-            user?.email || '',
-            user?.phone || '',
-            addrFields.address_line1 || '',
-            addrFields.address_line2 || '',
-            addrFields.city || '',
-            addrFields.state || '',
-            addrFields.pincode || '',
-            addrFields.country || 'India',
-            address_id || null,
-            addrSnap,
-            delivery_method || 'Standard',
-            razorpay_order_id, razorpay_payment_id, razorpay_signature,
-            subtotal, discount, shipping, tax, total,
-            couponId, validatedCouponCode,
-            now,
-            notes || null
-        ).first();
-
-        // ── Insert items & decrement stock (batched loop) ─────────────────────
-        for (const item of orderItems) {
-            await env.DB.prepare(
-                `INSERT INTO order_items
-          (order_id, product_id, product_snapshot, size, color, qty, unit_price, total_price)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
-            ).bind(
-                order.id, item.product_id, item.product_snapshot,
-                item.size, item.color, item.qty,
-                item.unit_price, item.total_price
-            ).run();
-
-            await env.DB.prepare(
-                `UPDATE inventory
-         SET stock = stock - ?, updated_at = datetime('now')
-         WHERE product_id = ? AND size = ?`
-            ).bind(item.qty, item.product_id, item.size).run();
-        }
-
-        // ── Increment coupon usage ────────────────────────────────────────────
-        if (couponId) {
-            await env.DB.prepare(
-                'UPDATE coupons SET uses_count = uses_count + 1 WHERE id = ?'
-            ).bind(couponId).run();
-        }
-
-        return created({
-            order_number: order.order_number,
-            order_id: order.id,
-            total: order.total_amount,
-            payment_status: 'paid',
-            order_status: 'placed',
-        }, 'Order placed successfully');
-
-    } catch (e) {
-        console.error('Order create error:', e);
-        return serverError('Failed to create order: ' + (e.message || ''));
-    }
-}
-
-// ── Customer: My Orders ────────────────────────────────────────────────────
-async function handleMyOrders(request, env, params) {
-    const { user, error: authErr } = await requireAuth(request, env);
-    if (authErr) return authErr;
-    try {
-        const page = Math.max(1, parseInt(params.get('page') || '1'));
-        const limit = Math.min(50, parseInt(params.get('limit') || '10'));
-        const offset = (page - 1) * limit;
-
-        const [countRow, ordersRes] = await Promise.all([
-            env.DB.prepare('SELECT COUNT(*) as cnt FROM orders WHERE user_id = ?')
-                .bind(user.id).first(),
-            env.DB.prepare(
-                `SELECT
-           id, order_number, order_status, payment_status, payment_method,
-           total_amount, shipping_amount, discount_amount,
-           tracking_number, tracking_url,
-           paid_at, delivered_at, cancelled_at, created_at,
-           exchange_reason, exchange_product
-         FROM orders
-         WHERE user_id = ?
-         ORDER BY created_at DESC
-         LIMIT ? OFFSET ?`
-            ).bind(user.id, limit, offset).all(),
-        ]);
-
-        // Attach items preview for each order
-        const orders = await Promise.all((ordersRes.results || []).map(async o => {
-            const itemsRes = await env.DB.prepare(
-                `SELECT product_snapshot, size, qty, unit_price FROM order_items WHERE order_id = ? LIMIT 4`
-            ).bind(o.id).all();
-            const items = (itemsRes.results || []).map(it => {
-                let snap = {}; try { snap = JSON.parse(it.product_snapshot || '{}'); } catch { }
-                return { name: snap.name, image: snap.image, size: it.size, qty: it.qty, price: it.unit_price };
-            });
-            return { ...formatOrder(o), items };
-        }));
-
-        const total = countRow?.cnt || 0;
-        return list(orders, { page, limit, total, pages: Math.ceil(total / limit) });
-    } catch (e) {
-        console.error('My orders error:', e);
-        return serverError('Failed to fetch orders');
-    }
-}
-
-// ── Customer: Order Detail ─────────────────────────────────────────────────
-async function handleMyOrderDetail(path, request, env) {
-    const { user, error: authErr } = await requireAuth(request, env);
-    if (authErr) return authErr;
-    const id = path.match(/(\d+)/)?.[1];
-    try {
-        const [order, itemsRes] = await Promise.all([
-            env.DB.prepare(
-                'SELECT * FROM orders WHERE id = ? AND user_id = ?'
-            ).bind(id, user.id).first(),
-            env.DB.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(id).all(),
-        ]);
-        if (!order) return notFound('Order not found');
-        const items = (itemsRes.results || []).map(formatItem);
-        return ok(formatOrder(order, items));
-    } catch (e) {
-        return serverError('Failed to fetch order');
-    }
-}
-
-// ── Public: Track by order number ─────────────────────────────────────────
-async function handleTrack(path, env) {
-    const orderNumber = path.replace('/track/', '');
-    if (!orderNumber) return error('Order number required', 400);
-    try {
-        const order = await env.DB.prepare(
-            `SELECT order_number, order_status, payment_status,
-              tracking_number, tracking_url,
-              shipped_at, out_for_delivery_at, delivered_at, created_at
-       FROM orders WHERE order_number = ?`
-        ).bind(orderNumber.toUpperCase()).first();
-        if (!order) return notFound('Order not found');
-        return ok(order);
-    } catch (e) {
-        return serverError('Tracking lookup failed');
-    }
-}
-
-// ── Customer: Request Exchange ─────────────────────────────────────────────
-async function handleExchangeRequest(path, request, env) {
-    const { user, error: authErr } = await requireAuth(request, env);
-    if (authErr) return authErr;
-    const id = path.match(/(\d+)/)?.[1];
-    try {
-        const order = await env.DB.prepare(
-            'SELECT * FROM orders WHERE id = ? AND user_id = ?'
-        ).bind(id, user.id).first();
-        if (!order) return notFound('Order not found');
-
-        // Only delivered orders can request exchange
-        if (order.order_status !== 'delivered')
-            return error('Exchange can only be requested for delivered orders', 400);
-
-        // Check exchange window (default 7 days)
-        const windowDays = 7;
-        if (order.delivered_at) {
-            const deliveredAt = new Date(order.delivered_at);
-            const daysPassed = (Date.now() - deliveredAt.getTime()) / (1000 * 60 * 60 * 24);
-            if (daysPassed > windowDays)
-                return error(`Exchange window of ${windowDays} days has expired`, 400);
-        }
-
-        const { reason, exchange_product } = await request.json();
-        if (!reason?.trim()) return error('Exchange reason is required', 400);
-
-        await env.DB.prepare(
-            `UPDATE orders
-       SET order_status = 'exchange_requested',
-           exchange_reason  = ?,
-           exchange_product = ?,
-           updated_at = datetime('now')
-       WHERE id = ?`
-        ).bind(reason.trim(), exchange_product || null, id).run();
-
-        return ok(null, 'Exchange request submitted successfully');
-    } catch (e) {
-        return serverError('Failed to submit exchange request');
-    }
-}
-
-// ══════════════════════════════════════════════════════════════════════════════
-// ADMIN HANDLERS
-// ══════════════════════════════════════════════════════════════════════════════
-
-// ── Admin: List Orders (fast, all filters) ────────────────────────────────
-async function handleAdminListOrders(request, env, params) {
-    const { error: authErr } = await requireAdmin(request, env);
-    if (authErr) return authErr;
-    try {
-        const page = Math.max(1, parseInt(params.get('page') || '1'));
-        const limit = Math.min(100, parseInt(params.get('limit') || '20'));
-        const offset = (page - 1) * limit;
-
-        const status = params.get('status') || '';
-        const source = params.get('source') || '';
-        const payment = params.get('payment') || '';
-        const method = params.get('method') || '';
-        const q = params.get('q') || '';
-        const dateFrom = params.get('from') || '';
-        const dateTo = params.get('to') || '';
-
-        const where = [];
-        const binds = [];
-
-        if (status) { where.push('o.order_status = ?'); binds.push(status); }
-        if (source) { where.push('o.source = ?'); binds.push(source); }
-        if (payment) { where.push('o.payment_status = ?'); binds.push(payment); }
-        if (method) { where.push('o.payment_method LIKE ?'); binds.push(`%${method}%`); }
-        if (q) {
-            where.push('(o.order_number LIKE ? OR o.customer_name LIKE ? OR o.customer_email LIKE ? OR o.customer_phone LIKE ?)');
-            const like = `%${q}%`;
-            binds.push(like, like, like, like);
-        }
-        if (dateFrom) { where.push("o.created_at >= ?"); binds.push(dateFrom); }
-        if (dateTo) { where.push("o.created_at <= ?"); binds.push(dateTo + 'T23:59:59'); }
-
-        const whereSQL = where.length ? 'WHERE ' + where.join(' AND ') : '';
-
-        // Parallel count + data query
-        const [countRow, ordersRes] = await Promise.all([
-            env.DB.prepare(`SELECT COUNT(*) as cnt FROM orders o ${whereSQL}`)
-                .bind(...binds).first(),
-            env.DB.prepare(
-                `SELECT
-           o.id, o.order_number, o.order_status, o.payment_status, o.payment_method,
-           o.customer_name, o.customer_email, o.customer_phone,
-           o.city, o.state,
-           o.total_amount, o.discount_amount, o.subtotal_amount,
-           o.razorpay_order_id, o.razorpay_payment_id,
-           o.source, o.coupon_code,
-           o.tracking_number, o.tracking_url,
-           o.paid_at, o.shipped_at, o.delivered_at, o.cancelled_at,
-           o.exchange_reason, o.exchange_product,
-           o.created_at, o.updated_at
-         FROM orders o
-         ${whereSQL}
-         ORDER BY o.created_at DESC
-         LIMIT ? OFFSET ?`
-            ).bind(...binds, limit, offset).all(),
-        ]);
-
-        const total = countRow?.cnt || 0;
-        const orders = (ordersRes.results || []).map(o => formatOrder(o, null));
-
-        return list(orders, { page, limit, total, pages: Math.ceil(total / limit) });
-    } catch (e) {
-        console.error('Admin list orders error:', e);
-        return serverError('Failed to fetch orders');
-    }
-}
-
-// ── Admin: Stats Summary ──────────────────────────────────────────────────
-async function handleAdminStats(request, env, params) {
-    const { error: authErr } = await requireAdmin(request, env);
-    if (authErr) return authErr;
-    try {
-        const days = parseInt(params.get('days') || '30');
-        const from = params.get('from') || new Date(Date.now() - days * 864e5).toISOString();
-        const to = params.get('to') || new Date().toISOString();
-
-        const stats = await env.DB.prepare(
-            `SELECT
-         COUNT(*)                                                            as total_orders,
-         SUM(CASE WHEN order_status = 'delivered'                 THEN 1 ELSE 0 END) as delivered,
-         SUM(CASE WHEN order_status = 'placed'                    THEN 1 ELSE 0 END) as placed,
-         SUM(CASE WHEN order_status = 'confirmed'                 THEN 1 ELSE 0 END) as confirmed,
-         SUM(CASE WHEN order_status = 'shipped'                   THEN 1 ELSE 0 END) as shipped,
-         SUM(CASE WHEN order_status = 'out_for_delivery'          THEN 1 ELSE 0 END) as out_for_delivery,
-         SUM(CASE WHEN order_status = 'cancelled'                 THEN 1 ELSE 0 END) as cancelled,
-         SUM(CASE WHEN order_status = 'exchange_requested'        THEN 1 ELSE 0 END) as exchange_requested,
-         SUM(CASE WHEN order_status IN ('placed','confirmed','processing') THEN 1 ELSE 0 END) as unfulfilled,
-         SUM(CASE WHEN payment_status = 'paid'                    THEN total_amount ELSE 0 END) as revenue,
-         SUM(discount_amount)                                               as total_discount,
-         COUNT(DISTINCT user_id)                                            as unique_customers
-       FROM orders
-       WHERE created_at BETWEEN ? AND ?`
-        ).bind(from, to).first();
-
-        return ok(stats);
-    } catch (e) {
-        return serverError('Failed to fetch stats');
-    }
-}
-
-// ── Admin: Single Order Full Detail ──────────────────────────────────────
-async function handleAdminOrderDetail(path, request, env) {
-    const { error: authErr } = await requireAdmin(request, env);
-    if (authErr) return authErr;
-    const id = path.match(/(\d+)/)?.[1];
-    try {
-        const [order, itemsRes] = await Promise.all([
-            env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(id).first(),
-            env.DB.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(id).all(),
-        ]);
-        if (!order) return notFound('Order not found');
-        const items = (itemsRes.results || []).map(formatItem);
-        return ok(formatOrder(order, items));
-    } catch (e) {
-        return serverError('Failed to fetch order');
-    }
-}
-
-// ── Admin: Update Order Status ─────────────────────────────────────────────
-async function handleAdminUpdateStatus(path, request, env) {
-    const { error: authErr } = await requireAdmin(request, env);
-    if (authErr) return authErr;
-    const id = path.match(/(\d+)/)?.[1];
-    try {
-        const body = await request.json();
-        const { status, tracking_number, tracking_url, note } = body;
-
-        if (!status) return error('Status is required', 400);
-
-        // Fetch current order
-        const current = await env.DB.prepare(
-            'SELECT * FROM orders WHERE id = ?'
-        ).bind(id).first();
-        if (!current) return notFound('Order not found');
-
-        const currentStatus = current.order_status;
-
-        // ── Status transition validation ──────────────────────────────────────
-        const VALID_TRANSITIONS = {
-            placed: ['confirmed', 'cancelled'],
-            confirmed: ['processing', 'shipped', 'cancelled'],
-            processing: ['packed', 'shipped', 'cancelled'],
-            packed: ['shipped', 'cancelled'],
-            shipped: ['out_for_delivery', 'delivered', 'cancelled'],
-            out_for_delivery: ['delivered'],
-            delivered: [],  // terminal (exchange request comes from customer)
-            cancelled: [],  // terminal
-            exchange_requested: ['exchange_approved', 'exchange_rejected'],
-            exchange_approved: [],  // terminal
-            exchange_rejected: [],  // terminal
-        };
-
-        const allowed = VALID_TRANSITIONS[currentStatus] || [];
-        if (!allowed.includes(status)) {
-            return error(
-                `Cannot transition from '${currentStatus}' to '${status}'. Allowed: [${allowed.join(', ') || 'none'}]`,
-                422
-            );
-        }
-
-        // ── Build dynamic SET clause ──────────────────────────────────────────
-        const sets = ['order_status = ?', "updated_at = datetime('now')"];
-        const binds = [status];
-
-        // Stage timestamps
-        const timestamps = {
-            confirmed: 'confirmed_at',
-            shipped: 'shipped_at',
-            out_for_delivery: 'out_for_delivery_at',
-            delivered: 'delivered_at',
-            cancelled: 'cancelled_at',
-        };
-        if (timestamps[status]) {
-            sets.push(`${timestamps[status]} = datetime('now')`);
-        }
-
-        // Tracking (only update if provided)
-        if (tracking_number !== undefined && tracking_number !== null) {
-            sets.push('tracking_number = ?');
-            binds.push(tracking_number || null);
-        }
-        if (tracking_url !== undefined && tracking_url !== null) {
-            sets.push('tracking_url = ?');
-            binds.push(tracking_url || null);
-        }
-
-        // ── CRITICAL: Never touch Razorpay payment_status ─────────────────────
-        // payment_status is ONLY updated by the payment verification endpoint.
-        // Admin CANNOT change it if razorpay_payment_id is set.
-        const isRazorpay = !!(current.razorpay_payment_id);
-        if (!isRazorpay && body.payment_status) {
-            // Non-Razorpay orders (POS/offline) — admin can update payment status
-            sets.push('payment_status = ?');
-            binds.push(body.payment_status);
-        }
-        // If Razorpay order and admin tried to change payment_status — silently ignore
-
-        binds.push(id); // WHERE id = ?
-
-        await env.DB.prepare(
-            `UPDATE orders SET ${sets.join(', ')} WHERE id = ?`
-        ).bind(...binds).run();
-
-        // ── Return updated order ──────────────────────────────────────────────
-        const updated = await env.DB.prepare('SELECT * FROM orders WHERE id = ?').bind(id).first();
-        return ok(formatOrder(updated), 'Order updated successfully');
-
-    } catch (e) {
-        console.error('Admin update status error:', e);
-        return serverError('Failed to update order: ' + (e.message || ''));
-    }
-}
-
-// ── Admin: Approve / Reject Exchange ──────────────────────────────────────
-async function handleAdminExchange(path, request, env) {
-    const { error: authErr } = await requireAdmin(request, env);
-    if (authErr) return authErr;
-    const id = path.match(/(\d+)/)?.[1];
-    try {
-        const { action } = await request.json();
-        if (!['approve', 'reject'].includes(action))
-            return error('action must be approve or reject', 400);
-
-        const order = await env.DB.prepare(
-            'SELECT * FROM orders WHERE id = ?'
-        ).bind(id).first();
-        if (!order) return notFound('Order not found');
-        if (order.order_status !== 'exchange_requested')
-            return error('Order is not in exchange_requested state', 400);
-
-        const newStatus = action === 'approve' ? 'exchange_approved' : 'exchange_rejected';
-        await env.DB.prepare(
-            `UPDATE orders
-       SET order_status = ?, updated_at = datetime('now')
-       WHERE id = ?`
-        ).bind(newStatus, id).run();
-
-        return ok(null, `Exchange ${action}d successfully`);
-    } catch (e) {
-        return serverError('Failed to update exchange status');
-    }
 }

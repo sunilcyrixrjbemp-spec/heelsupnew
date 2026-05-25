@@ -20,8 +20,8 @@ export async function customersRouter(request, env) {
             let where = ["role = 'customer'"];
             let binds = [];
             if (search) {
-                where.push('(name LIKE ? OR email LIKE ? OR phone LIKE ?)');
-                binds.push(`%${search}%`, `%${search}%`, `%${search}%`);
+                where.push('(first_name LIKE ? OR last_name LIKE ? OR email LIKE ? OR phone LIKE ?)');
+                binds.push(`%${search}%`, `%${search}%`, `%${search}%`, `%${search}%`);
             }
 
             const total = await env.DB.prepare(
@@ -29,9 +29,9 @@ export async function customersRouter(request, env) {
             ).bind(...binds).first();
 
             const customers = await env.DB.prepare(
-                `SELECT u.id, u.name, u.email, u.phone, u.is_active, u.created_at,
+                `SELECT u.id, (u.first_name || ' ' || COALESCE(u.last_name, '')) as name, u.email, u.phone, (CASE WHEN u.is_blocked=1 THEN 0 ELSE 1 END) as is_active, u.created_at,
                 (SELECT COUNT(*) FROM orders o WHERE o.user_id = u.id) as order_count,
-                (SELECT COALESCE(SUM(total), 0) FROM orders o WHERE o.user_id = u.id AND o.payment_status='paid') as total_spent
+                (SELECT COALESCE(SUM(total_amount), 0) FROM orders o WHERE o.user_id = u.id AND o.payment_status='paid') as total_spent
          FROM users u WHERE ${where.join(' AND ')}
          ORDER BY u.created_at DESC LIMIT ? OFFSET ?`
             ).bind(...binds, limit, offset).all();
@@ -93,8 +93,8 @@ export async function customersRouter(request, env) {
     if (path.match(/^\/\d+\/toggle$/) && method === 'PATCH') {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
-        const id = path.match(/(\d+)/)[1];
-        await env.DB.prepare("UPDATE users SET is_active = CASE WHEN is_active=1 THEN 0 ELSE 1 END WHERE id=?").bind(id).run();
+        const id = path.match(/^\/(\d+)\/toggle$/)[1];
+        await env.DB.prepare("UPDATE users SET is_blocked = CASE WHEN is_blocked=1 THEN 0 ELSE 1 END WHERE id=?").bind(id).run();
         return ok(null, 'Customer status toggled');
     }
 

@@ -12,7 +12,7 @@ export async function staffRouter(request, env) {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
         const staff = await env.DB.prepare(
-            `SELECT s.*, u.name, u.email, u.phone, u.is_active, u.last_login_at 
+            `SELECT s.*, (u.first_name || ' ' || COALESCE(u.last_name, '')) as name, u.email, u.phone, (CASE WHEN u.is_blocked=1 THEN 0 ELSE 1 END) as is_active, u.last_login_at 
              FROM staff s JOIN users u ON s.user_id = u.id 
              ORDER BY s.created_at DESC`
         ).all();
@@ -30,8 +30,11 @@ export async function staffRouter(request, env) {
             const { hashPassword } = await import('../utils/password.js');
             const hashed = await hashPassword(password);
             const newUser = await env.DB.prepare(
-                "INSERT INTO users (first_name, last_name, email, phone, password, role, is_active) VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id"
-            ).bind(first_name, last_name || '', email.toLowerCase(), phone || null, hashed, role || 'staff', is_active !== undefined ? is_active : 1).first();
+                "INSERT INTO users (first_name, last_name, email, phone, password_hash, role, is_blocked, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now')) RETURNING id"
+            ).bind(
+                first_name, last_name || '', email.toLowerCase(), phone || null, hashed, role || 'staff', 
+                (is_active !== undefined && !is_active) ? 1 : 0
+            ).first();
 
             await env.DB.prepare(
                 'INSERT INTO staff (user_id, role, notes, permissions) VALUES (?, ?, ?, ?)'
@@ -52,8 +55,11 @@ export async function staffRouter(request, env) {
         const { first_name, last_name, email, phone, role, notes, permissions, is_active } = await request.json();
         try {
             await env.DB.prepare(
-                "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ?, is_active = ? WHERE id = ?"
-            ).bind(first_name, last_name || '', email.toLowerCase(), phone || null, role || 'staff', is_active !== undefined ? is_active : 1, id).run();
+                "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ?, role = ?, is_blocked = ?, updated_at = datetime('now') WHERE id = ?"
+            ).bind(
+                first_name, last_name || '', email.toLowerCase(), phone || null, role || 'staff', 
+                (is_active !== undefined && !is_active) ? 1 : 0, id
+            ).run();
             await env.DB.prepare(
                 "UPDATE staff SET role = ?, notes = ?, permissions = ? WHERE user_id = ?"
             ).bind(role || 'support', notes || null, JSON.stringify(permissions || []), id).run();
@@ -68,16 +74,16 @@ export async function staffRouter(request, env) {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
         const id = path.match(/(\d+)/)[1];
-        await env.DB.prepare("UPDATE users SET is_active = 0 WHERE id = ?").bind(id).run();
+        await env.DB.prepare("UPDATE users SET is_blocked = 1 WHERE id = ?").bind(id).run();
         return ok(null, 'Staff suspended');
     }
-
+ 
     // PATCH /api/staff/:id/activate
     if (path.match(/^\/\d+\/activate$/) && method === 'PATCH') {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
         const id = path.match(/(\d+)/)[1];
-        await env.DB.prepare("UPDATE users SET is_active = 1 WHERE id = ?").bind(id).run();
+        await env.DB.prepare("UPDATE users SET is_blocked = 0 WHERE id = ?").bind(id).run();
         return ok(null, 'Staff activated');
     }
 

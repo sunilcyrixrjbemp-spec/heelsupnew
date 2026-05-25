@@ -4,16 +4,16 @@
 // ============================================================
 
 import { adminGuard } from '../middleware/adminAuth.js';
-import { verifyJWT } from '../middleware/auth.js';
+import { authenticate } from '../middleware/auth.js';
 import { query, queryOne, run, now } from '../utils/db.js';
-import { ok, err } from '../utils/response.js';
+import { ok, error, unauthorized } from '../utils/response.js';
 
 export async function handleNotifications(request, env, path, method) {
 
     // ── GET /api/notifications — customer: own notifs, admin: all ──
     if (method === 'GET' && path === '/api/notifications') {
-        const user = await verifyJWT(request, env);
-        if (!user) return err('Unauthorized', 401);
+        const { user, error: authError } = await authenticate(request, env);
+        if (authError) return authError;
 
         const url = new URL(request.url);
         const limit = Math.min(parseInt(url.searchParams.get('limit') || '20'), 100);
@@ -65,8 +65,8 @@ export async function handleNotifications(request, env, path, method) {
     // ── PATCH /api/notifications/:id/read — mark as read ──────────
     const readMatch = path.match(/^\/api\/notifications\/(\d+)\/read$/);
     if (method === 'PATCH' && readMatch) {
-        const user = await verifyJWT(request, env);
-        if (!user) return err('Unauthorized', 401);
+        const { user, error: authError } = await authenticate(request, env);
+        if (authError) return authError;
 
         const id = parseInt(readMatch[1]);
         await run(env.DB,
@@ -78,8 +78,8 @@ export async function handleNotifications(request, env, path, method) {
 
     // ── PATCH /api/notifications/read-all — mark all read ─────────
     if (method === 'PATCH' && path === '/api/notifications/read-all') {
-        const user = await verifyJWT(request, env);
-        if (!user) return err('Unauthorized', 401);
+        const { user, error: authError } = await authenticate(request, env);
+        if (authError) return authError;
 
         await run(env.DB,
             'UPDATE notifications SET is_read = 1, read_at = ? WHERE user_id = ? AND is_read = 0',
@@ -91,8 +91,8 @@ export async function handleNotifications(request, env, path, method) {
     // ── DELETE /api/notifications/:id ─────────────────────────────
     const deleteMatch = path.match(/^\/api\/notifications\/(\d+)$/);
     if (method === 'DELETE' && deleteMatch) {
-        const user = await verifyJWT(request, env);
-        if (!user) return err('Unauthorized', 401);
+        const { user, error: authError } = await authenticate(request, env);
+        if (authError) return authError;
 
         const id = parseInt(deleteMatch[1]);
         await run(env.DB,
@@ -110,7 +110,7 @@ export async function handleNotifications(request, env, path, method) {
         const body = await request.json();
         const { user_id, type = 'info', title, message, link } = body;
 
-        if (!title || !message) return err('title and message are required');
+        if (!title || !message) return error('title and message are required');
 
         if (user_id) {
             // Send to specific user
@@ -121,7 +121,7 @@ export async function handleNotifications(request, env, path, method) {
         } else {
             // Broadcast to all active customers
             const users = await query(env.DB,
-                "SELECT id FROM users WHERE role = 'customer' AND is_active = 1"
+                "SELECT id FROM users WHERE role = 'customer' AND is_blocked = 0"
             );
             for (const u of users) {
                 await run(env.DB,
@@ -134,5 +134,5 @@ export async function handleNotifications(request, env, path, method) {
         return ok({ message: 'Notification(s) sent' }, 201);
     }
 
-    return err('Not found', 404);
+    return error('Not found', 404);
 }

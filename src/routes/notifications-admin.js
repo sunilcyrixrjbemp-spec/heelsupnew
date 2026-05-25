@@ -23,7 +23,7 @@ export async function notificationsAdminRouter(request, env) {
             const type = url.searchParams.get('type');
 
             let sql = `
-                SELECT n.*, u.name as user_name, u.email as user_email
+                SELECT n.*, (u.first_name || ' ' || COALESCE(u.last_name, '')) as user_name, u.email as user_email
                 FROM notifications n
                 LEFT JOIN users u ON u.id = n.user_id
             `;
@@ -58,7 +58,7 @@ export async function notificationsAdminRouter(request, env) {
             } else {
                 // Broadcast to all active customers
                 const users = await env.DB.prepare(
-                    "SELECT id FROM users WHERE role = 'customer' AND is_active = 1"
+                    "SELECT id FROM users WHERE role = 'customer' AND is_blocked = 0"
                 ).all();
                 for (const u of users.results) {
                     await env.DB.prepare(

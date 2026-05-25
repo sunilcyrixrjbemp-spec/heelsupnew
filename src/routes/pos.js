@@ -24,54 +24,75 @@ export async function posRouter(request, env) {
 
             for (const item of items) {
                 const product = await env.DB.prepare(
-                    'SELECT id, name, sku, price, images FROM products WHERE id = ? AND is_active = 1'
+                    'SELECT id, name, sku, price, images_json, image_url, stock FROM products WHERE id = ? AND active = 1'
                 ).bind(item.product_id).first();
                 if (!product) return error(`Product ${item.product_id} not found`);
 
-                // Check stock
-                if (item.size) {
-                    const inv = await env.DB.prepare(
-                        'SELECT stock FROM inventory WHERE product_id = ? AND size = ?'
-                    ).bind(item.product_id, item.size).first();
-                    if (!inv || inv.stock < item.qty) return error(`Insufficient stock for ${product.name}`);
+                // Check stock (D1 products.stock is global stock)
+                if ((product.stock || 0) < item.qty) {
+                    return error(`Insufficient stock for ${product.name}. Only ${product.stock} available.`);
                 }
 
-                const unitPrice = item.unit_price || product.price;
+                const unitPrice = item.unit_price || product.price; // in Rupees
                 const totalPrice = unitPrice * item.qty;
                 subtotal += totalPrice;
+
+                let imgs = [];
+                try { imgs = JSON.parse(product.images_json || '[]'); } catch { }
+                const img = imgs[0] || product.image_url || null;
+
                 orderItems.push({
                     product_id: product.id,
-                    product_snapshot: JSON.stringify({ name: product.name, sku: product.sku, image: JSON.parse(product.images || '[]')[0], price: unitPrice }),
-                    size: item.size || null,
-                    color: item.color || null,
+                    product_name: product.name,
+                    sku: product.sku || '',
                     qty: item.qty,
                     unit_price: unitPrice,
-                    total_price: totalPrice,
+                    line_total: totalPrice,
+                    size: item.size || null,
+                    image: img
                 });
             }
 
-            const discountAmt = discount || 0;
+            const discountAmt = discount || 0; // in Rupees
             const total = subtotal - discountAmt;
             const orderNumber = genOrderNumber();
+            const now = new Date().toISOString();
 
-            const order = await env.DB.prepare(
-                `INSERT INTO orders (order_number, guest_name, guest_phone, channel, status, payment_status, payment_method, subtotal, discount, total, notes)
-         VALUES (?, ?, ?, 'pos', 'delivered', 'paid', ?, ?, ?, ?, ?) RETURNING *`
-            ).bind(orderNumber, customer_name || 'Walk-in', customer_phone || null, payment_method || 'cash', subtotal, discountAmt, total, notes || null).first();
+            // Insert into orders using D1 schema
+            const orderRes = await env.DB.prepare(
+                `INSERT INTO orders (order_number, user_id, customer_name, customer_email, customer_phone,
+                 address_line1, city, state, pincode, country, delivery_method, source,
+                 order_status, payment_status, payment_method, subtotal_amount, discount_amount, total_amount, notes, created_at, updated_at)
+                 VALUES (?, ?, ?, 'pos@heelsup.in', ?, 'In-Store Purchase', 'Store City', 'Store State', '000000', 'India', 'pos', 'pos',
+                 'delivered', 'paid', ?, ?, ?, ?, ?, ?, ?)`
+            ).bind(
+                orderNumber, user.id, customer_name || 'Walk-in', customer_phone || null,
+                payment_method || 'cash', subtotal, discountAmt, total, notes || null, now, now
+            ).run();
 
+            const orderId = orderRes.meta?.last_row_id;
+
+            // Insert order items & update product stock
             for (const item of orderItems) {
                 await env.DB.prepare(
-                    'INSERT INTO order_items (order_id, product_id, product_snapshot, size, color, qty, unit_price, total_price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-                ).bind(order.id, item.product_id, item.product_snapshot, item.size, item.color, item.qty, item.unit_price, item.total_price).run();
+                    `INSERT INTO order_items (order_id, product_id, product_name, product_sku, quantity, unit_price, line_total, size_label, image_url, created_at)
+                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+                ).bind(orderId, item.product_id, item.product_name, item.sku, item.qty, item.unit_price, item.line_total, item.size, item.image, now).run();
 
-                if (item.size) {
+                // Update product stock
+                const prod = await env.DB.prepare("SELECT stock, name FROM products WHERE id=?").bind(item.product_id).first();
+                if (prod) {
+                    const newStock = Math.max(0, (prod.stock || 0) - item.qty);
+                    await env.DB.prepare("UPDATE products SET stock=?, sold_count=sold_count+?, updated_at=? WHERE id=?").bind(newStock, item.qty, now, item.product_id).run();
+
+                    // Log inventory
                     await env.DB.prepare(
-                        'UPDATE inventory SET stock = stock - ? WHERE product_id = ? AND size = ?'
-                    ).bind(item.qty, item.product_id, item.size).run();
+                        "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, created_at) VALUES (?,?,'sale',?,?,?,?,datetime('now'))"
+                    ).bind(item.product_id, prod.name, -item.qty, prod.stock || 0, newStock, `POS sale: Order ${orderNumber}`).run();
                 }
             }
 
-            return created({ order_number: orderNumber, order_id: order.id, total }, 'POS sale recorded');
+            return created({ order_number: orderNumber, order_id: orderId, total }, 'POS sale recorded');
         } catch (e) {
             console.error('POS sale error:', e);
             return serverError('Failed to record sale');
@@ -82,10 +103,15 @@ export async function posRouter(request, env) {
     if (path === '/sales' && method === 'GET') {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
-        const sales = await env.DB.prepare(
-            "SELECT * FROM orders WHERE channel='pos' ORDER BY created_at DESC LIMIT 50"
-        ).all();
-        return list(sales.results);
+        try {
+            const sales = await env.DB.prepare(
+                "SELECT * FROM orders WHERE source='pos' ORDER BY id DESC LIMIT 50"
+            ).all();
+            return list(sales.results || []);
+        } catch (e) {
+            console.error('Fetch POS sales error:', e);
+            return serverError('Failed to fetch sales');
+        }
     }
 
     return error('Route not found', 404);

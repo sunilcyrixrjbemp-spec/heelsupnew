@@ -5,10 +5,10 @@
 // ============================================================
 
 import { adminGuard } from '../middleware/adminAuth.js';
-import { verifyJWT } from '../middleware/auth.js';
+import { authenticate } from '../middleware/auth.js';
 import { queryOne, run, now } from '../utils/db.js';
 import { uploadReceipt, publicUrl } from '../utils/r2.js';
-import { ok, err } from '../utils/response.js';
+import { ok, error, unauthorized, forbidden, notFound } from '../utils/response.js';
 
 export async function handleReceipts(request, env, path, method) {
 
@@ -18,19 +18,18 @@ export async function handleReceipts(request, env, path, method) {
         const orderId = getMatch[1];
 
         // Verify auth: either customer (own order) or admin
-        const user = await verifyJWT(request, env);
-        if (!user) return err('Unauthorized', 401);
+        const { user, error: authError } = await authenticate(request, env);
+        if (authError) return authError;
 
         const order = await queryOne(env.DB,
             'SELECT id, order_number, user_id, receipt_url FROM orders WHERE order_number = ? OR id = ?',
             [orderId, parseInt(orderId) || 0]
         );
 
-        if (!order) return err('Order not found', 404);
+        if (!order) return notFound('Order not found');
 
         // Customer can only access own orders
-        if (user.role === 'customer' && order.user_id !== user.id) {
-            return err('Forbidden', 403);
+            return forbidden('Forbidden');
         }
 
         if (order.receipt_url) {
@@ -48,10 +47,10 @@ export async function handleReceipts(request, env, path, method) {
         if (earlyReturn) return earlyReturn;
 
         const { order_id } = await request.json();
-        if (!order_id) return err('order_id is required');
+        if (!order_id) return error('order_id is required');
 
         const order = await queryOne(env.DB, 'SELECT id, order_number FROM orders WHERE id = ?', [order_id]);
-        if (!order) return err('Order not found', 404);
+        if (!order) return notFound('Order not found');
 
         const receiptUrl = await generateAndStoreReceipt(env, order.id);
 
@@ -62,7 +61,7 @@ export async function handleReceipts(request, env, path, method) {
         });
     }
 
-    return err('Not found', 404);
+    return notFound('Not found');
 }
 
 // ── Internal: Build receipt HTML and store to R2 ─────────────

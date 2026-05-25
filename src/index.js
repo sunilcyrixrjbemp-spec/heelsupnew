@@ -21,6 +21,7 @@ import { handleReports } from './routes/reports.js';
 import { handleNotifications } from './routes/notifications.js';
 import { handleShipping } from './routes/shipping.js';
 import { json } from './utils/response.js';
+import { authRateLimit, apiRateLimit, paymentRateLimit, adminRateLimit } from './middleware/ratelimit.js';
 
 // ── Admin alias helper ────────────────────────────────────────────────────────
 // Frontend uses /api/admin/* — backend has routes at /api/* — this bridges them.
@@ -49,6 +50,50 @@ export default {
 
     // 3. API Router Logic
     if (path.startsWith('/api/')) {
+      const pathNormalized = path.replace(/\/$/, "");
+      const isCacheable = method === "GET" && !pathNormalized.startsWith("/api/admin") && (
+        pathNormalized === "/api/banners" ||
+        pathNormalized === "/api/categories" ||
+        pathNormalized === "/api/settings" ||
+        pathNormalized === "/api/products" ||
+        pathNormalized === "/api/reviews" ||
+        pathNormalized === "/api/search" ||
+        /^\/api\/products\/(\d+)$/.test(pathNormalized) ||
+        /^\/api\/products\/(\d+)\/reviews$/.test(pathNormalized)
+      );
+
+      let cache = null;
+      let cacheKey = null;
+      if (isCacheable) {
+        try {
+          cache = caches.default;
+          cacheKey = new Request(url.toString(), request);
+          const cachedRes = await cache.match(cacheKey);
+          if (cachedRes) return cachedRes;
+        } catch (err) {
+          console.warn("Cache match failed:", err);
+        }
+      }
+
+      // Rate limiting
+      let rlRes = null;
+      try {
+        if (path.startsWith('/api/auth/login') || path.startsWith('/api/auth/register') || path.startsWith('/api/auth/forgot-password')) {
+          rlRes = await authRateLimit(request, env);
+        } else if (path.startsWith('/api/payment')) {
+          rlRes = await paymentRateLimit(request, env);
+        } else if (path.startsWith('/api/admin')) {
+          rlRes = await adminRateLimit(request, env);
+        } else {
+          rlRes = await apiRateLimit(request, env);
+        }
+      } catch (e) {
+        console.warn('Rate limit error:', e);
+      }
+      if (rlRes) {
+        return addCors(rlRes, request);
+      }
+
       let response;
       try {
 
@@ -171,6 +216,10 @@ export default {
         else if (path.startsWith('/api/admin/returns')) {
           response = json({ success: true, data: [], pagination: { total: 0, page: 1, limit: 20 } });
         }
+        else if (path.startsWith('/api/payments/razorpay/')) {
+          const rewritten = rewriteAdminPath(request, '/api/payments/razorpay', '/api/payment');
+          response = await paymentRouter(rewritten, env);
+        }
 
         // ── Standard routes ──────────────────────────────────────────────────
         else if (path.startsWith('/api/auth')) response = await authRouter(request, env);
@@ -201,10 +250,36 @@ export default {
         console.error('API Error:', err);
         response = json({ success: false, error: 'Internal server error' }, 500);
       }
-      return addCors(response, request);
+
+      const corsResponse = addCors(response, request);
+
+      // Store in cache if cacheable and status is 200 OK
+      if (isCacheable && response && response.status === 200 && cache && cacheKey) {
+        try {
+          const cacheableRes = new Response(corsResponse.clone().body, corsResponse);
+          cacheableRes.headers.set("Cache-Control", "public, max-age=60"); // 60s
+          if (ctx && ctx.waitUntil) {
+            ctx.waitUntil(cache.put(cacheKey, cacheableRes).catch(() => {}));
+          } else {
+            await cache.put(cacheKey, cacheableRes).catch(() => {});
+          }
+        } catch (e) {
+          console.warn("Cache write failed:", e);
+        }
+      }
+
+      return corsResponse;
     }
 
     // 4. Static files via Cloudflare Assets
-    return env.ASSETS.fetch(request);
-  },
+    const assetRes = await env.ASSETS.fetch(request);
+    const headers = new Headers(assetRes.headers);
+    headers.set('X-Content-Type-Options', 'nosniff');
+    headers.set('X-Frame-Options', 'DENY');
+    headers.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+    if (url.pathname.endsWith('.html') || !url.pathname.includes('.')) {
+      headers.set('Content-Security-Policy', "default-src 'self' https://*.razorpay.com https://fonts.googleapis.com https://fonts.gstatic.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; img-src 'self' data: https://media.heelsup.in https://*.unsplash.com https://*.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; frame-src https://*.razorpay.com; connect-src 'self' https://heelsupnew.heelsup.workers.dev https://api.razorpay.com;");
+    }
+    return new Response(assetRes.body, { status: assetRes.status, headers });
+  }
 };

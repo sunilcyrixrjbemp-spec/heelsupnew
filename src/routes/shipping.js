@@ -5,7 +5,7 @@
 
 import { adminGuard } from '../middleware/adminAuth.js';
 import { query, queryOne, run, now } from '../utils/db.js';
-import { ok, err } from '../utils/response.js';
+import { ok, error } from '../utils/response.js';
 
 export async function handleShipping(request, env, path, method) {
 
@@ -53,7 +53,7 @@ export async function handleShipping(request, env, path, method) {
     if (method === 'POST' && path === '/api/shipping/check-pincode') {
         const { pincode } = await request.json();
         if (!pincode || !/^\d{6}$/.test(String(pincode))) {
-            return err('Invalid pincode — must be 6 digits');
+            return error('Invalid pincode — must be 6 digits');
         }
 
         // In production: integrate with Shiprocket / Delhivery API
@@ -109,7 +109,7 @@ export async function handleShipping(request, env, path, method) {
         const body = await request.json();
         const { name, states, base_rate, free_above } = body;
 
-        if (!name || !states) return err('name and states are required');
+        if (!name || !states) return error('name and states are required');
 
         const result = await run(env.DB,
             'INSERT INTO shipping_zones (name, states, base_rate, free_above, created_at) VALUES (?,?,?,?,?)',
@@ -146,5 +146,5 @@ export async function handleShipping(request, env, path, method) {
         return ok({ methods });
     }
 
-    return err('Not found', 404);
+    return error('Not found', 404);
 }

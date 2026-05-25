@@ -23,7 +23,7 @@ export async function contactRouter(request, env) {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
         const msgs = await env.DB.prepare('SELECT * FROM contact_messages ORDER BY created_at DESC').all();
-        return list(msgs.results);
+        return list(msgs.results || []);
     }
 
     return error('Route not found', 404);
@@ -47,45 +47,101 @@ export async function newsletterRouter(request, env) {
 }
 
 export async function inventoryRouter(request, env) {
+    const { user, error: authError } = await requireAdmin(request, env);
+    if (authError) return authError;
+
     const url = new URL(request.url);
     const path = url.pathname.replace('/api/inventory', '') || '/';
     const method = request.method;
 
-    // GET /api/inventory?product_id=X
+    // GET /api/inventory — list stock matrix
     if (path === '/' && method === 'GET') {
-        const { user, error: authError } = await requireAdmin(request, env);
-        if (authError) return authError;
-        const productId = url.searchParams.get('product_id');
-        const where = productId ? 'WHERE i.product_id = ?' : '';
-        const binds = productId ? [productId] : [];
-        const inv = await env.DB.prepare(
-            `SELECT i.*, p.name as product_name, p.sku FROM inventory i JOIN products p ON i.product_id = p.id ${where} ORDER BY p.name, i.size`
-        ).bind(...binds).all();
-        return list(inv.results);
-    }
-
-    // PUT /api/inventory/:id — update stock
-    if (path.match(/^\/\d+$/) && method === 'PUT') {
-        const { user, error: authError } = await requireAdmin(request, env);
-        if (authError) return authError;
-        const id = path.slice(1);
-        const { stock } = await request.json();
-        if (stock < 0) return error('Stock cannot be negative');
-        await env.DB.prepare("UPDATE inventory SET stock=?, updated_at=datetime('now') WHERE id=?").bind(stock, id).run();
-        return ok(null, 'Inventory updated');
-    }
-
-    // POST /api/inventory — add inventory row
-    if (path === '/' && method === 'POST') {
-        const { user, error: authError } = await requireAdmin(request, env);
-        if (authError) return authError;
-        const { product_id, size, color, stock } = await request.json();
         try {
-            await env.DB.prepare(
-                'INSERT INTO inventory (product_id, size, color, stock) VALUES (?, ?, ?, ?) ON CONFLICT(product_id, size, color) DO UPDATE SET stock=stock+excluded.stock'
-            ).bind(product_id, size, color || null, stock || 0).run();
-            return ok(null, 'Inventory updated');
-        } catch (e) { return serverError('Failed to update inventory'); }
+            const search = url.searchParams.get("q") || "";
+            const category = url.searchParams.get("category") || "";
+            const stock = url.searchParams.get("stock") || "";
+
+            let sql = "SELECT id, name, sku, category, price, stock, active, image_url FROM products WHERE 1=1";
+            const binds = [];
+
+            if (search) {
+                sql += " AND (LOWER(name) LIKE LOWER(?) OR sku LIKE ?)";
+                binds.push(`%${search}%`, `%${search}%`);
+            }
+            if (category) {
+                sql += " AND LOWER(category)=LOWER(?)";
+                binds.push(category);
+            }
+            if (stock === "low") { sql += " AND stock>0 AND stock<=10"; }
+            if (stock === "out") { sql += " AND stock=0"; }
+            if (stock === "in") { sql += " AND stock>10"; }
+
+            sql += " ORDER BY stock ASC, name ASC LIMIT 500";
+            const { results } = await env.DB.prepare(sql).bind(...binds).all();
+            return ok({ products: results || [] });
+        } catch (e) {
+            console.error('Fetch inventory error:', e);
+            return serverError('Failed to fetch inventory');
+        }
+    }
+
+    // GET /api/inventory/log — audit log
+    if (path === '/log' && method === 'GET') {
+        try {
+            const productId = url.searchParams.get("product_id") || "";
+            const limit = Math.min(parseInt(url.searchParams.get("limit") || "100"), 500);
+
+            let sql = "SELECT * FROM inventory_log WHERE 1=1";
+            const binds = [];
+
+            if (productId) {
+                sql += " AND product_id=?";
+                binds.push(parseInt(productId));
+            }
+            sql += " ORDER BY id DESC LIMIT ?";
+            binds.push(limit);
+
+            const { results } = await env.DB.prepare(sql).bind(...binds).all();
+            return ok({ logs: results || [] });
+        } catch (e) {
+            console.error('Fetch inventory logs error:', e);
+            return serverError('Failed to fetch logs');
+        }
+    }
+
+    // PUT /api/inventory/bulk — bulk update stock
+    if (path === '/bulk' && method === 'PUT') {
+        try {
+            const body = await request.json();
+            if (!Array.isArray(body?.updates)) return error("updates array required", 400);
+
+            let updated = 0;
+            const now = new Date().toISOString();
+
+            for (const u of body.updates) {
+                const id = parseInt(u.id);
+                const stock = Math.max(0, parseInt(u.stock || 0));
+                if (!id) continue;
+
+                const prod = await env.DB.prepare("SELECT id, name, stock FROM products WHERE id=?").bind(id).first();
+                if (!prod) continue;
+
+                const diff = stock - (prod.stock || 0);
+
+                await env.DB.prepare("UPDATE products SET stock=?, updated_at=? WHERE id=?").bind(stock, now, id).run();
+
+                await env.DB.prepare(
+                    "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, created_at) VALUES (?,?,'adjustment',?,?,?,?,?)"
+                ).bind(prod.id, prod.name, prod.stock || 0, diff, stock, String(u.reason || "Admin adjustment"), now).run();
+
+                updated++;
+            }
+
+            return ok({ updated }, "Inventory updated");
+        } catch (e) {
+            console.error('Bulk update stock error:', e);
+            return serverError('Failed to update inventory');
+        }
     }
 
     return error('Route not found', 404);

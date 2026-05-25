@@ -3,6 +3,7 @@
 const ALLOWED_ORIGINS = [
     'https://heelsup.in',
     'https://www.heelsup.in',
+    'https://heelsupnew.heelsup.workers.dev',
     'http://localhost:3000',
     'http://localhost:8787',
 ];
@@ -15,6 +16,10 @@ export function corsHeaders(request) {
         'Access-Control-Allow-Methods': 'GET, POST, PUT, PATCH, DELETE, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type, Authorization',
         'Access-Control-Max-Age': '86400',
+        'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none'",
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
     };
 }
 

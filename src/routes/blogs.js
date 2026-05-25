@@ -26,7 +26,7 @@ export async function blogsAdminRouter(request, env) {
             const offset = (page - 1) * limit;
             const status = url.searchParams.get('status'); // draft | published | archived
 
-            let sql = `SELECT b.*, u.name as author_name
+            let sql = `SELECT b.*, (u.first_name || ' ' || COALESCE(u.last_name, '')) as author_name
                        FROM blog_posts b
                        LEFT JOIN users u ON b.author_id = u.id`;
             const params = [];

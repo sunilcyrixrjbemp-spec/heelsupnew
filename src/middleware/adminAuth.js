@@ -3,22 +3,22 @@
 // Protects admin-only routes — requires role: admin | staff
 // ============================================================
 
-import { verifyJWT } from './auth.js';
-import { err } from '../utils/response.js';
+import { authenticate } from './auth.js';
+import { error } from '../utils/response.js';
 
 /**
  * requireAdmin — blocks non-admin users.
  * Returns user payload if admin, else returns 401/403 Response.
  */
 export async function requireAdmin(request, env) {
-    const user = await verifyJWT(request, env);
+    const { user, error: authError } = await authenticate(request, env);
 
-    if (!user) {
-        return { user: null, response: err('Unauthorized — please login', 401) };
+    if (authError) {
+        return { user: null, response: authError };
     }
 
     if (user.role !== 'admin' && user.role !== 'staff') {
-        return { user: null, response: err('Forbidden — admin access required', 403) };
+        return { user: null, response: error('Forbidden — admin access required', 403) };
     }
 
     return { user, response: null };
@@ -29,14 +29,14 @@ export async function requireAdmin(request, env) {
  * (staff cannot perform destructive operations)
  */
 export async function requireSuperAdmin(request, env) {
-    const user = await verifyJWT(request, env);
+    const { user, error: authError } = await authenticate(request, env);
 
-    if (!user) {
-        return { user: null, response: err('Unauthorized — please login', 401) };
+    if (authError) {
+        return { user: null, response: authError };
     }
 
     if (user.role !== 'admin') {
-        return { user: null, response: err('Forbidden — super-admin access required', 403) };
+        return { user: null, response: error('Forbidden — super-admin access required', 403) };
     }
 
     return { user, response: null };
@@ -62,6 +62,6 @@ export async function adminGuard(request, env, superAdminOnly = false) {
  * Check if currently logged-in user is admin (for non-blocking checks)
  */
 export async function isAdminUser(request, env) {
-    const user = await verifyJWT(request, env);
+    const { user } = await authenticate(request, env);
     return user && (user.role === 'admin' || user.role === 'staff');
 }
