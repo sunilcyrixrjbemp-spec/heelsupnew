@@ -1,4 +1,4 @@
-// src/index.js - HeelsUp Cloudflare Worker (Fixed with /api/admin/* aliases)
+// src/index.js - HeelsUp Cloudflare Worker (Production-ready — all routes wired)
 import { handleOptions, addCors } from './middleware/cors.js';
 import { authRouter } from './routes/auth.js';
 import { productsRouter } from './routes/products.js';
@@ -20,6 +20,8 @@ import { contactRouter, newsletterRouter, inventoryRouter } from './routes/misc.
 import { handleReports } from './routes/reports.js';
 import { handleNotifications } from './routes/notifications.js';
 import { handleShipping } from './routes/shipping.js';
+import { blogsPublicRouter } from './routes/blogs.js';
+import { adminRouter } from './routes/admin.js';
 import { json } from './utils/response.js';
 import { authRateLimit, apiRateLimit, paymentRateLimit, adminRateLimit } from './middleware/ratelimit.js';
 
@@ -97,124 +99,12 @@ export default {
       let response;
       try {
 
-        // ── /api/admin/* aliases ── (frontend uses these paths)
-        // Each alias rewrites to the actual backend path
-
-        if (path.startsWith('/api/admin/reviews')) {
-          // GET /api/admin/reviews -> /api/reviews/admin/all
-          // PUT /api/admin/reviews/:id (status=approved) -> PATCH /api/reviews/:id/approve
-          // PUT /api/admin/reviews/:id (status=rejected) -> DELETE /api/reviews/:id  [hide]
-          // DELETE /api/admin/reviews/:id -> DELETE /api/reviews/:id
-          const reviewIdMatch = path.match(/\/api\/admin\/reviews\/(\d+)/);
-          if (method === 'GET' && !reviewIdMatch) {
-            // List all reviews
-            const url2 = new URL(request.url);
-            url2.pathname = '/api/reviews/admin/all';
-            response = await reviewsRouter(new Request(url2.toString(), request), env);
-          } else if (reviewIdMatch && (method === 'PUT' || method === 'PATCH')) {
-            // Frontend sends PUT with { status: 'approved' | 'rejected', reply }
-            // Backend expects PATCH /:id/approve OR DELETE /:id
-            let body = {};
-            try { body = await request.clone().json(); } catch (_) { }
-            const id = reviewIdMatch[1];
-            if (body.status === 'approved') {
-              const url2 = new URL(request.url);
-              url2.pathname = `/api/reviews/${id}/approve`;
-              response = await reviewsRouter(new Request(url2.toString(), { method: 'PATCH', headers: request.headers }), env);
-            } else {
-              // hidden/rejected -> delete
-              const url2 = new URL(request.url);
-              url2.pathname = `/api/reviews/${id}`;
-              response = await reviewsRouter(new Request(url2.toString(), { method: 'DELETE', headers: request.headers }), env);
-            }
-          } else if (reviewIdMatch && method === 'DELETE') {
-            const id = reviewIdMatch[1];
-            const url2 = new URL(request.url);
-            url2.pathname = `/api/reviews/${id}`;
-            response = await reviewsRouter(new Request(url2.toString(), { method: 'DELETE', headers: request.headers }), env);
-          } else {
-            const rewritten = rewriteAdminPath(request, '/api/admin/reviews', '/api/reviews/admin');
-            response = await reviewsRouter(rewritten, env);
-          }
-        }
-        else if (path.startsWith('/api/admin/orders')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/orders', '/api/orders');
-          response = await ordersRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/products')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/products', '/api/products');
-          response = await productsRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/customers')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/customers', '/api/customers');
-          response = await customersRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/banners')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/banners', '/api/banners');
-          response = await bannersRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/categories')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/categories', '/api/categories');
-          response = await categoriesRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/coupons')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/coupons', '/api/coupons');
-          response = await couponsRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/staff')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/staff', '/api/staff');
-          response = await staffRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/settings')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/settings', '/api/settings');
-          response = await settingsRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/notifications')) {
-          // /api/admin/notifications -> /api/notifications/admin/all
-          // /api/admin/notifications/read-all -> /api/notifications/read-all
-          let newPath = path.replace('/api/admin/notifications', '/api/notifications');
-          if (newPath === '/api/notifications') newPath = '/api/notifications/admin/all';
-          const url2 = new URL(request.url);
-          url2.pathname = newPath;
-          const rewritten = new Request(url2.toString(), request);
-          response = await handleNotifications(rewritten, env, newPath, method);
-        }
-        else if (path.startsWith('/api/admin/shipping')) {
-          const newPath = path.replace('/api/admin/shipping', '/api/shipping');
-          const url2 = new URL(request.url);
-          url2.pathname = newPath;
-          const rewritten = new Request(url2.toString(), request);
-          response = await handleShipping(rewritten, env, newPath, method);
-        }
-        else if (path.startsWith('/api/admin/inventory')) {
-          const rewritten = rewriteAdminPath(request, '/api/admin/inventory', '/api/inventory');
-          response = await inventoryRouter(rewritten, env);
-        }
-        else if (path.startsWith('/api/admin/reports') || path.startsWith('/api/admin/analytics')) {
-          const newPath = path.replace('/api/admin/analytics', '/api/analytics').replace('/api/admin/reports', '/api/reports');
-          const url2 = new URL(request.url);
-          url2.pathname = newPath;
-          const rewritten = new Request(url2.toString(), request);
-          if (newPath.startsWith('/api/analytics')) response = await analyticsRouter(rewritten, env);
-          else response = await handleReports(rewritten, env, newPath, method);
-        }
-        // Stubs for features not yet built (returns 200 with empty data so frontend doesn't crash)
-        else if (path.startsWith('/api/admin/blogs')) {
-          response = json({ success: true, data: [], pagination: { total: 0, page: 1, limit: 20 } });
-        }
-        else if (path.startsWith('/api/admin/collections')) {
-          response = json({ success: true, data: [], pagination: { total: 0, page: 1, limit: 20 } });
-        }
-        else if (path.startsWith('/api/admin/pages')) {
-          response = json({ success: true, data: [], pagination: { total: 0, page: 1, limit: 20 } });
-        }
-        else if (path.startsWith('/api/admin/taxes')) {
-          if (path.includes('/rules')) response = json({ success: true, data: [] });
-          else if (path.includes('/settings')) response = json({ success: true, data: { enabled: false, inclusive: true } });
-          else response = json({ success: true, data: [] });
-        }
-        else if (path.startsWith('/api/admin/returns')) {
-          response = json({ success: true, data: [], pagination: { total: 0, page: 1, limit: 20 } });
+        // ── /api/admin/* ── Delegated to unified adminRouter ─────────────────────
+        // adminRouter handles: dashboard, reviews, orders, products, customers,
+        // banners, categories, coupons, staff, settings, inventory, notifications,
+        // shipping, blogs, collections, pages, taxes, returns, analytics, upload, pos
+        if (path.startsWith('/api/admin/')) {
+          response = await adminRouter(request, env);
         }
         else if (path.startsWith('/api/payments/razorpay/')) {
           const rewritten = rewriteAdminPath(request, '/api/payments/razorpay', '/api/payment');
@@ -244,6 +134,7 @@ export default {
         else if (path.startsWith('/api/newsletter')) response = await newsletterRouter(request, env);
         else if (path.startsWith('/api/inventory')) response = await inventoryRouter(request, env);
         else if (path.startsWith('/api/reports')) response = await handleReports(request, env, path, method);
+        else if (path.startsWith('/api/blogs')) response = await blogsPublicRouter(request, env);
         else response = json({ success: false, error: 'API route not found' }, 404);
 
       } catch (err) {

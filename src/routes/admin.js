@@ -22,17 +22,16 @@ import { settingsRouter } from './settings.js';
 import { inventoryRouter } from './misc.js';
 
 // ── New admin-only routers ───────────────────────────────────
-import { dashboardRouter } from './dashboard.js';      // ADDED: Handles /api/admin/dashboard stats
 import { blogsAdminRouter } from './blogs.js';
 import { collectionsAdminRouter } from './collections.js';
 import { pagesAdminRouter } from './pages.js';
-import { taxesAdminRouter } from './taxes.js';
+import { taxesAdminRouter } from './texes.js';
 import { returnsAdminRouter } from './returns.js';
-import { shippingAdminRouter } from './shipping-admin.js';
+import { shippingAdminRouter } from './shippings-admin.js';
 import { notificationsAdminRouter } from './notifications-admin.js';
-import { analyticsRouter } from './analytics.js';      // ADDED
-import { uploadRouter } from './upload.js';            // ADDED
-import { posRouter } from './pos.js';                  // ADDED
+import { analyticsRouter, dashboardStatsRouter } from './analytics.js';
+import { uploadRouter } from './upload.js';
+import { posRouter } from './pos.js';
 
 // ── Helper: rewrite request URL pathname ────────────────────
 function rewritePath(request, newPathname) {
@@ -51,10 +50,10 @@ export async function adminRouter(request, env) {
     const url = new URL(request.url);
     const path = url.pathname; // e.g. /api/admin/reviews
 
-    // ── /api/admin/dashboard ─────────────────────────────────── (NEWLY ADDED)
-    // Feeds the main dashboard stats, kpis, and recent metrics shown in the admin HTML
+    // ── /api/admin/dashboard ─────────────────────────────────────
+    // Returns dashboard KPIs in the shape the admin frontend expects
     if (path.startsWith('/api/admin/dashboard')) {
-        return dashboardRouter(request, env);
+        return dashboardStatsRouter(request, env);
     }
 
     // ── /api/admin/reviews/* → /api/reviews/* ─────────────────

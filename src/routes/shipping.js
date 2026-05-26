@@ -61,7 +61,7 @@ export async function handleShipping(request, env, path, method) {
         return ok({
             pincode,
             serviceable: true,
-            cod_available: true,
+            cod_available: false,
             prepaid_available: true,
             estimated_days: '5-7',
         });

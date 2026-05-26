@@ -41,7 +41,7 @@ export async function collectionsAdminRouter(request, env) {
 
         // Fetch products in collection
         const products = await env.DB.prepare(`
-            SELECT p.id, p.name, p.slug, p.sku, p.price, p.images, cp.sort_order
+            SELECT p.id, p.name, p.slug, p.sku, p.price, p.images_json, cp.sort_order
             FROM collection_products cp
             JOIN products p ON p.id = cp.product_id
             WHERE cp.collection_id = ?
@@ -195,10 +195,10 @@ export async function collectionsPublicRouter(request, env) {
         if (!col) return error('Collection not found', 404);
 
         const products = await env.DB.prepare(`
-            SELECT p.id, p.name, p.slug, p.price, p.mrp, p.images, p.is_featured
+            SELECT p.id, p.name, p.slug, p.price, p.original_price, p.images_json, p.featured
             FROM collection_products cp
             JOIN products p ON p.id = cp.product_id
-            WHERE cp.collection_id = ? AND p.is_active = 1
+            WHERE cp.collection_id = ? AND p.active = 1
             ORDER BY cp.sort_order ASC
         `).bind(col.id).all();
 

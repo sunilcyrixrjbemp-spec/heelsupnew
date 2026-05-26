@@ -11,12 +11,13 @@ export async function analyticsRouter(request, env) {
     const path = url.pathname.replace(/^\/api\/(admin\/)?analytics/, '') || '/';
     const method = request.method;
 
+    // ── /dashboard — full analytics data (from analytics page) ──────
     if (path === '/dashboard' && method === 'GET') {
         const { user, error: authError } = await requireAdmin(request, env);
         if (authError) return authError;
 
         try {
-            // 0. Ultra-fast Isolate Caching (Returns instantly if requested recently)
+            // 0. Ultra-fast Isolate Caching
             const cacheKey = url.search;
             if (queryCache.has(cacheKey)) {
                 const cached = queryCache.get(cacheKey);
@@ -25,7 +26,7 @@ export async function analyticsRouter(request, env) {
                 }
             }
 
-            // 1. Dynamic Date Filtering based on URL parameters
+            // 1. Dynamic Date Filtering
             const period = url.searchParams.get('period') || '30';
             let startDate = "date('now', '-30 days')";
             let endDate = "datetime('now')";
@@ -33,7 +34,6 @@ export async function analyticsRouter(request, env) {
             if (period === 'custom') {
                 const s = url.searchParams.get('start');
                 const e = url.searchParams.get('end');
-                // Regex validation prevents SQL Injection when injecting dates directly
                 if (/^\d{4}-\d{2}-\d{2}$/.test(s) && /^\d{4}-\d{2}-\d{2}$/.test(e)) {
                     startDate = `'${s} 00:00:00'`;
                     endDate = `'${e} 23:59:59'`;
@@ -43,90 +43,81 @@ export async function analyticsRouter(request, env) {
                 startDate = `date('now', '-${days} days')`;
             }
 
-            // Create safe SQL fragments for filtering
             const dateFilter = `created_at >= ${startDate} AND created_at <= ${endDate}`;
             const dateFilterO = `o.created_at >= ${startDate} AND o.created_at <= ${endDate}`;
 
-            // 2. ULTRA-FAST BATCH EXECUTION
+            // 2. Batch queries
             const results = await env.DB.batch([
-                // Query 0: Aggregate Orders (Revenue, counts, and statuses in one pass)
+                // Query 0: Order aggregates
                 env.DB.prepare(`
                     SELECT 
-                        COALESCE(SUM(CASE WHEN payment_status = 'paid' AND status NOT IN ('cancelled', 'returned') THEN total ELSE 0 END), 0) as total_revenue,
+                        COALESCE(SUM(CASE WHEN payment_status = 'paid' AND order_status NOT IN ('cancelled', 'exchange_requested', 'exchange_approved') THEN total_amount ELSE 0 END), 0) as total_revenue,
                         COUNT(*) as total_orders,
-                        SUM(CASE WHEN status = 'delivered' THEN 1 ELSE 0 END) as delivered_orders,
-                        SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending_orders,
-                        SUM(CASE WHEN status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_orders,
-                        SUM(CASE WHEN status = 'returned' THEN 1 ELSE 0 END) as returned_orders,
-                        SUM(CASE WHEN status = 'placed' THEN 1 ELSE 0 END) as placed_orders,
-                        SUM(CASE WHEN status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_orders,
-                        SUM(CASE WHEN status = 'shipped' THEN 1 ELSE 0 END) as shipped_orders,
+                        SUM(CASE WHEN order_status = 'delivered' THEN 1 ELSE 0 END) as delivered_orders,
+                        SUM(CASE WHEN order_status IN ('placed','confirmed','processing') THEN 1 ELSE 0 END) as pending_orders,
+                        SUM(CASE WHEN order_status = 'cancelled' THEN 1 ELSE 0 END) as cancelled_orders,
+                        SUM(CASE WHEN order_status IN ('exchange_requested','exchange_approved') THEN 1 ELSE 0 END) as returned_orders,
+                        SUM(CASE WHEN order_status = 'placed' THEN 1 ELSE 0 END) as placed_orders,
+                        SUM(CASE WHEN order_status = 'confirmed' THEN 1 ELSE 0 END) as confirmed_orders,
+                        SUM(CASE WHEN order_status = 'shipped' THEN 1 ELSE 0 END) as shipped_orders,
                         SUM(CASE WHEN payment_status != 'paid' THEN 1 ELSE 0 END) as payment_pending
                     FROM orders WHERE ${dateFilter}
                 `),
-
-                // Query 1: Customers Stats
+                // Query 1: Customer stats
                 env.DB.prepare(`
                     SELECT 
                         (SELECT COUNT(*) FROM users WHERE role='customer') as total_customers,
                         (SELECT COUNT(*) FROM users WHERE role='customer' AND ${dateFilter}) as new_customers
                 `),
-
-                // Query 2: Daily Revenue Chart
+                // Query 2: Daily revenue
                 env.DB.prepare(`
-                    SELECT date(created_at) as date, COALESCE(SUM(total), 0) as revenue, COUNT(*) as orders
+                    SELECT date(created_at) as date, COALESCE(SUM(total_amount), 0) as revenue, COUNT(*) as orders
                     FROM orders 
-                    WHERE payment_status='paid' AND status NOT IN ('cancelled', 'returned') AND ${dateFilter} 
+                    WHERE payment_status='paid' AND order_status NOT IN ('cancelled', 'exchange_requested', 'exchange_approved') AND ${dateFilter} 
                     GROUP BY date ORDER BY date ASC
                 `),
-
-                // Query 3: Top Products
+                // Query 3: Top products
                 env.DB.prepare(`
-                    SELECT p.name, p.image_url, SUM(oi.qty) as quantity, SUM(oi.total_price) as revenue
+                    SELECT p.name, p.image_url, SUM(oi.quantity) as quantity, SUM(oi.line_total) as revenue
                     FROM order_items oi 
                     JOIN products p ON oi.product_id = p.id
                     JOIN orders o ON oi.order_id = o.id 
-                    WHERE o.payment_status = 'paid' AND o.status NOT IN ('cancelled', 'returned') AND ${dateFilterO}
+                    WHERE o.payment_status = 'paid' AND o.order_status NOT IN ('cancelled', 'exchange_requested') AND ${dateFilterO}
                     GROUP BY p.id ORDER BY revenue DESC LIMIT 7
                 `),
-
-                // Query 4: Category Sales
+                // Query 4: Category sales
                 env.DB.prepare(`
-                    SELECT COALESCE(p.category, 'Uncategorized') as category, SUM(oi.total_price) as revenue
+                    SELECT COALESCE(p.category, 'Uncategorized') as category, SUM(oi.line_total) as revenue
                     FROM order_items oi 
                     JOIN products p ON oi.product_id = p.id
                     JOIN orders o ON oi.order_id = o.id 
-                    WHERE o.payment_status = 'paid' AND o.status NOT IN ('cancelled', 'returned') AND ${dateFilterO}
+                    WHERE o.payment_status = 'paid' AND o.order_status NOT IN ('cancelled', 'exchange_requested') AND ${dateFilterO}
                     GROUP BY p.category ORDER BY revenue DESC
                 `),
-
-                // Query 5: Payment Methods Breakdown
+                // Query 5: Payment methods
                 env.DB.prepare(`
                     SELECT payment_method, COUNT(*) as count 
                     FROM orders WHERE ${dateFilter} GROUP BY payment_method
                 `)
             ]);
 
-            // 3. Destructure and format the results precisely for the frontend
             const orderStats = results[0].results[0] || {};
             const custStats = results[1].results[0] || {};
             const rawPayments = results[5].results || [];
 
-            // Convert payment methods array [{payment_method: 'upi', count: 5}] to object {upi: 5}
             const payment_methods = {};
             rawPayments.forEach(p => {
                 const key = p.payment_method ? p.payment_method.toLowerCase() : 'unknown';
                 payment_methods[key] = p.count;
             });
 
-            // Realistic logical Funnel calculation (fallback if you don't track events yet)
             const tOrders = orderStats.total_orders || 0;
             const funnel = {
                 orders: tOrders,
-                checkout: Math.round(tOrders * 1.6),     // Assumes 62% checkout completion
-                add_to_cart: Math.round(tOrders * 3.2),  // Assumes 31% cart to order
-                product_views: Math.round(tOrders * 12), // Assumes 8% view to order
-                visits: Math.round(tOrders * 35)         // Assumes ~2.8% overall conversion
+                checkout: Math.round(tOrders * 1.6),
+                add_to_cart: Math.round(tOrders * 3.2),
+                product_views: Math.round(tOrders * 12),
+                visits: Math.round(tOrders * 35)
             };
 
             const responseData = {
@@ -156,17 +147,89 @@ export async function analyticsRouter(request, env) {
                 funnel: funnel
             };
 
-            // Save to isolate memory cache
             queryCache.set(cacheKey, { time: Date.now(), data: responseData });
-
-            // 4. Return the exact structure expected by the HTML
             return ok(responseData);
 
         } catch (e) {
             console.error('Analytics execution error:', e);
-            return serverError('Failed to execute analytics queries fast.');
+            return serverError('Failed to execute analytics queries.');
         }
     }
 
     return error('Route not found', 404);
+}
+
+// ── dashboardStatsRouter — serves /api/admin/dashboard ─────────────────────────
+// Returns the shape that frontend dashboard.js expects:
+// { totalProducts, totalOrders, totalRevenue, pendingOrders, ordersByStatus, recentOrders, topProducts }
+export async function dashboardStatsRouter(request, env) {
+    const { user, error: authError } = await requireAdmin(request, env);
+    if (authError) return authError;
+
+    const url = new URL(request.url);
+    const from = url.searchParams.get('from') || new Date(Date.now() - 30 * 86400000).toISOString().slice(0, 10);
+    const to = url.searchParams.get('to') || new Date().toISOString().slice(0, 10);
+    const fromDt = `${from} 00:00:00`;
+    const toDt = `${to} 23:59:59`;
+
+    try {
+        const results = await env.DB.batch([
+            // 0: order+revenue stats in period
+            env.DB.prepare(`
+                SELECT
+                    COUNT(*) as total_orders,
+                    COALESCE(SUM(CASE WHEN payment_status='paid' AND order_status NOT IN ('cancelled','exchange_requested','exchange_approved') THEN total_amount ELSE 0 END), 0) as total_revenue,
+                    SUM(CASE WHEN order_status IN ('placed','confirmed','processing') THEN 1 ELSE 0 END) as pending_orders,
+                    SUM(CASE WHEN order_status = 'placed' THEN 1 ELSE 0 END) as placed,
+                    SUM(CASE WHEN order_status = 'confirmed' THEN 1 ELSE 0 END) as confirmed,
+                    SUM(CASE WHEN order_status = 'shipped' THEN 1 ELSE 0 END) as shipped,
+                    SUM(CASE WHEN order_status = 'delivered' THEN 1 ELSE 0 END) as delivered,
+                    SUM(CASE WHEN order_status = 'cancelled' THEN 1 ELSE 0 END) as cancelled,
+                    SUM(CASE WHEN order_status IN ('exchange_requested','exchange_approved') THEN 1 ELSE 0 END) as exchange_requested
+                FROM orders WHERE created_at BETWEEN ? AND ?
+            `).bind(fromDt, toDt),
+            // 1: product count
+            env.DB.prepare("SELECT COUNT(*) as cnt FROM products WHERE active = 1"),
+            // 2: recent orders
+            env.DB.prepare(`
+                SELECT id, order_number, customer_name, customer_email, customer_phone,
+                       total_amount, order_status, payment_status, payment_method, created_at
+                FROM orders ORDER BY id DESC LIMIT 10
+            `),
+            // 3: top products in period
+            env.DB.prepare(`
+                SELECT p.id, p.name, p.image_url, p.price, SUM(oi.quantity) as sold, SUM(oi.line_total) as revenue
+                FROM order_items oi
+                JOIN products p ON p.id = oi.product_id
+                JOIN orders o ON o.id = oi.order_id
+                WHERE o.created_at BETWEEN ? AND ? AND o.payment_status = 'paid'
+                GROUP BY p.id ORDER BY revenue DESC LIMIT 8
+            `).bind(fromDt, toDt),
+        ]);
+
+        const s = results[0].results[0] || {};
+        const totalProducts = results[1].results[0]?.cnt || 0;
+        const recentOrders = results[2].results || [];
+        const topProducts = results[3].results || [];
+
+        return ok({
+            totalProducts,
+            totalOrders: s.total_orders || 0,
+            totalRevenue: s.total_revenue || 0,
+            pendingOrders: s.pending_orders || 0,
+            ordersByStatus: {
+                placed: s.placed || 0,
+                confirmed: s.confirmed || 0,
+                shipped: s.shipped || 0,
+                delivered: s.delivered || 0,
+                cancelled: s.cancelled || 0,
+                exchange_requested: s.exchange_requested || 0,
+            },
+            recentOrders,
+            topProducts,
+        });
+    } catch (e) {
+        console.error('Dashboard stats error:', e);
+        return serverError('Failed to load dashboard stats');
+    }
 }

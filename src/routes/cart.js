@@ -32,9 +32,9 @@ export async function cartRouter(request, env) {
         const { user, error: authError } = await requireAuth(request, env);
         if (authError) return authError;
         const items = await env.DB.prepare(
-            `SELECT c.id, c.qty, c.size, c.color, p.id as product_id, p.name, p.price, p.mrp, p.images
+            `SELECT c.id, c.qty, c.size, c.color, p.id as product_id, p.name, p.price, p.original_price, p.images_json
        FROM carts c JOIN products p ON c.product_id = p.id
-       WHERE c.user_id = ? AND p.is_active = 1`
+       WHERE c.user_id = ? AND p.active = 1`
         ).bind(user.id).all();
         return list(items.results);
     }

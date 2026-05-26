@@ -88,7 +88,7 @@ export async function posRouter(request, env) {
                     // Log inventory
                     await env.DB.prepare(
                         "INSERT INTO inventory_log (product_id, product_name, change_type, quantity_before, quantity_change, quantity_after, reason, created_at) VALUES (?,?,'sale',?,?,?,?,datetime('now'))"
-                    ).bind(item.product_id, prod.name, -item.qty, prod.stock || 0, newStock, `POS sale: Order ${orderNumber}`).run();
+                    ).bind(item.product_id, prod.name, prod.stock || 0, -item.qty, newStock, `POS sale: Order ${orderNumber}`).run();
                 }
             }
 

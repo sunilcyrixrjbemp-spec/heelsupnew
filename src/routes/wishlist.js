@@ -13,10 +13,10 @@ export async function wishlistRouter(request, env) {
         if (authError) return authError;
         try {
             const items = await env.DB.prepare(
-                `SELECT p.id, p.name, p.slug, p.price, p.mrp, p.images, c.name as category_name
+                `SELECT p.id, p.name, p.slug, p.price, p.original_price, p.images_json, c.name as category_name
          FROM wishlists w JOIN products p ON w.product_id = p.id
          LEFT JOIN categories c ON p.category_id = c.id
-         WHERE w.user_id = ? AND p.is_active = 1 ORDER BY w.added_at DESC`
+         WHERE w.user_id = ? AND p.active = 1 ORDER BY w.added_at DESC`
             ).bind(user.id).all();
             return list(items.results);
         } catch (e) { return serverError('Failed to fetch wishlist'); }
