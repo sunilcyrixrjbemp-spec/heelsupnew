@@ -1141,6 +1141,28 @@
 
   </div>
 
+  <!-- 2FA OTP MODAL -->
+  <div class="modal-backdrop" id="otpModal" style="position:fixed;inset:0;background:rgba(13,10,8,0.7);backdrop-filter:blur(6px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:24px;padding:32px;max-width:400px;width:100%;box-shadow:var(--sh-lg);animation:fadeSlideIn 0.3s ease;text-align:center;">
+      <div style="width:56px;height:56px;background:var(--gold-glow);color:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:24px;">
+        <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <h2 style="font-family:var(--fh);font-size:1.5rem;font-weight:600;margin-bottom:8px;color:var(--text-1)">Admin Verification</h2>
+      <p style="font-size:13.5px;color:var(--text-3);line-height:1.5;margin-bottom:24px;" id="otpModalSub">Enter the 6-digit verification code sent to your email.</p>
+      
+      <div style="margin-bottom:24px;">
+        <input type="text" id="fOtp" maxlength="6" placeholder="000000" style="width:100%;text-align:center;font-size:1.8rem;font-weight:700;letter-spacing:6px;padding:12px;border:1.5px solid var(--border);border-radius:12px;outline:none;background:#faf8f5;color:var(--text-1);font-family:monospace;" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')verifyAdminOtp()">
+        <div id="otpErr" style="color:var(--rose);font-size:12.5px;margin-top:8px;font-weight:500;display:none;"></div>
+      </div>
+      
+      <button class="btn-submit" id="btnVerifyOtp" onclick="verifyAdminOtp()" style="margin-bottom:16px;">
+        <span id="btnVerifyText">Verify &amp; Sign In</span>
+      </button>
+      
+      <button onclick="closeOtpModal()" style="font-size:13px;font-weight:600;color:var(--text-3);text-decoration:underline;cursor:pointer;background:none;border:none;">Cancel</button>
+    </div>
+  </div>
+
   <!-- ══════════════════════════════════
      SCRIPTS
 ══════════════════════════════════ -->
@@ -1215,6 +1237,72 @@
     }
 
     /* ── Main Login Logic ── */
+    let currentSessionToken = '';
+    let currentEmail = '';
+
+    function showOtpUI(sessionToken, email) {
+      currentSessionToken = sessionToken;
+      currentEmail = email;
+      document.getElementById('otpModalSub').innerHTML = `Enter the 6-digit verification code sent to <br><strong>${email}</strong>`;
+      document.getElementById('otpErr').style.display = 'none';
+      document.getElementById('fOtp').value = '';
+      document.getElementById('otpModal').style.display = 'flex';
+      setTimeout(() => document.getElementById('fOtp').focus(), 100);
+    }
+
+    function closeOtpModal() {
+      document.getElementById('otpModal').style.display = 'none';
+      currentSessionToken = '';
+      currentEmail = '';
+    }
+
+    async function verifyAdminOtp() {
+      const otp = document.getElementById('fOtp').value.trim();
+      const errBox = document.getElementById('otpErr');
+      errBox.style.display = 'none';
+      
+      if (otp.length !== 6) {
+        errBox.textContent = 'Please enter a 6-digit code.';
+        errBox.style.display = 'block';
+        return;
+      }
+      
+      const btn = document.getElementById('btnVerifyOtp');
+      const btnText = document.getElementById('btnVerifyText');
+      btn.disabled = true;
+      btnText.innerHTML = '<div class="spinner"></div> Verifying…';
+      
+      try {
+        const rawRes = await HeelsUpAuth.api('/api/auth/admin-verify-otp', {
+          method: 'POST',
+          body: JSON.stringify({
+            otp,
+            session_token: currentSessionToken
+          })
+        });
+        
+        const res = rawRes?.data;
+        if (res && res.token) {
+          HeelsUpAuth.setSession(res.token, res.user);
+          toast('🎉 Admin login successful! Welcome back.');
+          closeOtpModal();
+          
+          setTimeout(() => {
+            const redirectParam = new URLSearchParams(location.search).get('redirect') || 'admin.html';
+            window.location.href = redirectParam;
+          }, 700);
+        } else {
+          throw new Error('Verification failed. Invalid response.');
+        }
+      } catch (err) {
+        errBox.textContent = err?.message || 'Verification failed. Please try again.';
+        errBox.style.display = 'block';
+      } finally {
+        btn.disabled = false;
+        btnText.innerHTML = 'Verify &amp; Sign In';
+      }
+    }
+
     async function doLogin() {
       const email = document.getElementById('fEmail').value.trim();
       const password = document.getElementById('fPassword').value;
@@ -1235,10 +1323,21 @@
       try {
         const payload = { email, password, remember: rememberMe };
 
-        const res = await HeelsUpAuth.api('/api/auth/login', {
+        const rawRes = await HeelsUpAuth.api('/api/auth/login', {
           method: 'POST',
           body: JSON.stringify(payload)
         });
+
+        if (rawRes?.step === 'otp_required' || rawRes?.data?.step === 'otp_required') {
+          const stepData = rawRes.data || rawRes;
+          showOtpUI(stepData.session_token, stepData.email);
+          return;
+        }
+
+        const res = rawRes?.data;
+        if (!res || !res.token) {
+          throw new Error(rawRes?.error || 'Invalid credentials or login failed.');
+        }
 
         HeelsUpAuth.setSession(res.token, res.user);
 
@@ -1250,9 +1349,7 @@
 
         const role = (res.user?.role || '').toLowerCase();
         let target = 'index.html';
-        if (role === 'admin') target = 'admin.html';
-        else if (role === 'staff') target = 'admin.html';
-        else if (role === 'manager') target = 'admin.html';
+        if (role === 'admin' || role === 'staff' || role === 'manager') target = 'admin.html';
 
         setTimeout(() => window.location.href = target, 700);
 
@@ -1276,11 +1373,12 @@
 
     async function handleGoogleCallback(response) {
       try {
-        const res = await HeelsUpAuth.api('/api/auth/google', {
+        const rawRes = await HeelsUpAuth.api('/api/auth/google', {
           method: 'POST',
           body: JSON.stringify({ credential: response.credential })
         });
-        if (res.token) {
+        const res = rawRes?.data;
+        if (res && res.token) {
           HeelsUpAuth.setSession(res.token, res.user);
           toast('Logged in successfully!');
           setTimeout(() => {

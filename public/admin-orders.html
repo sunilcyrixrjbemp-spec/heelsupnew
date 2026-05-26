@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -1626,6 +1626,7 @@
                 <a href="admin-customers.html" class="nav-item"><i class="fa-solid fa-users"></i> Customers</a>
                 <a href="admin-coupons.html" class="nav-item"><i class="fa-solid fa-ticket"></i> Coupons</a>
                 <a href="admin-reviews.html" class="nav-item"><i class="fa-solid fa-star"></i> Reviews</a>
+                <a href="admin-orders.html?tab=exchange" class="nav-item"><i class="fa-solid fa-rotate-left"></i> Exchanges</a>
                 <a href="admin-pos.html" class="nav-item"><i class="fa-solid fa-cash-register"></i> POS / Offline</a>
                 <div class="nav-section">Marketing</div>
                 <a href="admin-banners.html" class="nav-item"><i class="fa-solid fa-image"></i> Banners</a>
@@ -2541,7 +2542,12 @@
         document.addEventListener('DOMContentLoaded', () => {
             const params = new URLSearchParams(window.location.search);
             const orderId = params.get('id');
+            const tabParam = params.get('tab');
             loadOrders().then(() => {
+                if (tabParam) {
+                    const btn = Array.from(document.querySelectorAll('.tab-btn')).find(b => b.getAttribute('onclick') && b.getAttribute('onclick').includes(`'${tabParam}'`));
+                    if (btn) setTab(tabParam, btn);
+                }
                 if (orderId) openOrderModal(parseInt(orderId));
             });
         });

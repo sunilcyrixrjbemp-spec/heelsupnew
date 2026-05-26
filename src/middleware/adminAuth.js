@@ -17,7 +17,7 @@ export async function requireAdmin(request, env) {
         return { user: null, response: authError };
     }
 
-    if (user.role !== 'admin' && user.role !== 'staff') {
+    if (!['admin', 'staff', 'manager'].includes(user.role)) {
         return { user: null, response: error('Forbidden — admin access required', 403) };
     }
 
@@ -63,5 +63,5 @@ export async function adminGuard(request, env, superAdminOnly = false) {
  */
 export async function isAdminUser(request, env) {
     const { user } = await authenticate(request, env);
-    return user && (user.role === 'admin' || user.role === 'staff');
+    return user && ['admin', 'staff', 'manager'].includes(user.role);
 }

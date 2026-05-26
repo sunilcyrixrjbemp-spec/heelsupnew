@@ -3195,7 +3195,7 @@
                 <div class="footer-legal">
                     <a href="/policy/privacy.html">Privacy Policy</a>
                     <a href="/policy/terms.html">Terms of Service</a>
-                    <a href="/policy/returns.html">Returns</a>
+                    <a href="/policy/returns.html">Exchanges</a>
                 </div>
             </div>
         </div>
@@ -3227,7 +3227,7 @@
         /* ── HELPERS ── */
         const $ = id => document.getElementById(id);
         const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        const fmtPrice = n => { const v = Number(n) || 0; return '₹' + (v / 100).toLocaleString('en-IN'); };
+        const fmtPrice = n => { const v = Number(n) || 0; return '₹' + v.toLocaleString('en-IN'); };
         const pad = n => String(n).padStart(2, '0');
 
         /* ── CATEGORY META ── */
@@ -3354,7 +3354,7 @@
           </div>
           <div class="cart-item-price">${fmtPrice(it.price * (it.quantity || 1))}</div>
         </div>`).join('');
-            const freeAt = 79900, left = freeAt - total;
+            const freeAt = 799, left = freeAt - total;
             $('cart-subtotal').textContent = fmtPrice(total);
             $('cart-ship-msg').innerHTML = left > 0 ? `Add ${fmtPrice(left)} more for FREE shipping 🚚` : '✓ You qualify for FREE shipping!';
             footEl.style.display = 'block';
@@ -3489,7 +3489,7 @@
                 else p = p.filter(x => (x.category || '').toLowerCase() === activeCategory.toLowerCase());
             }
 
-            p = p.filter(x => { const pr = (Number(x.price) || 0) / 100; return pr >= priceMin && pr <= priceMax; });
+            p = p.filter(x => { const pr = Number(x.price) || 0; return pr >= priceMin && pr <= priceMax; });
             if (filterSale) p = p.filter(x => Number(x.mrp || x.original_price) > Number(x.price));
             if (filterNew) p = p.filter(x => x.is_new);
 

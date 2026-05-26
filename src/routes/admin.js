@@ -71,10 +71,10 @@ export async function adminRouter(request, env) {
     if (path.startsWith('/api/admin/orders')) {
         const sub = path.replace('/api/admin/orders', '') || '/';
         if (sub === '/' || sub === '') {
-            const req = rewritePath(request, '/api/orders/admin/all');
+            const req = rewritePath(request, '/api/orders/admin');
             return ordersRouter(req, env);
         }
-        const req = rewritePath(request, '/api/orders' + sub);
+        const req = rewritePath(request, '/api/orders/admin' + sub);
         return ordersRouter(req, env);
     }
 

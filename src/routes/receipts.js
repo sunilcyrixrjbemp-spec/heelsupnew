@@ -81,7 +81,7 @@ async function generateAndStoreReceipt(env, orderId) {
     const buffer = new TextEncoder().encode(html);
 
     const { ok: uploaded, url } = await uploadReceipt(
-        env.BUCKET,
+        env.MEDIA || env.BUCKET,
         env.R2_PUBLIC_URL,
         buffer,
         order.order_number || `ORD-${orderId}`
@@ -159,7 +159,7 @@ function buildReceiptHTML(order) {
   <p><b>Payment:</b> ${(order.payment_method || 'Cash').toUpperCase()}</p>
   <div class="footer">
     <p>Thank you for shopping at HeelsUp!</p>
-    <p>Returns accepted within 7 days</p>
+    <p>Exchanges accepted within 7 days</p>
     <p>heelsup.in</p>
   </div>
 </body>

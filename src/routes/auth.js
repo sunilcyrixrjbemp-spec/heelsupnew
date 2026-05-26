@@ -1,5 +1,5 @@
 // worker/src/routes/auth.js
-import { signJWT } from '../utils/jwt.js';
+import { signJWT, verifyJWT } from '../utils/jwt.js';
 import { hashPassword, verifyPassword } from '../utils/password.js';
 import { requireAuth } from '../middleware/auth.js';
 import { ok, created, error, unauthorized, serverError } from '../utils/response.js';
@@ -22,6 +22,14 @@ function nowIso(plusMinutes = 0) {
 
 function normalizeEmail(email) {
     return String(email || '').trim().toLowerCase();
+}
+
+function masked(email) {
+    if (!email) return '';
+    const [name, domain] = email.split('@');
+    if (!domain) return email;
+    if (name.length <= 2) return `${name[0]}*@${domain}`;
+    return `${name[0]}${'*'.repeat(name.length - 2)}${name[name.length - 1]}@${domain}`;
 }
 
 function mapUser(u) {
@@ -308,12 +316,22 @@ export async function authRouter(request, env) {
 
                 await env.KV.put(resendKey, String(resendCount + 1), { expirationTtl: 3600 }); // 1 hour
 
+                // ALWAYS print to console for development/debugging ease
+                console.log(`[ADMIN 2FA] Generated OTP for ${email}: ${otp}`);
+
                 // Send OTP email via Resend
                 const emailResult = await sendOtpEmail(env, email, otp, 'login');
                 if (!emailResult.ok) {
                     console.error('Failed to send admin OTP:', emailResult.error);
-                    // Fall through to normal login if email fails (graceful degradation)
-                    // Log error but don't block login
+                    if (env.REQUIRE_EMAIL_OTP === 'true') {
+                        return ok({
+                            step: 'otp_required',
+                            session_token: sessionToken,
+                            email: mapped.email,
+                            warning: 'OTP email delivery failed, check worker console/logs'
+                        }, `OTP generated (email delivery failed: ${emailResult.error || 'unknown error'})`);
+                    }
+                    // Otherwise (if requireOtp came from DB settings and env is false), we can fall through.
                     console.warn('OTP email failed — falling through to direct login for:', email);
                 } else {
                     // OTP sent successfully — require 2FA step

@@ -1660,7 +1660,7 @@
       inner.innerHTML = '<div class="spinner"></div> Creating Account…';
 
       try {
-        const res = await HeelsUpAuth.api('/api/auth/register', {
+        const rawRes = await HeelsUpAuth.api('/api/auth/register', {
           method: 'POST',
           body: JSON.stringify({
             firstName: document.getElementById('fFname').value.trim(),
@@ -1671,10 +1671,15 @@
             otp
           })
         });
-        HeelsUpAuth.setSession(res.token, res.user);
-        toast('🎉 Welcome to HeelsUp, ' + (res.user?.name?.split(' ')[0] || 'there') + '!');
-        const redirect = new URLSearchParams(location.search).get('redirect') || 'index.html';
-        setTimeout(() => window.location.href = redirect, 800);
+        const res = rawRes?.data;
+        if (res && res.token) {
+          HeelsUpAuth.setSession(res.token, res.user);
+          toast('🎉 Welcome to HeelsUp, ' + (res.user?.name?.split(' ')[0] || 'there') + '!');
+          const redirect = new URLSearchParams(location.search).get('redirect') || 'index.html';
+          setTimeout(() => window.location.href = redirect, 800);
+        } else {
+          throw new Error('Registration failed');
+        }
       } catch (e) {
         const msg = e?.message || '';
         if (msg.toLowerCase().includes('otp') || msg.toLowerCase().includes('invalid')) {
@@ -1693,11 +1698,12 @@
 
     async function handleGoogleCallback(response) {
       try {
-        const res = await HeelsUpAuth.api('/api/auth/google', {
+        const rawRes = await HeelsUpAuth.api('/api/auth/google', {
           method: 'POST',
           body: JSON.stringify({ credential: response.credential })
         });
-        if (res.token) {
+        const res = rawRes?.data;
+        if (res && res.token) {
           HeelsUpAuth.setSession(res.token, res.user);
           toast('Account created successfully!');
           setTimeout(() => {

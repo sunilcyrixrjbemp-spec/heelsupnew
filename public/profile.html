@@ -3514,7 +3514,7 @@
         </div>`;
             }).join('');
             if ($('cart-subtotal-val')) $('cart-subtotal-val').textContent = '₹' + total.toLocaleString('en-IN');
-            const freeAt = 79900, left = freeAt - total;
+            const freeAt = 799, left = freeAt - total;
             const shipNote = $('cart-ship-note');
             if (shipNote) {
                 shipNote.innerHTML = left > 0 ? `Add ₹${left.toLocaleString('en-IN')} more for <strong>FREE shipping</strong> 🚚` : '<i class="fa-solid fa-circle-check"></i> You qualify for FREE shipping!';

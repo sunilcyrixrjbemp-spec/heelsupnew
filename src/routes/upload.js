@@ -26,10 +26,12 @@ export async function uploadRouter(request, env) {
             const ext = file.type.split('/')[1];
             const key = `products/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
 
-            await env.BUCKET.put(key, buffer, {
+            const bucket = env.MEDIA || env.BUCKET;
+            if (!bucket) return error('R2 bucket binding (MEDIA) not found', 500);
+
+            await bucket.put(key, buffer, {
                 httpMetadata: { contentType: file.type },
             });
-
             const publicUrl = `${env.R2_PUBLIC_URL}/${key}`;
             return ok({ url: publicUrl, key }, 'File uploaded');
         } catch (e) {
@@ -45,7 +47,9 @@ export async function uploadRouter(request, env) {
         try {
             const { key } = await request.json();
             if (!key) return error('key required');
-            await env.BUCKET.delete(key);
+            const bucket = env.MEDIA || env.BUCKET;
+            if (!bucket) return error('R2 bucket binding (MEDIA) not found', 500);
+            await bucket.delete(key);
             return ok(null, 'File deleted');
         } catch (e) {
             return serverError('Delete failed');

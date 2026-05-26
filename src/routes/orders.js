@@ -210,7 +210,7 @@ export async function ordersRouter(request, env) {
             let couponCode = String(body.couponCode || "").trim().toUpperCase();
             const subtotalAmount = Number(items.reduce((s, i) => s + (Number(i.price || 0) * Math.max(1, i.qty || i.quantity || 1)), 0).toFixed(2));
             if (couponCode) {
-                const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND is_active = 1").bind(couponCode).first();
+                const coupon = await env.DB.prepare("SELECT * FROM coupons WHERE code=? AND active = 1").bind(couponCode).first();
                 if (coupon && subtotalAmount >= coupon.min_order) {
                     let disc = coupon.type === "percent" ? Math.round(subtotalAmount * (coupon.value / 100)) : coupon.value;
                     if (coupon.max_discount) disc = Math.min(disc, coupon.max_discount);

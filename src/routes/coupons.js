@@ -14,13 +14,13 @@ export async function couponsRouter(request, env) {
             if (!code) return error('Coupon code required');
 
             const coupon = await env.DB.prepare(
-                `SELECT * FROM coupons WHERE code = ? AND is_active = 1
+                `SELECT * FROM coupons WHERE code = ? AND active = 1
          AND (valid_from IS NULL OR valid_from <= datetime('now'))
          AND (valid_until IS NULL OR valid_until >= datetime('now'))`
             ).bind(code.toUpperCase()).first();
 
             if (!coupon) return error('Invalid or expired coupon code');
-            if (coupon.max_uses && coupon.uses_count >= coupon.max_uses) return error('Coupon usage limit reached');
+            if (coupon.max_uses && coupon.used_count >= coupon.max_uses) return error('Coupon usage limit reached');
             if (cart_total && cart_total < coupon.min_order) {
                 return error(`Minimum order ₹${(coupon.min_order / 100).toFixed(0)} required for this coupon`);
             }
