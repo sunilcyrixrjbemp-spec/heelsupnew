@@ -253,7 +253,7 @@ export async function authRouter(request, env) {
 
             if (!email || !password) return error('Email and password required');
 
-            // Rate limit check
+            // Rate limit check (per IP)
             const ip = request.headers.get('CF-Connecting-IP') || 'unknown';
             const rateLimitKey = `ratelimit:login:${ip}`;
             const attempts = parseInt(await env.KV.get(rateLimitKey) || '0');
@@ -273,19 +273,143 @@ export async function authRouter(request, env) {
             // Reset rate limit on success
             await env.KV.delete(rateLimitKey);
 
-            // Update last login
+            const mapped = mapUser(user);
+            const isAdminUser = ['admin', 'staff', 'manager'].includes(mapped.role);
+
+            // ── Admin 2FA: OTP step ───────────────────────────────────────────
+            // Only triggered for admin/staff/manager when REQUIRE_EMAIL_OTP = "true"
+            const requireOtp = (env.REQUIRE_EMAIL_OTP === 'true') ||
+                               (await getSetting(env, 'require_email_otp', 'false') === 'true');
+
+            if (isAdminUser && requireOtp) {
+                // Issue short-lived session token (5 min) — cannot access admin routes
+                const sessionToken = await signJWT(
+                    { id: mapped.id, email: mapped.email, role: mapped.role, name: mapped.name, otp_pending: true },
+                    env.JWT_SECRET,
+                    5  // 5 minute expiry
+                );
+
+                // Generate & store OTP in KV (10 min TTL)
+                const otp = String(Math.floor(100000 + Math.random() * 900000));
+                const otpKey = `otp:admin_login:${email}`;
+
+                // Rate limit OTP resends: max 3 per hour
+                const resendKey = `otp_resend:admin_login:${email}`;
+                const resendCount = parseInt(await env.KV.get(resendKey) || '0');
+                if (resendCount >= 3) {
+                    return error('Too many OTP requests. Wait 1 hour.', 429);
+                }
+
+                await env.KV.put(otpKey, JSON.stringify({
+                    otp,
+                    attempts: 0,
+                    created_at: Date.now()
+                }), { expirationTtl: 600 }); // 10 min
+
+                await env.KV.put(resendKey, String(resendCount + 1), { expirationTtl: 3600 }); // 1 hour
+
+                // Send OTP email via Resend
+                const emailResult = await sendOtpEmail(env, email, otp, 'login');
+                if (!emailResult.ok) {
+                    console.error('Failed to send admin OTP:', emailResult.error);
+                    // Fall through to normal login if email fails (graceful degradation)
+                    // Log error but don't block login
+                    console.warn('OTP email failed — falling through to direct login for:', email);
+                } else {
+                    // OTP sent successfully — require 2FA step
+                    return ok({
+                        step: 'otp_required',
+                        session_token: sessionToken,
+                        email: mapped.email,
+                    }, `OTP sent to ${masked(email)}`);
+                }
+            }
+
+            // ── Normal login (customer) or admin fallback if OTP email failed ──
             const now = nowIso();
             await env.DB.prepare('UPDATE users SET last_login_at = ? WHERE id = ?').bind(now, user.id).run();
             user.last_login_at = now;
 
-            const mapped = mapUser(user);
-            const token = await signJWT({ id: mapped.id, email: mapped.email, role: mapped.role, name: mapped.name }, env.JWT_SECRET);
+            const token = await signJWT(
+                { id: mapped.id, email: mapped.email, role: mapped.role, name: mapped.name },
+                env.JWT_SECRET
+            );
             return ok({ token, user: mapped }, 'Login successful');
         } catch (e) {
             console.error('Login error:', e);
             return serverError('Login failed');
         }
     }
+
+    // POST /api/auth/admin-verify-otp  — Step 2 of admin 2FA login
+    // Verifies OTP from KV, issues real full-duration JWT
+    if (path === '/admin-verify-otp' && method === 'POST') {
+        try {
+            const body = await request.json();
+            if (!body) return error('Invalid JSON', 400);
+            const inputOtp = String(body.otp || '').trim();
+            if (!inputOtp || inputOtp.length !== 6) return error('6-digit OTP required', 400);
+
+            // Must have session_token from step 1
+            const authHeader = request.headers.get('Authorization') || '';
+            const sessionToken = body.session_token || (authHeader.startsWith('Bearer ') ? authHeader.slice(7) : null);
+            if (!sessionToken) return error('session_token required', 400);
+
+            // Verify the short-lived JWT
+            const payload = await verifyJWT(sessionToken, env.JWT_SECRET);
+            if (!payload) return unauthorized('Session expired. Please login again.');
+            if (!payload.otp_pending) return error('Invalid session type', 400);
+
+            const email = payload.email;
+            const otpKey = `otp:admin_login:${email}`;
+            const raw = await env.KV.get(otpKey);
+            if (!raw) return error('OTP expired or not found. Please login again.', 400);
+
+            const otpData = JSON.parse(raw);
+
+            // Lock after 5 wrong attempts
+            if (otpData.attempts >= 5) {
+                await env.KV.delete(otpKey);
+                return error('Too many incorrect attempts. Please login again.', 429);
+            }
+
+            if (otpData.otp !== inputOtp) {
+                otpData.attempts++;
+                await env.KV.put(otpKey, JSON.stringify(otpData), { expirationTtl: 600 });
+                const remaining = 5 - otpData.attempts;
+                return error(`Incorrect OTP. ${remaining} attempt${remaining === 1 ? '' : 's'} remaining.`, 400);
+            }
+
+            // ✅ OTP correct — clean up and issue real JWT
+            await env.KV.delete(otpKey);
+            await env.KV.delete(`otp_resend:admin_login:${email}`);
+
+            const user = await env.DB.prepare('SELECT * FROM users WHERE email = ?').bind(email).first();
+            if (!user || user.is_blocked) return unauthorized('Account not accessible.');
+
+            const now = nowIso();
+            await env.DB.prepare('UPDATE users SET last_login_at = ? WHERE id = ?').bind(now, user.id).run();
+
+            const mapped = mapUser(user);
+            const token = await signJWT(
+                { id: mapped.id, email: mapped.email, role: mapped.role, name: mapped.name },
+                env.JWT_SECRET
+            );
+
+            // Log successful admin login to activity_log if table exists
+            try {
+                await env.DB.prepare(
+                    "INSERT OR IGNORE INTO activity_log (admin_id, action, entity, details, created_at) VALUES (?, 'login', 'auth', '2FA login successful', ?)"
+                ).bind(mapped.id, now).run();
+            } catch (_) { /* activity_log may not exist */ }
+
+            return ok({ token, user: mapped }, 'Login successful');
+        } catch (e) {
+            console.error('Admin verify OTP error:', e);
+            return serverError('OTP verification failed');
+        }
+    }
+
 
     // GET /api/auth/me
     if (path === '/me' && method === 'GET') {

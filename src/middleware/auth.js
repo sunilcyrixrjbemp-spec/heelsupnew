@@ -26,7 +26,9 @@ export async function requireAuth(request, env) {
 export async function requireAdmin(request, env) {
     const { user, error } = await authenticate(request, env);
     if (error) return { user: null, error };
-    if (user.role !== 'admin') return { user: null, error: forbidden('Admin access required') };
+    if (!['admin', 'staff', 'manager'].includes(user.role)) {
+        return { user: null, error: forbidden('Admin access required') };
+    }
     return { user, error: null };
 }
 
